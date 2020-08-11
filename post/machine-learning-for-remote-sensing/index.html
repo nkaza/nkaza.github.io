@@ -1,0 +1,1574 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Classification trees, random forests, neural networks and the like.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/">
+  <meta property="og:title" content="Machine Learning for Remote Sensing | Nikhil Kaza">
+  <meta property="og:description" content="Classification trees, random forests, neural networks and the like."><meta property="og:image" content="http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/featured.png">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2018-08-07T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2018-08-07T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/"
+  },
+  "headline": "Machine Learning for Remote Sensing",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/featured.png"
+  ],
+  
+  "datePublished": "2018-08-07T00:00:00Z",
+  "dateModified": "2018-08-07T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Classification trees, random forests, neural networks and the like."
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Machine Learning for Remote Sensing | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Machine Learning for Remote Sensing</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Aug 7, 2018
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    16 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 260px;">
+  <div style="position: relative">
+    <img src="/post/machine-learning-for-remote-sensing/featured_hu335f4ea0b956171d85a18efc1754789e_75926_720x0_resize_lanczos_2.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#stages-of-ml-approach">Stages of ML approach</a></li>
+<li><a href="#data-acquisition-and-preprocessing">Data Acquisition and Preprocessing</a></li>
+<li><a href="#feature-engineering">Feature engineering</a></li>
+<li><a href="#constructing-the-training-dataset">Constructing the training dataset</a></li>
+<li><a href="#build-models-using-different-algorithms">Build models using different algorithms</a></li>
+<li><a href="#note-on-performance-measures">Note on performance measures</a></li>
+<li><a href="#choosing-among-different-predictive-algorithms">Choosing among different predictive algorithms</a></li>
+<li><a href="#potential-improvements">Potential Improvements</a></li>
+<li><a href="#conclusions">Conclusions</a></li>
+<li><a href="#acknowledgements">Acknowledgements</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Machine learning (ML) is currently buzzwords in urban analytics. It is a process of automated model building that generates a predictive model that can reasonably explain not just the data that it is trained on, but generalised to other data from the same data generating process. Traditional models are rules that operate on data to produce and ouput. Machine learning approaches, on the other hand, usually take outputs and data to figure out the approriate rules. While traditional models have to rely upon external justification for the rules, the promise of ML is that it discovers these rules empirically, without a theoretical basis for understanding the correlations among the differnet variables.One important thing to note about machine learning is that the models are restricted to the hypothesis space and the search is not among the arbirtary model specifications. For example, in machine learning, that is about logistic regression model, the features are restricted to enter the model in a linear fashion, where as in a decision tree, they behave non-linearly based on the partition. While this may be too esoteric for students who are starting out on understaning ML techniques, it is useful to temper the expectations regarding what kinds of models can we expect to be generated by the various algorithms. In other words, there is no gaurentee that the ML model is the <code>best</code> model that explains and predicts the observed data. Practical ML is as much an art as it is a science.</p>
+<p>It might be beneficial to illustrate some of the salient points about ML though a practical example that interests planners. Identifying objects and land use classes from remotely sensed images of urban areas.</p>
+</div>
+<div id="stages-of-ml-approach" class="section level1">
+<h1>Stages of ML approach</h1>
+<p>There are 5 distinct stages of Machine Learning. Let’s focus on supervised learning, a subset of ML approaches. In supervised learning, target outcome is known for a vector of features and the dataset consists of a collection of the features and target. So for example, land use class is frequently the target (dependent variable) and the featues (independent variables) are various bands, indices, textures, proximity etc.</p>
+<ol style="list-style-type: decimal">
+<li>Identifying appropriate data sources, especially labelled data. Wrangle, Clean and Assemble (Data Preprocessing)</li>
+<li>Feature Engineering. Identify the right variable combinations from the independent variables.</li>
+<li>Splitting the data into training, validation and holdout.</li>
+<li>Iterating over the algorithm to fit best explain the training dataset. Use the validation data to tune the model.</li>
+<li>Choosing the best model that does well (predictively) on the holdout dataset.</li>
+</ol>
+<p>ML approaches are fundamentally iterative. I cannot emphasise this enough. While there are distinct steps in the appoaches, because later stages crucuially depend on earlier stages, all stages, except the last one, are iterative. We usually iterate to find better fitting algorithms to the data, which necessitates changes to feature engineering and selection as shown in the figure below.</p>
+<div class="figure">
+<img src="/post/2018-08-07-machine-learning-for-remote-sensing_files/1528719478855-image3%5B4%5D.png" alt="Image credit: Goyal (2018)" style="width:100.0%;height:100.0%" />
+<p class="caption">Image credit: <a href="https://www.zeolearn.com/magazine/understanding-the-human-process-in-machine-learning">Goyal (2018)</a></p>
+</div>
+<p>In the following steps, for the sake of brevity, I do not demonstrate the iterative aspects of ML.</p>
+</div>
+<div id="data-acquisition-and-preprocessing" class="section level1">
+<h1>Data Acquisition and Preprocessing</h1>
+<p>For this exercise, I am going to use a 3m, 4-band Planetscope image from around Wuhan, China. You can download it from around <a href="https://www.dropbox.com/s/thx2gdi7230qme2/data.zip?dl=0">here</a>. The 4 bands are Blue, Green, Red and Near InfraRed (NIR). These are initial set of features.</p>
+<pre class="r"><code>library(raster)
+wuhan_raster &lt;- brick(&#39;./20170914_022008_0f28/20170914_022008_0f28_3B_AnalyticMS_SR.tif&#39;)
+names(wuhan_raster) &lt;- c(&#39;Blue&#39;, &quot;Green&quot;, &quot;Red&quot;, &#39;NIR&#39;)
+wuhan_raster
+# class      : RasterBrick 
+# dimensions : 4695, 9068, 42574260, 4  (nrow, ncol, ncell, nlayers)
+# resolution : 3, 3  (x, y)
+# extent     : 231990, 259194, 3372027, 3386112  (xmin, xmax, ymin, ymax)
+# crs        : +proj=utm +zone=50 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 
+# source     : /Users/kaza/Dropbox/urban_analysis_tutorials/datasets/4.machinelearning/20170914_022008_0f28/20170914_022008_0f28_3B_AnalyticMS_SR.tif 
+# names      :  Blue, Green,   Red,   NIR 
+# min values :     0,     0,     0,     0 
+# max values : 65535, 65535, 65535, 65535
+plotRGB(wuhan_raster, r=3, g=2, b=1, stretch=&#39;hist&#39;, main=&#39;True color composite&#39;) #TRUE color composite</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-1-1.png" width="768" /></p>
+<pre class="r"><code>plotRGB(wuhan_raster, r=4,g=3,b=2, stretch=&#39;hist&#39;, main = &#39;False color composite&#39;) # FALsE Color Composite</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-1-2.png" width="768" /></p>
+<p>The labels are vector data derived from Openstreetmap data. It is availale as part of the zip file you downloaded earlier. In particular, the labels are in the ‘landuse’ class.</p>
+<pre class="r"><code> library(sf)
+ shp &lt;- st_read(&quot;./landuse3.shp&quot;)
+# Reading layer `landuse3&#39; from data source `/Users/kaza/Dropbox/urban_analysis_tutorials/datasets/4.machinelearning/landuse3.shp&#39; using driver `ESRI Shapefile&#39;
+# Simple feature collection with 629 features and 25 fields
+# geometry type:  MULTIPOLYGON
+# dimension:      XY
+# bbox:           xmin: 114.21 ymin: 30.45716 xmax: 114.4891 ymax: 30.57547
+# CRS:            4326
+shp &lt;- st_transform(shp, proj4string(wuhan_raster)) ## Note that shp was not in the same projection as raster, so transform it to make the spatial operations possible. In general, it is quicker and easier to transform vectors.
+summary(shp$landuse)
+#    Length     Class      Mode 
+#       629 character character
+plot(shp[,&#39;landuse&#39;])</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
+<p>For the sake of simplicity, lets sample 15 locations from each polygon and use that as the basis for our dataset.</p>
+<pre class="r"><code>ptsamp &lt;- shp %&gt;% 
+  st_sample(rep(15, nrow(shp)), type = &#39;random&#39;) %&gt;% 
+  st_sf() %&gt;%
+  st_join(shp, join=st_intersects)</code></pre>
+<p>We will ultimately extract the raster values from the locations of these points to construct the columns in the training data. The landuse class becomes the target variable.</p>
+</div>
+<div id="feature-engineering" class="section level1">
+<h1>Feature engineering</h1>
+<p>Feature engineering is careful construction of new variables from raw data. For example, we can construct ‘Age’ from ‘Birth Date’ and ‘CurrentDate’, even when ‘CurrentDate’ is a not explicitly part of the dataset. Or combining two categorical variables into one.</p>
+<p>Feature engineering is one of the critical steps in ML approaches and is often overlooked. Because the raw data can be transformed into any number of features, it is critical that we need to draw upon domain knowledge to produce a proper ‘hypothesis space’ to find the ‘best model’.</p>
+<blockquote>
+<p>“Coming up with features is difficult, time-consuming, requires expert knowledge. ‘Applied machine learning’ is basically feature engineering.” - Andrew Ng</p>
+</blockquote>
+<p>For example it is common practise to construct Normalised Difference Index by doing some band math. One such indes is Normalised Difference Vegetation Index (NDVI) that is based on the ratio of NIR and Red. Normalised Difference Water Index is based on NIR and Green.</p>
+<pre class="r"><code>band_math_ratio &lt;- function(img, k, i) {
+  bk &lt;- img[[k]]
+  bi &lt;- img[[i]]
+  vi &lt;- (bk - bi) / (bk + bi)
+  return(vi)
+}
+
+
+ndvi &lt;- band_math_ratio(wuhan_raster, 4,3)
+names(ndvi) &lt;- &#39;ndvi&#39;
+ndwi &lt;- band_math_ratio(wuhan_raster, 2,4)
+names(ndwi) &lt;- &#39;ndwi&#39;
+plot(ndvi, col = rev(terrain.colors(10)), main = &#39;NDVI&#39;)</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-4-1.png" width="768" /></p>
+<pre class="r"><code>plot(ndwi, col = rev(terrain.colors(10)), main = &#39;NDWI&#39;)</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-4-2.png" width="768" /></p>
+<hr />
+<p><strong>Exercise</strong></p>
+<p>Calculate</p>
+<ul>
+<li>Visible Atmospherically Resistant Index <span class="math inline">\((Green - Red)/ (Green + Red - Blue)\)</span></li>
+<li>Modified Soil Adjusted Vegetation Index (MSAVI2): <span class="math inline">\(\frac{(2* NIR+1)-\sqrt{(2*NIR+1)^2-8*(NIR-Red))}}{2}\)</span></li>
+</ul>
+<p>Look up the original references for these indices and see if they can really be applied to Planetscopse sensors. What are the limitations of each of these indices including NDVI, NDWI</p>
+<p>Plot these indices and see if the values visually distinguish different classes.</p>
+<hr />
+<p>It is often useful to look at correlations within the different bands in the dataset to see if different features are adding much to the information content.</p>
+<pre class="r"><code>pairs(wuhan_raster)</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-5-1.png" width="768" /></p>
+<p>From this plot, Blue and Red are pairwise heavily correlated (linearly) to Green. One way to reduce the dimensions is to extract the principal components of the data that encomposses most of the information.</p>
+<pre class="r"><code>library(RStoolbox)
+wuhan_PCA &lt;- rasterPCA(wuhan_raster, spca =TRUE) #scaled version.
+summary(wuhan_PCA$model)
+# Importance of components:
+#                          Comp.1    Comp.2     Comp.3     Comp.4
+# Standard deviation     1.729329 0.9746140 0.23241792 0.07436020
+# Proportion of Variance 0.747645 0.2374681 0.01350452 0.00138236
+# Cumulative Proportion  0.747645 0.9851131 0.99861764 1.00000000
+plot(wuhan_PCA$map[[1:2]], nr=2)</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-6-1.png" width="768" /></p>
+<p>From the summary, it would appear that the first two principal components effectly capture more than 98% of the variation. We can just use those two instead of the 4 bands.</p>
+<p><div class="alert alert-Note">
+  <div>
+    </p>
+<p>In general, in remote sensing applications, dimensionality reduction is done on the entire dataset rather than the training sample. It is a matter of convention, though it is probably more accurate to reduce the dimensions using correlations in the training data only.</p>
+<p>
+  </div>
+</div>
+</p>
+<div id="textures" class="section level2">
+<h2>Textures</h2>
+<p>Textures describe the spatial distribution of intensities, which makes it useful in classification of similar regions in different images. Haralick textures are usually from a discretised gray level images.</p>
+<div class="figure">
+<img src="/post/2018-08-07-machine-learning-for-remote-sensing_files/GLCM.jpg" alt="Image credit: Eichkitz et.al (2013)" style="width:100.0%" />
+<p class="caption">Image credit: <a href="https://doi.org/10.1016/j.cageo.2013.07.006">Eichkitz et.al (2013)</a></p>
+</div>
+<p>The main idea is that an gray level image is discretised into n-levels. In a moving window of 3x3 or 5x5, the proportion of co-occurence of two levels is noted in a matrix. From the Gray Level Co-Occurrence Matrix (GLCM), we can derive texture features such as Variance Homogeneity, Dissmilarity etc.</p>
+<p>We can use the 1 st principal component as an input for the GLCM.</p>
+<pre class="r"><code>library(glcm)
+textures &lt;- glcm(wuhan_PCA$map[[1]], shift=list(c(0,1), c(1,1), c(1,0), c(1,-1)))
+textures &lt;- textures[[-8]]</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<p>The above code calculates isotropic textures (taking the mean of all the directions). However, sometimes it might be better to calculate anisotropic textures for urban orbject detection. See <a href="http://dx.doi.org/10.1109/JSTARS.2008.2002869">Pesaresi et.al (2008)</a>. Calculate the PanTex features from Pesaresi et.al based on maximum, instead of the mean of different directions for this image.</p>
+<hr />
+</div>
+</div>
+<div id="constructing-the-training-dataset" class="section level1">
+<h1>Constructing the training dataset</h1>
+<pre class="r"><code>(wuhan_analysis_raster &lt;- stack(wuhan_PCA$map[[1:2]],ndvi, ndwi, textures))
+# class      : RasterStack 
+# dimensions : 4695, 9068, 42574260, 11  (nrow, ncol, ncell, nlayers)
+# resolution : 3, 3  (x, y)
+# extent     : 231990, 259194, 3372027, 3386112  (xmin, xmax, ymin, ymax)
+# crs        : +proj=utm +zone=50 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 
+# names      :         PC1,         PC2,        ndvi,        ndwi,        mean,    variance, homogeneity,    contrast, dissimilarity,     entropy, second_moment 
+# min values : -3.07275580, -9.65130365, -0.36895072, -0.77007209,  0.03125000,  0.91175974,  0.01047714,  0.00000000,    0.00000000,  0.00000000,    0.11111111 
+# max values :  28.0441893,   2.8748238,   0.7871753,   0.4260036,   0.9826389, 936.7556695,   1.0000000, 143.2222222,    11.4444444,   2.1972246,     1.0000000
+raster_sample &lt;- extract(wuhan_analysis_raster, ptsamp) %&gt;% as.data.frame()
+raster_sample$landuse &lt;- factor(ptsamp$landuse)
+raster_sample &lt;- raster_sample[complete.cases(raster_sample),]
+
+summary(raster_sample)
+#       PC1               PC2                ndvi              ndwi        
+#  Min.   :-2.7713   Min.   :-3.70960   Min.   :-0.1652   Min.   :-0.6930  
+#  1st Qu.:-1.3715   1st Qu.:-0.59110   1st Qu.: 0.2369   1st Qu.:-0.4744  
+#  Median :-0.5966   Median :-0.04614   Median : 0.3525   Median :-0.3525  
+#  Mean   :-0.2232   Mean   :-0.11321   Mean   : 0.3635   Mean   :-0.3611  
+#  3rd Qu.: 0.4469   3rd Qu.: 0.43456   3rd Qu.: 0.4870   3rd Qu.:-0.2476  
+#  Max.   :17.5947   Max.   : 1.69672   Max.   : 0.7300   Max.   : 0.1158  
+#                                                                          
+#       mean            variance         homogeneity         contrast      
+#  Min.   :0.03125   Min.   :  0.9217   Min.   :0.09025   Min.   : 0.0000  
+#  1st Qu.:0.06771   1st Qu.:  4.7471   1st Qu.:0.74444   1st Qu.: 0.1111  
+#  Median :0.09549   Median :  8.4766   Median :0.83333   Median : 0.3333  
+#  Mean   :0.10753   Mean   : 13.8832   Mean   :0.83023   Mean   : 0.4223  
+#  3rd Qu.:0.12674   3rd Qu.: 15.8251   3rd Qu.:0.94444   3rd Qu.: 0.5556  
+#  Max.   :0.68403   Max.   :449.7449   Max.   :1.00000   Max.   :24.4444  
+#                                                                          
+#  dissimilarity       entropy       second_moment           landuse    
+#  Min.   :0.0000   Min.   :0.0000   Min.   :0.1111   residential:4834  
+#  1st Qu.:0.1111   1st Qu.:0.3488   1st Qu.:0.3333   meadow     :1609  
+#  Median :0.3333   Median :0.9369   Median :0.4815   industrial : 840  
+#  Mean   :0.3530   Mean   :0.7864   Mean   :0.5576   forest     : 809  
+#  3rd Qu.:0.5556   3rd Qu.:1.2149   3rd Qu.:0.8025   commercial : 647  
+#  Max.   :4.2222   Max.   :2.1972   Max.   :1.0000   grass      : 647  
+#                                                     (Other)    :1232</code></pre>
+<p>To test the generalisability of the model, we will hold out a portion of the dataset and train the model on the remaining dataset. The following image illustrates this.</p>
+<div class="figure">
+<img src="/post/2018-08-07-machine-learning-for-remote-sensing_files/1_4G__SV580CxFj78o9yUXuQ.png" alt="Image credit: Borhnstein (2017)" />
+<p class="caption">Image credit: <a href="https://towardsdatascience.com/train-test-split-and-cross-validation-in-python-80b61beca4b6">Borhnstein (2017)</a></p>
+</div>
+<pre class="r"><code>library(caret)
+# create a holdout test set
+# use 80% of the original training data for training # use the remaining 20% of the original training data for testing
+set.seed(12)
+train_index &lt;- createDataPartition(raster_sample$landuse, p=0.80, list=FALSE)
+test_dataset &lt;- raster_sample[-train_index,]
+train_dataset &lt;- raster_sample[train_index,]</code></pre>
+<p>We will use repeated cross validation to fine tune each model. During each iteration, we will shuffle the dataset, so that the model is trained and tested on different datasets.
+<img src="/post/2018-08-07-machine-learning-for-remote-sensing_files/1_J2B_bcbd1-s1kpWOu_FZrg.png" alt="Image credit: Borhnstein (2017)" /></p>
+<p>Fortunately the Caret library has convenience functions that automate this process.</p>
+<pre class="r"><code>control &lt;- trainControl(method=&quot;repeatedcv&quot;, repeats =3, classProbs= TRUE, summaryFunction = multiClassSummary)</code></pre>
+</div>
+<div id="build-models-using-different-algorithms" class="section level1">
+<h1>Build models using different algorithms</h1>
+<p>Let’s build a simple decision tree model and see the results.</p>
+<pre class="r"><code>m_tree&lt;- train(landuse~., data=train_dataset, method=&quot;rpart&quot;, 
+                trControl=control, preProcess = c(&quot;center&quot;, &quot;scale&quot;, &#39;nzv&#39;) )
+plot(m_tree$finalModel, uniform=TRUE, main=&quot;Classification Tree&quot;)
+text(m_tree$finalModel, cex = 0.8)</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-12-1.png" width="768" /></p>
+<pre class="r"><code>
+varImp(m_tree, scale=TRUE) %&gt;% plot()</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-12-2.png" width="768" /></p>
+<pre class="r"><code>pred_hold_tree &lt;- predict.train(m_tree,test_dataset, type=&#39;raw&#39;)
+confusionMatrix(pred_hold_tree,test_dataset[,&#39;landuse&#39;])
+# Confusion Matrix and Statistics
+# 
+#                Reference
+# Prediction      basin commercial construction forest grass industrial lake
+#   basin             0          0            0      0     0          0    0
+#   commercial        0          0            0      0     0          0    0
+#   construction      0          0            0      0     0          0    0
+#   forest            0         11            8     70    20         10    0
+#   grass             0          0            0      0     0          0    0
+#   industrial        0          0            0      0     0          0    0
+#   lake              0          3            0      0     0          0    9
+#   meadow            7          1           17     25    36         24    0
+#   railway           0          0            0      0     0          0    0
+#   residential      14        114           99     66    73        134    0
+#   retail            0          0            0      0     0          0    0
+#   river             0          0            0      0     0          0    0
+#   village_green     0          0            0      0     0          0    0
+#                Reference
+# Prediction      meadow railway residential retail river village_green
+#   basin              0       0           0      0     0             0
+#   commercial         0       0           0      0     0             0
+#   construction       0       0           0      0     0             0
+#   forest            35       0          68      1     0             0
+#   grass              0       0           0      0     0             0
+#   industrial         0       0           0      0     0             0
+#   lake               0       0           1      0     6             0
+#   meadow            70       0          59      1     0             2
+#   railway            0       0           0      0     0             0
+#   residential      216       3         838     75     0             4
+#   retail             0       0           0      0     0             0
+#   river              0       0           0      0     0             0
+#   village_green      0       0           0      0     0             0
+# 
+# Overall Statistics
+#                                           
+#                Accuracy : 0.4656          
+#                  95% CI : (0.4442, 0.4871)
+#     No Information Rate : 0.4557          
+#     P-Value [Acc &gt; NIR] : 0.1856          
+#                                           
+#                   Kappa : 0.1422          
+#                                           
+#  Mcnemar&#39;s Test P-Value : NA              
+# 
+# Statistics by Class:
+# 
+#                      Class: basin Class: commercial Class: construction
+# Sensitivity              0.000000           0.00000             0.00000
+# Specificity              1.000000           1.00000             1.00000
+# Pos Pred Value                NaN               NaN                 NaN
+# Neg Pred Value           0.990094           0.93915             0.94151
+# Prevalence               0.009906           0.06085             0.05849
+# Detection Rate           0.000000           0.00000             0.00000
+# Detection Prevalence     0.000000           0.00000             0.00000
+# Balanced Accuracy        0.500000           0.50000             0.50000
+#                      Class: forest Class: grass Class: industrial Class: lake
+# Sensitivity                0.43478      0.00000           0.00000    1.000000
+# Specificity                0.92190      1.00000           1.00000    0.995263
+# Pos Pred Value             0.31390          NaN               NaN    0.473684
+# Neg Pred Value             0.95203      0.93915           0.92075    1.000000
+# Prevalence                 0.07594      0.06085           0.07925    0.004245
+# Detection Rate             0.03302      0.00000           0.00000    0.004245
+# Detection Prevalence       0.10519      0.00000           0.00000    0.008962
+# Balanced Accuracy          0.67834      0.50000           0.50000    0.997631
+#                      Class: meadow Class: railway Class: residential
+# Sensitivity                0.21807       0.000000             0.8675
+# Specificity                0.90439       1.000000             0.3085
+# Pos Pred Value             0.28926            NaN             0.5122
+# Neg Pred Value             0.86635       0.998585             0.7355
+# Prevalence                 0.15142       0.001415             0.4557
+# Detection Rate             0.03302       0.000000             0.3953
+# Detection Prevalence       0.11415       0.000000             0.7717
+# Balanced Accuracy          0.56123       0.500000             0.5880
+#                      Class: retail Class: river Class: village_green
+# Sensitivity                0.00000      0.00000              0.00000
+# Specificity                1.00000      1.00000              1.00000
+# Pos Pred Value                 NaN          NaN                  NaN
+# Neg Pred Value             0.96368      0.99717              0.99717
+# Prevalence                 0.03632      0.00283              0.00283
+# Detection Rate             0.00000      0.00000              0.00000
+# Detection Prevalence       0.00000      0.00000              0.00000
+# Balanced Accuracy          0.50000      0.50000              0.50000</code></pre>
+<p>This model has particularly low accuracy. Nevertheless, it is useful to predict the classes for the whole image and see where the issues might lie.</p>
+<pre class="r"><code>
+wuhan_tree_class &lt;- predict(wuhan_analysis_raster, m_tree, type=&#39;raw&#39;)
+
+library(rasterVis)
+library(RColorBrewer)
+
+levelplot(wuhan_tree_class, att=&#39;value&#39;, maxpixels = 1e6,
+          col.region = brewer.pal(n = 12,name=&#39;Set3&#39;),
+          scales=list(draw=FALSE),
+          main = &quot;Decision Tree classification&quot;)</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-14-1.png" width="768" /></p>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Use better colors to represent the land use classes.</li>
+</ul>
+<hr />
+</div>
+<div id="note-on-performance-measures" class="section level1">
+<h1>Note on performance measures</h1>
+<p>Let us consider a binary classification (1, 0 classes) problem, as digression and consider the contingency table and define some terms</p>
+<p>True Positive (TP): When the algorithm results 1, when it should result 1
+True Negative (TN): When the algorithm results 0, when it should be 0
+False Positive (FP): When the algorithm results 1, when it should be 0
+False Negative (FN): When the algorithm results 0, when it should be 1</p>
+<p>Once we define these terms, we can define</p>
+<ul>
+<li>Accuracy as <span class="math inline">\((TP+TN)/(TP + TN + FP + FN)\)</span>; Accuracy can be terribly biased if there are large number of Negatives or Positives, i.e if the data is unbalanced</li>
+<li>Precision/Positive Predictive Value as <span class="math inline">\(TP/(TP +FP)\)</span>; What proportion of positive identifications was actually correct?</li>
+<li>Recall/Sensitivity as <span class="math inline">\(TP/(TP+FN)\)</span>; What proportion of actual positives was identified correctly?</li>
+<li>True Negative Rate/ Specificity as <span class="math inline">\(TN/(TN+FP)\)</span>; What proportion of negative identifications are actually correct</li>
+<li>F1-Scoare as harmonic mean of Precision and Recall.</li>
+</ul>
+<p>Instead of overall accuracy measure, F1-scores may be a better measure.</p>
+<p>These could be extended to multi-class classifications. Kappa is a measure of aggrement above random chance. Though it has been discouraged in recent literature (see <a href="https://doi.org/10.1016/j.rse.2014.02.015">Olofsson et.al (2014)</a>), it is still widely reported.</p>
+</div>
+<div id="choosing-among-different-predictive-algorithms" class="section level1">
+<h1>Choosing among different predictive algorithms</h1>
+<pre class="r"><code>
+library(doParallel)
+cl &lt;- makeCluster(detectCores(), type=&#39;PSOCK&#39;)
+registerDoParallel(cl)
+
+algos &lt;- c(&#39;multinom&#39;, &#39;kknn&#39;, &#39;ranger&#39;, &#39;xgbTree&#39;)
+
+m_algos &lt;- lapply(algos, function(x){train(landuse~., data=train_dataset, method=x, trControl=control, preProcess = c(&quot;center&quot;, &quot;scale&quot;, &#39;nzv&#39;)) })
+# # weights:  169 (144 variable)
+# initial  value 21796.939640 
+# iter  10 value 15204.553684
+# iter  20 value 14914.990753
+# iter  30 value 14434.172330
+# iter  40 value 13962.884251
+# iter  50 value 13718.450244
+# iter  60 value 13421.655788
+# iter  70 value 13318.888686
+# iter  80 value 13236.213825
+# iter  90 value 13193.719221
+# iter 100 value 13164.980085
+# final  value 13164.980085 
+# stopped after 100 iterations
+
+names(m_algos) &lt;- algos
+
+stopCluster(cl)
+
+# calculate resamples // exclude SIMCA and PLS
+resample_results &lt;- resamples(m_algos)
+# print results to console
+bwplot(resample_results , metric = c(&quot;Kappa&quot;,&quot;Accuracy&quot;))</code></pre>
+<p><img src="/post/2018-08-07-machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-15-1.png" width="768" /></p>
+<pre class="r"><code>summary(resample_results,metric = c(&quot;Kappa&quot;,&quot;Accuracy&quot;,&quot;logLoss&quot;))
+# 
+# Call:
+# summary.resamples(object = resample_results, metric = c(&quot;Kappa&quot;,
+#  &quot;Accuracy&quot;, &quot;logLoss&quot;))
+# 
+# Models: multinom, kknn, ranger, xgbTree 
+# Number of resamples: 30 
+# 
+# Kappa 
+#                Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA&#39;s
+# multinom 0.09474404 0.1254326 0.1368737 0.1331987 0.1415270 0.1678425    0
+# kknn     0.11307705 0.1444467 0.1535353 0.1526570 0.1642711 0.1846233    0
+# ranger   0.10603055 0.1351100 0.1454138 0.1451452 0.1504783 0.2106543    0
+# xgbTree  0.12216713 0.1398694 0.1534862 0.1557746 0.1720845 0.1890085    0
+# 
+# Accuracy 
+#               Min.   1st Qu.    Median      Mean   3rd Qu.      Max. NA&#39;s
+# multinom 0.4587264 0.4781711 0.4817432 0.4816023 0.4845364 0.4988235    0
+# kknn     0.3842538 0.4120243 0.4177465 0.4170045 0.4259645 0.4380165    0
+# ranger   0.4307692 0.4490454 0.4537969 0.4568133 0.4629847 0.4935218    0
+# xgbTree  0.4642438 0.4776602 0.4852761 0.4854916 0.4936742 0.5053129    0
+# 
+# logLoss 
+#              Min.  1st Qu.   Median     Mean  3rd Qu.     Max. NA&#39;s
+# multinom 1.514424 1.551353 1.568340 1.567856 1.582850 1.620177    0
+# kknn     6.390299 6.853167 7.034534 7.098904 7.415265 7.683677    0
+# ranger   1.581251 1.629913 1.668813 1.662745 1.688387 1.782635    0
+# xgbTree  1.502802 1.528530 1.536751 1.537656 1.547443 1.574374    0</code></pre>
+<p>Despite all this effort, the mean accuracy is low. Furthermore, the even the maximum Kappa statistic is less than 20%. In other words, the machine learning algorithms are at best 20% better at predicting the land use than random chance alone.</p>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Explore the tuning parameters for each of the algorithms and try to optimise the performance of the model</li>
+<li>For each of these models, plot and describe the variable importance.</li>
+<li>Pick the best model of the lot and test its performance on the holdout dataset</li>
+<li>Visualise the result of the classification of the entire scene.</li>
+</ul>
+<hr />
+</div>
+<div id="potential-improvements" class="section level1">
+<h1>Potential Improvements</h1>
+<ul>
+<li>Get better training dataset. Reduce the number of classes, by merging similar classes.</li>
+<li>Perform image segmentation to extract objects and then use machine learning algorithms</li>
+<li>Add information from ancilliary datasets (such as distance to roads, railroads etc.)</li>
+<li>Tune the hyperparameters of model. Explore <code>caret</code> package documentation</li>
+<li>Work on feature engineering more.</li>
+<li>Try hierarchical image classification (impervious/water/barren/park at first level; residential/commerical/industrial within urban etc.)</li>
+</ul>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>In this post, I showed how machine learning can be used to classify remote sensing images. However, these methods are more general than satellite image applications. We can use these methods to predict time series data, classify textual informtion, identify sentiments in tweets and complaints and in general find patterns in data. While ML approaches are powerful, they are not always the most useful (as this post has shown) nor can they be a substitute for careful analysis, problem framing, data assembly, feature engineering, label data construction etc. Another big critique of the ML approaches are that most of them do not give us an understanding of the correlations. Causal relationships are even more problematic to ascertain. In any case, ML approaches, just like any other tool, should be used with caution and for appropriate purposes.</p>
+</div>
+<div id="acknowledgements" class="section level1">
+<h1>Acknowledgements</h1>
+<p>Parts of the code in this post is written by <a href="https://planning.unc.edu/student/chenyan/">Yan Chen</a>.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/&amp;text=Machine%20Learning%20for%20Remote%20Sensing" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/&amp;t=Machine%20Learning%20for%20Remote%20Sensing" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Machine%20Learning%20for%20Remote%20Sensing&amp;body=http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/&amp;title=Machine%20Learning%20for%20Remote%20Sensing" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Machine%20Learning%20for%20Remote%20Sensing%20http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/machine-learning-for-remote-sensing/&amp;title=Machine%20Learning%20for%20Remote%20Sensing" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/scraping-web-for-data/">Scraping web for data</a></li>
+      
+      <li><a href="/post/geospatial-data-in-r/">Geospatial Data in R</a></li>
+      
+      <li><a href="/post/exploratory-data-analysis-visualisation/">Exploratory Data Analysis &amp; Visualisation</a></li>
+      
+      <li><a href="/teaching/techniques-politics-short-course/">Techniques &amp; Politics of New Urban Analytics</a></li>
+      
+      <li><a href="/post/cluster-detection-in-point-data/">Identifying Clusters of Events</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

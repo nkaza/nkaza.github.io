@@ -1,0 +1,2414 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Creating urban landscape metrics">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/">
+  <meta property="og:title" content="Urban Morphology &amp; Landscape Metrics | Nikhil Kaza">
+  <meta property="og:description" content="Creating urban landscape metrics"><meta property="og:image" content="http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/featured.jpg">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/featured.jpg"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-03-12T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-03-12T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/"
+  },
+  "headline": "Urban Morphology \u0026 Landscape Metrics",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/featured.jpg"
+  ],
+  
+  "datePublished": "2020-03-12T00:00:00Z",
+  "dateModified": "2020-03-12T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Creating urban landscape metrics"
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Urban Morphology &amp; Landscape Metrics | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Urban Morphology &amp; Landscape Metrics</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Mar 12, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    12 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="btn-links mb-3">
+  
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  
+  <a class="btn btn-outline-primary my-1 mr-1" href="/project/urban-change/">
+    Project
+  </a>
+  
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 708px; max-height: 312px;">
+  <div style="position: relative">
+    <img src="/post/urban-morphology-landscape-metrics/featured.jpg" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#additional-resources">Additional resources</a></li>
+<li><a href="#acquire-data">Acquire data</a></li>
+<li><a href="#explore-the-data">Explore the data</a></li>
+<li><a href="#analyse-the-raster">Analyse the raster</a></li>
+<li><a href="#a-digression-into-morphological-operations">A digression into morphological operations</a></li>
+<li><a href="#landscape-metrics">Landscape metrics</a></li>
+<li><a href="#conclusions">Conclusions</a></li>
+</ul>
+</div>
+
+<p>In this post, I am going to show how to characterise urban form using urban landscape metrics.
+Landscape metrics are relatively common on ecology to understand the configuration and composition of natural landscapes. Their application to urban landscape is relatively novel, though is becoming more widespread.</p>
+<p>Most of the methods and results are discussed in <a href="/publication/kaza_changing_2013/">Kaza (2013)</a> and <a href="/publication/kazawpyo/">McCarty &amp; Kaza (2015)</a>. Please refer to those articles.</p>
+<div id="requirements" class="section level1">
+<h1>Requirements</h1>
+<p>This requires <a href="http://r-project.org">R</a>, the many libraries including <a href="https://cran.r-project.org/web/packages/raster/">raster</a>,<a href="https://cran.r-project.org/web/packages/sp/">sp</a>, <a href="https://cran.r-project.org/web/packages/rgdal">rgdal</a>, <a href="https://cran.r-project.org/package=rgeos">rgeos</a> <a href="https://cran.r-project.org/package=mmand">mmand</a> and <a href="https://cran.r-project.org/web/packages/landscapemetrics/index.html">landscapemetrics</a>.</p>
+</div>
+<div id="additional-resources" class="section level1">
+<h1>Additional resources</h1>
+<p>I strongly recommend that you read through <a href="http://rspatial.org/index.html">R spatial</a> by <a href="https://desp.ucdavis.edu/people/robert-j-hijmans">Robert Hijmans</a>, the author of the <code>raster</code> package.</p>
+</div>
+<div id="acquire-data" class="section level1">
+<h1>Acquire data</h1>
+<p>I am going to use a <a href="https://www.dropbox.com/s/pbx180gw420g03l/Archive.zip?dl=0">small section</a> of the <a href="https://www.mrlc.gov/nlcd11_data.php">US National Land Cover Dataset for 2011</a> from United States Geological Survey. You are welcome to use any categorical raster data.</p>
+</div>
+<div id="explore-the-data" class="section level1">
+<h1>Explore the data</h1>
+<p>Intialise the packages and read them into R along with the raster.</p>
+<pre class="r"><code>library(raster)
+library(rasterVis)
+lc &lt;- raster(path.to.file)</code></pre>
+<p>The land cover is assigned to the object <code>lc</code>. I prepared it so that it is a categorical raster with the right colors in the colortable. See attributes below.</p>
+<pre class="r"><code>lc
+# class      : RasterLayer 
+# dimensions : 1483, 892, 1322836  (nrow, ncol, ncell)
+# resolution : 30, 30  (x, y)
+# extent     : 1510215, 1536975, 1558875, 1603365  (xmin, xmax, ymin, ymax)
+# crs        : +proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs 
+# source     : /Users/kaza/Dropbox/website/tutorials_datasets/lmetrics/c11_37063.img 
+# names      : c11_37063 
+# values     : 11, 95  (min, max)
+# attributes :
+#        ID    Class               Classification colortable
+#  from: 11    Water                   Open Water    #5475A8
+#   to : 95 Wetlands Emergent Herbaceous Wetlands    #64B3D5</code></pre>
+<p>Here is the frequency table of counts of cells in various categories and visualisation of the raster.</p>
+<pre class="r"><code>freq(lc)
+#       value  count
+#  [1,]    11  25218
+#  [2,]    21 170495
+#  [3,]    22  74482
+#  [4,]    23  42961
+#  [5,]    24  10213
+#  [6,]    31   1214
+#  [7,]    41 222663
+#  [8,]    42 109305
+#  [9,]    43  30740
+# [10,]    52  16259
+# [11,]    71  37211
+# [12,]    81  68416
+# [13,]    82   4926
+# [14,]    90  41920
+# [15,]    95   1180
+# [16,]    NA 465633
+
+levelplot(lc, att=&quot;Classification&quot;, ylab=NULL, xlab=NULL, scales=list(y=list(draw=FALSE), x=list(draw=FALSE)),  col.regions=levels(lc)[[1]]$colortable, main=&quot;2011 Land Cover&quot;)</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="analyse-the-raster" class="section level1">
+<h1>Analyse the raster</h1>
+<p>Select the categories that are urban, These are Values <code>21,22,23,24</code> and set them to 1. Set the rest to 0. Anotehr alternative is <code>reclassify</code> function from the <code>raster</code> package to achieve the same output</p>
+<pre class="r"><code>urb_lc &lt;- calc(lc, fun = function(x){ifelse(x&gt;=21 &amp; x&lt;=24, 1, 0)})%&gt;% ratify
+freq(urb_lc)
+#      value  count
+# [1,]     0 559052
+# [2,]     1 298151
+# [3,]    NA 465633
+(p &lt;- levelplot(urb_lc, att=&quot;ID&quot;, ylab=NULL, xlab=NULL, main = &quot;Urban Land Cover&quot;, colorkey=FALSE, scales=list(y=list(draw=FALSE), x=list(draw=FALSE))))</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Now construct the urban patches from the urban raster. For this you need <code>landscapemetrics</code> library.
+The requirements to calculate meaningful landscape metrics are:
+- The distance units of your projection are meter, as the package converts units internally and returns results in either meters, square meters or hectares. For more information see the help file of each function.
+- The raster is categorical and the classes are integers (0,1….n)</p>
+<p>A naive urban landscape metrics are ready to be calculated from the binary image after checking for the landscape.</p>
+<p>For the sake of brevity, I am only checking the area metrics. I am going to ignore patches of class 0 (background).</p>
+<pre class="r"><code>library(landscapemetrics)
+library(skimr)
+
+options_landscapemetrics(to_disk = TRUE)
+check_landscape(urb_lc)
+#   layer       crs units   class n_classes OK
+# 1     1 projected     m integer         2  ✓
+
+naivemetrics1 &lt;- calculate_lsm(urb_lc, what = &quot;lsm_p_area&quot;)  
+naivemetrics1  %&gt;% filter(class==1) %&gt;% arrange(desc(value))
+# # A tibble: 400 x 6
+#    layer level class    id metric   value
+#    &lt;int&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;
+#  1     1 patch     1   728 area   25261. 
+#  2     1 patch     1   865 area     506. 
+#  3     1 patch     1  1077 area     163. 
+#  4     1 patch     1   956 area     106. 
+#  5     1 patch     1   736 area      36.4
+#  6     1 patch     1  1119 area      22.3
+#  7     1 patch     1  1066 area      18.4
+#  8     1 patch     1   936 area      18.3
+#  9     1 patch     1   993 area      17.7
+# 10     1 patch     1   746 area      16.1
+# # … with 390 more rows</code></pre>
+<p>The area of the cells in one of the patches is substantially larger than the next largest patch. This means most of urban area in this raster is connected and forms a single patch, even though visually we can see distinct neighborhoods. Most of these urban areas are connected through roads. These roads should not technically should not count towards urban area characteristics. To do this problem, we will have to use a <a href="%22./datasets/Highways.zip%22">Highways vector file</a> an remove them from the raster. To read the vector file and to do some vector operations, we need <code>rgdal</code>, <code>sp</code> and <code>rgeos</code> libraries. Load them and modify the path suitably to read the Highway file.</p>
+<pre class="r"><code>library(sf)
+
+
+highways &lt;- here(&quot;tutorials_datasets&quot;, &quot;lmetrics&quot;, &quot;Highways.shp&quot;) %&gt;%
+              read_sf()%&gt;% st_transform(crs(urb_lc))</code></pre>
+<p>The highways and the lc objects have different projections and coordinate systems. We need to align them if we can do any operations. Visualise them by styling the width of the line using <code>lwd</code> parameter. Note that <code>Width</code> attribute is a factor and therefore numerical operations are not permitted. We need to convert it to numerical value before styling the lines.</p>
+<pre class="r"><code>
+p + layer(sp.lines(highways %&gt;% as(&quot;Spatial&quot;), lwd=as.numeric(highways$Width)/24, col=&#39;red&#39;))</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Buffer the highways with a specified width.I am using the NCDOT guidelines that 4 lane highways have 150-300ft of Right of Way. So assuming 65 ft per lane (20m), we get</p>
+<pre class="r"><code>
+
+
+highways &lt;- highways %&gt;% 
+           filter(!is.na(LANES)) %&gt;%
+           mutate(width_m = as.numeric(LANES) * 20)
+
+highways_buffer &lt;- st_buffer(highways, dist=highways$width_m)</code></pre>
+<p>Now extract the cell numbers that overlap with the buffer and set those values to 0.</p>
+<pre class="r"><code>v &lt;- raster::extract(urb_lc, highways_buffer, cellnumbers=TRUE, small=T)
+v2 &lt;- unlist(lapply(v, function(x){x[,&#39;cell&#39;]}))
+urb_lc2 &lt;- urb_lc
+urb_lc2[v2] &lt;- 0
+p2 &lt;- levelplot(urb_lc2, att=&quot;ID&quot;, ylab=NULL, xlab=NULL, main=&quot;Urban (Highways Removed)&quot;, colorkey=FALSE, scales=list(y=list(draw=FALSE), x=list(draw=FALSE)))
+print(p, split=c(1, 1, 2, 1), more=TRUE)
+print(p2, split=c(2, 1, 2, 1))</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>metrics2 &lt;- calculate_lsm(urb_lc2, what = &quot;lsm_p_area&quot;) 
+metrics2  %&gt;% arrange(desc(value))
+# # A tibble: 3,288 x 6
+#    layer level class    id metric  value
+#    &lt;int&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;dbl&gt;
+#  1     1 patch     0     1 area   57864.
+#  2     1 patch     1  1204 area    1058.
+#  3     1 patch     1  1496 area     796.
+#  4     1 patch     1   988 area     473.
+#  5     1 patch     1  1088 area     468.
+#  6     1 patch     1  1824 area     365.
+#  7     1 patch     1  1414 area     340.
+#  8     1 patch     1  1797 area     325.
+#  9     1 patch     1  1194 area     293.
+# 10     1 patch     1   837 area     290.
+# # … with 3,278 more rows</code></pre>
+<p>The before picture is on the left and the after is on the right. We can now see some improvement, but it is not great. This because the vectorfiles are not perfectly aligned with the raster files and therefore any overlay operations leave a significant number of small <em>error</em> patches.To deal with this we need to turn to morphological operations borrowed from Image Processing literature.</p>
+</div>
+<div id="a-digression-into-morphological-operations" class="section level1">
+<h1>A digression into morphological operations</h1>
+<p>There are four basic operations. I will go through them one by one. But first we need to convert the raster into a matrix that the library <code>mmand</code> can process.</p>
+<pre class="r"><code>require(mmand)
+urb_mat &lt;- as.matrix(urb_lc2)
+urb_lc3 &lt;- urb_lc2</code></pre>
+<div id="structuring-elements" class="section level2">
+<h2>Structuring elements</h2>
+<p>Morphological operations require something called a structuring element that probes the image.
+<img src="img/morph-probing.jpg" alt="Borrowed from https://www.cs.auckland.ac.nz/courses/compsci773s1c/lectures/ImageProcessing-html/topic4.htm" style="width:100.0%;height:100.0%" /></p>
+<p>Structuring elements can be of any dimension But usually they are of odd because it is easier to locate the center. For this exercise, I am using a structuring element of a 3x3 matrix of 1s. If you want a fancy structuring element like a cross, create a binary image with 0s and 1s such as k2 below.</p>
+<pre class="r"><code>(k &lt;- matrix(1,nrow=3,ncol=3))
+#      [,1] [,2] [,3]
+# [1,]    1    1    1
+# [2,]    1    1    1
+# [3,]    1    1    1
+k2 &lt;- k
+k2[1,1] &lt;- k2[1,3] &lt;- k2[3,1] &lt;- k2[3,3]&lt;- 0
+k2
+#      [,1] [,2] [,3]
+# [1,]    0    1    0
+# [2,]    1    1    1
+# [3,]    0    1    0</code></pre>
+</div>
+<div id="erosion" class="section level2">
+<h2>Erosion</h2>
+<p>The erosion of a binary image <span class="math inline">\(A\)</span> by a structuring element <span class="math inline">\(S\)</span> (denoted <span class="math inline">\(A \ominus S\)</span>) produces a new binary image <span class="math inline">\(B\)</span> of the dimensions of <span class="math inline">\(A\)</span>, with 1s in the locations, where the structuring element <span class="math inline">\(S\)</span> ‘fits’ <span class="math inline">\(A\)</span>. i.e. If the center of <span class="math inline">\(S\)</span> is placed on <span class="math inline">\((x,y)\)</span> of <span class="math inline">\(A\)</span> and if 1s of the structuring element also correspond to the 1s of <span class="math inline">\(A\)</span>, then <span class="math inline">\((x,y)\)</span> of B is rendered 1 otherwise 0. See the effect of erosion on the image below</p>
+<pre class="r"><code>urb_mat2 &lt;- erode(urb_mat, k)
+urb_mat2[!is.finite(urb_mat2)] &lt;- NA
+urb_lc3[] &lt;- urb_mat2
+urb_lc3 &lt;- urb_lc3 %&gt;% ratify()
+p3 &lt;- levelplot(urb_lc3, att=&quot;ID&quot;, ylab=NULL, xlab=NULL, main = &quot;Erosion (k)&quot;, colorkey=FALSE, scales=list(y=list(draw=FALSE), x=list(draw=FALSE)))
+print(p2, split=c(1, 1, 2, 1), more=TRUE)
+print(p3, split=c(2, 1, 2, 1))</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="dilation" class="section level2">
+<h2>Dilation</h2>
+<p>The dilation of a binary image <span class="math inline">\(A\)</span> by a structuring element <span class="math inline">\(S\)</span> (denoted <span class="math inline">\(A \oplus S\)</span>) produces a new binary image <span class="math inline">\(B\)</span> of the dimensions of <span class="math inline">\(A\)</span>, with 1s in the locations, where the structuring element <span class="math inline">\(S\)</span> ‘hits’ <span class="math inline">\(A\)</span>. i.e. If the center of <span class="math inline">\(S\)</span> is placed on <span class="math inline">\((x,y)\)</span> of <span class="math inline">\(A\)</span> and if 1s of the structuring element also correspond at least some of the 1s of <span class="math inline">\(A\)</span>, then <span class="math inline">\((x,y)\)</span> of B is rendered 1 otherwise 0. Dilation has the opposite effect to erosion – it adds a layer of pixels to both the inner and outer boundaries of regions. See the effect of dilation on the original image below.</p>
+<pre class="r"><code>urb_mat2 &lt;- dilate(urb_mat, k)</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+<div id="closing" class="section level2">
+<h2>Closing</h2>
+<p>Closing is simply dilation followed by erosion: <span class="math inline">\(A \bullet S = (A \oplus S) \ominus S\)</span>. Closing is so called because it can fill holes in the regions while keeping the initial region sizes. You can see the effect of closing compared to the original image below.</p>
+<pre class="r"><code>urb_mat2 &lt;- closing(urb_mat, k)</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+<div id="opening" class="section level2">
+<h2>Opening</h2>
+<p>Opening is simply erosion followed by dilation: <span class="math inline">\(A \circ S = (A \ominus S) \oplus S\)</span>. Opening is so called because it can open up a gap between objects connected by a thin bridge of pixels. Any regions that have survived the erosion are restored to their original size by the dilation. You can see the effect of opening compared to the original image below</p>
+<pre class="r"><code>urb_mat2 &lt;- opening(urb_mat, k)</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>From the above experiments, it should be obvious that opening gives us the best option for urban landscape metrics. Experiment with other structuring elements.</p>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+</div>
+<div id="landscape-metrics" class="section level1">
+<h1>Landscape metrics</h1>
+<p>Now we are ready to create some metrics. Let’s create some metrics for each patch. Some of the key metrics are <code>area</code> (area of the patch) and <code>core areaindex</code> (area after eliminating edges). You can use these to further threshold the patches that might be too small to matter.</p>
+<pre class="r"><code>check_landscape(urb_lc3)
+#   layer       crs units   class n_classes OK
+# 1     1 projected     m integer         2  ✓
+ps.data &lt;- calculate_lsm(urb_lc3, level = &quot;patch&quot;) %&gt;% 
+            filter(class==1)
+ps.data  %&gt;% 
+  pivot_wider(names_from = metric, values_from = value) %&gt;%
+  skim()</code></pre>
+<table style='width: auto;'
+        class='table table-condensed'>
+<caption>
+<span id="tab:unnamed-chunk-21">Table 1: </span>Data summary
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Name
+</td>
+<td style="text-align:left;">
+Piped data
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Number of rows
+</td>
+<td style="text-align:left;">
+721
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Number of columns
+</td>
+<td style="text-align:left;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+_______________________
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Column type frequency:
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+character
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+________________________
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Group variables
+</td>
+<td style="text-align:left;">
+None
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:right;">
+min
+</th>
+<th style="text-align:right;">
+max
+</th>
+<th style="text-align:right;">
+empty
+</th>
+<th style="text-align:right;">
+n_unique
+</th>
+<th style="text-align:right;">
+whitespace
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+level
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
+<th style="text-align:right;">
+p0
+</th>
+<th style="text-align:right;">
+p25
+</th>
+<th style="text-align:right;">
+p50
+</th>
+<th style="text-align:right;">
+p75
+</th>
+<th style="text-align:right;">
+p100
+</th>
+<th style="text-align:left;">
+hist
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+layer
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:left;">
+▁▁▇▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+class
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:left;">
+▁▁▇▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+id
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+482.00
+</td>
+<td style="text-align:right;">
+208.28
+</td>
+<td style="text-align:right;">
+122.00
+</td>
+<td style="text-align:right;">
+302.00
+</td>
+<td style="text-align:right;">
+482.00
+</td>
+<td style="text-align:right;">
+662.00
+</td>
+<td style="text-align:right;">
+842.00
+</td>
+<td style="text-align:left;">
+▇▇▇▇▇
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+area
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+23.06
+</td>
+<td style="text-align:right;">
+60.87
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+1.53
+</td>
+<td style="text-align:right;">
+4.14
+</td>
+<td style="text-align:right;">
+15.21
+</td>
+<td style="text-align:right;">
+759.33
+</td>
+<td style="text-align:left;">
+▇▁▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cai
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+46.87
+</td>
+<td style="text-align:right;">
+24.67
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+26.67
+</td>
+<td style="text-align:right;">
+48.78
+</td>
+<td style="text-align:right;">
+67.86
+</td>
+<td style="text-align:right;">
+91.66
+</td>
+<td style="text-align:left;">
+▆▆▇▇▆
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+circle
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+0.27
+</td>
+<td style="text-align:right;">
+0.39
+</td>
+<td style="text-align:right;">
+0.47
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+<td style="text-align:right;">
+0.90
+</td>
+<td style="text-align:left;">
+▇▇▆▂▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+contig
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.76
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.69
+</td>
+<td style="text-align:right;">
+0.79
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+<td style="text-align:right;">
+0.97
+</td>
+<td style="text-align:left;">
+▁▁▁▆▇
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+core
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+18.19
+</td>
+<td style="text-align:right;">
+52.99
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.36
+</td>
+<td style="text-align:right;">
+2.07
+</td>
+<td style="text-align:right;">
+10.35
+</td>
+<td style="text-align:right;">
+661.05
+</td>
+<td style="text-align:left;">
+▇▁▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+enn
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+165.70
+</td>
+<td style="text-align:right;">
+248.69
+</td>
+<td style="text-align:right;">
+60.00
+</td>
+<td style="text-align:right;">
+84.85
+</td>
+<td style="text-align:right;">
+94.87
+</td>
+<td style="text-align:right;">
+161.55
+</td>
+<td style="text-align:right;">
+3785.83
+</td>
+<td style="text-align:left;">
+▇▁▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+frac
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.04
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.01
+</td>
+<td style="text-align:right;">
+1.03
+</td>
+<td style="text-align:right;">
+1.06
+</td>
+<td style="text-align:right;">
+1.19
+</td>
+<td style="text-align:left;">
+▇▃▂▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gyrate
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+144.85
+</td>
+<td style="text-align:right;">
+163.16
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+47.75
+</td>
+<td style="text-align:right;">
+81.88
+</td>
+<td style="text-align:right;">
+165.24
+</td>
+<td style="text-align:right;">
+1202.30
+</td>
+<td style="text-align:left;">
+▇▁▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ncore
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.01
+</td>
+<td style="text-align:right;">
+0.28
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:left;">
+▁▇▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+para
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:left;">
+▇▅▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+perim
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2170.65
+</td>
+<td style="text-align:right;">
+3600.69
+</td>
+<td style="text-align:right;">
+120.00
+</td>
+<td style="text-align:right;">
+540.00
+</td>
+<td style="text-align:right;">
+960.00
+</td>
+<td style="text-align:right;">
+2040.00
+</td>
+<td style="text-align:right;">
+42720.00
+</td>
+<td style="text-align:left;">
+▇▁▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+shape
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.30
+</td>
+<td style="text-align:right;">
+0.39
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.06
+</td>
+<td style="text-align:right;">
+1.17
+</td>
+<td style="text-align:right;">
+1.39
+</td>
+<td style="text-align:right;">
+4.21
+</td>
+<td style="text-align:left;">
+▇▁▁▁▁
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>
+ggplot(ps.data)+
+  geom_histogram(aes(x=value)) + 
+  facet_wrap(~metric, scales=&quot;free&quot;)</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>It seems to me there are still some really small patches as evidenced the left skews of the distributions in area, core area index (cai) and right skew in the perim.area.ratio. We can use a combination of thresholds on these indices to remove some ‘error’ patches that might skew our urban indices. I choose, number of cores <span class="math inline">\(&lt;\)</span> 1 or area less than $&lt;=$0.5, ha arbitrarily based on the histogram. Let’s first calculate the class statistics without the modification and then do it with the modification.</p>
+<pre class="r"><code>
+ignore.patches1 &lt;- ps.data %&gt;% filter(metric == &#39;ncore&#39;) %&gt;% filter (value &lt;1) %&gt;% dplyr::pull(&#39;id&#39;)
+ignore.patches2 &lt;- ps.data %&gt;% filter(metric == &#39;area&#39;) %&gt;% filter (value &lt; 0.5) %&gt;% dplyr::pull(&#39;id&#39;)
+ignore.patches &lt;- union(ignore.patches1, ignore.patches2)
+ignore_raster &lt;- 1-(get_patches(urb_lc3, class=1)[[1]] %in% ignore.patches)
+
+urb_lc4 &lt;- overlay(urb_lc3, ignore_raster, fun=function(x,y){x*y}) %&gt;% ratify
+
+levelplot(urb_lc4, att=&quot;ID&quot;, ylab=NULL, xlab=NULL, main = &quot;Removed Small Patches&quot;, colorkey=FALSE, scales=list(y=list(draw=FALSE), x=list(draw=FALSE)))</code></pre>
+<p><img src="/post/2018-07-01-urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p>Compare the final metrics with the others along the way. I am going to convert the area to sq.km to make things easier to read.</p>
+<pre class="r"><code>
+urb_df &lt;- stack(urb_lc, urb_lc2, urb_lc3, urb_lc4) %&gt;%
+            calculate_lsm(level = &#39;landscape&#39;, type = &quot;aggregation metric&quot;) %&gt;%
+            mutate(layer = recode(layer, `1` = &quot;Naive&quot;, `2` = &quot;Improv1&quot;, `3` = &quot;Improv2&quot;, `4` = &quot;Final&quot;)) %&gt;%
+            dplyr::select(layer, metric, value) %&gt;%
+            pivot_wider(names_from = layer, values_from = value)
+            </code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+metric
+</th>
+<th style="text-align:right;">
+Naive
+</th>
+<th style="text-align:right;">
+Improv1
+</th>
+<th style="text-align:right;">
+Improv2
+</th>
+<th style="text-align:right;">
+Final
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ai
+</td>
+<td style="text-align:right;">
+93.4
+</td>
+<td style="text-align:right;">
+94.0
+</td>
+<td style="text-align:right;">
+97.0
+</td>
+<td style="text-align:right;">
+97.0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cohesion
+</td>
+<td style="text-align:right;">
+99.8
+</td>
+<td style="text-align:right;">
+99.9
+</td>
+<td style="text-align:right;">
+99.9
+</td>
+<td style="text-align:right;">
+99.9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+contag
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+36.1
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+44.1
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+53.2
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+53.8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+division
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+0.8
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+0.4
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+0.4
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+0.4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+enn_cv
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+99.4
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+94.4
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+142.3
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+141.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+enn_mn
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+113.2
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+106.5
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+162.6
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+163.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+enn_sd
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+112.5
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+100.6
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+231.3
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+231.8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+iji
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+lsi
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+31.8
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+29.5
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+15.5
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+15.3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+mesh
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+14822.7
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+43331.3
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+47283.4
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+47963.4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+np
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+1126.0
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+3288.0
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+842.0
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+830.0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+pd
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+1.5
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+4.2
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+1.1
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+1.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pladj
+</td>
+<td style="text-align:right;">
+93.4
+</td>
+<td style="text-align:right;">
+94.0
+</td>
+<td style="text-align:right;">
+97.0
+</td>
+<td style="text-align:right;">
+97.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+split
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+5.2
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+1.8
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+1.6
+</td>
+<td style="text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;">
+1.6
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that significant changes are observed in highlighted variables. In particular, number of patches change dramatically, as do the standard deviation of various indices.</p>
+<hr />
+<p><strong>Exercises</strong></p>
+<p>There are many more improvements possible to these indices. For example,</p>
+<ul>
+<li>What happens when you use a different road network to remove the roads from the raster?</li>
+<li>Different structuring elements for the morphological operations.</li>
+<li>Different thresholds on different patch characteristics to remove erroneous urban patches.</li>
+<li>Instead of treating urban as a single category, what are the results when we treat it as 4 different categories?</li>
+<li>Perhaps explore more complex landscape metrics by characterising the configuration of urban and non-urban land cover.</li>
+</ul>
+<hr />
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>Landscape metrics have been used in ecology for a long time to understand the fragmentation of landscape from a habitat perspective. However, we can use these metrics to understand the urban pattern as well. In particular, we can study if a place is experiencing at-the-edges-fragmentary urbanisation over time or infill-coalescent urbanisation or edge-exapnsion. These help us understand the urban development patterns over time and if any land use policy changes have made any difference in promoting particular forms of urban growth.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/&amp;text=Urban%20Morphology%20&amp;amp;%20Landscape%20Metrics" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/&amp;t=Urban%20Morphology%20&amp;amp;%20Landscape%20Metrics" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Urban%20Morphology%20&amp;amp;%20Landscape%20Metrics&amp;body=http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/&amp;title=Urban%20Morphology%20&amp;amp;%20Landscape%20Metrics" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Urban%20Morphology%20&amp;amp;%20Landscape%20Metrics%20http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/urban-morphology-landscape-metrics/&amp;title=Urban%20Morphology%20&amp;amp;%20Landscape%20Metrics" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2020-01-12-using-tidycensus/">Using TidyCensus package</a></li>
+      
+      <li><a href="/project/irregular-settlements/">Irregular/Informal Settlement Detection</a></li>
+      
+      <li><a href="/teaching/remote-instruction-672/">Using Rstudio.cloud for Troubleshooting</a></li>
+      
+      <li><a href="/post/land-suitabilty-with-ahp-wlc/">Land Suitability Analysis</a></li>
+      
+      <li><a href="/post/2020-02-27-basic-raster-operations-in-r/">Basic Raster Operations in R</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

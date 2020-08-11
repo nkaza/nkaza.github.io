@@ -1,0 +1,1390 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Using tidycensus to download US Census data from the API">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/">
+  <meta property="og:title" content="Using TidyCensus package | Nikhil Kaza">
+  <meta property="og:description" content="Using tidycensus to download US Census data from the API"><meta property="og:image" content="http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/featured.png">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-01-12T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-01-12T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/"
+  },
+  "headline": "Using TidyCensus package",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/featured.png"
+  ],
+  
+  "datePublished": "2020-01-12T00:00:00Z",
+  "dateModified": "2020-01-12T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Using tidycensus to download US Census data from the API"
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Using TidyCensus package | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Using TidyCensus package</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jan 12, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    11 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 553px; max-height: 542px;">
+  <div style="position: relative">
+    <img src="/post/2020-01-12-using-tidycensus/featured.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+
+<div id="getting-started" class="section level1">
+<h1>Getting Started</h1>
+<p>Application Programming Interface (API) is a software intermediary that allows two applications to talk to each other. For example, when you use an app on your phone, it connects to the internet, queries a server in a specific way. The server responds to the query, by retrieving the data, aggregating/interpreting/managing it and sending it back to the phone. The application then interprets that data and presents you with the information you wanted in a readable way. While API are not soley based on internet based queries, these are becoming increasingly important. In this tutorial, we are going to use API to query and process US Census data via http protocol on the fly, instead of downloading them as csv files.</p>
+<p>To get started you need a US census API key. <a href="http://api.census.gov/data/key_signup.html">Signup for one</a> and store it in a secure place. Whenever “YOUR_API_KEY” appears in the code below, you should substitute this key.</p>
+</div>
+<div id="querying-census-servers" class="section level1">
+<h1>Querying Census Servers</h1>
+<p>Different APIs have different requirements, so you will have to use the documentation specific to the endpoint. To illustrate, let’s use the <a href="https://www.census.gov/data/developers/data-sets/acs-5year.html">American Community Survey API</a>. For example, paste the following into your web browser after suitably editing for the “YOUR_API_KEY”</p>
+<p><code>https://api.census.gov/data/2017/acs/acs5?key=[YOUR_API_KEY]&amp;get=B01003_001E&amp;for=zip%20code%20tabulation%20area:27514,27510</code></p>
+<p>The output should look like the following in the JSON format</p>
+<p><img src="img/jsonout.png" /></p>
+<p>The results tell you that there are 15,397 people in ZCTA 27510 and 31,659 people in ZCTA 27514. Also, this would be a good time to refresh your understanding of the <a href="https://www.census.gov/programs-surveys/geography/guidance/geo-areas/zctas.html">differences between Zipcodes and ZCTA</a></p>
+<p>If you get this result, from your R script (instead of the browser), it is <a href="https://hendrikvanb.gitlab.io/2018/07/nested_data-json_to_tibble/">relatively straightforward to convert them</a> into data structures you are familiar with, such as tables, tibbles and data.frames. See this post.</p>
+<p>It is useful to understand the structure of the query</p>
+<ul>
+<li><p><code>https://api.census.gov/data/2017/acs/acs5?</code> is the base url. It tells the census servers that it is looking for 5 year ACS data that ends in 2017 i.e ACS 2012-2017.</p></li>
+<li><p><code>key=[YOUR_API_KEY]</code> is the key to identify the client (i.e your browser/script) who is making the request.</p></li>
+<li><p><code>get=B01003_001E</code> is the variable name (Total population). For a full list, see <a href="https://api.census.gov/data/2017/acs/acs5/variables.html">here</a></p></li>
+<li><p><code>for=zip%20code%20tabulation%20area:27514,27510</code> for the census geography ZCTA for Chapel Hill(27514) and Carrboro (27510). The <code>%20</code> is a hexademical representation of “unsafe” space character. There are <a href="https://www.w3schools.com/tags/ref_urlencode.ASP">many such special characters</a> that need to be properly encoded, if they need to be passed to the server.</p></li>
+<li><p>Note that the all the arguments are concatenated using <code>&amp;</code>.</p></li>
+</ul>
+<p>This structure is unique to Census and ACS APIs and endpoints. For other APIs you will have to refer to their documentation. And it is also likely that these structures will change over time, which may explain why your code may stop working after a while.</p>
+<hr />
+<p><strong>Exercise</strong></p>
+<p>Practise the following in the web browser by constructing the right URL.</p>
+<ul>
+<li>Use the endpoint for the decennial census and get the population for all the zipcodes in Durham, NC.</li>
+<li>Use the ACS 2016 endpoint and get the population for all the census tracts in Orange County, NC.</li>
+<li>Use the ACS 2013-2018 and get the households under poverty in each census tracts in Orange County, NC</li>
+</ul>
+<hr />
+</div>
+<div id="tidycensus" class="section level1">
+<h1>TidyCensus</h1>
+<p>While the above is a generic way of constructing the query and getting the results using APIs, tidycensus is a package that wraps this all in different convenience functions such as <code>get_decennial</code> and <code>get_acs</code>. Note that, this package is tailored only towards US Census and not for any other Census agencies or for that matter other US government data.</p>
+<p>In the rest of the tutorial, I am going to demonstrate how to download, construct and visualise unemployment rates and poverty rates at a Census tract level. We are going to use the 5 year ACS 2012-2017 data.</p>
+<div id="poverty-rates-using-tidycensus" class="section level2">
+<h2>Poverty Rates using TidyCensus</h2>
+<pre class="r"><code>library(tidyverse)
+library(sf)
+library(tidycensus)
+census_api_key(&quot;YOUR_KEY_HERE&quot;, install=TRUE)</code></pre>
+<p>To get the poverty level, you can use B17001_01 (persons for whom poverty level is tracked) and B17001_002 (persons whose income in the last 12 months was below poverty level). Use the get_acs function for ACS.</p>
+<pre class="r"><code>
+povrate17 &lt;- 
+    get_acs(geography = &quot;tract&quot;, variables = &quot;B17001_002&quot;,  summary_var = &#39;B17001_001&#39;,state = &quot;NC&quot;, geometry = TRUE, year = 2017) %&gt;%
+        rename(population = summary_est) %&gt;%
+  filter(population&gt;0)%&gt;%
+  mutate(pov_rate = estimate/population) %&gt;%
+  select(GEOID, NAME, population, pov_rate)
+
+povrate17
+# Simple feature collection with 2162 features and 4 fields
+# geometry type:  MULTIPOLYGON
+# dimension:      XY
+# bbox:           xmin: -84.32187 ymin: 33.84232 xmax: -75.46062 ymax: 36.58812
+# CRS:            4269
+# First 10 features:
+#          GEOID                                                 NAME population
+# 1  37001020100    Census Tract 201, Alamance County, North Carolina       3704
+# 2  37001020200    Census Tract 202, Alamance County, North Carolina       4127
+# 3  37001020300    Census Tract 203, Alamance County, North Carolina       7676
+# 4  37001020400    Census Tract 204, Alamance County, North Carolina       6708
+# 5  37001020501 Census Tract 205.01, Alamance County, North Carolina       3565
+# 6  37001020502 Census Tract 205.02, Alamance County, North Carolina       3987
+# 7  37001020601 Census Tract 206.01, Alamance County, North Carolina       3008
+# 8  37001020602 Census Tract 206.02, Alamance County, North Carolina       2538
+# 9  37001020701 Census Tract 207.01, Alamance County, North Carolina       4251
+# 10 37001020702 Census Tract 207.02, Alamance County, North Carolina       4520
+#      pov_rate                       geometry
+# 1  0.25566955 MULTIPOLYGON (((-79.45844 3...
+# 2  0.29585655 MULTIPOLYGON (((-79.43321 3...
+# 3  0.22889526 MULTIPOLYGON (((-79.41992 3...
+# 4  0.33631485 MULTIPOLYGON (((-79.46613 3...
+# 5  0.29789621 MULTIPOLYGON (((-79.49342 3...
+# 6  0.30097818 MULTIPOLYGON (((-79.47267 3...
+# 7  0.00831117 MULTIPOLYGON (((-79.49738 3...
+# 8  0.05122143 MULTIPOLYGON (((-79.47542 3...
+# 9  0.06774876 MULTIPOLYGON (((-79.49833 3...
+# 10 0.21371681 MULTIPOLYGON (((-79.48519 3...</code></pre>
+<p>The above code downloads and constructs the poverty rate for census tracts. Note the omission of tracts that have zero population. Also note the blithe use of estimates as true values.</p>
+<p><div class="alert alert-warning">
+  <div>
+    </p>
+<p>ACS is a survey and therefore the estimates have Margins of Error (MOE). We are ignoring them here, but they pose serious problems, especially at sub county geographies and finer age and sex sub categories. Ignore them at your peril.</p>
+<p>
+  </div>
+</div>
+</p>
+<p>To visualise this, we can use the <code>tmap</code> package.</p>
+<pre class="r"><code>library(tmap)
+
+povrate17 %&gt;%
+  mutate(pov_rate = pov_rate*100) %&gt;%
+tm_shape() +
+  tm_polygons(&quot;pov_rate&quot;,
+    title = &quot;Poverty Rate&quot;,    # This renames the title of th variable in the legend.
+    style = &quot;cont&quot;,
+    border.col = NULL,
+    legend.format=list(fun=function(x) paste0(formatC(x, digits=0, format=&quot;f&quot;), &quot;%&quot;))) + # This formats the numbers in the legend
+  tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
+<p><img src="/post/2020-01-12-using-tidycensus/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>It should be apparent by now that choices of colors, cuts and linewidths etc. dramatically alter the visual evidence produced by the map. See for example,</p>
+<pre class="r"><code>
+povrate17 %&gt;%
+  mutate(pov_rate = pov_rate*100) %&gt;%
+tm_shape() +
+  tm_polygons(&quot;pov_rate&quot;,
+    title = &quot;Poverty Rate&quot;,
+    style = &quot;quantile&quot;,
+    palette = &quot;seq&quot;,
+    border.col = NULL,
+    legend.format=list(fun=function(x) paste0(formatC(x, digits=0, format=&quot;f&quot;), &quot;%&quot;))) + 
+  tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
+<p><img src="/post/2020-01-12-using-tidycensus/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li><p>Experiment with different options in the above maps for colors, breaks, border widths, projections etc and note the differences in visual evidence it produces.</p></li>
+<li><p>Instead of the point estimates, create a map of the Margins of Errors to understand the geographic distribution of the uncertainty in the poverty rate estimates. See <a href="https://walkerke.github.io/tidycensus/articles/margins-of-error.html">Kyle Walker’s page on this topic</a></p></li>
+<li><p>Instead of 5 year ACS, map using 1 year ACS for 2017.</p></li>
+</ul>
+<hr />
+<p>Unfortunately ACS data at the tract level can be downloaded at most for each state. If we want to download it for the entire US, we need to automate the calls for each state and assemble the dataset. Fortunately, this is quite straightforward in R. I am going to demonstrate this for 10 states, for the sake of simplicity.</p>
+<pre class="r"><code>data(&quot;fips_codes&quot;) # This is a dataset inside tidycensus package
+
+unique(fips_codes$state_code)[1:10] %&gt;%  # We extract unique state FIPS codes and subset the first 10 
+   map(function(x){get_acs(geography = &quot;tract&quot;, variables = &quot;B17001_002&quot;,  summary_var = &#39;B17001_001&#39;,
+            state = x, geometry = TRUE, year = 2017)}) %&gt;% #Note the use of argument x. We are simply applying the custom built function for each of the 10 states
+  reduce(rbind) %&gt;% # The list of 10 elements is reduced using &#39;row binding&#39; to create one single tibble. read up on these map and reduce functions in purrr. They are key to functional programming paradigm
+  rename(population = summary_est) %&gt;%
+  filter(population&gt;0)%&gt;%
+  mutate(pov_rate = estimate/population) %&gt;%
+  select(GEOID, NAME, population, pov_rate) %&gt;%
+  dim
+</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li><p>Do the above for all states in the US and map the poverty rate. Troubleshoot when this fails. Hint: There are 57 unique state_codes, only 50 states in the United States.</p></li>
+<li><p>Instead of tm_polygons use tm_bubbles and create a map of poverty across the United States.</p></li>
+</ul>
+<hr />
+</div>
+<div id="unemployment-rates-using-tidycensus" class="section level2">
+<h2>Unemployment Rates using TidyCensus</h2>
+<p>Unemployment rate is trickier, because it needs to track both the labour force as well as unemployed persons. In general, we consider people of the ages between 16 and 64 to be in the labour force. It turns out that ACS only provides labour force and unemployment for males and females separtely and by different age categories. So we need to assemble them and combine them. We return to NC for the sake of simplicity.</p>
+<pre class="r"><code> # Variable names
+
+#Labour Force
+lf_m &lt;- paste(&quot;B23001_&quot;, formatC(seq(4,67,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;) # Males. Check to make sure these are indeed the variables representing the labor force for men in different age categories
+lf_f &lt;- paste(&quot;B23001_&quot;, formatC(seq(90,153,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;) # Females
+
+lf_t &lt;- 
+  get_acs(geography=&#39;tract&#39;, variables = c(lf_m, lf_f), state=&quot;NC&quot;, year=2017)%&gt;% 
+  group_by(GEOID) %&gt;%
+  summarize(lf_est = sum(estimate, na.rm=T))
+
+
+#Unemployed
+unemp_m &lt;- paste(&quot;B23001_&quot;, formatC(seq(8,71,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;)
+unemp_f &lt;- paste(&quot;B23001_&quot;, formatC(seq(94,157,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;)
+
+unemp_t &lt;- 
+  get_acs(geography=&#39;tract&#39;, variables = c(unemp_m, unemp_f), state=&quot;NC&quot;, year=2017)%&gt;%
+  group_by(GEOID) %&gt;%
+  summarize(unemp_est = sum(estimate, na.rm=T))
+
+
+unemprate17 &lt;-
+  left_join(lf_t, unemp_t, by=c(&#39;GEOID&#39;=&#39;GEOID&#39;)) %&gt;%  #Look up joining tables. It is incredibly useful to merge data
+  filter(lf_est &gt;0) %&gt;%
+  mutate(unemp_rate = unemp_est/lf_est)</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li><p>Compute unemployment rate for more meaningful classes (Women, Youth etc.) and visualise it. Are there differences in the spatial distribution?</p></li>
+<li><p>What about the unemployment rate of gender queer groups?</p></li>
+</ul>
+<hr />
+<p>Is the spatial distribution of unemployment rate, same as the spatial distribution of poverty rate? On some ocassions it may be useful to put those maps side by side (small multiples in Tufte parlance) and compare them. Fortunately, tmap does it automatically, when you supply multiple variables.</p>
+<pre class="r"><code>unemprate17 %&gt;%
+  left_join(povrate17 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
+  st_as_sf() %&gt;%
+  tm_shape() +
+    tm_polygons(c(&quot;pov_rate&quot;, &quot;unemp_rate&quot;),
+    title = c(&quot;Poverty Rate&quot;, &quot;Unemployment Rate&quot;),
+    style = &quot;quantile&quot;,
+    palette = &quot;seq&quot;,
+    border.col = NULL,
+    legend.format=list(fun=function(x) paste0(formatC(x, digits=2, format=&quot;f&quot;), &quot;%&quot;))) + 
+  tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
+<p><img src="/post/2020-01-12-using-tidycensus/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>It should be relatively obvious that this visualisation does not tell us much about the correlation between poverty and unemployment rates. It is better to visualise them as a scatter plot</p>
+<pre class="r"><code>unemprate17 %&gt;%
+       left_join(povrate17 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
+      ggplot() + 
+      geom_point(aes(x=unemp_rate, y=pov_rate), alpha=.3) + 
+      geom_smooth(aes(x=unemp_rate, y=pov_rate), method=&#39;lm&#39;) +
+      ylab(&#39;Poverty Rate&#39;) + xlab(&#39;Unemployment Rate&#39;)</code></pre>
+<p><img src="/post/2020-01-12-using-tidycensus/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>As you can see, there is strong linear relationship between poverty rate and unemployment rate. Notice the range of values on the axes. While unemployment rate ranges from 0 to 40%, poverty rate ranges from 0 to 86%, suggesting that poverty may be more acute than unemployment. Furthermore, if you just focus on the average relationship, you will miss the substantial variance around the relationship. It may be useful to identify, some of the outliers and focus on them in the map.</p>
+<p>One way to identify them is perhaps to look at the predictions made by the regression line and if the actual value is higher or lower than the prediction interval, we can call them outliers.</p>
+<pre class="r"><code>dat17 &lt;-
+  unemprate17 %&gt;%
+  inner_join(povrate17 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) 
+
+mod1 &lt;- lm(pov_rate ~ unemp_rate , data=dat17)
+dat17 &lt;- cbind(dat17, predict(mod1, interval = &#39;prediction&#39;))
+
+dat17 %&gt;%
+  mutate(outlier = ifelse(pov_rate &gt;= upr | pov_rate &lt;= lwr, &quot;Yes&quot;, &quot;No&quot;) %&gt;% as_factor) %&gt;%
+  ggplot() +
+  geom_point(aes(x=unemp_rate, y=pov_rate, color = outlier), alpha=.5) +
+  ylab(&#39;Poverty Rate&#39;) + xlab(&#39;Unemployment Rate&#39;)</code></pre>
+<p><img src="/post/2020-01-12-using-tidycensus/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code> 
+
+dat17 %&gt;%
+  mutate(outlier = ifelse(pov_rate &gt;= upr | pov_rate &lt;= lwr, &quot;Yes&quot;, &quot;No&quot;) %&gt;% as_factor) %&gt;% 
+  st_as_sf() %&gt;%
+    tm_shape() +
+    tm_polygons(&quot;outlier&quot;,
+                palette = c(&#39;white&#39;, &quot;red&quot;),
+                border.col = &quot;gray70&quot;,
+                border.aplha=.2,
+                lwd =.1
+                )</code></pre>
+<p><img src="/post/2020-01-12-using-tidycensus/index_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
+<p>Note that this representation provides some insight but is infact not particularly helpful. Many small census tracts within the metropolitan areas are in the outliers but are not visbile because of small area that is obfuscated by the borders. The large tracts draw attention to the eye even when they are probably not most important from a policy perspective.</p>
+<pre class="r"><code>
+dat17 &lt;- 
+  dat17 %&gt;%  st_as_sf()
+
+outliers&lt;- dat17 %&gt;%
+    filter(pov_rate &gt;= upr | pov_rate &lt;= lwr)
+  
+   
+tm_shape( dat17) +
+    tm_borders(lwd=.1, alpha=.5) + 
+    tm_shape(outliers)+
+    tm_bubbles(col=&quot;red&quot;, size=.5, alpha=.3, border.col=&#39;gray90&#39;
+    )</code></pre>
+<p><img src="/post/2020-01-12-using-tidycensus/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<hr />
+<p>** Exercise **</p>
+<p>The above map may not be even the right story to tell. It could very well be that the focus should be on outliers that have high poverty and high unemployment rates, perhaps also places that have at least some threshold of population levels. Make some judgements about these and create a differnt visualisation.</p>
+<hr />
+</div>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>This tutorial is about how to use APIs to access US Census data. Becoming quite familiar with the quirks of the Census data is quite useful for planners. But the ease with which these data can be queried does not obviate the need for careful consideration of what kinds of analysis and visualisations are needed and what kinds of compelling stories that need to be told.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/&amp;text=Using%20TidyCensus%20package" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/&amp;t=Using%20TidyCensus%20package" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Using%20TidyCensus%20package&amp;body=http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/&amp;title=Using%20TidyCensus%20package" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Using%20TidyCensus%20package%20http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/2020-01-12-using-tidycensus/&amp;title=Using%20TidyCensus%20package" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2019-12-31-introduction-to-r-r-markdown/">Introduction to R &amp; R Markdown</a></li>
+      
+      <li><a href="/post/2019-12-31-starting-with-qgis/">Starting with QGIS</a></li>
+      
+      <li><a href="/post/using-network-ananlysis-to-identify-clusters-of-deprivation/">Regions of Deprivation</a></li>
+      
+      <li><a href="/post/using-google-api-for-planning/">Using Google API for Planning</a></li>
+      
+      <li><a href="/post/analysing-urban-neworks/">Analysing Urban Neworks</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

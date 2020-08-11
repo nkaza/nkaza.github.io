@@ -1,0 +1,1421 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Parsing data that is served through REST API.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/scraping-web-for-data/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/scraping-web-for-data/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/scraping-web-for-data/">
+  <meta property="og:title" content="Scraping web for data | Nikhil Kaza">
+  <meta property="og:description" content="Parsing data that is served through REST API."><meta property="og:image" content="http://www.nikhilkaza.com/post/scraping-web-for-data/featured.png">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/scraping-web-for-data/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2018-08-03T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2018-08-03T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/scraping-web-for-data/"
+  },
+  "headline": "Scraping web for data",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/scraping-web-for-data/featured.png"
+  ],
+  
+  "datePublished": "2018-08-03T00:00:00Z",
+  "dateModified": "2018-08-03T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Parsing data that is served through REST API."
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Scraping web for data | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Scraping web for data</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Aug 3, 2018
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    11 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 285px;">
+  <div style="position: relative">
+    <img src="/post/scraping-web-for-data/featured_hua6df9699869a6261d235034852e22e39_500093_720x0_resize_lanczos_2.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#legality">Legality</a></li>
+<li><a href="#an-example-using-baidu">An example using Baidu</a></li>
+<li><a href="#apis-for-non-point-data">APIs for non-point data</a></li>
+<li><a href="#unstructured-data">Unstructured data</a></li>
+<li><a href="#conclusions">Conclusions</a></li>
+<li><a href="#acknowledgements">Acknowledgements</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Extracting data from un/semi/structured websites is becoming increasingly common place. Since data is collected, modified and refined continuously, it is increasingly useful to both serve them via web protocols rather than flat files that are downloaded. Furthermore, much of spatial data collection has become private, which also means that firms have stronger incentives to protect their datasets and curate what is available to the others. In other instances, the user or the analyst requires only a small section of the dataset. In these instances and others, data is served by a web-based protocol. Harvesting data usually takes the form of automating the process of sending requests to the webserver and parsing the output to extract relevant data for storage and analysis.</p>
+</div>
+<div id="legality" class="section level1">
+<h1>Legality</h1>
+<p>Different jurisdictions have different legal restrictions and permissions on web scraping. There are also end user agreements that prevent certain actions (storage, retrieval, replication etc.). Please make sure that you are aware of these before attempting to make a local copy of the data that might be privately owned.</p>
+<p>In general, scraping requires automated and repeated requests to the server. As long as these requests are not a disruptive rate, it is unlikely that you will run afoul of legality. Local data storage and replication of services is an entirely different ball game. Please consult a lawyer.</p>
+<p>Many public and government websites are also now serving up data using web protocols. It is, therefore, useful to learn how to parse the outputs of these requests. In some instances, private firms such as Google, Baidu, Instagram etc. also provide application programming interfaces (API) that serve data in a structured format. In these instances, subject to end user agreements, rate limits and daily quotas, restrictions on storage and transfer, it may be possible to access datasets that are otherwise unavailable.</p>
+</div>
+<div id="an-example-using-baidu" class="section level1">
+<h1>An example using Baidu</h1>
+<p><a href="https://www.baidu.com/">Baidu</a> is a technology service company that provides a number of services including maps and social networking. According to Wikipedia,</p>
+<blockquote>
+<p>The name Baidu (百度) literally means “a hundred times”, or alternatively, “countless times”. It is a quote from the last line of Xin Qiji (辛弃疾)’s classical poem “Green Jade Table in The Lantern Festival” (青玉案·元夕) saying: “Having searched hundreds of times in the crowd, suddenly turning back, She is there in the dimmest candlelight.” (众里寻他千百度，蓦然回首，那人却在灯火阑珊处。)</p>
+</blockquote>
+<p>In this post, we are going to query Baidu for points of interest around <a href="https://www.travelchinaguide.com/cityguides/wuhan.htm">Wuhan, China</a>. This is similar to Google Places.</p>
+<div id="setting-up" class="section level2">
+<h2>Setting up</h2>
+<p>In general, all API require registration and perusal of documentation, so that queries can be structured appropriately. In the case of Baidu, there are additional steps that are required so that the IP address of the computer that you are querying from is not blacklisted for abuse. Please see the <a href="http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi">documentation</a></p>
+</div>
+<div id="acquiring-api-keys." class="section level2">
+<h2>Acquiring API keys.</h2>
+<p>Every request to API requires a key so the website can control the how much and who can access the information. To acquire a key we need to :</p>
+<ol style="list-style-type: decimal">
+<li>Have a Baidu account. Register at <a href="https://passport.baidu.com/v2/?reg" class="uri">https://passport.baidu.com/v2/?reg</a></li>
+</ol>
+<p><img src="img/1.png" width="600" /></p>
+<ol style="list-style-type: decimal">
+<li><p>Find your computer IP address. Preferably use <a href="http://ifconfig.me/">ifconfig</a> or <a href="http://ip138.com/">ip138</a>
+<img src="img/2.png" alt="ifconfig.me" width="600" /></p></li>
+<li><p>Login your Baidu account and go to <a href="http://lbsyun.baidu.com/apiconsole/key?application=key" class="uri">http://lbsyun.baidu.com/apiconsole/key?application=key</a>, click “创建应用” to create a new application. Use the IP address from the previous step to “IP白名单”, then submit the application.
+<img src="img/3.png" width="600" /></p></li>
+<li><p>After getting back to the application management page, make a note of the api key. You will need to use it in your R code.
+<img src="img/4.png" width="600" /></p></li>
+</ol>
+</div>
+<div id="scraping" class="section level2">
+<h2>Scraping</h2>
+<p>There are There are a few steps to scrape and visualize information fro web queries. In this post, we will use Baidu API as a example to scrape the resturants around Huazhong Agricultural University (HZAU). For the moment, we will deal with structured data. Parsing unstructured data is for a different time.</p>
+<p>The steps are:</p>
+<ol style="list-style-type: decimal">
+<li>Intialise your R session</li>
+<li>Set the parameters of the query</li>
+<li>Send the query repreatedly to get all the results</li>
+<li>Cleaning and exporting the data</li>
+<li>Visualize the result</li>
+</ol>
+<p>The two main packages, we are going to use for scraping the web is <a href="https://CRAN.R-project.org/package=rjson">RCurl</a> and <a href="https://CRAN.R-project.org/package=rjson">rjson</a>. Install them, if necessary and intialise them into the library. We will also use <a href="https://CRAN.R-project.org/package=rjson">devtools</a> package to install packages that are not on Comprehensive R Archive Network <a href="https://cran.r-project.org">(CRAN)</a>, but on places like <a href="http://github.com">Github</a>.</p>
+<p>Curl is a command line tool that allows us to transfer data especially over the web. Rcurl is an interface for that tool. Because the result of the API query is formatted in JavaScript Object Notation (JSON), we use RJSON to parse it easily. JSON is lightweight data-interchange format.</p>
+<pre class="r"><code>##################### USE YOUR OWN KEY #########################
+### aquire the key from: http://lbsyun.baidu.com/apiconsole/key?application=key
+key = &quot;_YOUR_KEY_HERE_&quot;
+library(rjson)
+library(RCurl)
+library(tidyverse) # We have seen this package before.
+################################################################</code></pre>
+<div id="parameters-of-the-query" class="section level3">
+<h3>Parameters of the query</h3>
+<p>According to the <a href="http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi">API documentation</a>, we need to set a number of parameters to send the request to API. First, we will use the “round buffer” API to search all the restraunts within 2km distance around Huazhong Agricultural University. You can extract the coordinates from <a href="http://api.map.baidu.com/lbsapi/getpoint/index.html" class="uri">http://api.map.baidu.com/lbsapi/getpoint/index.html</a> by searching for 华中农业大学. Also Note the lat/long format, instead of the long/lat format we should be using. Pay attention to what the API requires.</p>
+<pre class="r"><code>location &lt;- &quot;30.48178,114.363708&quot;   #Latitude and Longitude as a string.
+keyword &lt;- &quot;餐馆&quot; %&gt;% curlEscape() ### set the keyword to search for in this case, resturants
+city &lt;- &quot;武汉&quot; %&gt;% curlEscape() ### set the city to search
+
+radius &lt;- 4000 ### set the search radius as 2000 meters
+page_size &lt;- 20 ### set the number of records in each page of the response
+
+#It will be replaced by the actual value of the result once get the first response
+placeIDSet = name = lat = lng = address = NULL ### set the initial value of the other parameters</code></pre>
+</div>
+<div id="querying-the-api" class="section level3">
+<h3>Querying the API</h3>
+<p>Querying the API is simply passing the url string to the server. <code>paste</code> and <code>paste0</code> are quite useful for constructing these queries</p>
+<pre class="r"><code>(searchURL &lt;- paste(&quot;http://api.map.baidu.com/place/v2/search?query=&quot;,
+                      keyword,
+                      &quot;&amp;location=&quot;,location,
+                      &quot;&amp;radius=&quot;,radius,
+                      &quot;&amp;scope=&quot;,1,
+                      &quot;&amp;page_num=&quot;, 1,
+                      &quot;&amp;page_size=&quot;,page_size,
+                      &quot;&amp;region=&quot;,city,
+                      &quot;&amp;output=json&quot;,
+                      &quot;&amp;ak=&quot;,key,
+                      sep=&quot;&quot;))
+# [1] &quot;http://api.map.baidu.com/place/v2/search?query=%E9%A4%90%E9%A6%86&amp;location=30.48178,114.363708&amp;radius=4000&amp;scope=1&amp;page_num=1&amp;page_size=20&amp;region=%E6%AD%A6%E6%B1%89&amp;output=json&amp;ak=mSWfSeru2jtlMtAutjy9Vv28XLC568N3&quot;
+
+
+result &lt;- getURL(url = URLencode(searchURL),ssl.verifypeer = FALSE)
+x &lt;- fromJSON(result)
+str(x, max.level = 2) # Setting max.level so that it won&#39;t overwhelm the page. Feel free to explore.
+# List of 2
+#  $ status : num 210
+#  $ message: chr &quot;APP IPæ ¡éªŒå¤±è´¥&quot;</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Query Baidu for Parks around 1 km of Huazhong Agricultural University and print raw results</li>
+<li>Query Baidu for bus and train stations around Wuhan University and print the results</li>
+<li>How many day care centers are there in this area?</li>
+<li>Intepret these results</li>
+</ul>
+<hr />
+</div>
+<div id="repeated-queries" class="section level3">
+<h3>Repeated queries</h3>
+<p>Because many of the results are paginated, it is imperative that we query the server repeatedly to get all the results we want. In the following code, we query until all the results are retrieved. We use the while loop for this, though other loops might be more suitable for particular use cases.</p>
+<pre class="r"><code>
+page_num &lt;- 0 ### set the starting page 
+total &lt;- 20 ### the total number of records, initial value is 20, 
+
+while(page_num &lt;= ceiling(total/page_size)-1){
+    ### run the query to get the result from the server
+    searchURL &lt;- paste(&quot;http://api.map.baidu.com/place/v2/search?query=&quot;,
+                      keyword,
+                      &quot;&amp;location=&quot;,location,
+                      &quot;&amp;radius=&quot;,radius,
+                      &quot;&amp;scope=&quot;,1,
+                      &quot;&amp;page_num=&quot;,page_num,
+                      &quot;&amp;page_size=&quot;,page_size,
+                      &quot;&amp;region=&quot;,city,
+                      &quot;&amp;output=json&quot;,
+                      &quot;&amp;ak=&quot;,key,
+                      sep=&quot;&quot;)
+    result = getURL(url = searchURL,ssl.verifypeer = FALSE)
+    ### transfer the result from json to a list format in R
+    x = fromJSON(result)
+    ### get the number of total records from the result
+    total = x$total
+    ### print the process
+    cat(&quot;Retrieving&quot;,page_num+1,&quot;from total&quot;,ceiling(total/page_size),&quot;pages ...\n&quot;)
+    page_num = page_num + 1
+    ### extract the value from the result
+    
+    # PLACEID
+    placeIDSet = c(placeIDSet,
+                   unlist(lapply(X = x$results,FUN = function(x)return(x$uid))))
+    # Name of the place
+    name = c(name,
+             unlist(lapply(X = x$results,FUN = function(x)return(x$name))))
+    #latitude
+    lat = c(lat,
+            unlist(lapply(X = x$results,FUN = function(x)return(x$location$lat))))
+    #longitude
+    lng = c(lng,
+            unlist(lapply(X = x$results,FUN = function(x)return(x$location$lng))))
+    #address
+    address = c(address,
+                unlist(lapply(X = x$results,FUN = function(x)return(x$address))))
+    Sys.sleep(1) # Set this so that you do not bombard the server. The process stops for 1s. Change this to suit your purpose. 
+}
+# Retrieving 1 from total  pages ...
+# Error in while (page_num &lt;= ceiling(total/page_size) - 1) {: argument is of length zero
+# save the extracted information as a dataframe
+dat &lt;- data.frame(name,lng,lat,address,placeIDSet)
+nrow(dat)
+# [1] 0</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>The above is a very brittle code. If the server returns an error because of heavy volume, the loop fails. Use <code>tryCatch</code> to trap errors and continue loop and keep track of which pages have returned errors. In particular use the status and message of the results to write more graceful code that will survive.</li>
+</ul>
+<hr />
+</div>
+<div id="cleaning-and-exporting-the-data" class="section level3">
+<h3>Cleaning and exporting the data</h3>
+<p>Baidu has its own projection system. To visualize the data, we need to transform the coordinates from BD09 coordinate system to the commonly used WGS84 system (epsg:4326). To achieve that, we need use a customized package on github. &quot;devtools“ package is required here.</p>
+<pre class="r"><code>library(devtools)
+install_github(&quot;waholulu/bd09towgs84&quot;)
+library(bdtowgs)</code></pre>
+<p>Then we can use its build-in function “bd09towgs84” to project the coordinates.</p>
+<pre class="r"><code>coord &lt;- subset(dat, select = c(&quot;lng&quot;, &quot;lat&quot;))
+# Error in `[.data.frame`(x, r, vars, drop = drop): undefined columns selected
+transfer &lt;- as.data.frame(t(apply(coord,1,bd09towgs84)))
+# Error in apply(coord, 1, bd09towgs84): object &#39;coord&#39; not found
+dat$lng &lt;- transfer$V1
+# Error in eval(expr, envir, enclos): object &#39;transfer&#39; not found
+dat$lat &lt;- transfer$V2
+# Error in eval(expr, envir, enclos): object &#39;transfer&#39; not found</code></pre>
+<p>Then the data can be saved as a csv file.</p>
+<pre class="r"><code># save the information as an excel file
+write_csv(dat, path= &quot;search_results.csv&quot;)</code></pre>
+</div>
+<div id="visualise-results" class="section level3">
+<h3>Visualise results</h3>
+<p>Now we can use leaflet to visuzalize the locations of the restaurants.</p>
+<pre><code># Error in `[.data.frame`(dat, , c(&quot;lng&quot;, &quot;lat&quot;, &quot;name&quot;)): undefined columns selected
+# Error in structure(list(options = options), leafletData = data): object &#39;locations_df&#39; not found
+# Error in eval(expr, envir, enclos): object &#39;m&#39; not found</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li><p>Instead of a buffer search, use a bounding box search to return the results for restaurants (“餐馆”). Use the bounds as <code>c(30.531539,114.357628,30.552129,114.385296)</code> (SW-NE corner points). Display on a map.</p></li>
+<li><p>What happens you search for day care centers?</p></li>
+</ul>
+<hr />
+</div>
+</div>
+</div>
+<div id="apis-for-non-point-data" class="section level1">
+<h1>APIs for non-point data</h1>
+<p>In the above, we primarily used API to query point location information. There is no reason to think that this is limited to points. For example we can get routing information or travel time isoschornes or whatever API is serving that can be read.</p>
+<p>To demonstrate this, we can plot <a href="https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times">Isochrones</a> of every 2 min biking, around some random points in Wuhan. For this we use the Open Source Routing Library (OSRM), though any other API works as well (e.g. Google, Mapbox etc.). For this purposes, we are going to use the demo server for OSRM, though ideally you will <a href="https://github.com/Project-OSRM/osrm-backend">set one up</a> for your purposes. If you set one up for yourself, you can get other directions and travel such as walking, driving etc.</p>
+<p><div class="alert alert-warning">
+  <div>
+    </p>
+<p>You should be careful using the OSRM demo server, it is not always very stable.</p>
+<p>
+  </div>
+</div>
+</p>
+<pre class="r"><code>library(sf)
+library(osrm)
+# Ideally set these options up
+ options(osrm.server = &quot;http://localhost:5000/&quot;)
+options(osrm.profile = &#39;bike&#39;) #Change this for other modes. However, the demo server only returns car profile
+
+randompoints &lt;- matrix(c(114.346566,30.533282,
+                           114.298273,30.381364,
+                           114.347141,30.599453), ncol=2, byrow =TRUE) %&gt;% data.frame()
+names(randompoints) &lt;- c(&#39;lng&#39;, &#39;lat&#39;)
+randompoints$name &lt;- c(&#39;pt1&#39;, &#39;pt2&#39;, &#39;pt3&#39;)
+
+rt &lt;- osrmRoute(src = randompoints[1,c(&#39;name&#39;, &#39;lng&#39;,&#39;lat&#39;)], 
+                dst = randompoints[2,c(&#39;name&#39;,&#39;lng&#39;,&#39;lat&#39;)], 
+                sp = TRUE) %&gt;% st_as_sf()
+# Error in UseMethod(&quot;st_as_sf&quot;): no applicable method for &#39;st_as_sf&#39; applied to an object of class &quot;NULL&quot;
+
+rt %&gt;% leaflet() %&gt;%
+    addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;) %&gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;) %&gt;%
+  addMarkers(data=randompoints[1:2,], ~lng, ~lat) %&gt;%
+  addPolylines(weight =5, smoothFactor = .5, color=&#39;red&#39;)
+# Error in polygonData.default(data): Don&#39;t know how to get path data from object of class function</code></pre>
+<p>OSRM is a convenience package that is wrapping the calls to the server and parsing the output into Spatial*. For example, the curl query in the backend looks like</p>
+<p><code>http://router.project-osrm.org/route/v1/driving/114.346566,30.533282,114.298273,30.381364</code></p>
+<pre class="r"><code>iso &lt;- list()
+for (i in 1:nrow(randompoints)){
+iso[[i]] &lt;- osrmIsochrone(loc = randompoints[i,c(&#39;lng&#39;,&#39;lat&#39;)], breaks = seq(from = 0,to = 20, by = 2)) %&gt;% st_as_sf()
+}
+# Error in (function (classes, fdef, mtable) : unable to find an inherited method for function &#39;coordinates&#39; for signature &#39;&quot;NULL&quot;&#39;
+
+iso &lt;- do.call(&#39;rbind&#39;, iso)
+
+ Npal &lt;- colorNumeric(
+   palette = &quot;Reds&quot;, n = 5,
+   domain = iso$center
+ )
+ 
+iso %&gt;% leaflet() %&gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;) %&gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;) %&gt;%
+  addMarkers(data=randompoints, ~lng, ~lat) %&gt;%
+  addPolygons(color = &quot;#444444&quot;, weight = 1, smoothFactor = 0.5,
+    opacity = 1.0, fillOpacity = 0.5, fillColor = ~Npal(iso$center),
+    group = &quot;Isochrone&quot;) %&gt;%
+  addLegend(&quot;topleft&quot;, pal = Npal, values = ~iso$center,
+            title = &quot;Biking Time (min)&quot;,opacity = 1
+            )
+# Error in derivePolygons(data, lng, lat, missing(lng), missing(lat), &quot;addPolygons&quot;): Polygon data not found; please provide addPolygons with data and/or lng/lat arguments</code></pre>
+</div>
+<div id="unstructured-data" class="section level1">
+<h1>Unstructured data</h1>
+<p>JSON files are well-structured. Therefore, it is relatively easy to parse them. If the files are unstructured, a lot of effort goes into figuring out different structures and searches that will yield the dataset that is necessary. In general, packages such as <code>xml2</code> and <code>rvest</code> will help such tasks. This is left for a different day.</p>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>Reading data from server based APIs are no different from reading and parsing a local file. However, unlike local files that are well structured, and OS handling handling of low level functions of memory management and error recovery, we ought to be extra mindful of how errors might affect and break our code. Once the data is scraped, analysis proceeds in the usual fashion. However, because the data is not of specific vintage, reproducibility of research is a serious concern. You should note it and be able to provide archival of scraped data for others to use, subject to end use restrictions. In any case, currency of the data should be balanced with the archival mission of the organisation.</p>
+</div>
+<div id="acknowledgements" class="section level1">
+<h1>Acknowledgements</h1>
+<p>Parts of the code in this post is written by <a href="https://planning.unc.edu/student/chenyan/">Yan Chen</a>.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/scraping-web-for-data/&amp;text=Scraping%20web%20for%20data" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/scraping-web-for-data/&amp;t=Scraping%20web%20for%20data" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Scraping%20web%20for%20data&amp;body=http://www.nikhilkaza.com/post/scraping-web-for-data/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/scraping-web-for-data/&amp;title=Scraping%20web%20for%20data" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Scraping%20web%20for%20data%20http://www.nikhilkaza.com/post/scraping-web-for-data/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/scraping-web-for-data/&amp;title=Scraping%20web%20for%20data" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/geospatial-data-in-r/">Geospatial Data in R</a></li>
+      
+      <li><a href="/post/exploratory-data-analysis-visualisation/">Exploratory Data Analysis &amp; Visualisation</a></li>
+      
+      <li><a href="/teaching/techniques-politics-short-course/">Techniques &amp; Politics of New Urban Analytics</a></li>
+      
+      <li><a href="/post/cluster-detection-in-point-data/">Identifying Clusters of Events</a></li>
+      
+      <li><a href="/post/identifying-employment-centers/">Identifying Employment Centers</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

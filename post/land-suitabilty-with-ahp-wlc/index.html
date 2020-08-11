@@ -1,0 +1,1413 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Land Suitability Analysis using Multi Criteria Decision Making">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/">
+  <meta property="og:title" content="Land Suitability Analysis | Nikhil Kaza">
+  <meta property="og:description" content="Land Suitability Analysis using Multi Criteria Decision Making"><meta property="og:image" content="http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/featured.jpeg">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/featured.jpeg"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-03-06T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-03-06T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/"
+  },
+  "headline": "Land Suitability Analysis",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/featured.jpeg"
+  ],
+  
+  "datePublished": "2020-03-06T00:00:00Z",
+  "dateModified": "2020-03-06T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Land Suitability Analysis using Multi Criteria Decision Making"
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Land Suitability Analysis | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Land Suitability Analysis</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Mar 6, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    12 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 505px; max-height: 607px;">
+  <div style="position: relative">
+    <img src="/post/land-suitabilty-with-ahp-wlc/featured.jpeg" alt="" class="featured-image">
+    <span class="article-header-caption"><a href="https://storymaps.arcgis.com/stories/b60b7399f6944bca86d1be6616c178cf">https://storymaps.arcgis.com/stories/b60b7399f6944bca86d1be6616c178cf</a></span>
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#download-the-data">Download the Data</a></li>
+<li><a href="#additional-resources">Additional resources</a></li>
+<li><a href="#land-suitability-for-locating-a-landfill">Land Suitability for Locating a Landfill</a></li>
+<li><a href="#multi-criteria-decision-making">Multi-criteria Decision Making</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Land suitability analysis has a long tradition in planning. Ian McHarg at Penn, pioneered the method of overlaying transparencies about suitability criteria, which then got translated into GIS with the advent of computers. Suitability analysis has many uses in planning. It can be used, for example, for</p>
+<ul>
+<li>Retail site selection</li>
+<li>Determining best locations for future land use (such as residential, agriculture, commercial etc..)</li>
+<li>Ecological planning for protecting natural habitats</li>
+<li>Prioritising investments (such as flood protection)</li>
+<li>Post-Disaster housing relocation (see <a href="https://coastalresiliencecenter.unc.edu/files/2018/12/LSA-Technical-Memo-6.pdf">Christian Karmath’s MP report</a>)</li>
+</ul>
+<p>These analyses have a long tradition in planning. In fact, my former doctoral advisor, Lew Hopkins, <a href="https://doi.org/10.1080/01944367708977903">wrote a paper</a> in 1977, on this topic and is still considered a classic. Dick Klosterman’s Planning Support System, <a href="http://www.whatifinc.biz/">WhatIf?™</a> relies heavily on land suitability analysis.</p>
+<p>In this tutorial, I give a contrived example of finding suitable site for locating a landfill using rasters. Every cell is treated as potential alternative site for the landfill and is given a score based on different criteria (such as distance to schools, population centers etc.). The trick is to figure out a right combination of these scores to order the cells (alternatives). The analytical techniques used are rather straightforward and rely on simple raster algebra. As we will see, the skill is about picking the right kinds of criteria and making appropriate judgements about how to evaluate alternatives with respect to the criteria. Subjectivity and analyst’s bias is omnipresent in these steps. In particular, it is also subject to all sorts of other theoretical problems that the insistence on quantification <a href="/post/2020-03-16-some-troubles-with-land-suitability-analysis-a-conversation-with-lew/">obfuscates</a>.</p>
+</div>
+<div id="requirements" class="section level1">
+<h1>Requirements</h1>
+<p>Many new packages are introduced in this analysis including <a href="https://github.com/r-quantities/units/">units</a> (to systematically think and capture units such as km^2), <a href="https://github.com/ecohealthalliance/fasterize">fasterize</a> (fast rasterization) and others such as rasterVis, raster, sf and tidycensus.</p>
+</div>
+<div id="download-the-data" class="section level1">
+<h1>Download the Data</h1>
+<p>The datasets are available <a href="https://www.dropbox.com/s/uzmz7tjxkxbh2dl/Archive.zip?dl=0">here</a></p>
+</div>
+<div id="additional-resources" class="section level1">
+<h1>Additional resources</h1>
+<p>I strongly recommend that you read through <a href="http://rspatial.org/index.html">R spatial</a> by <a href="https://desp.ucdavis.edu/people/robert-j-hijmans">Robert Hijmans</a>, the author of the <code>raster</code> package. In addition, you can also check out the <a href="https://www.r-exercises.com/tag/geospatial/">R-exercises</a> tagged as geospatial.</p>
+</div>
+<div id="land-suitability-for-locating-a-landfill" class="section level1">
+<h1>Land Suitability for Locating a Landfill</h1>
+<p>There are no accepted conventions for identifying the appropriate locations of landfills. Locating one, is a contentious topic, as it is a Locally Unwanted Land Use (LULU). Furthermore, there are many regulatory agencies that are invovled in regulating the landfill locations including the Environmental Protection Agency.</p>
+<p><div class="alert alert-">
+  <div>
+    </p>
+<p>Nothing in this tutorial is an endorsement of particular criteria used for site selection purposes. This is to be treated as an in-class exercise and caution should be used to interpret the results.</p>
+<p>
+  </div>
+</div>
+</p>
+<p>In this example, I am going to use 4 <em>arbitrary</em> criteria</p>
+<ol style="list-style-type: decimal">
+<li>Distance to Schools. (Farther the better)</li>
+<li>Distance to Parks. (Farther the better)</li>
+<li>Slope (Flatter the better)</li>
+<li>Distance to population centers (Sufficiently far, but no further)</li>
+</ol>
+<p>But first set up the project crs by setting it to the crs of the land use raster and also create a template raster.</p>
+<pre class="r"><code>library(raster)
+library(rasterVis)
+library(here)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(fasterize)
+library(sf)
+
+
+
+
+lu_raster &lt;- here(&quot;tutorials_datasets&quot;, &quot;landsuitability&quot;, &quot;c11_37063.img&quot;) %&gt;% raster
+template_raster &lt;- reclassify(lu_raster, cbind(0, 100, 0), right=FALSE)
+project_crs &lt;- crs(lu_raster)
+
+vector_read_fn &lt;- function(x){
+      if(file.exists(x)){
+          temp1 &lt;- st_read(x, quiet=TRUE) %&gt;% st_transform(project_crs)
+          return(temp1)
+      } 
+}</code></pre>
+<div id="distance-to-schools-parks" class="section level3">
+<h3>Distance to Schools &amp; Parks</h3>
+<p>The workhorse functions are <code>gridDistance</code> and <code>reclassify</code> both from the <code>raster</code> package.</p>
+<p>gridDistance is a function that calculates the distance to cells of a RasterLayer when the path has to go through the centers of neighboring raster cells. This is effectively like buffering at multiple distances.</p>
+<p>Reclassify is a function that (re)classifies groups of values to other values. For example, all values between 0 and 1000 become 1, and all values between 1000 and 2000 become 2 in the following code. In particular, see the <code>rcl</code> matrix argument in <code>?reclassify</code></p>
+<pre class="r"><code>schools &lt;- here(&quot;tutorials_datasets&quot;, &quot;landsuitability&quot;, &quot;NCDurhamSchools&quot;, &quot;SchoolPts.shp&quot;) %&gt;% vector_read_fn()
+
+
+schools_raster_dist &lt;- schools %&gt;% 
+                  st_buffer(10) %&gt;% # Fasterize only works with polygons, so we create tiny buffers around the points
+                  fasterize(raster= template_raster) %&gt;%
+                  gridDistance(origin=1) %&gt;% # Check ?fasterize especially the `field argument on why origin is 1.
+                  mask(lu_raster) %&gt;%
+                  reclassify(rcl = matrix(c(0,1000,1, 1000,2000,2, 2000,4000,3, 4000,8000,4, 8000,Inf,5), ncol=3, byrow = T), include.lowest =T)</code></pre>
+<p>Similar approach can be taken to distance to parks.</p>
+<pre class="r"><code>
+parks &lt;- here(&quot;tutorials_datasets&quot;, &quot;landsuitability&quot;, &quot;NCDurhamParksTrailsGreenways&quot;, &quot;Parks.shp&quot;) %&gt;% vector_read_fn() %&gt;% dplyr::select(geometry)
+future &lt;- here(&quot;tutorials_datasets&quot;, &quot;landsuitability&quot;, &quot;NCDurhamParksTrailsGreenways&quot;, &quot;Future_Parks.shp&quot;) %&gt;% vector_read_fn() %&gt;% dplyr::select(geometry)
+easements &lt;- here(&quot;tutorials_datasets&quot;, &quot;landsuitability&quot;, &quot;NCDurhamParksTrailsGreenways&quot;, &quot;GreenwayEasementParcels.shp&quot;) %&gt;% vector_read_fn() %&gt;% dplyr::select(geometry)
+
+parks_and_others &lt;- reduce(list(parks, future, easements), rbind)
+rm(parks, future, easements)
+
+
+
+parks_others_raster_dist &lt;- parks_and_others  %&gt;% 
+  fasterize(raster= template_raster) %&gt;%
+  gridDistance(origin=1) %&gt;%
+  mask(lu_raster) %&gt;%#Create a new Raster* object that has the same values as x, except for the cells that are NA (or other maskvalue) in a &#39;mask&#39;.
+  reclassify(rcl = matrix(c(0,500,1, 500,1000,2, 1000,2000,3, 2000,4000,4, 4000,Inf,5), ncol=3, byrow = T), include.lowest=T)</code></pre>
+<p>Visualise them using the following code</p>
+<pre class="r"><code>library(RColorBrewer)
+library(gridExtra)
+p1 &lt;- schools_raster_dist %&gt;% ratify %&gt;% levelplot(att=&quot;ID&quot;, main = &quot;Distance from Schools&quot;, col.regions=brewer.pal(6, &quot;PuRd&quot;))
+p2 &lt;- parks_others_raster_dist %&gt;% ratify %&gt;% levelplot(att =&quot;ID&quot;, main = &quot;Distance from Parks&quot;,col.regions=brewer.pal(6, &quot;PuRd&quot;))
+grid.arrange(p1, p2, ncol=2)</code></pre>
+<p><img src="/post/2020-03-06-land-suitability-analysis/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="slope" class="section level3">
+<h3>Slope</h3>
+<p>Fortunately to calculate slopes in the US, there is an excellent package called <code>elevatr</code> that downloads the USGS Digital elevation model. USGS Digital elevation models (DEMs) are arrays of regularly spaced elevation values. Once we acquire the raw elevation data, we can use the <code>terrain</code> function to create the slope raster.</p>
+<p>Note the use of <code>resample</code> to make sure that the slope data that conforms to the extent, dimensions and resolution of the original land use dataset.</p>
+<pre class="r"><code>library(elevatr)
+durham_slope &lt;- get_elev_raster(template_raster, z = 11) %&gt;%
+                    terrain(opt=&quot;slope&quot;, unit=&quot;degrees&quot;) %&gt;%
+                    resample(lu_raster, method= &quot;bilinear&quot;) %&gt;% 
+                    mask(lu_raster) %&gt;%
+                    reclassify(rcl = matrix(c(0,5,5, 5,7,4, 7,10,3, 10,13,2, 13,Inf,1), ncol=3, byrow = T), include.lowest=T)
+
+durham_slope  %&gt;% ratify %&gt;% levelplot(att=&quot;ID&quot;, main = &quot;Slope&quot;, col.regions=brewer.pal(6, &quot;PuRd&quot;))</code></pre>
+<p><img src="/post/2020-03-06-land-suitability-analysis/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="more-complicated-distance-calculations" class="section level3">
+<h3>More Complicated Distance Calculations</h3>
+<p>In this subsection, I am going to demonstrate how to use more complicated network distance calculations, instead of a geographic distance that we used earlier. We are going to use <code>gdistance</code> package by Jacob Van Etten. It is useful to peruse the <a href="https://cran.r-project.org/web/packages/gdistance/vignettes/Overview.html">vignette for the package</a>. Remember raster can be treated as a network/graph that is mostly regular (except at the corners of the raster). Then the problem is simply finding the shortest route on the graph if the we can assign costs to the edges.</p>
+<p><img src="img/raster_graph.png" /></p>
+<p>To do this, we take advantage of the highway network and its attributes. There is a SPEED_LMT, which we will treat as the speed to traverse that link. The LANES attribute can be used to construct the width of the road and then use it to construct the raster.</p>
+<pre class="r"><code>library(gdistance)
+
+highways &lt;- here(&quot;tutorials_datasets&quot;, &quot;landsuitability&quot;, &quot;Roads&quot;, &quot;Roads.shp&quot;) %&gt;% 
+             vector_read_fn() %&gt;% 
+             filter(func_class != &quot;Local Roads&quot;) %&gt;%
+             mutate(LANES = as.numeric(as.character(LANES)),
+                     SPEED_LMT = as.numeric(as.character(SPEED_LMT)),
+                    bufferwidth = ifelse(is.na(LANES), 30, LANES * 30/2)
+                   )%&gt;%
+            st_buffer(dist = .$bufferwidth) %&gt;% 
+            fasterize(template_raster, field = &quot;SPEED_LMT&quot;, fun=&#39;max&#39;)
+
+
+
+highways[is.na(highways)] &lt;- 0
+levelplot(highways, margin = FALSE)</code></pre>
+<p><img src="/post/2020-03-06-land-suitability-analysis/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>For the rest of the raster that are not covered by highways, we arbitarily assign a speed based on land cover class. In this instance, we assign of 15mph to developed cells and 5 mph to cells that are forests and other land covers. We also make water, wetlands impassable by assigning them NA speed. We take advantage of the fact that
+<a href="https://www.mrlc.gov/data/legends/national-land-cover-database-2016-nlcd2016-legend">National Land Cover Dataset has two digit code</a>, which the first digit representing a higher landuse type (Water, Developed etc.). Hence, the integer division by 10 using <code>%/%</code>.</p>
+<pre class="r"><code>
+speed_raster &lt;- lu_raster %/% 10 %&gt;%
+                  subs(data.frame(id = 1:9, v=c(NA,15,rep(5,6),NA)))
+combined_speed_raster &lt;- overlay(speed_raster, highways, fun = max)
+
+
+p1 &lt;- levelplot(highways, margin = FALSE, main =&#39;Speed on Roads&#39;)
+p2 &lt;- levelplot(combined_speed_raster, margin=FALSE, main = &quot;Speed on all cells&quot;)
+
+grid.arrange(p1,p2, ncol=2)</code></pre>
+<p><img src="/post/2020-03-06-land-suitability-analysis/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<hr />
+<p>** Exercise **</p>
+<ul>
+<li>Feel free to experiment with other speeds based on other datasets.</li>
+</ul>
+<hr />
+<p>In gdistance package, the edge weights on the neighbor graph are stored using a conductance framework (instead of a resistance) and the key concept is a transition matrix. It is stored as a sparse matrix. It is essentially captures which two cells are connected and how much conductance is there between the two cells. It is useful to work through <a href="https://gis.stackexchange.com/questions/280593/understanding-the-values-from-transition-layers-produced-by-the-r-package-gdist">some toy examples</a> to understand how to construct the appropriate transition matrix.</p>
+<pre class="r"><code>
+Trmatx &lt;- transition(1/(combined_speed_raster*0.44704) , function(x){1/mean(x)}, 8, symm=TRUE) %&gt;%
+          geoCorrection # 0.44704 is conversion between mph and m/s</code></pre>
+<p>In this example, I am going to use population centers as defined high population density and high population and calculate the network distance to these centers for each pixel in the raster. I am arbitarily setting that being 1200s is ideal and deviation in either direction is penalised. As usual, I am categorizing the distance raster.</p>
+<pre class="r"><code>library(units)
+library(tidycensus)
+
+durham_blk &lt;- get_decennial(geography = &quot;block&quot;, variables = &quot;P001001&quot;, state = &quot;NC&quot;, county = &quot;Durham&quot;, geometry = T) %&gt;%
+                st_transform(crs=project_crs) %&gt;% 
+                mutate(popdens = value/(st_area(.) %&gt;% set_units(km^2)))
+  
+
+pop_concentrations &lt;- durham_blk %&gt;% 
+                      filter(popdens&gt;set_units(10000, 1/km^2) &amp; value &gt; 300) %&gt;% 
+                      st_centroid()
+
+dist_popcenters_raster &lt;- accCost(Trmatx, pop_concentrations %&gt;% as_Spatial()) %&gt;% 
+                              calc(function(x){ceiling(5-(abs(x-1200)/300))}) %&gt;%
+                              clamp(lower=1, upper=5, useValues=FALSE)</code></pre>
+<pre class="r"><code>dist_popcenters_raster   %&gt;% 
+  mask(lu_raster) %&gt;%
+  ratify %&gt;% 
+  levelplot(att=&quot;ID&quot;, main = &quot;Distance to population centers&quot;, col.regions=brewer.pal(5, &quot;PuRd&quot;))</code></pre>
+<p><img src="/post/2020-03-06-land-suitability-analysis/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<hr />
+<p>** Exercise **</p>
+<ul>
+<li><p>Boolean (0-1/T-F) rasters have special meaning and arithmetic operations with boolean rasters are effectively boolean algebra . Sum of two boolean rasters is ‘OR’ and product of two boolean rasters is <code>AND</code>. Why?</p></li>
+<li><p>Use these features of Boolean rasters to effectively remove cells from consideration as alternatives to speed up processing. For example, a landfill may not be located on land that is already developed.</p></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="multi-criteria-decision-making" class="section level1">
+<h1>Multi-criteria Decision Making</h1>
+<p>Until now, we have 4 criteria. Alternatives were assessed w.r.t. the criteria and there is forced consistency in the scales (1 is worst, 5 is best). Even though, these are ordinal scales, much of land suitability analyses treat them as numerical values. If so, then a simplest way is combine (add) them all and pick the best cells that score the highest (or at least above a threshold). See for example.</p>
+<pre class="r"><code>durham_stack &lt;- stack(schools_raster_dist, parks_others_raster_dist,durham_slope,dist_popcenters_raster)
+
+combo_raster &lt;- calc(durham_stack, sum)
+
+(combo_raster &gt; 18) %&gt;% ratify %&gt;% levelplot(att=&quot;ID&quot;)</code></pre>
+<p><img src="/post/2020-03-06-land-suitability-analysis/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<div id="weighted-linear-combination" class="section level2">
+<h2>Weighted Linear Combination</h2>
+<p>The above method treats every criteria equally. There is no reason to think that this should always be the case. If we assign weight to each of the four criteria and combine them according to those weights, then we are peforming weighted linear combination</p>
+<pre class="r"><code>combo_raster &lt;- calc(durham_stack, function(x){x[1]*.2 + x[2]*.25 + x[3] * .4 + x[4]*.15})
+(combo_raster &gt; 4.8) %&gt;% ratify %&gt;% levelplot(att=&quot;ID&quot;)</code></pre>
+<p><img src="/post/2020-03-06-land-suitability-analysis/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Note that the weights summing to 1 is a matter of convention, not a mathematical necessity (Sort of. It is a necessity, if you want to stick to 1-5 range.). More importantly, this arbitrary assingment of weights obscures judgements made by the analysts. That is distance from schools is half as important as slope (0.2 vs 0.4) and is 80% important as distance from parks etc. Furthermore, this weight assignment preserves consistency (i.e. transitive property). Distance to schools is 80% as important as distance to parks; distance to parks is 62.5% as important as slope and distance to school is (0.2/0.25) * (0.25/0.4) = 0.5 as important as slope.</p>
+<hr />
+<p>** Exercise **</p>
+<ul>
+<li>Would it be better to eliminate the alternatives using boolean raster after WLC or before? If before, what is the appropriate step? Why? (Hint: Remember the difference between NA and 0).</li>
+</ul>
+<hr />
+</div>
+<div id="categorical-combination-method" class="section level2">
+<h2>Categorical Combination Method</h2>
+<p>While it is true that ordinal scales are treated as numeric often, they can also be treated as nominal by ignoring the order.</p>
+<pre class="r"><code>combo_raster &lt;- 
+ overlay(durham_stack, 
+         fun = function(x){paste0(x[1],x[2],x[3],x[4], collapse=&quot;&quot;) %&gt;%as.factor()}
+         )
+</code></pre>
+<p>I am not displaying the raster because of enormous number of categories. 6 categories (5 levels + NA) in each raster layer with 4 layers, so the total number of combinations are 6^4 = 1,296. Clearly this is not reasonable number of categories froma an analytical perspective and only few categories are going to be relevant, such as “5555” or “5455” etc. In such an instance it is probably better to reclassify ahead of time to sort for the relevalnt categories of interest (say for example 2) and restrict the total number of combinations (2^4=16).</p>
+</div>
+<div id="analytical-hierarchy-process" class="section level2">
+<h2>Analytical Hierarchy Process</h2>
+<p>Developed by Thomas Satay in the 1970s, the Analytical Hierarchy Process (AHP) reduces the complexity of decisions by making the analyst only compare among two alternatives at a time, without sacrificing consistency. It has been widely used in decision making in different sectors (including hiring processes, environmental analyses, product development etc.). In the case of land suitability the AHP is useful to create a set of consistent weights and then applying the weighted linear combination method.</p>
+<p>For a worked out example, please refer to <a href="https://en.wikipedia.org/wiki/Analytic_hierarchy_process_%E2%80%93_leader_example">this wikipedia article</a>.</p>
+<p>The key feature of AHP is the ranking among two criteria using a 1-9 scale, with 1 being the two criteria (e.g. A &amp; B) being equally important and 9 being that A is extermely important compared to B. The rest of them are in between. The idea is to construct a matrix, whose elements represent a pairwise comparison. Also if A is extermely important compared to B (value = 9) the B to A comparison receives a reciprocal value (1/9). In this case, we have 4 criteria, (schools, parks, slope, population centers). By this logic, the diagnol elements are always 1.</p>
+<pre class="r"><code>AHPmatrix &lt;- matrix(1,nrow=nlayers(durham_stack), ncol=nlayers(durham_stack))
+row.names(AHPmatrix) &lt;- colnames(AHPmatrix) &lt;- c(&#39;Schools&#39;, &#39;Parks&#39;, &quot;Slope&quot;, &quot;PopulationCenters&quot;)
+AHPmatrix[upper.tri(AHPmatrix)] &lt;- c(2,5,3,4,7,2)
+
+for(i in 1:dim(AHPmatrix)[1]){
+  for(j in i:dim(AHPmatrix)[2])
+    AHPmatrix[j,i] = 1/AHPmatrix[i,j]
+}</code></pre>
+<p>Check to make sure that the AHP is indeed of the format required by the process. Once it is correct, the weights on the criteria are given by normalising the largest eigen vector of the matrix. But first we need to check the consistency of the matrix (i.e if the transitive property mostly holds). To do that we compute, <span class="math inline">\(CI := \frac{(\lambda_{max} - n)}{(n-1)}\)</span> where <span class="math inline">\(\lambda_{max}\)</span> is the largest eigen value of the matrix and <span class="math inline">\(n\)</span> is the number of criteria.</p>
+<pre class="r"><code>CI &lt;- (Mod(eigen(AHPmatrix)$values[1]) - 4)/3 #Using Modulus to ignore the zero imaginary part of the complex number.</code></pre>
+<p>The CI is compared to Random Consistency Index (RCI) from the table below. Pick the right RCI for the right number of criteria.</p>
+<p><img src="img/The-Random-Consistency-Index-RCI.png" /></p>
+<p>If Consistency Ration (CR) = CI/RCI &lt; 0.10 is TRUE, then the AHP matrix is said to be consistent. If not, revise the weights till consistency is achieved.</p>
+<p>Once consistency is achieved, the weights on the criteria are calculated by normalising the largest eigen vector of the matrix.</p>
+<pre class="r"><code>(weights &lt;- eigen(AHPmatrix, symmetric =F)$vectors[,1] / sum(eigen(AHPmatrix, symmetric =F)$vectors[,1]))
+# [1] 0.47975196+0i 0.33842037+0i 0.11097265+0i 0.07085501+0i</code></pre>
+<p>This demonstrates that Schools weigthed the highest followed by Parks in the pairwise weighting. The analysis then proceeds just like Weighted Linear Combination method.</p>
+<pre class="r"><code>combo_raster &lt;- calc(durham_stack, function(x){x[1]*Re(weights)[1] + x[2]*Re(weights)[2] + x[3]*Re(weights)[3] + x[4]*Re(weights)[4]})
+                   
+(combo_raster &gt; 4.8) %&gt;% ratify %&gt;% levelplot(att=&quot;ID&quot;)</code></pre>
+<p><img src="/post/2020-03-06-land-suitability-analysis/index_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<hr />
+<p>** Exercise **</p>
+<ul>
+<li>Experiment with increasing and decreasing the number of criteria.</li>
+<li>Experiment with different AHP matrices to identify consistency issues.</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>These are but some very basic and tried and tested methods used in planning practise. There are significant advances since the 70s including using fuzzy airthmethic, non-linear combinations etc. However, the point of many of these methods is not to identify the right lcoations, but provide a basis for discussion with relevant participants in the decision making processes.</p>
+<p>It should however be noted that Multi Criteria Decision Making and land suitability analyses are often presented as rational methods for making decisions about land uses. I hope I have demonstrated, in this tutorial, the subjective nature of the process. Please re-read the <a href="/post/2020-03-16-some-troubles-with-land-suitability-analysis-a-conversation-with-lew/">caveats</a>.The things we choose to care about, says a lot about the values of the analyst.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/&amp;text=Land%20Suitability%20Analysis" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/&amp;t=Land%20Suitability%20Analysis" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Land%20Suitability%20Analysis&amp;body=http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/&amp;title=Land%20Suitability%20Analysis" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Land%20Suitability%20Analysis%20http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/land-suitabilty-with-ahp-wlc/&amp;title=Land%20Suitability%20Analysis" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2020-02-27-basic-raster-operations-in-r/">Basic Raster Operations in R</a></li>
+      
+      <li><a href="/post/2020-02-12-extracting-data-from-openstreetmap/">Extracting Data from OpenStreetMap</a></li>
+      
+      <li><a href="/post/2020-02-04-scraping-craigslist-posts/">Scraping Craigslist Posts</a></li>
+      
+      <li><a href="/post/2020-01-12-using-tidycensus/">Using TidyCensus package</a></li>
+      
+      <li><a href="/post/2019-12-31-starting-with-qgis/">Starting with QGIS</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1461 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Using R to scrape points of interest from OpenStreetMap">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/">
+  <meta property="og:title" content="Extracting Data from OpenStreetMap | Nikhil Kaza">
+  <meta property="og:description" content="Using R to scrape points of interest from OpenStreetMap"><meta property="og:image" content="http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/featured.png">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-02-12T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-02-12T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/"
+  },
+  "headline": "Extracting Data from OpenStreetMap",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/featured.png"
+  ],
+  
+  "datePublished": "2020-02-12T00:00:00Z",
+  "dateModified": "2020-02-12T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Using R to scrape points of interest from OpenStreetMap"
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Extracting Data from OpenStreetMap | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Extracting Data from OpenStreetMap</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Feb 12, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    13 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 399px;">
+  <div style="position: relative">
+    <img src="/post/2020-02-12-extracting-data-from-openstreetmap/featured_hu345d821e64446b5a35c703b77788a496_2128143_720x0_resize_lanczos_2.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/leaflet/leaflet.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/leaflet/leaflet.js"></script>
+<link href="/rmarkdown-libs/leafletfix/leafletfix.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/Proj4Leaflet/proj4-compressed.js"></script>
+<script src="/rmarkdown-libs/Proj4Leaflet/proj4leaflet.js"></script>
+<link href="/rmarkdown-libs/rstudio_leaflet/rstudio_leaflet.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/leaflet-binding/leaflet.js"></script>
+<script src="/rmarkdown-libs/leaflet-providers/leaflet-providers_1.9.0.js"></script>
+<script src="/rmarkdown-libs/leaflet-providers-plugin/leaflet-providers-plugin.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#comparison-between-osm-and-google">Comparison between OSM and Google</a></li>
+<li><a href="#downloading-data">Downloading data</a></li>
+<li><a href="#comparing-with-google">Comparing with Google</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#acknowledgements">Acknowledgements</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This tutorial covers obtaining free OpenStreetMap (OSM) data. <em>OpenstreetMap (OSM)</em> is a free and open map of the world created largely by voluntary contribution of millions of people around the world. Much like Wikipedia. Since the data is free and open, there are much less restrictions to obtaining and using the data. The only condition of using OSM data is proper attribution to OSM contributors.</p>
+</div>
+<div id="comparison-between-osm-and-google" class="section level1">
+<h1>Comparison between OSM and Google</h1>
+<p>Availability of data is reasonably good in both Goolge and OSM in most parts of the world. However, the availability of Google data is better in places where there is more commercial interest and that in OSM where there is more humanitarian interst. You can use <a href = "https://tools.geofabrik.de/mc/">Map Compare</a> to compare OSM and Google in particular locations.</p>
+<p>OSM data is free to download. Overpass can be used free of cost to download small amount of data. For large datasets, use <a href = "https://download.geofabrik.de/">Geofabrik</a>. Google requires users to pay based on volume of data served after a limited daily quota.
+<br /></p>
+</div>
+<div id="downloading-data" class="section level1">
+<h1>Downloading data</h1>
+<p>OSM serves two APIs, namely Main API for editing OSM, and Overpass API for providing OSM data. We will use Overpass API to gather data in this tutorial.</p>
+<p>Data can be queried for download using a combination of search criteria lke location and type of objects. It helps to understand how OSM data is structured. OSM data is stored as a list of attributes tagged in key - value pairs of geospatial objects (points, lines or polygons). For example, for an architect’s office, the key is “office”, and the value is “architect.” For the name of the office, key is “name” and value is “ABC Design Studio.” Access an extensive list of key-value pairs through <a href="https://wiki.openstreetmap.org/wiki/Map_Features%22%3EMap%20features">OSM Wiki</a></p>
+<div id="obtaining-point-locations-of-restaurants-in-duram-from-osm" class="section level2">
+<h2>Obtaining point locations of restaurants in Duram from OSM</h2>
+<p>restaurants are tagged under amenities. Amenities, according to OSM Wiki are facilities used by visitors and residents. Here, ‘key’ is “amenity” and ‘value’ is “restaurant.” Do not forget to look for related amenities such as “pub”, “food court”, “cafe”, “fast food”, etc. Other amenities include: “university”, “music school”, “kindergarten” and the likes in education, “bus station”, “fuel”, “parking” and others in transportation, and much more.</p>
+<pre class="r"><code>library(osmdata)
+library(sf)
+library(tidyverse)
+library(leaflet)
+
+data_from_osm_df &lt;- opq (getbb (&quot;Durham, North carolina&quot;)) %&gt;% #gets bounding box
+  add_osm_feature(key = &quot;amenity&quot;, value = &quot;restaurant&quot;) %&gt;% #searches for restaurants
+  osmdata_sf() #download OSM data as sf
+
+#select name and geometry from point data for restaurants
+cafe_osm &lt;- data_from_osm_df$osm_points %&gt;% #select point data from downloaded OSM data
+  select(name, geometry) #for now just selecting the name and geometry to plot
+
+#create a plot in leaflet
+leaflet() %&gt;%
+  addProviderTiles(&quot;CartoDB.Positron&quot;) %&gt;%
+  addCircles(data = cafe_osm)</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[36.0164193,35.9999491,36.0074115,35.9970496,35.9745695,36.0157299,36.0095337,36.0093886,36.0093951,36.009527,36.0092328,36.0092395,36.0093847,36.0091803,36.0091105,36.0091184,36.0091695,36.0085101,36.0083673,36.008378,36.0084972,36.0103634,36.0103617,36.0104768,36.010456,36.0103783,36.0105699,36.010575,36.0106695,36.0107338,35.9215359,35.9200744,35.9204394,35.9054828,35.9052787,35.9051539,35.905408,36.0112862,36.0115145,36.0139833,36.0139726,36.0138372,36.0138479,36.0070336,36.0064782,35.9965625,35.9965642,35.9968825,35.9968807,35.9966365,36.0008925,36.0009632,36.0010806,36.0010099,36.0006241,36.000678,36.0005505,36.0003283,36.0002219,36.0002222,36.0002633,36.0003144,36.0004052,36.0008496,36.0007964,36.0005361,36.0073947,36.0230655,35.9956505,35.995588,35.9953983,36.0003914,35.998997,35.9217027,35.910195,36.0182362,36.011547,36.0113691,36.0114825,36.0116604,36.0103785,36.0103638,36.0104374,36.0104568,36.0104341,36.0104662,36.010472,35.9103415,35.9103064,35.9102821,35.9102778,35.9102362,35.9102417,35.910199,35.91014,35.9101487,35.910138,35.9101275,35.9100982,35.9101093,35.9100994,35.9100369,35.9101216,35.9101141,35.9101765,35.9102198,35.9102465,35.9102838,35.9102788,35.9102952,35.9102772,35.9103063,35.9103103,35.9103204,35.9103159,35.9103335,35.9103198,35.9110175,35.9109273,35.9107809,35.9109248,35.9109595,35.910956,35.9109944,35.9110037,35.9110944,35.9110358,35.9072382,35.9071534,35.9071519,35.9071332,35.9070969,35.9071177,35.9071089,35.9071432,35.9073378,35.9073502,35.9074334,35.9073774,35.9077357,35.9076744,35.9076654,35.9076264,35.907635,35.907524,35.9075768,35.9076004,35.9076119,35.9076197,35.9077094,35.9076977,35.9077881,35.9311863,35.9308345,35.9308093,35.9308301,35.9308211,35.9308041,35.9307987,35.9308157,35.9307877,35.9307937,35.9307853,35.9309061,35.9309126,35.9309271,35.9309181,35.930994,35.9310025,35.9310497,35.9310731,35.9310829,35.9311129,35.9311016,35.999523,35.9998794,36.0076968,36.008033,35.974429,35.9215998,35.9026867,36.0005987,36.0006473,36.0007536,36.0006403,36.0007876,36.0266681,36.0263457,36.0268231,36.0263019,36.0264071,36.0264449,36.0267325,36.0264436,36.026217,36.0265368,36.0267587,35.9995516,36.0175015,36.0177211,36.0177251,36.0174822,36.0174988,36.0174981,36.0175022,36.0174849,35.999966,35.9999969,35.9999993,36.0000302,35.9699518,35.9696393,35.9698818,35.9697108,35.9994984,35.9645545,35.9647678,35.964648,35.9644347,35.9125746,35.9060899,35.906151,35.9046227,35.9063199,35.9061973,35.9099779,35.8992417,35.9006532,35.9003794,35.9063106,35.8866285,35.8863812,35.8864571,35.8866013,35.8866491,35.8863616,35.8865367,35.886606,35.8864683,35.8865433,35.9687631,35.9684135,35.968801,35.9684697,35.9687788,35.9047902,36.0106854,36.010685,36.0106688,36.0107378,35.9144557,35.9142846,35.9143587,35.9142865,35.9143767,35.9141113,35.9139018,35.9143045,35.9143316,35.9146384,35.914388,35.9144715,35.9143553,35.9143372,35.9145719,35.9144455,35.9143474,35.9142425,35.914122,35.9143316,35.9145516,35.9094434,35.9092261,35.9093043,35.9092652,35.9092696,35.9093087,35.9093695,35.9093217,35.9504026,35.9502457,35.950167,35.9503239,35.9745915,35.9991461,35.99507,35.9933562,35.9967069,36.0197957,36.019796,36.019799,36.0197996,36.0198164,36.0198166,36.0198194,36.0198197,36.0198451,36.0198454,36.0199036,36.019904,36.0199457,36.0199459,36.0199581,36.0199592,36.0200067,36.0200072,36.0200176,36.0200181,35.9696443,35.9696592,35.9696627,35.969679,36.0214118,36.021469,36.021483,36.0215403,36.0321141,36.0320566,35.9544098,35.9556662,35.9557669,35.9559863,35.9547256,35.9558857,36.0318271,36.0318484,36.0311685,35.9962871,36.0245251,36.0244598,36.0242995,36.0246853,36.027599,36.0335307,36.029424,36.0292478,36.0336328,36.03372,36.033542,36.0290948,36.0336394,36.0291399,36.0291459,36.0291603,36.0337089,36.0336506,36.0289929,36.0336575,36.0294445,35.9048424,35.9517878,35.9517879,35.9515331,35.9515323,35.992539,35.9916189,35.9933029,35.9925216,36.0003496,35.9621306,35.9622584,35.9623899,35.962262,35.9610137,35.961282,35.9611525,35.9614208,35.962608,35.9647074,36.0180204,36.0180207,36.0182486,36.0182488,35.9745976,35.9685304,35.971868,35.9990732,36.0293863,36.0294011,36.0294272,36.0294288,36.0295615,36.0295632,36.0295899,36.029594,36.0296017,36.029605,36.0296108,36.0296182,35.9768794,35.9769088,35.9767285,35.9768664,35.9768395,35.9768733,35.9768186,35.9768832,35.9767603,35.9768135,35.9769288,35.976764,35.9767346,35.9769258,35.976918,35.9768776,35.9863302,35.9864128,35.98651,35.9865517,35.997125,36.0388175,36.0388287,36.0389521,36.0389633,36.0104666,36.0104759,36.0104801,36.0105001,36.0105015,35.9036323,35.9051973,35.9052229,35.9053291,35.9053394,35.9054221,35.9054273,35.9054318,35.9054522,35.9084235,35.908459,35.9084879,35.9085234,35.987053,35.9871277,35.9871357,35.987141,35.9871918,35.9872612,35.904412,35.9507108,35.9508164,35.9508432,35.9508094,35.9508735,35.9509698,35.9509838,35.9511004,35.9515324,35.9516266,35.9516621,35.9517257,35.9517562,35.9518199,35.951887,35.9519812,35.8901046,35.9125239,35.931152,35.9311435,35.9311682,35.9311243,35.9309939,35.9310757,35.9310674,35.9309623,35.9309128,35.9308929,35.9050736,35.9082223,35.9063714,35.9061454,35.9051895,35.9957291,35.995879,35.9954718,35.9955928,35.9956214,35.9956317,35.9956582,36.0035428,35.9040696,35.9040704,36.0091078,36.0091736,36.0093861,36.0094294,36.0094318,35.9038147,36.0772395,36.0577761,36.0770855,35.9966276,35.993888,35.9869769,36.0001632,35.9743525,35.9743286,35.9743195,35.9742364,35.9742397,35.9742217,35.9742498,35.9742763,35.9742807,35.9743073,35.9743109,35.9743965,35.9743932,35.9744501,35.9744449,35.9743743,35.9744968,35.9743032,35.9743526,35.9745462,35.9741645,35.9741495,35.9739993,35.9740144,35.9745259,35.9745913,35.9745976,35.9745632,35.9745721,35.9745522,35.974557,35.9744381,35.9744341,35.9744112,35.9743676,35.974495,35.9182432,35.9175,35.9011432,35.9012858,35.9012481,35.9011056,35.9011693,35.9010222,35.9010524,35.9010753,35.9010766,35.9012008,36.0165825,35.9969345,35.9969308,35.9970494,35.9970531,35.9969172,35.9969207,35.9970088,35.9970054,36.0096915,35.8796201,35.8795411,35.8795576,35.8794884,35.8794978,35.8794855,35.8795366,35.8795536,35.879581,35.8795933,35.8796085,35.8796255,35.8796529,35.8797712,35.8783782,35.8784901,35.8785231,35.8785532,35.8786736,35.8786421,35.8787439,35.8787037,35.8786707,35.878579,36.0078559,36.0097782,35.9946958,36.0093187,36.0093079,36.0094364,35.9122243,35.9004969,35.9003712,35.9005112,35.992746,35.904993,36.0065777,35.9114595,35.9112276,35.9112281,35.9114599,36.0090802,35.9015282,35.9745535,35.9242216,36.0185151,35.8903756,36.0064803,35.9972734,35.9973064,36.0224346,36.022395,36.022453,36.0224915,35.9742686,35.9550762,35.9865035,35.986485,35.9864173,36.007815,36.0405,36.0403673,36.0402664,36.0403991,35.9109287,35.911089,35.9459046,35.9460012,35.9459947,35.9459882,35.9459654,35.9459811,35.9459751,35.9459605,35.9459464,35.9458557,35.8795142,35.8794871,35.9140013,35.9140333,35.9140299,35.9141144,35.974216,35.9208276,35.9985986,35.9175928,35.9174307,35.9174295,35.9173343,35.9173077,35.9173225,35.9174314,35.9174322,35.9176105,35.9180184,35.918025,35.9208668,35.9558851,35.9113517,35.9113963,35.9113504,35.9114384,35.9115999,35.9115544,35.9115406,35.911486,35.911457,35.9114244,36.0006919,36.0007263,36.0005959,35.8804755,35.8941125,35.8939997,35.8939991,35.9555233,35.9018222,35.9687606,35.8941118,35.9006369,35.9213452,35.9122266,35.9055695,35.9055468,35.9059018,35.9087281,35.9087069,35.9559338,35.9771417,35.9628824,36.0072868,35.9041743,35.9559454,35.9559807,35.9618193,35.9627461,35.9768624,35.9768331,35.9768864,35.9769156,35.9769571,35.9769278,35.9769363,35.965863,35.9031447,35.9060498,35.9060813,35.9060731,35.9060443,35.9060868,35.9060605,36.0321112,36.0320751,36.0320492,36.0318642,35.9741825,35.9966664,35.996379,36.0092104,36.0090062,35.9197659,35.9819072,35.9656979,35.9657053,35.9656936,35.9656997,35.9657108,35.9657113,35.9658786,35.9658717,35.965908,35.9659055,35.9658678,35.9178789,35.8764261,35.9185346,35.9195127,35.9196799,35.9133859,35.9034058,35.9031894,35.9031589,35.9033754,35.9131908,35.9121729,36.0087852],[-78.9189592,-78.9056283,-78.9218713,-78.899765,-78.9243776,-78.9190261,-78.9219561,-78.9217925,-78.9219634,-78.9217817,-78.9217979,-78.9219725,-78.9216914,-78.921976,-78.9217602,-78.9219789,-78.9216957,-78.9220195,-78.9217193,-78.9220285,-78.921711,-78.9219019,-78.921559,-78.9218994,-78.9214989,-78.9215151,-78.9222091,-78.9224411,-78.922438,-78.9222189,-78.9587904,-78.9298635,-78.9296436,-78.9369403,-78.9370604,-78.9368228,-78.936671,-78.9221356,-78.9221509,-78.9216573,-78.9213913,-78.9213996,-78.9216656,-78.9472546,-78.9478468,-78.9047627,-78.9048611,-78.9048526,-78.9047541,-78.9047607,-78.9111819,-78.9113008,-78.9111941,-78.9110752,-78.9089873,-78.9089369,-78.908861,-78.9090791,-78.9091791,-78.9092314,-78.9092929,-78.9092936,-78.9092086,-78.9096532,-78.9095658,-78.9097901,-78.9471687,-78.9180611,-78.8997171,-78.8995773,-78.8997312,-78.9101619,-78.9088833,-78.9583698,-78.937649,-78.9464666,-78.9306407,-78.9308633,-78.9310018,-78.9307792,-78.9214978,-78.9215161,-78.9215903,-78.921523,-78.9215537,-78.9215523,-78.9215899,-78.7832188,-78.7831659,-78.7831293,-78.7831336,-78.7830739,-78.7830669,-78.7830026,-78.7830617,-78.7830746,-78.7830853,-78.7830693,-78.7830987,-78.7831154,-78.7831179,-78.7831806,-78.7833084,-78.783316,-78.7834101,-78.7833667,-78.7834071,-78.7833698,-78.7833623,-78.7833458,-78.7833187,-78.7832896,-78.7832957,-78.7832856,-78.7832789,-78.7832613,-78.7832405,-78.7815724,-78.7814316,-78.7815814,-78.7817975,-78.7817639,-78.7817585,-78.7817225,-78.7817362,-78.7816432,-78.7815554,-78.7847321,-78.7847625,-78.7847767,-78.7847489,-78.7847957,-78.7848178,-78.7848207,-78.784965,-78.7848952,-78.7849474,-78.7849176,-78.7846821,-78.784561,-78.7845828,-78.7845444,-78.7845583,-78.7845951,-78.7846345,-78.7848591,-78.7848507,-78.7848999,-78.7848972,-78.7848653,-78.784816,-78.7847839,-78.8085643,-78.8087074,-78.8088166,-78.8088239,-78.8088629,-78.8088569,-78.8088803,-78.8088863,-78.8090078,-78.8090099,-78.8090463,-78.8090885,-78.8090603,-78.8090653,-78.8091048,-78.8091313,-78.8090945,-78.8091112,-78.8090165,-78.8090202,-78.8088988,-78.8088945,-78.909865,-78.9096472,-78.9270681,-78.925808,-78.9245528,-78.9558401,-78.8944209,-78.9088164,-78.9097045,-78.9097425,-78.9096931,-78.9097984,-78.9238211,-78.923042,-78.9236351,-78.9230942,-78.9234416,-78.9233965,-78.9235955,-78.9231675,-78.9231967,-78.9232869,-78.9238606,-78.9082914,-78.907261,-78.9070543,-78.9072959,-78.9071007,-78.9071003,-78.9070599,-78.9073015,-78.9072615,-78.8961735,-78.8961485,-78.8962363,-78.8962113,-78.9599202,-78.9600868,-78.9601847,-78.9598227,-78.901689,-78.9727507,-78.9729251,-78.9731486,-78.9729741,-78.984037,-78.9363322,-78.9359053,-78.9451116,-78.9359846,-78.9363826,-78.9333404,-78.7634626,-78.791617,-78.7922553,-78.7849651,-78.8468523,-78.8466246,-78.8466362,-78.846665,-78.8466755,-78.8468014,-78.8466026,-78.8466153,-78.8465495,-78.8465599,-78.9580237,-78.9580357,-78.95804,-78.9578353,-78.9579676,-78.944268,-78.9222205,-78.9222053,-78.9224045,-78.9224022,-78.7825735,-78.7812249,-78.7825749,-78.7829008,-78.782586,-78.7814174,-78.781209,-78.7827783,-78.7827908,-78.7826877,-78.7825638,-78.7830499,-78.7826529,-78.7829649,-78.782859,-78.7826014,-78.7829384,-78.7822469,-78.7809972,-78.782632,-78.7828437,-78.7840051,-78.7837422,-78.7840587,-78.7836564,-78.7837208,-78.7836403,-78.78371,-78.7837208,-78.8364686,-78.8363142,-78.8364362,-78.8365906,-78.7922974,-78.9368496,-78.9010014,-78.8980807,-78.9039761,-78.9447736,-78.944703,-78.944703,-78.9445685,-78.9445686,-78.9445228,-78.9448498,-78.9447738,-78.9449141,-78.94485,-78.9450032,-78.9449146,-78.9445697,-78.9445238,-78.9448909,-78.9446617,-78.945004,-78.9448913,-78.9446622,-78.9445703,-78.959991,-78.9599348,-78.9599985,-78.9599428,-78.9503509,-78.9503789,-78.9501281,-78.9501561,-78.9797449,-78.9800174,-78.9931518,-78.9928519,-78.9926233,-78.9927707,-78.9923368,-78.9929994,-78.9799904,-78.9797138,-78.9366216,-78.9031929,-78.9554545,-78.9549835,-78.9552047,-78.9552334,-78.9153225,-78.9295464,-78.9225876,-78.9217086,-78.9296658,-78.9294895,-78.9293592,-78.9216093,-78.9295565,-78.9226159,-78.9219485,-78.9229296,-78.9296728,-78.9294831,-78.9218492,-78.9293699,-78.9229013,-78.9437566,-78.9937617,-78.9935568,-78.9937644,-78.9935553,-78.9034521,-78.9057159,-78.9045088,-78.9052438,-78.9092604,-78.9776667,-78.977772,-78.9775283,-78.977423,-78.9792834,-78.9794869,-78.9790041,-78.9792077,-78.9784324,-78.9567,-78.888363,-78.8884508,-78.8883619,-78.8884496,-78.9232827,-78.9596374,-78.9505125,-78.9094462,-78.9364472,-78.9367248,-78.9367227,-78.9367532,-78.9367113,-78.9367422,-78.9364306,-78.9365085,-78.9366463,-78.9367078,-78.9365071,-78.9366449,-78.9357456,-78.9356345,-78.9356295,-78.9355807,-78.9354754,-78.9357215,-78.9357692,-78.9355981,-78.9356171,-78.9357495,-78.9356268,-78.9357688,-78.9355162,-78.9357011,-78.9355846,-78.9355763,-78.928499,-78.9282952,-78.9285017,-78.9283971,-78.9036457,-78.9290067,-78.9288369,-78.9290203,-78.9288506,-78.9215227,-78.9218184,-78.9217812,-78.9217812,-78.9218175,-78.935963,-78.9369335,-78.9369182,-78.9370302,-78.9370566,-78.9369766,-78.9367987,-78.9370014,-78.9367838,-78.8929189,-78.8931813,-78.8929056,-78.893168,-78.9258737,-78.9258222,-78.9260569,-78.9258518,-78.9258168,-78.9259704,-78.9426472,-78.9951,-78.9952152,-78.9951844,-78.9949703,-78.9948227,-78.99526,-78.9948999,-78.994976,-78.9956071,-78.9953807,-78.9950491,-78.9957298,-78.9948488,-78.9955034,-78.9952104,-78.9950101,-78.8976869,-78.7804996,-78.8087036,-78.8088098,-78.8087097,-78.8088025,-78.8085317,-78.8085239,-78.8085585,-78.8086637,-78.8086456,-78.8087288,-78.785211,-78.7844609,-78.7851906,-78.7847722,-78.7845039,-78.8998795,-78.8997249,-78.8998683,-78.8995896,-78.8995669,-78.8996732,-78.8996287,-78.8997761,-78.9544919,-78.9543665,-78.9216993,-78.9218014,-78.9217286,-78.9217261,-78.9217873,-78.8943324,-78.9114828,-78.9303601,-78.9114449,-78.9036835,-78.8991478,-78.8983423,-78.9103681,-78.9316632,-78.93166,-78.9317627,-78.9317515,-78.931714,-78.9317115,-78.9313932,-78.9313968,-78.9313465,-78.93135,-78.9313101,-78.9313216,-78.9313586,-78.9313662,-78.9314257,-78.9314161,-78.932955,-78.9330228,-78.9332382,-78.9331704,-78.929087,-78.9292008,-78.9291705,-78.9290567,-78.9255381,-78.9253358,-78.9252884,-78.9252815,-78.9252145,-78.9252105,-78.9251737,-78.9251497,-78.9251805,-78.9251759,-78.9255063,-78.9322607,-78.9609764,-78.9609,-78.9600795,-78.9601034,-78.9604457,-78.9604218,-78.9609825,-78.9609623,-78.9606263,-78.9606295,-78.960615,-78.960632,-78.918952,-78.9163697,-78.9162768,-78.9162697,-78.9163626,-78.9178432,-78.9176789,-78.9176817,-78.917846,-78.9223473,-78.8467373,-78.8468308,-78.8468552,-78.8469405,-78.8469545,-78.8469708,-78.8470409,-78.8470187,-78.8470549,-78.8470409,-78.8470595,-78.8470374,-78.8470701,-78.8469113,-78.8480704,-78.8479271,-78.8479625,-78.8479112,-78.8480563,-78.8480846,-78.848212,-78.8482598,-78.848212,-78.8483288,-78.9223605,-78.9226829,-78.9008184,-78.9219683,-78.9216959,-78.9219612,-78.7801992,-78.8966072,-78.896689,-78.8970168,-78.9042392,-78.7841372,-78.9208011,-78.9372808,-78.9372798,-78.9371343,-78.9371353,-78.9444577,-78.8963447,-78.9253282,-78.8450704,-78.9476595,-78.8974115,-78.9479147,-78.9012646,-78.9012335,-78.9180685,-78.9181088,-78.9181906,-78.918149,-78.7935122,-78.9939405,-78.9283468,-78.9283736,-78.9283,-78.9218468,-78.9577678,-78.9578818,-78.9577022,-78.9575882,-78.7814339,-78.7816352,-78.8391284,-78.8391056,-78.8390533,-78.8390553,-78.8389339,-78.8389285,-78.8388997,-78.8389044,-78.838832,-78.8388595,-78.8470102,-78.8469731,-78.7811078,-78.7814062,-78.7813889,-78.7813984,-78.9239196,-78.9572497,-78.9072082,-78.9609725,-78.960954,-78.9609681,-78.9609588,-78.9609248,-78.9607311,-78.9607418,-78.96073,-78.9607523,-78.9609715,-78.9593904,-78.957318,-78.9964718,-78.9385352,-78.9385707,-78.9386588,-78.9387288,-78.9384195,-78.9383833,-78.9384097,-78.9383663,-78.9384218,-78.9383959,-78.9097989,-78.9098554,-78.9098883,-78.8496016,-78.8977767,-78.8977773,-78.897609,-78.9932889,-78.8943088,-78.9581842,-78.8976084,-78.896935,-78.9558515,-78.9378056,-78.7845783,-78.7843823,-78.7842557,-78.7842719,-78.7838617,-78.8407934,-78.7936388,-78.9775958,-78.9472547,-78.9356522,-78.9928637,-78.9927836,-78.9795477,-78.978261,-78.9364477,-78.9363251,-78.9363056,-78.9364282,-78.9364131,-78.9362905,-78.9364207,-78.9619535,-78.7874194,-78.9362338,-78.9362486,-78.9362753,-78.9363222,-78.9363422,-78.9362694,-78.9797818,-78.9797776,-78.9800165,-78.9799948,-78.9248806,-78.9048584,-78.9013636,-78.9448491,-78.9453288,-78.930278,-78.8777737,-78.9619448,-78.9617307,-78.96173,-78.9615542,-78.9615548,-78.9615393,-78.9615482,-78.9617461,-78.9617481,-78.9618186,-78.9618166,-78.7887971,-78.8506368,-78.7870338,-78.7888223,-78.7887129,-78.7795048,-78.8016419,-78.8016768,-78.8013887,-78.8013538,-78.7796405,-78.780105,-78.9219262],10,null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[35.8764261,36.0772395],"lng":[-78.9964718,-78.7634626]}},"evals":[],"jsHooks":[]}</script>
+<p>It is helpful to learn about the distinctions between different tags (key-value pairs). For example, the key “landuse” is used to describe the purpose for which an area is being used. Examples of values for the key “landuse” are “commercial”, “retail”, “vineyard”, “cemetery”, “religious”, etc. Landuse tags are more generic than amenities and are only used for area objects while amenities can also be used for point objects. In case of any confusion, refer to <a href = " https://wiki.openstreetmap.org/wiki/Map_Features">Map features</a>.</p>
+<p>Various amenities, land-use, roads (e.g. key=“highway”, value = “primary”, “service”, “footway”), natural land features (key=“natural”, value = “grassland”), settlements (key = “place”, value = “suburb”), power (key=“power”, value=“line”, “pole”, “transformer”), etc. may be useful in planning applications.
+<br /></p>
+</div>
+</div>
+<div id="comparing-with-google" class="section level1">
+<h1>Comparing with Google</h1>
+<p>It is useful to compare the output of OSM to Google Places. I am going to use <code>googleway</code> package for this analysis. Note the use of loops to get the next page.</p>
+<pre class="r"><code>library(googleway)
+
+str &lt;- &quot;restaurants in Durham, NC&quot;  # Construct a search string
+
+res &lt;- google_places(search_string = str, key = YOUR_API_KEY)  #Query google servers. Do not forget to set your Google API key 
+
+str(res)</code></pre>
+<pre><code>## List of 4
+##  $ html_attributions: list()
+##  $ next_page_token  : chr &quot;CvQD7QEAAEYXcN9BnsyOGVjdSqYVHri5DSgZoZWBXyp8htdwbXTrAoe6vpiS_PFS8KNiygQyvZzyYkCb6EnV-xsk7Ew-B4EqzKceFC79z8vad1E&quot;| __truncated__
+##  $ results          :&#39;data.frame&#39;:   20 obs. of  15 variables:
+##   ..$ business_status   : chr [1:20] &quot;OPERATIONAL&quot; &quot;OPERATIONAL&quot; &quot;OPERATIONAL&quot; &quot;OPERATIONAL&quot; ...
+##   ..$ formatted_address : chr [1:20] &quot;8128 Renaissance Pkwy #114, Durham, NC 27713, United States&quot; &quot;8030 Renaissance Pkwy, Durham, NC 27713, United States&quot; &quot;8030 Renaissance Pkwy, Durham, NC 27713, United States&quot; &quot;Renaissance Center, 6911 Fayetteville Rd #102, Durham, NC 27713, United States&quot; ...
+##   ..$ geometry          :&#39;data.frame&#39;:   20 obs. of  2 variables:
+##   .. ..$ location:&#39;data.frame&#39;:  20 obs. of  2 variables:
+##   .. .. ..$ lat: num [1:20] 35.9 35.9 35.9 35.9 36 ...
+##   .. .. ..$ lng: num [1:20] -79 -78.9 -78.9 -78.9 -78.9 ...
+##   .. ..$ viewport:&#39;data.frame&#39;:  20 obs. of  2 variables:
+##   .. .. ..$ northeast:&#39;data.frame&#39;:  20 obs. of  2 variables:
+##   .. .. .. ..$ lat: num [1:20] 35.9 35.9 35.9 35.9 36 ...
+##   .. .. .. ..$ lng: num [1:20] -79 -78.9 -78.9 -78.9 -78.9 ...
+##   .. .. ..$ southwest:&#39;data.frame&#39;:  20 obs. of  2 variables:
+##   .. .. .. ..$ lat: num [1:20] 35.9 35.9 35.9 35.9 36 ...
+##   .. .. .. ..$ lng: num [1:20] -79 -78.9 -78.9 -78.9 -78.9 ...
+##   ..$ icon              : chr [1:20] &quot;https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png&quot; ...
+##   ..$ id                : chr [1:20] &quot;205123152a23cbb9ed641a45e5d09b61a820527d&quot; &quot;12d972a493a527624c1427a7c8caa98f48565180&quot; &quot;e1e9c1271e4bda8bb6b947516c62bc8b6d622cba&quot; &quot;9d65d946f0c5fad1a8512b872f3b09c206d6c66b&quot; ...
+##   ..$ name              : chr [1:20] &quot;Harvest 18 Restaurant&quot; &quot;Firebirds Wood Fired Grill&quot; &quot;Maggiano&#39;s Little Italy&quot; &quot;Ted&#39;s Montana Grill&quot; ...
+##   ..$ opening_hours     :&#39;data.frame&#39;:   20 obs. of  1 variable:
+##   .. ..$ open_now: logi [1:20] TRUE TRUE TRUE TRUE TRUE TRUE ...
+##   ..$ photos            :List of 20
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3456
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/114997535574095918823\&quot;&gt;Nick Tschernia&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAQ8xBm2YoqpHAdRkaBKpt1UaVzRHKhcViwi2Hy92VJubsgSU1IWrK9dv2PSAdu8L_b6hUn0M88Jp_I-kLYcQ0JLcLudEgf8qFkE7i-Lg&quot;| __truncated__
+##   .. .. ..$ width            : int 4608
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/105289503536512287870\&quot;&gt;Aviv Shahar&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAABYCD3E1wZyKH0s-q3Riq2OhB_STCkO03dxaJTgAGguRt2oo0eBYnwJY6ZdINnFdoCIxat3EWWgtJPfhQBq-wlLhYLGtByyjYCSWvof4&quot;| __truncated__
+##   .. .. ..$ width            : int 1024
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 4032
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/105046473845443132908\&quot;&gt;Melinda Richardson&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAMOSTbyMdKl3Zg7cVlRZ0xvhQTemO7k_rQq1UfU0S2S3PLbv7H6gHAd9gv0VGZ4aAzzKdrOZadcZqgEt1WlqBleYlZ9cCncMkusAAR-t&quot;| __truncated__
+##   .. .. ..$ width            : int 3024
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 709
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/112402377131006074993\&quot;&gt;Ted&amp;#39;s Montana Grill&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAm2ElQzDuLZFtnHmcg7iy_kNknTGnqItLqNPTFrJwOL294HLMZOPt9wbpafLXi1mPcWZbVewMOB6QtPRqV6PdqpjOJKs5QiJ15h0k78I&quot;| __truncated__
+##   .. .. ..$ width            : int 1000
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/115712679935541822299\&quot;&gt;Melody Kuroda&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAu8DhctWHLSZNs_m_0HOdYoND8k11-MIdFtLflhtV_T2kd0n9jTE9nlWmHIeWUaef3SK82ObkDQxotwkvjj2RY0dQGRlI937xo6T0t-4&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2464
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/111667056766172143296\&quot;&gt;James Mc&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAFKuHaU2luNxJ4w8lGIZkpRi8VuuRZJuJtR2l7PsrzMSc7_8rnBMAuADBGbQuDFmA-hMnTP0LTwuupvscPIdrB1ZeORQsZVHmhcd4lsT&quot;| __truncated__
+##   .. .. ..$ width            : int 3093
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3036
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/105460694534638150991\&quot;&gt;SYL THECRU&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAwjIHiK2ZVsc6-hCH0UUmfnS4z7p3YRnn8m8PFkJIoC16xc1-fOkGwCxYcoiSCtRzh5J-woSWXjXA2D-VDEjMkp2PuAWi_TaEUenKsPV&quot;| __truncated__
+##   .. .. ..$ width            : int 4048
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1205
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/107150824588424836094\&quot;&gt;A Google User&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAvCyUIJZ-N8Xkkv8KsGJHrZUcKNzhP5czz7fkrK8lZnOi7LwH2IVJC8pwG4TTvuoJSKcYkuyC3FqBp2IyIMZVTMcWksR1XycQVcoHZVE&quot;| __truncated__
+##   .. .. ..$ width            : int 1805
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2160
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/112207021045049751234\&quot;&gt;Michelle Vereen&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAASoJtu2zOl6TyiloMicnelGnzFk1wXTOrM_ayziDE9zwUGzQIb8hXAtnmou_ceX7zDbyZ6FbdH7Gsn102foeoXTTOpYfThf9pr4iOiAM&quot;| __truncated__
+##   .. .. ..$ width            : int 2160
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 4160
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/100731183192056323787\&quot;&gt;Eric Woods&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAA0OW_4hCI4tQU0_rHMqjQTpYeiwoVWVyPm6NtxcWDMVad3Lykwo3_5VTpG7Fk5-JUfw2Ul_C2ZEGskbBvAeAwZjXDGPeq0EMfFnU1xqe&quot;| __truncated__
+##   .. .. ..$ width            : int 6240
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1341
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/104437791179745167409\&quot;&gt;Sandra Benton&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAaRg6uWlBSQ8zEas3Od4QNUCt5A7HpZPlXxR6peBF1vihOd-mxKS5HecBNoGrJz5ni0mobovUVMXqAHZa6jA-8HkQ-uf4HreWWNHV5aW&quot;| __truncated__
+##   .. .. ..$ width            : int 2048
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2268
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/116628488628808058987\&quot;&gt;Millie Kwan&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAhQfgWQWYNF_ICkQrfANbdCzK9Kd-dLaGc5GFgo6wDPP2NDwI0-aSTe7Cn-UI6oyx1sberGHLh7m32jaymLvMxPx5-vco6KUocG2_Wae&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 4032
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/102337295188781509685\&quot;&gt;Aaron Weinbaum&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAZtnRiJC2WoTL8zEfenEEET8gWsHU4hyXYmjD4z19DPt_VXIWFypQ-2HWEoCTyyeoucdwVwvQg6vtfkzPijvoWamX3RtaaXM2XBdPPBV&quot;| __truncated__
+##   .. .. ..$ width            : int 3024
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2914
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/108249481864151986330\&quot;&gt;Jake Herbst&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAP1Ox4j4HPvxQJLJ2mbAoudyQFuDjAkvQ7i2uA_ccvsZu8wJrR8jEQCbAbrPHXV2NRff-vksbmOJQr96MFoAX3_LzylrBqBPh682WA4u&quot;| __truncated__
+##   .. .. ..$ width            : int 3558
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 4032
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/116556684375323100386\&quot;&gt;D&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAA2MWD0JnrlnWB0Za2eqjl6bP6OAwlXMtnHNDRzTtFyKO9wJNCvVMCfA86QwMme7ECU0_d8h66Fp9QskxLmelpNbpxTyqQcVhvHXD4HIv&quot;| __truncated__
+##   .. .. ..$ width            : int 3024
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3036
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/114434663766152776745\&quot;&gt;Tim Dreher&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAH7WIgbyCgcPtCqCYAs7vLUUX9EZPGSQZP1AVVoWHpxjXHDtTvPTnZKH9EgTiIUwAaASDUe6D_uHKD7uAcklUbeVCj2rjQTwUzKVq9Kg&quot;| __truncated__
+##   .. .. ..$ width            : int 4048
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/105489010945902222279\&quot;&gt;Lizzy Stallknecht&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAARuo5qIr4FFJpcumhwunT7gz-jzGbTTAxkm8cr1plT28aMdX8452mfmwcHgmnoasVqJ8tmfJP-SvxsAYYEYpZHDqa4vS4pBozrXyLFul&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/102511155894959062096\&quot;&gt;Sanoe Badua&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAWDiGwzL6kOFfFwYHcJZU3edTfZ0BLzmOtaXdIIrT2CveZ-FZ4e5GHMdhJtzQc8OvararMkXus_o7KZ2iVpZTPrbQMJBV0oyvH1V5-L_&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3501
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/108294483674431625712\&quot;&gt;Kenny Thomson&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAD9nlNZR_qsB8KpPlMBf09vh038q3hIf2a-VSx6IKsvJ8nPwcQafHqXW20jImGgrIHEpoK5wZIVtIvKGO0DCvIjT3GB9jq19IcqKC7kx&quot;| __truncated__
+##   .. .. ..$ width            : int 3024
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2160
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/103439197535655932721\&quot;&gt;Euntaek Lim&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;CmRaAAAAbBshzl1ZHc-rRpHUimuzkKlaJb1iCxW606cpHEKYfaVPTLFH6dbst-DUUMcslsLymh_6YkpWi8eRPEQK7rMwCgvh6SP3PU10iQtT3rf&quot;| __truncated__
+##   .. .. ..$ width            : int 2880
+##   ..$ place_id          : chr [1:20] &quot;ChIJj6foxurorIkRhlH7GB_PMo0&quot; &quot;ChIJoQR3XcforIkRxzHnFHXc9ZA&quot; &quot;ChIJmUHHvrjorIkRevk33Tl7A5A&quot; &quot;ChIJaQdfIbborIkRKFdwEoNG0Hw&quot; ...
+##   ..$ plus_code         :&#39;data.frame&#39;:   20 obs. of  2 variables:
+##   .. ..$ compound_code: chr [1:20] &quot;W23W+8Q Durham, North Carolina&quot; &quot;W334+V4 Durham, North Carolina&quot; &quot;W334+QR Durham, North Carolina&quot; &quot;W337+CJ Durham, North Carolina&quot; ...
+##   .. ..$ global_code  : chr [1:20] &quot;8773W23W+8Q&quot; &quot;8773W334+V4&quot; &quot;8773W334+QR&quot; &quot;8773W337+CJ&quot; ...
+##   ..$ price_level       : int [1:20] 2 2 2 2 2 2 2 3 3 2 ...
+##   ..$ rating            : num [1:20] 4.3 4.3 4.3 4.4 4.6 4.4 4.7 4.5 4.5 4.5 ...
+##   ..$ reference         : chr [1:20] &quot;ChIJj6foxurorIkRhlH7GB_PMo0&quot; &quot;ChIJoQR3XcforIkRxzHnFHXc9ZA&quot; &quot;ChIJmUHHvrjorIkRevk33Tl7A5A&quot; &quot;ChIJaQdfIbborIkRKFdwEoNG0Hw&quot; ...
+##   ..$ types             :List of 20
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:5] &quot;restaurant&quot; &quot;bar&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
+##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
+##   .. ..$ : chr [1:8] &quot;restaurant&quot; &quot;bakery&quot; &quot;cafe&quot; &quot;bar&quot; ...
+##   .. ..$ : chr [1:6] &quot;restaurant&quot; &quot;cafe&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:6] &quot;night_club&quot; &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; ...
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:5] &quot;restaurant&quot; &quot;bar&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   ..$ user_ratings_total: int [1:20] 784 1004 2057 982 1738 583 941 270 616 429 ...
+##  $ status           : chr &quot;OK&quot;</code></pre>
+<pre class="r"><code># Notice that the result has Status code and next page token. We are going to use them to extract the restaurants.
+
+# Initiatlise some values.
+nextpage_yes_no &lt;- !is.null(res$next_page_token)
+token &lt;- res$next_page_token
+i &lt;- 1
+cafe_google_list &lt;- NULL
+
+# extract only when status is OK.
+
+if(res$status == &quot;OK&quot;) {
+    cafe_google_list[[i]] &lt;- 
+                        cbind (&quot;id&quot; = res$results$id, 
+                               &quot;name&quot; = res$results$name,
+                               &quot;address&quot; = res$results$formatted_address,
+                               &quot;longitude&quot; = res$results$geometry$location$lng,  # Notice that we are going multiple levels down in the data frame.  You should really examine the structure of the res and results to understand what is going on here.
+                               &quot;latitude&quot; = res$results$geometry$location$lat,
+                               &quot;plus_code&quot; = res$results$plus_code$compound_code,
+                               &quot;price_level&quot; = res$results$price_level,
+                               &quot;rating&quot; = res$results$rating
+                               ) %&gt;% as_tibble()
+
+}
+
+
+# The loop begins.
+
+while(nextpage_yes_no == TRUE){ #See if the loop will run at least once.
+  i &lt;- i+1 #increment i.
+  res_next &lt;- google_places(search_string = str,
+                          page_token = token,
+                          key = YOUR_API_KEY)
+
+  if(res$status == &quot;OK&quot;) {
+    cafe_google_list[[i]] &lt;- 
+                        cbind (&quot;id&quot; = res_next$results$id, 
+                               &quot;name&quot; = res_next$results$name,
+                               &quot;address&quot; = res_next$results$formatted_address,
+                               &quot;longitude&quot; = res_next$results$geometry$location$lng,
+                               &quot;latitude&quot; = res_next$results$geometry$location$lat,
+                               &quot;plus_code&quot; = res_next$results$plus_code$compound_code,
+                               &quot;price_level&quot; = res_next$results$price_level,
+                               &quot;rating&quot; = res_next$results$rating
+                               ) %&gt;% as_tibble()
+
+}
+
+
+  token &lt;- res_next$next_page_token # notice the update of the token 
+  nextpage_yes_no &lt;- !is.null(res_next$next_page_token) # Notice the update of nextpage_yes_no. If you don&#39;t do it, you can potentially run the loop forever (or at least till the server shuts you down.)
+  rm(res_next)  # clean up the temporary objects. Good practise/
+  Sys.sleep(5) # Introduce a time delay, so that you do not overwhelm the server.
+}  # The loop concludes
+
+
+# Convert the list to a sf object to visualise
+cafe_google &lt;- plyr::compact(cafe_google_list) %&gt;% bind_rows 
+cafe_google &lt;- st_as_sf(cafe_google,  coords = c(&quot;longitude&quot;, &quot;latitude&quot;), crs=4326)
+
+leaflet() %&gt;%
+  addProviderTiles(&quot;CartoDB.Positron&quot;) %&gt;%
+  addCircles(data = cafe_google)</code></pre>
+<div id="htmlwidget-2" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.Positron",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[35.9033748,35.904655,35.9044369,35.903623,35.9743043,35.9744346,35.9525897,35.9739963,36.0080117,35.9214389,36.0106604,35.9953339,36.0093635,35.9970482,35.9966667,36.0000584,35.99472,35.9932306,35.996917,35.9979014],[-78.9530741,-78.944722,-78.9429951,-78.935969,-78.9323171,-78.9331157,-78.996492,-78.9248951,-78.9265703,-78.9567028,-78.9223349,-78.9009837,-78.921955,-78.9036276,-78.9047639,-78.9055371,-78.9007883,-78.902775,-78.917697,-78.9064199],10,null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[35.9033748,36.0106604],"lng":[-78.996492,-78.9007883]}},"evals":[],"jsHooks":[]}</script>
+<p>Note that OSM report 739 entries while Google reports 20 restaurants.</p>
+<hr />
+<p>** Exercise **</p>
+<ul>
+<li>Why is there a difference between Google and OSM? (Hint: Read the documentation)</li>
+<li>If there is a marked difference between OSM and Google, what implication does this have for any analysis that you might do using their data?</li>
+<li>Notice that repeated application of the same query produce different results in in the same system. Why? What implication does this have for reproducibility?</li>
+</ul>
+<hr />
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>The povenance of the data and the continual update of data on servers have serious implications for reproducibility. On the other hand, the updates allow for timeliness of analysis. It is important to recognise the limitations and potential.</p>
+</div>
+<div id="acknowledgements" class="section level1">
+<h1>Acknowledgements</h1>
+<p>Much of the post is written by <a href="https://planning.unc.edu/student/kshitiz-khanal-2/">Kshitiz Khanal</a>.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/&amp;text=Extracting%20Data%20from%20OpenStreetMap" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/&amp;t=Extracting%20Data%20from%20OpenStreetMap" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Extracting%20Data%20from%20OpenStreetMap&amp;body=http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/&amp;title=Extracting%20Data%20from%20OpenStreetMap" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Extracting%20Data%20from%20OpenStreetMap%20http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/2020-02-12-extracting-data-from-openstreetmap/&amp;title=Extracting%20Data%20from%20OpenStreetMap" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2020-02-04-scraping-craigslist-posts/">Scraping Craigslist Posts</a></li>
+      
+      <li><a href="/post/2020-01-12-using-tidycensus/">Using TidyCensus package</a></li>
+      
+      <li><a href="/post/2019-12-31-starting-with-qgis/">Starting with QGIS</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1552 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Getting started with R &amp; R Markdown.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/">
+  <meta property="og:title" content="Introduction to R &amp; R Markdown | Nikhil Kaza">
+  <meta property="og:description" content="Getting started with R &amp; R Markdown."><meta property="og:image" content="http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/featured.png">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2019-12-31T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2019-12-31T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/"
+  },
+  "headline": "Introduction to R \u0026 R Markdown",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/featured.png"
+  ],
+  
+  "datePublished": "2019-12-31T00:00:00Z",
+  "dateModified": "2019-12-31T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Getting started with R \u0026 R Markdown."
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Introduction to R &amp; R Markdown | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Introduction to R &amp; R Markdown</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Dec 31, 2019
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    15 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 388px;">
+  <div style="position: relative">
+    <img src="/post/2019-12-31-introduction-to-r-r-markdown/featured_hu84c34592347e7992d2b84250cc68e0e1_195457_720x0_resize_lanczos_2.png" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#preliminaries">Preliminaries</a></li>
+<li><a href="#why-r">Why R?</a></li>
+<li><a href="#good-practices">Good Practices</a></li>
+<li><a href="#basic-r">Basic R</a></li>
+<li><a href="#literate-programming-and-rmarkdown">Literate programming and RMarkdown</a></li>
+<li><a href="#additional-resources">Additional Resources</a></li>
+</ul>
+</div>
+
+<div id="preliminaries" class="section level1">
+<h1>Preliminaries</h1>
+<p>To get started with this course, you will need <a href="https://www.r-project.org/">R</a>. I strongly recommend <a href="http://www.rstudio.com">Rstudio</a>. To function correctly, RStudio needs R and therefore both need to be installed on your computer. If you already have these installed, please see <a href="http://bioinfo.umassmed.edu/bootstrappers/bootstrappers-courses/courses/rCourse/Additional_Resources/Updating_R.html">this page</a> to make sure you have up to date versions of the software. We will talk about other required software as we proceed further.</p>
+</div>
+<div id="why-r" class="section level1">
+<h1>Why R?</h1>
+<ul>
+<li>Great for reproducibility</li>
+<li>Great for statistics</li>
+<li>Great for data analysis and visualization</li>
+<li>Interdisciplinary &amp; Extensible</li>
+<li>Open source &amp; Cross Platform</li>
+<li>Most GIS operations can be done in R</li>
+</ul>
+<p>See <a href="https://datacarpentry.org/R-ecology-lesson/00-before-we-start.html">R-ecology</a> for more details.</p>
+<blockquote>
+<p>Actually, I see it as part of my job to inflict R on people who are perfectly happy to have never heard of it. Happiness doesn’t equal proficient and efficient. In some cases the proficiency of a person serves a greater good than their momentary happiness.
+– Patrick Burns: R-help (April 2005)</p>
+</blockquote>
+<div id="why-not-python-or-julia-or-c" class="section level2">
+<h2>Why not Python? Or Julia? Or C++?</h2>
+<p>Mostly because I don’t know them well/or at all. They are probably great, but R works for me, for the most part. <a href="https://sebastianraschka.com/blog/2015/why-python.html">See Sebastian’s post on Why Python?.</a></p>
+</div>
+</div>
+<div id="good-practices" class="section level1">
+<h1>Good Practices</h1>
+<ul>
+<li>Keep track of who wrote what code at the top of the file and its purpose.</li>
+<li>Use comments liberally using “#”.</li>
+<li>Avoid <code>setwd()</code> and use only relative paths. If you must, use <code>setwd()</code> only at the top of the script.</li>
+<li>Distinct components of the code should ideally be separate and be accessed using <code>source()</code>. This improves legibility.</li>
+<li>Use a consistent style within your code. For example, name all dataframes to something ending in _df.</li>
+<li>Keep all of your source files for a project in the same directory, then use relative paths as necessary to access them.</li>
+<li>Memory is a problem for R, because it stores all objects in memory (mostly true). Follow good practice of deleting objects that you don’t need using <code>rm()</code>. It is rarely necessary for you to use garbage collection <code>gc()</code>. If you are running to into problems constantly
+<ul>
+<li>Consider upgrading RAM (It is becoming cheaper by the day).</li>
+<li>Consider if you can break up the data set and independently process them and reassemble them.</li>
+<li>Find alternative libraries and methods.</li>
+</ul></li>
+</ul>
+</div>
+<div id="basic-r" class="section level1">
+<h1>Basic R</h1>
+<p>Once you have R &amp; Rstudio installed, run the following to see if it is working correctly.</p>
+<pre class="r"><code>1 + 1   #add 1 + 1
+# [1] 2
+a&lt;-2:5  #Assign vector 2:5 to a variable a
+a      #print a to console
+# [1] 2 3 4 5
+runif(5)   #Generate 5 random numbers
+# [1] 0.07659150 0.37128507 0.01888288 0.49317023 0.21917203
+sessionInfo()     #What is my computer environment? (Mac, Windows, libraries etc.)
+# R version 3.6.1 (2019-07-05)
+# Platform: x86_64-apple-darwin15.6.0 (64-bit)
+# Running under: macOS Mojave 10.14.6
+# 
+# Matrix products: default
+# BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+# LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+# 
+# locale:
+# [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+# 
+# attached base packages:
+# [1] stats     graphics  grDevices utils     datasets  methods   base     
+# 
+# loaded via a namespace (and not attached):
+#  [1] compiler_3.6.1  magrittr_1.5    bookdown_0.12   tools_3.6.1    
+#  [5] htmltools_0.3.6 yaml_2.2.0      Rcpp_1.0.2      stringi_1.4.3  
+#  [9] rmarkdown_1.14  blogdown_0.14   knitr_1.23      stringr_1.4.0  
+# [13] digest_0.6.20   xfun_0.8        evaluate_0.14</code></pre>
+<p>The output of the last two commands will be different on your computer than what is being shown.</p>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>If a vector a is (4,6,5,7, 10, 9, 4, 15), how many elements are over 7? What position in the vector are they?</li>
+<li>if b is 3, what is a+b? If b is (2,5), what is a+b?</li>
+</ul>
+<hr />
+</div>
+<div id="literate-programming-and-rmarkdown" class="section level1">
+<h1>Literate programming and RMarkdown</h1>
+<p><a href="https://en.wikipedia.org/wiki/Literate_programming">Literate Programming</a> is a concept introduced by Donald Knuth. The fundamental premis is that one should write code that communicates primarily to hummans, not computers. Here are some examples:</p>
+<ul>
+<li><a href="https://remi-daigle.github.io/2017-CHONe-Data/Rmarkdown.nb.html">Introduction to Literate Programming in R</a></li>
+<li><a href="https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html">Jane Austen and R</a></li>
+</ul>
+<p><a href="https://rmarkdown.rstudio.com/">R Markdown</a> allows you easily write documents that contain: R code, text, images, links, etc. You are required to use it for this course and you should effectively use it as a lab notebook for your data analysis everywhere. This and other tutorials in this sequence are written in Rmarkdown.</p>
+<div id="getting-started-with-markdown" class="section level2">
+<h2>Getting started with Markdown</h2>
+<p>To start a new Markdown file, open up Rstudio and follow the following picture.
+<img src="img/Rmarkdown_screenshot.png" /></p>
+<p>The created template is quite informative. Use <em>Knit</em> on the top to see the output of the template.
+<img src="img/Rmarkdown_yaml.png" /></p>
+<p>The parameters between the two <code>---</code> is a YAML header. YAML(YAML Ain’t Markup Language) is a human-readable data serialization language. Most of the document rendering settings are there. Experiment with them. By simply changing the output format, we can get a doc file or a html file.</p>
+<p>The rest of the document is formatted according to markdown syntax. Below are some useful syntax to structure your documents.</p>
+<pre><code># Heading 1
+## Heading 2
+
+
+*italics*
+
+**bold**
+
+~~strikethrough~~
+
+~subscript~
+
+^superscript^
+
+![](pictures/notebook.png)
+
+[link](www.link.com)
+
+$E = mc^2$
+
+$$y = \mu + \sum_{i=1}^p \beta_i x_i + \epsilon$$</code></pre>
+<p>Other syntax are available at <a href="https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">Rstudio website</a>.</p>
+</div>
+<div id="r-markdown" class="section level2">
+<h2>R Markdown</h2>
+<p>To include R code in your file you can insert a code chunk with</p>
+<ul>
+<li>the keyboard shortcut Ctrl + Alt + I (OS X: Cmd + Option + I)</li>
+<li>the Add Chunk command in the editor toolbar</li>
+<li>or by typing the chunk delimiters ```{r} and ```</li>
+</ul>
+<p>Chunk output can be customized with <a href="https://yihui.name/knitr/options/">knitr options</a>⧉, arguments set in the {} of a chunk header. The main ones are <code>include</code>, <code>cache</code>, <code>echo</code>, <code>message</code>, <code>warning</code> and <code>fig.cap</code></p>
+<p>Here is an example</p>
+<pre class="r"><code>summary(cars) #cars is a dataset included in base R
+#      speed           dist       
+#  Min.   : 4.0   Min.   :  2.00  
+#  1st Qu.:12.0   1st Qu.: 26.00  
+#  Median :15.0   Median : 36.00  
+#  Mean   :15.4   Mean   : 42.98  
+#  3rd Qu.:19.0   3rd Qu.: 56.00  
+#  Max.   :25.0   Max.   :120.00</code></pre>
+<p>It is often the case that when markdown files get big, it is useful to cache the output using the cache option for the code chunks.</p>
+<p>Embedding graphics created from R is also very easy.</p>
+<pre class="r"><code>plot(cars$speed, cars$dist)</code></pre>
+<p><img src="/post/2019-12-31-introduction-to-r-r-markdown/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Extend the template that creating Rmarkdown file with one more R command and one more graphic on cars dataset</li>
+</ul>
+<hr />
+<p>Embedding graphics created from external programs is also straight forward. There are many ways to do it (for example using the <code>![](./img/anaconda.png)</code> as noted above), but I prefer the following approach.</p>
+<pre class="r"><code>library(knitr) # include_graphics is a command in knitr package. We need to explictly initialise it once per session using the library command.
+include_graphics(&quot;./img/anaconda.png&quot;) # Change the file path suitably.</code></pre>
+<div class="figure"><span id="fig:anaconda"></span>
+<img src="img/anaconda.png" alt="An external image" width="50%" />
+<p class="caption">
+Figure 1: An external image
+</p>
+</div>
+</div>
+<div id="reading-real-data-into-r" class="section level2">
+<h2>Reading real data into R</h2>
+<p>In this course, we are going to follow the tidyverse style of programming and its associated packages. To read a comma separated file (*.csv) we are going to use <code>read_csv</code> command from <code>tidyverse</code> package.</p>
+<p>Download the latest building violations data from <a href="https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr">building violations data</a> from the Chicago Open Data Portal. For convenience, <a href="./datasets/Building_Violations.csv">a local copy downloaded in 2019 is stored here</a>.</p>
+<pre class="r"><code>library(tidyverse)
+chicago_df &lt;- read_csv(&quot;./datasets/Building_violations.csv&quot;)
+
+summary(chicago_df)
+#        ID          VIOLATION LAST MODIFIED DATE VIOLATION DATE    
+#  Min.   : 219970   Length:1682199               Length:1682199    
+#  1st Qu.:2846372   Class :character             Class :character  
+#  Median :4173309   Mode  :character             Mode  :character  
+#  Mean   :4041069                                                  
+#  3rd Qu.:5328152                                                  
+#  Max.   :6404250                                                  
+#                                                                   
+#  VIOLATION CODE     VIOLATION STATUS   VIOLATION STATUS DATE
+#  Length:1682199     Length:1682199     Length:1682199       
+#  Class :character   Class :character   Class :character     
+#  Mode  :character   Mode  :character   Mode  :character     
+#                                                             
+#                                                             
+#                                                             
+#                                                             
+#  VIOLATION DESCRIPTION VIOLATION LOCATION VIOLATION INSPECTOR COMMENTS
+#  Length:1682199        Length:1682199     Length:1682199              
+#  Class :character      Class :character   Class :character            
+#  Mode  :character      Mode  :character   Mode  :character            
+#                                                                       
+#                                                                       
+#                                                                       
+#                                                                       
+#  VIOLATION ORDINANCE INSPECTOR ID       INSPECTION NUMBER 
+#  Length:1682199      Length:1682199     Min.   :  265575  
+#  Class :character    Class :character   1st Qu.: 2306938  
+#  Mode  :character    Mode  :character   Median :10422051  
+#                                         Mean   : 8062623  
+#                                         3rd Qu.:11692850  
+#                                         Max.   :13061126  
+#                                                           
+#  INSPECTION STATUS  INSPECTION WAIVED  INSPECTION CATEGORY
+#  Length:1682199     Length:1682199     Length:1682199     
+#  Class :character   Class :character   Class :character   
+#  Mode  :character   Mode  :character   Mode  :character   
+#                                                           
+#                                                           
+#                                                           
+#                                                           
+#  DEPARTMENT BUREAU    ADDRESS          STREET NUMBER   STREET DIRECTION  
+#  Length:1682199     Length:1682199     Min.   :    1   Length:1682199    
+#  Class :character   Class :character   1st Qu.: 1648   Class :character  
+#  Mode  :character   Mode  :character   Median : 3746   Mode  :character  
+#                                        Mean   : 4151                     
+#                                        3rd Qu.: 6229                     
+#                                        Max.   :13770                     
+#                                                                          
+#  STREET NAME        STREET TYPE        PROPERTY GROUP        SSA         
+#  Length:1682199     Length:1682199     Min.   :  1000   Min.   : 1.0     
+#  Class :character   Class :character   1st Qu.: 20560   1st Qu.:22.0     
+#  Mode  :character   Mode  :character   Median :154437   Median :34.0     
+#                                        Mean   :202155   Mean   :33.8     
+#                                        3rd Qu.:367135   3rd Qu.:49.0     
+#                                        Max.   :678027   Max.   :69.0     
+#                                                         NA&#39;s   :1359814  
+#  LATITUDE       LONGITUDE      LOCATION      
+#  Mode:logical   Mode:logical   Mode:logical  
+#  NA&#39;s:1682199   NA&#39;s:1682199   NA&#39;s:1682199  
+#                                              
+#                                              
+#                                              
+#                                              
+# 
+
+nrow(chicago_df)
+# [1] 1682199
+
+str(chicago_df)
+# Classes &#39;spec_tbl_df&#39;, &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:  1682199 obs. of  26 variables:
+#  $ ID                          : num  3282077 1721274 1551698 1551137 1551226 ...
+#  $ VIOLATION LAST MODIFIED DATE: chr  &quot;10/14/2009&quot; &quot;10/24/2006&quot; &quot;05/14/2008&quot; &quot;08/11/2006&quot; ...
+#  $ VIOLATION DATE              : chr  &quot;10/07/2009&quot; &quot;10/10/2006&quot; &quot;08/07/2006&quot; &quot;08/07/2006&quot; ...
+#  $ VIOLATION CODE              : chr  &quot;CN198019&quot; &quot;CN198019&quot; &quot;PL159027&quot; &quot;CN069034&quot; ...
+#  $ VIOLATION STATUS            : chr  &quot;OPEN&quot; &quot;OPEN&quot; &quot;COMPLIED&quot; &quot;OPEN&quot; ...
+#  $ VIOLATION STATUS DATE       : chr  NA NA &quot;05/13/2008&quot; NA ...
+#  $ VIOLATION DESCRIPTION       : chr  &quot;FILE BLDG REGISTRATION&quot; &quot;FILE BLDG REGISTRATION&quot; &quot;RESET LOOSE FIXTURE&quot; &quot;REPAIR AREAWAY WALL&quot; ...
+#  $ VIOLATION LOCATION          : chr  NA NA &quot;BL00947 CRT&quot; NA ...
+#  $ VIOLATION INSPECTOR COMMENTS: chr  NA &quot;BUILDING NOT REGISTERED 2005-06&quot; &quot;RESET LOOSE FIXTURE TOILET APARTMENT 3N&quot; &quot;REAR AREAWAY WALLS COLLAPSING INWARD&quot; ...
+#  $ VIOLATION ORDINANCE         : chr  &quot;File building registration statement with Building Dept. (13-10-030, 13-10-040)&quot; &quot;File building registration statement with Building Dept. (13-10-030, 13-10-040)&quot; &quot;Reset loose plumbing fixture.  (18-29-102.3)&quot; &quot;Failed to maintain areaway walls in sound condition and good repair.  (13-196-530, 13-196-530(b), 13-196-641)&quot; ...
+#  $ INSPECTOR ID                : chr  &quot;BL00873&quot; &quot;BL00878&quot; &quot;BL00947&quot; &quot;BL00875&quot; ...
+#  $ INSPECTION NUMBER           : num  2811514 1135854 1528412 1426083 1426083 ...
+#  $ INSPECTION STATUS           : chr  &quot;CLOSED&quot; &quot;FAILED&quot; &quot;FAILED&quot; &quot;FAILED&quot; ...
+#  $ INSPECTION WAIVED           : chr  &quot;N&quot; &quot;N&quot; &quot;N&quot; &quot;N&quot; ...
+#  $ INSPECTION CATEGORY         : chr  &quot;COMPLAINT&quot; &quot;PERIODIC&quot; &quot;PERIODIC&quot; &quot;PERIODIC&quot; ...
+#  $ DEPARTMENT BUREAU           : chr  &quot;DEMOLITION&quot; &quot;CONSERVATION&quot; &quot;CONSERVATION&quot; &quot;CONSERVATION&quot; ...
+#  $ ADDRESS                     : chr  &quot;3918 S WELLS ST&quot; &quot;747 E 65TH ST&quot; &quot;6431 S COTTAGE GROVE AVE&quot; &quot;6431 S COTTAGE GROVE AVE&quot; ...
+#  $ STREET NUMBER               : num  3918 747 6431 6431 6431 ...
+#  $ STREET DIRECTION            : chr  &quot;S&quot; &quot;E&quot; &quot;S&quot; &quot;S&quot; ...
+#  $ STREET NAME                 : chr  &quot;WELLS&quot; &quot;65TH&quot; &quot;COTTAGE GROVE&quot; &quot;COTTAGE GROVE&quot; ...
+#  $ STREET TYPE                 : chr  &quot;ST&quot; &quot;ST&quot; &quot;AVE&quot; &quot;AVE&quot; ...
+#  $ PROPERTY GROUP              : num  304205 19591 19612 19612 19612 ...
+#  $ SSA                         : num  NA NA NA NA NA NA NA NA NA NA ...
+#  $ LATITUDE                    : logi  NA NA NA NA NA NA ...
+#  $ LONGITUDE                   : logi  NA NA NA NA NA NA ...
+#  $ LOCATION                    : logi  NA NA NA NA NA NA ...
+#  - attr(*, &quot;problems&quot;)=Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:  5042058 obs. of  5 variables:
+#   ..$ row     : int  1446 1446 1446 1447 1447 1447 1448 1448 1448 1449 ...
+#   ..$ col     : chr  &quot;LATITUDE&quot; &quot;LONGITUDE&quot; &quot;LOCATION&quot; &quot;LATITUDE&quot; ...
+#   ..$ expected: chr  &quot;1/0/T/F/TRUE/FALSE&quot; &quot;1/0/T/F/TRUE/FALSE&quot; &quot;1/0/T/F/TRUE/FALSE&quot; &quot;1/0/T/F/TRUE/FALSE&quot; ...
+#   ..$ actual  : chr  &quot;41.870030772&quot; &quot;-87.697338652&quot; &quot;(41.87003077167112, -87.6973386523565)&quot; &quot;41.940686661&quot; ...
+#   ..$ file    : chr  &quot;&#39;./datasets/Building_violations.csv&#39;&quot; &quot;&#39;./datasets/Building_violations.csv&#39;&quot; &quot;&#39;./datasets/Building_violations.csv&#39;&quot; &quot;&#39;./datasets/Building_violations.csv&#39;&quot; ...
+#  - attr(*, &quot;spec&quot;)=
+#   .. cols(
+#   ..   ID = col_double(),
+#   ..   `VIOLATION LAST MODIFIED DATE` = col_character(),
+#   ..   `VIOLATION DATE` = col_character(),
+#   ..   `VIOLATION CODE` = col_character(),
+#   ..   `VIOLATION STATUS` = col_character(),
+#   ..   `VIOLATION STATUS DATE` = col_character(),
+#   ..   `VIOLATION DESCRIPTION` = col_character(),
+#   ..   `VIOLATION LOCATION` = col_character(),
+#   ..   `VIOLATION INSPECTOR COMMENTS` = col_character(),
+#   ..   `VIOLATION ORDINANCE` = col_character(),
+#   ..   `INSPECTOR ID` = col_character(),
+#   ..   `INSPECTION NUMBER` = col_double(),
+#   ..   `INSPECTION STATUS` = col_character(),
+#   ..   `INSPECTION WAIVED` = col_character(),
+#   ..   `INSPECTION CATEGORY` = col_character(),
+#   ..   `DEPARTMENT BUREAU` = col_character(),
+#   ..   ADDRESS = col_character(),
+#   ..   `STREET NUMBER` = col_double(),
+#   ..   `STREET DIRECTION` = col_character(),
+#   ..   `STREET NAME` = col_character(),
+#   ..   `STREET TYPE` = col_character(),
+#   ..   `PROPERTY GROUP` = col_double(),
+#   ..   SSA = col_double(),
+#   ..   LATITUDE = col_logical(),
+#   ..   LONGITUDE = col_logical(),
+#   ..   LOCATION = col_logical()
+#   .. )</code></pre>
+<p>Looking at the data gives you a lot information about how the data is read and stored. You will find that quirks of data types and storage produce many unexpected results. Pay close attention to this step to avoid countless hours of debugging. For example, why is Latitude and Longitude represented as T/F rather than a number?</p>
+<hr />
+<p><strong>Exercise</strong></p>
+<p>It is useful to develop specific naming conventions for variables and datasets, so that your code will be legible to you later on.</p>
+<ul>
+<li>Notice that column names have spaces in them. Rename the columns replacing the space with an underscore, using <code>rename</code> command from tidyverse package</li>
+<li>Notice that VIOLATION DATE column is read in as a character but should really be a date. Using <code>mdy</code> command from lubridate package and <code>mutate</code> command from tidyverse, convert this column to date variable type and save it.</li>
+<li>Notice that parsing the file resulted in a lot of errors that read_csv gracefully skipped over. Examine the data file to understand what these errors are. Can you read the file correctly, by explictly specifying the <code>col_types</code> in read_csv command. See help for read_csv.</li>
+</ul>
+<hr />
+</div>
+<div id="basic-data-manipulation" class="section level2">
+<h2>Basic Data Manipulation</h2>
+<p>To find out the different violations issued by different bureaus and their status, we can create a contingency table using the <code>table</code> function.</p>
+<pre class="r"><code>chicago_cont_table_df &lt;- table(chicago_df$`DEPARTMENT BUREAU`, chicago_df$`VIOLATION STATUS`) 
+chicago_cont_table_df
+#                             
+#                              COMPLIED NO ENTRY   OPEN
+#   BOILER                        24690        0   6605
+#   CONSERVATION                 425176     5591 683412
+#   CONSTRUCTION EQUIPMENT          526        0     40
+#   DEMOLITION                    11919        0 113397
+#   ELECTRICAL                    17386        0  19927
+#   ELEVATOR                      57378        0  28860
+#   IRON                           5590        0   8779
+#   NEW CONSTRUCTION               8070        0  22008
+#   PLUMBING                      10626        0  17719
+#   REFRIGERATION                 12552        0  17170
+#   SIGNS                           976        0  13615
+#   SPECIAL INSPECTION PROGRAM    11895        0   9229
+#   SPECIAL TASK FORCE            40246        0  75743
+#   VENTILATION                   18439        0  13847
+#   WATER                           275        0    513</code></pre>
+<p><code>$</code> is special function that allows us access to the columns in a dataset. We use `` to access columns whose names have spaces or other special characters. Note that R is sensitive to capitalistation.</p>
+<p>Notice that “No Entry” category is not relevant for most categories, so we ignore those records and create a barplot of this table.</p>
+<pre class="r"><code>chicago_df2 &lt;- chicago_df[chicago_df$`VIOLATION STATUS` != &quot;NO ENTRY&quot;,] #!=  is logical operator meaning not equal to.
+chicago_cont_table_df2 &lt;- table(chicago_df2$`VIOLATION STATUS`, chicago_df2$`DEPARTMENT BUREAU`) # Notice the flip from before. This is done to make the barplot work.
+
+colrs &lt;- c(&quot;Green&quot;,&quot;Red&quot;)
+
+barplot(as.matrix(chicago_cont_table_df2 ), main=&quot;Bar Chart&quot;, ylab = &quot;Count&quot;, cex.lab = 1.1, cex.main = 1.4, beside=TRUE, col= colrs)
+legend(&quot;topright&quot;, c(&quot;Complied&quot;, &quot;Open&quot;), cex=1.3, bty=&quot;n&quot;, fill=colrs)</code></pre>
+<p><img src="/post/2019-12-31-introduction-to-r-r-markdown/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<hr />
+<p><strong>Exercise</strong></p>
+<p>The above is a terrible graphic and is used for demonstration purposes only. What is wrong with this graphic?</p>
+<hr />
+<p>We can also subset the dataset by restricting it to 2008-2009 and write it out a separate dataset</p>
+<pre class="r"><code>
+
+chicago_df %&gt;%
+  filter(year(`VIOLATION DATE`) &gt;= 2008 &amp; year(`VIOLATION DATE`) &lt; 2009) %&gt;% #This will only work if you successfully used mdy function to convert VIOLATION DATE into a date format, instead of a character
+  write_csv(&quot;./datasets/violations_2008.csv&quot;)</code></pre>
+<p>Notice few things that are important
+- <code>%&gt;%</code> is called a pipe operator. A combination function <span class="math inline">\(f(g(x))\)</span> where <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are functions and <span class="math inline">\(x\)</span> is the argument can be written as <code>x %&gt;% f() %&gt;% g()</code>. You will do well to get comfortable with this pipe operator as it makes the code cleaner. It is part of <code>magittr</code> package, which is loaded when you call <code>library(tidyverse)</code> in the earlier section of the code. See <a href="https://www.datacamp.com/community/tutorials/pipe-r-tutorial">this tutorial</a> for details.</p>
+<ul>
+<li><p><code>&amp;</code> is a logical operator. <code>&amp;</code> and <code>&amp;&amp;</code> indicate logical AND and <code>|</code> and <code>||</code> indicate logical OR. The shorter form performs elementwise comparisons in much the same way as arithmetic operators. The longer form evaluates left to right examining only the first element of each vector. Evaluation proceeds only until the result is determined. The longer form is appropriate for programming control-flow and typically preferred in if clauses.</p></li>
+<li><p>I could have simply used year(.) == 2008 to achieve the same result. But in what situations will this code fail to do what you want it to do? Hint: 2008 could be stored and interpreted in R in lot of different ways (double, character, Date).</p></li>
+<li><p><code>filter</code> is function from tidyverse that subsets the data by filter rows. A corresponding function that subsets columns is called <code>select</code>.</p></li>
+<li><p><code>write_csv</code> is a function that writes a dataset into a csv file.</p></li>
+</ul>
+<p>Now consider that you want to programmatically create subsets of this data by year for each year. You can repeat the above code numerous times, each time modifying the filter function and the file path in the write_csv function. Such procedure is tedious. Instead, we can write a function that takes year as a argument, and repeatedly call the function with the right argument.</p>
+<pre class="r"><code>write_chicago_df_fun &lt;- function(yr){  #yr is an argument. Avoid using names that are already other functions, such as year.
+  file_name_str &lt;- paste(&quot;./datasets/violations_&quot;, yr, &quot;.csv&quot; ,sep=&quot;&quot;) # This will create a string &quot;./datasets/voilations_2008.csv&quot; when yr == 2008 and store it in the variable &quot;file_name_str&quot;
+  
+   chicago_df %&gt;%
+  filter(year(`VIOLATION DATE`) == yr) %&gt;%  # Note the ==
+  write_csv(file_name_str)
+
+  return() #return null, because we are already writing the dataset into a disk file.
+} 
+
+
+for (yr2 in 2006:2020){  # I am using yr2 as a variable to avoid confusion between arguments.
+  write_chicago_df_fun(yr2)
+}</code></pre>
+<pre class="r"><code># Alternately, if you don&#39;t think that you will use the write_chicago_df_fun again you can just write a loop
+
+for (yr2 in 2006:2020){
+  file_name_str &lt;- paste(&quot;./datasets/violations_&quot;, yr2, &quot;.csv&quot; ,sep=&quot;&quot;) #
+  
+  chicago_df %&gt;%
+  filter(year(`VIOLATION DATE`) == yr2) %&gt;%  # Note the yr2
+  write_csv(file_name_str)
+  
+  rm(file_name_str) #It is a good practise to clean up after yourself.
+}
+</code></pre>
+<p>You should see all the files correctly labelled as below</p>
+<p><img src="img/files.png" /></p>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li><p>Notice that I included 2020 in the loop and R faithfully produced an empty file called <code>violations_2020.csv</code>. While this is innocuous at the moment, user errors might create unexpected results. Add some error checking to the function and trap these situations. Do not simply change the for loop condition.</p></li>
+<li><p>Adapt the function and the for loop to write out files in two year increments e.g. <code>violations_2006_2007.csv</code> and <code>violations_2008_2009.csv</code></p></li>
+<li><p>Can you find a more R way to replace the for loop? Hint: use <code>sapply</code>.</p></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="additional-resources" class="section level1">
+<h1>Additional Resources</h1>
+<ul>
+<li><a href="https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">R markdown cheatsheet</a></li>
+<li><a href="https://www.computerworld.com/article/2497143/business-intelligence-beginner-s-guide-to-r-introduction.html">Starting with R from Computer World</a></li>
+<li><a href="https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf">Data import cheatsheet</a></li>
+</ul>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/&amp;text=Introduction%20to%20R%20&amp;amp;%20R%20Markdown" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/&amp;t=Introduction%20to%20R%20&amp;amp;%20R%20Markdown" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Introduction%20to%20R%20&amp;amp;%20R%20Markdown&amp;body=http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/&amp;title=Introduction%20to%20R%20&amp;amp;%20R%20Markdown" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Introduction%20to%20R%20&amp;amp;%20R%20Markdown%20http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/2019-12-31-introduction-to-r-r-markdown/&amp;title=Introduction%20to%20R%20&amp;amp;%20R%20Markdown" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/exploratory-data-analysis-visualisation/">Exploratory Data Analysis &amp; Visualisation</a></li>
+      
+      <li><a href="/post/using-network-ananlysis-to-identify-clusters-of-deprivation/">Regions of Deprivation</a></li>
+      
+      <li><a href="/post/using-google-api-for-planning/">Using Google API for Planning</a></li>
+      
+      <li><a href="/post/analysing-urban-neworks/">Analysing Urban Neworks</a></li>
+      
+      <li><a href="/post/machine-learning-for-remote-sensing/">Machine Learning for Remote Sensing</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

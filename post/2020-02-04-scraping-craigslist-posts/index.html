@@ -1,0 +1,1347 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Using R to scrape rental listings from Craigslist">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/">
+  <meta property="og:title" content="Scraping Craigslist Posts | Nikhil Kaza">
+  <meta property="og:description" content="Using R to scrape rental listings from Craigslist"><meta property="og:image" content="http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/featured.jpg">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/featured.jpg"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-02-04T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-02-04T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/"
+  },
+  "headline": "Scraping Craigslist Posts",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/featured.jpg"
+  ],
+  
+  "datePublished": "2020-02-04T00:00:00Z",
+  "dateModified": "2020-02-04T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Using R to scrape rental listings from Craigslist"
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Scraping Craigslist Posts | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Scraping Craigslist Posts</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Feb 4, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    9 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 759px;">
+  <div style="position: relative">
+    <img src="/post/2020-02-04-scraping-craigslist-posts/featured_hu3c469692c90faec2880867abde1806b4_272598_720x0_resize_q90_lanczos.jpg" alt="" class="featured-image">
+    <span class="article-header-caption">Boeing, G. and P. Waddell. 2017. “New Insights into Rental Housing Markets across the United States: Web Scraping and Analyzing Craigslist Rental Listings.” Journal of Planning Education and Research, 37 (4), 457-476. doi:10.1177/0739456X16664789</span>
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/leaflet/leaflet.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/leaflet/leaflet.js"></script>
+<link href="/rmarkdown-libs/leafletfix/leafletfix.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/Proj4Leaflet/proj4-compressed.js"></script>
+<script src="/rmarkdown-libs/Proj4Leaflet/proj4leaflet.js"></script>
+<link href="/rmarkdown-libs/rstudio_leaflet/rstudio_leaflet.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/leaflet-binding/leaflet.js"></script>
+<script src="/rmarkdown-libs/leaflet-providers/leaflet-providers_1.9.0.js"></script>
+<script src="/rmarkdown-libs/leaflet-providers-plugin/leaflet-providers-plugin.js"></script>
+
+
+<div id="getting-started" class="section level1">
+<h1>Getting Started</h1>
+<p>When the data is unstructured or seemingly unstructured, we can still use R to create some structure. In this post I am going to demonstrate how to scrape a html page to extract the relevant information and convert them into a table for further analysis. In this particular example, we want to use Craigslist. Usual disclaimers about data retrieval and storage apply. Please consult a lawyer, especially if you use the data for non-research purposes. Also you can follow along the <a href="https://newmedialaw.proskauer.com/screen-scraping/">evolving landscape of the media law on this topic</a>.</p>
+</div>
+<div id="additional-resources" class="section level1">
+<h1>Additional Resources</h1>
+<ul>
+<li><p>Munzert, Simon, Christian Rubba, Peter Meißner, and Dominic Nyhuis. 2014. <a href="https://onlinelibrary-wiley-com.libproxy.lib.unc.edu/doi/book/10.1002/9781118834732">Automated Data Collection with R: A Practical Guide to Web Scraping and Text Mining</a>. 1 edition. Chichester, West Sussex, United Kingdom: Wiley.</p></li>
+<li><p>Pittard, Steve. 2019. <a href="https://steviep42.github.io/webscraping/book/.">Web Scraping with R</a>.</p></li>
+</ul>
+</div>
+<div id="understanding-the-structure-of-the-query" class="section level1">
+<h1>Understanding the structure of the query</h1>
+<p>In this post, I am going to demonstrate how to scrape and assemble the rental listings in Boston. To start, it is useful to use your browser to access the webpage.</p>
+<p><code>https://boston.craigslist.org/d/apts-housing-for-rent/search/apa</code></p>
+<p>The results should look like this</p>
+<p><img src="img/craigslist1.png" /></p>
+<p>On the left hand corner, you will notice that there are forms that you can use limit the search results. For example,</p>
+<p><code>https://boston.craigslist.org/search/apa?postedToday=1&amp;max_price=2000&amp;availabilityMode=0&amp;broker_fee=1&amp;sale_date=all+dates</code></p>
+<p>refers to a search with</p>
+<ol style="list-style-type: decimal">
+<li>“posted today” is checked</li>
+<li>“maximum price” is “2000 usd”</li>
+<li>“availability” is set to “all dates”</li>
+<li>“no broker fee” is checked</li>
+<li>“open house date” is set to “all dates”</li>
+</ol>
+<p>Few things to note.</p>
+<ol style="list-style-type: decimal">
+<li>Cities are subdomains. i.e. if you need to information about Raleigh, you need to use <code>https://raleigh.craigslist.org/</code></li>
+<li>The second bit of it <code>/d/apts-housing-for-rent/search/apa</code> is same for all cities but will change if you want to scrape something other than apartments.</li>
+<li>The browser uses a <code>https</code> protocol instead of a <code>http</code> protocol. This is more secure, but ocassionally poses problems for accessing the web using <code>curl</code> instead of a browser. cURL is a command-line tool for getting or sending data including files using URL syntax often used explcitly within scripts that are used for webscraping.</li>
+<li>The arguments start after <code>?</code>.</li>
+<li>Match the options checked on the browser to the variables in the url and the values they take. For example, <code>postedToday</code> and <code>broker_fee</code> are set to 1 when corresponding boxes are checked.</li>
+<li>Variables are concatenated using <code>&amp;</code> in the url string.</li>
+<li>It looks like the spaces in <code>all dates</code> are replaced with a <code>+</code>. Usually they are replaced by <code>%20</code> a hexadecimal code for space. It is useful to <a href="https://www.w3schools.com/tags/ref_urlencode.ASP">understand the hex codes</a> for special characters.</li>
+</ol>
+<p>Based on the understanding of the above url, we can use conventional string manipulation to construct the url in R as follows.</p>
+<pre class="r"><code>
+library(tidyverse)
+library(rvest)
+library(leaflet)
+
+location &lt;- &#39;boston&#39;
+bedrooms &lt;- 2
+bathrooms &lt;- 2
+min_sqft &lt;- 900
+
+baseurl &lt;- paste0(&quot;https://&quot;, location, &quot;.craigslist.org/search/apa&quot;)
+
+# Build out the query
+queries &lt;- c(&quot;?&quot;)
+queries &lt;- c(queries, paste0(&quot;bedrooms=&quot;, bedrooms))
+queries &lt;- c(queries, paste0(&quot;bathrooms=&quot;, bathrooms))
+queries &lt;- c(queries, paste0(&quot;minSqft=&quot;, min_sqft))
+
+query_url &lt;- paste0(baseurl,queries[1], paste(queries[2:length(queries)], collapse = &quot;&amp;&quot;))</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<p>Try out the different urls and understand how the query to the server works. i.e. try different cities, different types of ads and different arguments to the queries. It is useful to construct different urls by typing them out so that you understand the syntax.</p>
+<hr />
+</div>
+<div id="figuring-out-the-structure-of-the-results" class="section level1">
+<h1>Figuring out the structure of the results</h1>
+<p>An url request to the server usually results in an HTML page that is rendered in the browser. In other posts, we have seen how the URL may result in JSON objects which are much easier to deal with to create a structured dataset. But HTML pages are often with some structure that are used to render the page. Sometimes, we can take advantage of that structure to infer and extract what we need.</p>
+<p>To examine the structure, we will have to use the developer tools in the web browser. In the rest of the tutorial, I am going to use Firefox as a browser, though analogous tools can be found for other browsers. You can open the Firefox Developer Tools from the menu by selecting Tools &gt; Web Developer &gt; Toggle Tools or use the keyboard shortcut Ctrl + Shift + I or F12 on Windows and Linux, or Cmd + Opt + I on macOS.</p>
+<p><img src="img/craigslist2.png" /></p>
+<p>The most useful thing for this exercise is the page inspector, usually in the bottom left.
+You can right click on any post in the craigslist result page and use inspect element to understand what the structure looks like. Or alternately, you can point to various elements in the inspector and see different elements highlighted in the browser window.</p>
+<p><img src="img/craigslist3.png" /> <img src="img/craigslist4.png" /></p>
+<p>In this particular instance each posted ad seems to be within a list, with a list element <code>&lt;li&gt;</code> with a class <code>result-row</code>, with a <code>data-pid</code> associated with it.</p>
+<p><img src="img/craigslist5.png" /></p>
+<p>That is our way in to scraping and structuring the data. To take advantage of the HTML elements, you need to become somewhat familiar with css selectors. You can use a <a href="http://flukeout.github.io/">fun game</a> to get started.</p>
+</div>
+<div id="using-rvest-to-extract-data-from-html" class="section level1">
+<h1>Using rvest to extract data from html</h1>
+<p>The workhorse functions we are going to use are <code>html_nodes</code> and <code>html_node</code> from the <code>rvest</code> library. <code>html_node</code> always extracts exactly one element. In this instance we want to extract all elements that are of <code>result.row</code> class</p>
+<pre class="r"><code>raw_query &lt;- xml2::read_html(query_url)
+
+raw_query
+# {html_document}
+# &lt;html class=&quot;no-js&quot;&gt;
+# [1] &lt;head&gt;\n&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8 ...
+# [2] &lt;body class=&quot;search has-map&quot;&gt;\n    &lt;script type=&quot;text/javascript&quot;&gt;&lt;!--\n  ...
+
+## Select out the listing ads
+raw_ads &lt;- html_nodes(raw_query, &quot;li.result-row&quot;)
+raw_ads %&gt;% head()
+# {xml_nodeset (6)}
+# [1] &lt;li class=&quot;result-row&quot; data-pid=&quot;7070092132&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [2] &lt;li class=&quot;result-row&quot; data-pid=&quot;7069988793&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [3] &lt;li class=&quot;result-row&quot; data-pid=&quot;7069976094&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [4] &lt;li class=&quot;result-row&quot; data-pid=&quot;7069947008&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [5] &lt;li class=&quot;result-row&quot; data-pid=&quot;7069879830&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [6] &lt;li class=&quot;result-row&quot; data-pid=&quot;7069870509&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...</code></pre>
+<p>In the following bit of code, I extract the entire list of attributes that are part of each result-row. In particular, I want to extact id, title, price, date and locale. Notice how each of them require some special manipulation to get into a right format.</p>
+<pre class="r"><code>ids &lt;-
+  raw_ads %&gt;%
+  html_attr(&#39;data-pid&#39;)
+
+titles &lt;-
+  raw_ads %&gt;%
+   html_node(&quot;a.result-title&quot;) %&gt;%
+   html_text()
+
+prices &lt;-
+   raw_ads %&gt;% 
+     html_node(&quot;span.result-price&quot;) %&gt;%
+     html_text() %&gt;%
+     str_extract(&quot;[0-9]+&quot;) %&gt;%
+     as.numeric()
+
+dates &lt;-
+  raw_ads%&gt;%
+  html_node(&#39;time&#39;) %&gt;%
+  html_attr(&#39;datetime&#39;)
+
+locales &lt;-
+  raw_ads %&gt;%
+  html_node(&quot;.result-hood&quot;) %&gt;%
+  html_text() </code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li><p>Notice the different functions <code>html_attr</code> and <code>html_text</code> that are used in different situations. Can you explain which is used when?</p></li>
+<li><p>Create a vector of sq.ft and number of bedrooms for these ads</p></li>
+</ul>
+<hr />
+<p><div class="alert alert-warning">
+  <div>
+    </p>
+<p>We are treading dangerously here. Notice that we are assuming that each of these ads have same attributes that we can extact and are in the same places within the document and are properly encoded. It is always a good idea to spot check some of these results. In particular, an easy check is to see if the lengths of these variables are the same. If they are, then more likely than not, we can column bind them into a table. If they are not, there is some error and it is likely that the prices wont match up with the descriptions or the number of bedrooms. I will leave that as an exercise, as to how you will spot and recover from these errors.</p>
+<p>
+  </div>
+</div>
+</p>
+<div id="extracting-location-attributes" class="section level2">
+<h2>Extracting location attributes</h2>
+<p>Location of the apartments/houses are little bit more tricky because they are not embedded in the results page, but in each individual ad. To access them we need to access individual urls for the ads and then extract the location attributes.</p>
+<p>To do this we use the <code>map_*</code> function in <code>purrr</code> package. The function is effectively like a for loop. So the following code for each of the element of urls use the function(x) and then combine them into a table using row binding.</p>
+<pre class="r"><code>
+urls &lt;-
+  raw_ads %&gt;%
+  html_node(&quot;.result-title&quot;) %&gt;%
+  html_attr(&quot;href&quot;)
+  
+
+latlongs &lt;- 
+  map_dfr(urls, function(x){
+    xml2::read_html(x) %&gt;% 
+      html_node(&quot;#map&quot;) %&gt;%
+      html_attrs() %&gt;%
+      t() %&gt;%
+      as_tibble() %&gt;%
+      select_at(vars(starts_with(&quot;data-&quot;))) %&gt;%
+      mutate_all(as.numeric)
+  }
+  )
+
+latlongs
+# # A tibble: 120 x 3
+#    `data-latitude` `data-longitude` `data-accuracy`
+#              &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;
+#  1            42.4            -71.1              22
+#  2            42.6            -70.9              10
+#  3            42.4            -71.1              10
+#  4            42.3            -71.1              10
+#  5            42.3            -71.2              10
+#  6            42.7            -71.1               5
+#  7            42.7            -71.1               5
+#  8            42.7            -71.2              22
+#  9            42.4            -71.1              10
+# 10            42.6            -71.2              22
+# # … with 110 more rows</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>It is useful to go through each step of the function and see why they result in the lat longs finally.</li>
+</ul>
+<hr />
+<p>Now we are ready to combine them all into one table and visualise the results.</p>
+<pre class="r"><code>craigslist_table &lt;- cbind(ids, titles, dates, locales, urls, latlongs, prices) 
+
+
+leaflet(craigslist_table) %&gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;) %&gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;) %&gt;%
+  addCircles(lat = ~`data-latitude`, lng = ~`data-longitude`, label = paste(craigslist_table$ids, craigslist_table$locales, craigslist_table$prices, sep=&quot;,&quot;)
+  )</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Stamen.TonerLines",null,"Basemap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Stamen.TonerLite",null,"Basemap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[42.4173,42.553846,42.370475,42.341442,42.348515,42.678271,42.678517,42.708,42.354975,42.6496,42.360384,41.913053,42.2093,42.543047,42.387665,42.4884,42.0649,42.5326,42.4829,42.3492,42.3489,42.399088,42.543047,42.4633,42.35708,42.256357,42.2825,42.3347,42.4291,42.3478,41.9104,42.359609,42.339281,42.708,42.678422,42.344504,42.4633,42.17641,42.415164,42.336255,26.8842,42.637921,41.8884,42.372974,42.543047,41.9773,42.2973,42.2973,42.389523,42.543047,42.354327,42.5694,42.6826,42.349425,42.3687,42.3168,42.3642,42.390011,42.2093,42.359916,42.795774,42.708,42.395985,42.3251,42.1532,42.341227,42.339828,42.4633,42.6028,42.397977,42.3654,42.34316,42.3362,42.3478,42.363058,42.5151,42.575806,42.412009,42.365561,42.462821,42.806407,42.525365,42.377578,42.344563,42.0935,41.7541,42.543047,42.3347,42.708,42.3932,42.6496,42.211345,42.32647,42.658,42.61045,42.3932,42.708,42.708,42.359609,42.4633,42.543047,42.5645,42.405827,42.567686,42.4633,42.6826,42.37584,42.377,42.6826,42.35708,42.1645,42.0744,42.45715,42.330962,42.349135,42.349135,42.347599,42.349135,42.350671,41.732298],[-71.1087,-70.882876,-71.111249,-71.051311,-71.156604,-71.135187,-71.135402,-71.1638,-71.074254,-71.1565,-71.064415,-70.549942,-70.9963,-70.948038,-71.122892,-71.5178,-71.2441,-70.9612,-71.1574,-71.0768,-71.0465,-71.020386,-70.948038,-71.0111,-71.12968,-71.006725,-71.0241,-71.0375,-71.0605,-71.1566,-70.642,-71.134785,-71.146141,-71.1638,-71.135144,-71.153368,-71.0111,-71.037231,-71.079538,-71.14005,-82.2691,-70.682645,-70.893,-71.041198,-70.948038,-70.9723,-71.0745,-71.0745,-71.046756,-70.948038,-71.128961,-70.9425,-71.109,-71.117245,-71.0836,-71.2084,-71.0257,-71.12515,-70.9963,-71.13294,-70.995987,-71.1638,-71.100331,-71.0953,-71.2179,-71.11109,-71.105758,-71.0111,-71.2232,-71.129612,-71.2317,-71.072198,-71.0729,-71.1566,-71.180987,-70.9003,-70.767961,-71.11001,-71.06124,-71.457825,-70.874281,-71.10152,-71.245738,-71.074934,-71.4058,-70.7116,-70.948038,-71.053758,-71.1638,-71.1338,-71.1565,-71.14975,-71.142669,-70.6194,-71.23123,-71.1338,-71.1638,-71.1638,-71.134785,-71.0111,-70.948038,-71.112323,-71.239696,-70.968916,-71.0111,-71.109,-71.137494,-71.1256,-71.109,-71.12968,-71.1355,-71.6329,-71.18369,-71.10174,-71.133004,-71.133004,-71.103733,-71.133004,-71.128928,-71.125403],10,null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,["7070092132, (Medford),3800","7069988793, (Beverly),2200","7069976094, (Cambridge),2950","7069947008, (South Boston),4000","7069879830, (Brighton),3400","7069870509, (South Lawrence),1851","7069861855, (South Lawrence),2003","7069837609, (Lawrence, MA),1850","7069790148, (Boston - Back Bay -Beacon St),5800","7069788439,NA,2200","7069783190, (Boston - Beacon Hill - Hancock St.),4800","7069767192, (Manomet/Plymouth),1700","7069760993, (Braintree),2588","7069748606,NA,2759","7069714058, (Porter Square),5200","7069703690, (Boxborough),2188","7069692571, (Foxborough),2006","7069687368, (Peabody, MA),2747","7069686792, (Woburn),2692","7069684753, (Boston),4335","7069683512, (Boston),4997","7069668151,NA,2254","7069632273,NA,2285","7069628817,NA,2225","7069600240, (Allston),3595","7069573208, (Quincy Center),2999","7069535382, (Quincy),2200","7069481703, (South Boston),4900","7069473479, (Malden),2200","7069464063, (brighton),1150","7069433415, (Plymouth),2600","7069229490, (Lower Allston),4995","7069228935, (Brighton),2500","7069211246, (Lawrence, MA),1850","7069169539, (South Lawrence, MA),2008","7069138577, (Brighton),3300","7069131235, (NorthShore/Boston/Saugus),2325","7069123727, (randolph),2100","7069120041, (Malden),2850","7069087042, (Brookline),5100","7069065114, (78 Rotonda Blvd),2500","7069021381, (Gloucester),2000","7068986150, (MIDDLEBORO, MA),3200","7068968535, (Boston),3450","7068948150,NA,2739","7068930563, (Bridgewater),2050","7068900848, (Boston),3000","7068893803, (Boston),3000","7068868876, (Chelsea),2500","7068848624,NA,2285","7068828698, (Allston),4000","7068812608,NA,2850","7068811815,NA,2925","7068770785, (Brookline - Coolidge Corner),4950","7068711209, (Cambridge - Near Kendall Square),3600","7068709861, (Newton Area),2400","7068709184, (East Boston),3000","7068627297, (Cambridge - Porter Square),4600","7068622919, (Braintree),2323","7068548380, (Allston),5100","7068542658, (West Newbury),2375","7068526322, (Lawrence, MA),1850","7068492995, (Somerville),2500","7068474051, (Roxbury, MA),2800","7068405128, (East Walpole),2290","7068399159, (Brookline),6800","7068382816, (West Roxbury),6800","7068362668, (NorthShore/Boston/Saugus),2325","7068284531, (Tewksbury),2229","7068318587, (Cambridge - Pet Friendly!),4000","7068280318, (Waltham),2677","7068239306, (Boston ~ South End),4000","7068194112, (345 Harrison Ave.),7597","7068192237, (Brighton),3400","7068096786, (Watertown Square),3000","7068078200, (Salem),2225","7068000396, (Manchester),2495","7067927623, (MEDFORD),2775","7067915840, (North End),5375","7067854594, (Acton),1950","7067790774, (Newburyport),2100","7067748257, (Reading, MA),3300","7067702223, (Waltham),3600","7067667476, (South End),4900","7067642808, (Franklin),2317","7067374538, (Wareham),2400","7067365906,NA,2759","7067273065, (Boston),4500","7067268826, (Lawrence, MA),1850","7067260048, (Cambridge - North Cambridge),4273","7067258305,NA,2200","7067257488, (Westwood Place),3750","7067252315, (Chestnut Hill),4050","7067248672, (Rockport),2850","7067156468, (Tewksbury Center - Route # 38),1595","7067123798, (Cambridge - North Cambridge),3230","7067020733, (Lawrence, MA),1850","7066847963, (Lawrence, MA),1850","7066847119, (Lower Allston),4995","7066772110, (NorthShore/Boston/Saugus),2410","7066761956,NA,2425","7066722875, (North Reading),1950","7066715563, (Waltham),3000","7066705082,NA,2850","7066678126, (NorthShore/Boston/Saugus),2270","7066537400,NA,2925","7066513766, (Harvard Square, Cambridge, MA),1100","7066468170, (Cambridge, MA),3800","7066432742, (NORTH ANDOVER - 1st MONTH FREE!),2375","7066399737, (Allston),3595","7066245501, (Brockton),2500","7066221123,NA,2900","7066196949, (North Shore/ Woburn),2950","7066096796, (Mission Hill, brigham circle, dana),3800","7066096444, (Allston),4000","7066095386, (Allston),4000","7066094302, (Fenway–Kenmore),3450","7066091829, (Allston),4000","7066089481, (Allston),4800","7066085978,NA,1540"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[26.8842,42.806407],"lng":[-82.2691,-70.549942]}},"evals":[],"jsHooks":[]}</script>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li><p>If you remove all the filters from the url, there are more than 120 results. Craigslist only displays 120 results per page. Figure out how to loop through various pages to extract all the results. The more quickly you ping the server with your queries, you will run afoul of rate limits and may raise some eyebrows in San Francisco. Use <code>Sys.sleep</code> to slow down the query rate.</p></li>
+<li><p>Repeat this for few other metropolitan areas, such as Los Angeles and Raleigh.</p></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="cautions-conclusions" class="section level1">
+<h1>Cautions &amp; Conclusions</h1>
+<p>Scraping the web to create a structured dataset is as much an art as it is a technical exercise. It is about figuring out the right combinations of searches and manipulations that will get you right result. And because there are no documentation and manuals, it is imperative to experiment with it and fail. And you will fail often. The webpages change their structure over time and the code that might work one week may not work the next. The webpages themselves are dynamic and therefore the dataset that you generate may not be replicable. All these should be taken into account when you are scraping the web for data and conducting your analyses.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/&amp;text=Scraping%20Craigslist%20Posts" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/&amp;t=Scraping%20Craigslist%20Posts" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Scraping%20Craigslist%20Posts&amp;body=http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/&amp;title=Scraping%20Craigslist%20Posts" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Scraping%20Craigslist%20Posts%20http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/2020-02-04-scraping-craigslist-posts/&amp;title=Scraping%20Craigslist%20Posts" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2020-01-12-using-tidycensus/">Using TidyCensus package</a></li>
+      
+      <li><a href="/post/2019-12-31-starting-with-qgis/">Starting with QGIS</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

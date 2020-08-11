@@ -1,0 +1,1346 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Pattern recognition">
+
+  
+  <link rel="alternate" hreflang="en-us" href="http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+    
+      
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+    
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@nikhil_kaza">
+  <meta property="twitter:creator" content="@nikhil_kaza">
+  
+  <meta property="og:site_name" content="Nikhil Kaza">
+  <meta property="og:url" content="http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/">
+  <meta property="og:title" content="Unsupervised Clustering  | Nikhil Kaza">
+  <meta property="og:description" content="Pattern recognition"><meta property="og:image" content="http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/featured.png">
+  <meta property="twitter:image" content="http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/featured.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-03-20T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-03-20T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/"
+  },
+  "headline": "Unsupervised Clustering ",
+  
+  "image": [
+    "http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/featured.png"
+  ],
+  
+  "datePublished": "2020-03-20T00:00:00Z",
+  "dateModified": "2020-03-20T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Authors"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://www.nikhilkaza.com/images/icon_hu0b7a4cb9992c9ac0e91bd28ffd38dd00_9727_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Pattern recognition"
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#2962ff",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "#2962ff"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>Unsupervised Clustering  | Nikhil Kaza</title>
+
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class=" ">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Nikhil Kaza</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#featured"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/files/cv.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+
+<div class="article-container pt-3">
+  <h1>Unsupervised Clustering </h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Mar 20, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    9 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 425px;">
+  <div style="position: relative">
+    <img src="/post/2020-03-18-unsupervised-clustering/featured_hu3f0a4fa80b3962d048f965037ace641c_902187_720x0_resize_lanczos_2.png" alt="" class="featured-image">
+    <span class="article-header-caption"><a href="https://scikit-learn.org/stable/modules/clustering.html">https://scikit-learn.org/stable/modules/clustering.html</a></span>
+  </div>
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#data-required-packages">Data &amp; Required Packages</a></li>
+<li><a href="#different-clustering-techniques">Different clustering techniques</a></li>
+<li><a href="#what-is-the-point">What is the point?</a></li>
+<li><a href="#conclusions">Conclusions</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>In an earlier <a href="/post/2018-07-09-point-pattern-analysis-and-cluster-detection/cluster-detection-in-point-data/">post</a>, I primarly used location information to identify spatial patterns/clusters. Recall that space is, often simply 2 dimensional dataset (X,Y) coordinates. There is no reason to presume that clusters are of interest only in geographic space. Higher dimensional and non spatial datasets are of interest to planners as well. In this post, I am going to demonstrate few tried and tested methods to identify patterns in higher dimensional data about urban indicators.</p>
+<p>Unsupervised learning works by identifying patterns in the data. The following graphic vividly illustrates the point.</p>
+<div class="figure">
+<img src="img/unsupervised.jpg" alt="Source: Booz Allen Hamilton" />
+<p class="caption">Source: Booz Allen Hamilton</p>
+</div>
+</div>
+<div id="data-required-packages" class="section level1">
+<h1>Data &amp; Required Packages</h1>
+<p>In this tutorial, I am going to use different <a href="https://www.dropbox.com/s/ctf2kvf04771da3/2k11_metrics_2019.csv?dl=0">urban landscape metrics</a> that were found using methods described in <a href="/post/2018-07-01-urban-morphology-landscape-metrics/urban-morphology-landscape-metrics/">other posts</a>, at a county level for all the 3,100 counties in the conteminous United States for the 2011 land cover data. In additon, I am going restrict my attention few of the counties classified as <a href="https://www.dropbox.com/s/k394ex8bbeeqvm0/NCHSURCodes2013.xlsx?dl=0">Large Fringe Metro counties and Medium Metro counties</a>, by the <a href="https://www.cdc.gov/nchs/data/series/sr_02/sr02_166.pdf">National Center for Health Statistics</a> using the 2013 datasets.</p>
+<p>For this tutorial, in addition to other packages for visualisation, you will need to install and initalise <code>factoExtra</code> and <code>cluster</code> packages.</p>
+<p>Prepare the dataset as follows. It is often necessary to scale the variables in machine learning. Conventional scaling is to subtract the mean and divide by the standard deviation. But, any appropriate scaling techniques can be used as shown below.</p>
+<pre class="r"><code>
+library(tidyverse)
+library(skimr)
+library(openxlsx)
+library(tigris)
+library(cluster)
+library(factoextra)
+library(here)
+
+
+
+county_df &lt;- here(&quot;tutorials_datasets&quot;,&quot;unsupervisedclustering&quot;,&quot;2k11_metrics_2019.csv&quot;) %&gt;%
+                  read_csv()  %&gt;%
+                  mutate(FIPS = cntyfips %&gt;% as.integer %&gt;% formatC(width=5, flag=&quot;0&quot;)) 
+
+nchsurc_codes &lt;- here(&quot;tutorials_datasets&quot;,&quot;unsupervisedclustering&quot;,&quot;NCHSURCodes2013.xlsx&quot;) %&gt;%
+                  read.xlsx() %&gt;%
+                  as_tibble() %&gt;%
+                  mutate(FIPS = `FIPS.code` %&gt;% as.integer %&gt;% formatC(width=5, flag=&quot;0&quot;)) %&gt;%
+                  dplyr::select(FIPS, CountyName = County.name, CBSA = CBSA.title, NCHSURC_code = Code2013) %&gt;%
+                  mutate(NCHSURC_code  = NCHSURC_code %&gt;% as.factor)
+
+county_df &lt;- county_df %&gt;% 
+              left_join(nchsurc_codes)
+
+county_df_scaled &lt;- county_df %&gt;%
+                      mutate_if(is.numeric, scale) 
+
+# county_df_scaled %&gt;% skim()
+
+
+scale2 &lt;- function(x, na.rm = TRUE) ((x) / (max(x, na.rm=na.rm) - min(x,na.rm=na.rm)))
+
+county_df_scaled2 &lt;- county_df %&gt;%
+                     mutate_if(is.numeric, scale2) 
+
+# county_df_scaled2 %&gt;% skim()</code></pre>
+</div>
+<div id="different-clustering-techniques" class="section level1">
+<h1>Different clustering techniques</h1>
+<p>All clustering techniques rely on the notion of distance. It is fairly straightforward to think of geographic (eulcidean) distance <span class="math inline">\(d(i,j)\)</span> between two points <span class="math inline">\(i:= (x_i,y_i, z_i), j:= (x_j,y_j, z_i)\)</span> as</p>
+<p><span class="math display">\[\sqrt{(x_i-x_j)^2 + (y_i -y_j)^2 + (z_i -z_j)^2}\]</span></p>
+<p>But there are other types of distances that are possible as well. For example, Manhattan distance is</p>
+<p><span class="math display">\[|x_i-x_j| + |y_i-y_j| + |z_i-z_j|\]</span></p>
+<p>In fact distance can be any metric that satisfies</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(d(i,j) = 0\)</span> if and only if <span class="math inline">\(i = j\)</span></li>
+<li><span class="math inline">\(d(i,j) \leq d(i,k) + d(j,k)\)</span></li>
+</ol>
+<p>There are others criteria, but the above two are most important. Note that <span class="math inline">\(i\)</span>,<span class="math inline">\(j\)</span>,<span class="math inline">\(k\)</span> can be of any dimensions. Some popular distances are Manhattan distance, <span class="math inline">\(L_p\)</span> norm, Minkowski distance, Hamming distance, Cosine Simiarlity etc.</p>
+<div id="partition-based-clustering" class="section level2">
+<h2>Partition based clustering</h2>
+<p>The <em>K-Means algorithm</em> is perhaps the most well known, clusters data by trying to separate samples into <span class="math inline">\(K\)</span> groups, minimizing a criterion known as within-cluster sum-of-squares, by focusing on euclidean distance. This algorithm requires the number of clusters to be specified. It scales well to large number of samples and has been used across a large range of application areas in many different fields. This algorithm is susceptible to outliers that skew the euclidean norm. The following animation provides some indication of how the algorithm works.</p>
+<p><img src="https://media.giphy.com/media/12vVAGkaqHUqCQ/source.gif" /></p>
+<p>The <em>Partition around Medoids</em> (PAM) on the other hand, is bit more robust than k-means. Instead of finding the centroids (white xs in the above animation), the algorithm finds a ‘medoid’ (a representative point that is a member of the set). Note that centroids may not be members of the cluster. As such, PAM can accept any distance metric or dissimilarity matrix, instead of calculating the distance on the fly.</p>
+<p>In the rest of the tutorial, I am going to restrict my attention to a subset of counties (large fringe and medium metro) and a subset of variables (number of patches, mean and variance in patch areas). The following code divides the dataset into 5 clusters using K-means and PAM.</p>
+<pre class="r"><code>
+county_df_scaled_sel &lt;- county_df_scaled %&gt;% 
+                        filter(NCHSURC_code %in% c(2,3)) %&gt;%
+                        select(FIPS, n.patches, mean.patch.area, sd.patch.area)%&gt;%
+                        na.omit()
+
+km.res &lt;- county_df_scaled_sel %&gt;%
+          select(-FIPS) %&gt;%
+          kmeans(5, nstart = 25, iter.max=30)
+
+pm.res &lt;- county_df_scaled_sel %&gt;%
+  select(-FIPS) %&gt;%
+  pam(k = 5)
+
+as_tibble(cbind(pam =pm.res$cluster %&gt;% as.factor(), kmeans = km.res$cluster %&gt;% as.factor)) %&gt;%
+  table()
+#    kmeans
+# pam   1   2   3   4   5
+#   1   0 286   0   0   0
+#   2   0  27 124   0   0
+#   3   0  17  74   0  57
+#   4  54   0  21   0   6
+#   5   0   0   0  14  58</code></pre>
+<p>From the above table, it should be apparent that the both the algorithms produce very different set of clusters. While most of the cluster 3 identified by K-means are also identified as cluster 1, half of the cluster 1 in k-means is split between clusters 3 and 5 of PAM.</p>
+<hr />
+<p>** Exercise **</p>
+<ul>
+<li>Change the cluster numbers and other parameters</li>
+<li>Note that we scaled the dataset and then filtered it. This seems problematic for any number of reasons (means and variances are different for the different subsets). What if we reversed the operation, i.e. first filtering and then scaling. How do the results change?</li>
+</ul>
+<hr />
+<p>One of the problems with the partition based methods is that we have to apriori specify the number of clusters that we intend to find. This is often problematic. But over the years, some heuristics have been developed to identify the appropriate number of clusters. One popular heuristic is called the ‘eblow’ method. The point of the eblow method is to repeat the clustering for the arbitary number of clusters and identify the number at which there is <code>kink</code> in the Total WSS. In the following figure, it is around 9.</p>
+<pre class="r"><code>
+county_df_scaled_sel %&gt;%
+  select(-FIPS) %&gt;%
+  fviz_nbclust(pam, method = &quot;wss&quot;, k.max=20)</code></pre>
+<p><img src="/post/2020-03-18-unsupervised-clustering/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>The idea is that after 9 clusters, the total sum of WSS does not decrease significantly for the effort that is put in.</p>
+<p><a href="https://datasciencelab.wordpress.com/tag/gap-statistic/">Gap statistic</a> is a more robust way of selecting the number of clusters. This is based on bootstrapping (repeated sampling the dataset and constructing empirical distributions).</p>
+<pre class="r"><code>county_df_scaled_sel %&gt;%
+  select(-FIPS) %&gt;%
+  fviz_nbclust(pam, method = &quot;gap_stat&quot;, k.max=20)</code></pre>
+<p><img src="img/gapstat.png" />
+In this particular instance, the number of clusters suggested by the gap-stastistic and elbow method are the same.</p>
+<hr />
+<p>** Exercise **</p>
+<ul>
+<li>Compute the ‘right’ number of clusters for both K-means and PAM. Save these into columns named <code>knn_cluster</code> and <code>pam_cluster</code> etc. Make sure they are all stored as factors.</li>
+<li>Note the PAM can take different distance/dissimiarlity matrix instead of a matrixof observations. Use <code>get_dist</code> from <code>factoExtra</code> to compute a different dissimilarity matrix and use PAM to identify clusters</li>
+<li>CLARA is another algorithm, similar to PAM to identify clusters in large datasets. Instead of the subset of counties, use this algorithm on the full dataset.</li>
+</ul>
+<hr />
+</div>
+<div id="agglomerative-hierarchical-clustering" class="section level2">
+<h2>Agglomerative Hierarchical Clustering</h2>
+<p>In this mode of clustering, each point starts out as it own cluster and then the nearest point is added to it in iterative fashion. This builds a dendogram. To determine, what nearest point is, we have to define a linkage function. The linkage function could be minimum of maximum distance between the candidate point and the candidate cluster or average to all points in the candidate cluster etc. The following animation, illustrates the point</p>
+<div class="figure">
+<img src="img/hierarch_1.gif" alt="source: https://dashee87.github.io/data%20science/general/Clustering-with-Scikit-with-GIFs/" />
+<p class="caption">source: <a href="https://dashee87.github.io/data%20science/general/Clustering-with-Scikit-with-GIFs/" class="uri">https://dashee87.github.io/data%20science/general/Clustering-with-Scikit-with-GIFs/</a></p>
+</div>
+<p>Once this dendrogram is constructed, all that is left is is to cut it at an ‘appropriate height’ to get the clusters.</p>
+<pre class="r"><code>
+res.hc &lt;- county_df_scaled_sel%&gt;% 
+        select(n.patches, mean.patch.area, sd.patch.area) %&gt;%
+         get_dist(method = &quot;pearson&quot;) %&gt;%
+         hclust(method = &quot;ward.D2&quot;)     # Compute hierachical clustering
+
+# Visualize using factoextra
+# Cut in 4 groups and color by groups
+
+fviz_dend(res.hc, k = 4, # Cut in four groups
+          k_colors = c(&quot;#2E9FDF&quot;, &quot;#00AFBB&quot;, &quot;#E7B800&quot;, &quot;#FC4E07&quot;),
+          color_labels_by_k = TRUE, # color labels by groups
+          rect = TRUE, # Add rectangle around groups
+          show_labels = FALSE
+)</code></pre>
+<p><img src="/post/2020-03-18-unsupervised-clustering/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>
+county_df_scaled_sel$hc_cluster &lt;- cutree(res.hc,4) %&gt;% as.factor()</code></pre>
+</div>
+<div id="clustering-using-random-forest" class="section level2">
+<h2>Clustering using Random Forest</h2>
+<p>While tree based weak learners are often used for ‘supervised learning’, it is possible to use them for unsupervised learning as well. The idea is construct a ‘proximity’ matrix among the observations using lots of these weak learners (trees) and use the hierarchical clustering (or any other) to identify the clusters. The trick is to simulate points from the same distribution as the ‘real data’ and then try to use random forest to predict/classify whether the points are ‘real’ or ‘simulated’. But the real use is to create the proximity matrix, which is an nxn matrix where each value is the proportion of times the ‘real’ observations <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> end up in the same terminal node.</p>
+<pre class="r"><code>
+
+library(randomForest)
+
+rf.fit &lt;- county_df_scaled_sel %&gt;%
+          select(n.patches, mean.patch.area, sd.patch.area) %&gt;%
+          randomForest(y = NULL, ntree = 10000, proximity = TRUE, oob.prox = TRUE)
+
+hclust.rf &lt;- hclust(as.dist(1-rf.fit$proximity), method = &quot;ward.D2&quot;)
+
+county_df_scaled_sel$rf_cluster &lt;- cutree(hclust.rf,4) %&gt;% as.factor()</code></pre>
+</div>
+</div>
+<div id="what-is-the-point" class="section level1">
+<h1>What is the point?</h1>
+<p>The point of all these classification is to see if we can find some patterns in the dataset that we can say something about. To do that we will have to examine how these cluster classification say something about the patterns within the data. One way to do it is to look back as the observations relative to the clustering.</p>
+<pre class="r"><code>
+for(clustertype in c(&quot;knn_cluster&quot;, &quot;pam_cluster&quot;, &quot;hc_cluster&quot;, &quot;rf_cluster&quot;)){
+g1 &lt;-  
+  county_df_scaled_sel %&gt;%
+  select(n.patches, mean.patch.area, sd.patch.area, all_of(clustertype)) %&gt;%
+  pivot_longer(-all_of(clustertype), names_to = &quot;variable&quot;, values_to = &quot;val&quot;) %&gt;%
+  ggplot() +
+  geom_density(aes_string(x = &quot;val&quot;, color=clustertype)) + # Note the use of aes_string instead of aes to account for the variable name &#39;clustertype&#39; which is not a column name.
+  geom_rug(aes_string(x = &quot;val&quot;, color=clustertype)) + # Note the use of quotes around val, when used with aes_string instead of aes
+  facet_wrap(~variable) +
+  xlab(&#39;Value&#39;) +
+  ggtitle(clustertype)
+
+print(g1)
+}</code></pre>
+<p><img src="/post/2020-03-18-unsupervised-clustering/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /><img src="/post/2020-03-18-unsupervised-clustering/index_files/figure-html/unnamed-chunk-8-2.png" width="672" /><img src="/post/2020-03-18-unsupervised-clustering/index_files/figure-html/unnamed-chunk-8-3.png" width="672" /><img src="/post/2020-03-18-unsupervised-clustering/index_files/figure-html/unnamed-chunk-8-4.png" width="672" /></p>
+<p>The cluster may or may not make any substantive sense. It is upto the analyst to interpret the results to draw meaningful conclusions.</p>
+<hr />
+<p>** Exercise **</p>
+<ul>
+<li><p>Are there any spatial patterns of these clusters? Does visualising a map tell us much about these clusters?</p></li>
+<li><p>Does it matter that we used a subset of counties? What happens when we try to cluster for the entire dataset?</p></li>
+<li><p>What happens when we try to identify subsets in different qualitative subsets, say in non-metro counties in Pacific Northwest? Are the clusters more meaningful then?</p></li>
+</ul>
+<hr />
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>Unsupervised classification and learning is a task that requires a lot of finesse, judgement, substantive expertise and is an art form. Just like any other technique, we have dealt with in the course. The only way to get better, is to constantly re-evaluate how the clusters that are identified by different algorithms are sensitive to particular choices the analyst makes and develop an intuitive understanding of the structure of the data. The clusters might also point to further investigations into anamolies that shed some light on the data generating processes. All in all, these techniques should help with getting a better handle on what we are measuring and how we measure. And then the much harder task is to make sense what these clusters are telling us substantively.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/&amp;text=Unsupervised%20Clustering%20" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/&amp;t=Unsupervised%20Clustering%20" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Unsupervised%20Clustering%20&amp;body=http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/&amp;title=Unsupervised%20Clustering%20" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Unsupervised%20Clustering%20%20http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=http://www.nikhilkaza.com/post/2020-03-18-unsupervised-clustering/&amp;title=Unsupervised%20Clustering%20" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/land-suitabilty-with-ahp-wlc/">Land Suitability Analysis</a></li>
+      
+      <li><a href="/post/2020-02-27-basic-raster-operations-in-r/">Basic Raster Operations in R</a></li>
+      
+      <li><a href="/post/2020-03-16-some-troubles-with-land-suitability-analysis-a-conversation-with-lew/">Some Issues with Land Suitability Analysis</a></li>
+      
+      <li><a href="/post/urban-morphology-landscape-metrics/">Urban Morphology &amp; Landscape Metrics</a></li>
+      
+      <li><a href="/teaching/remote-instruction-672/">Using Rstudio.cloud for Troubleshooting</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js" integrity="sha512-7t8APmYpzEsZP7CYoA7RfMPV9Bb+PJHa9x2WiUnDXZx3XHveuyWUtvNOexhkierl5flZ3tr92dP1mMS+SGlD+A==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.c74291a35e92a8308b0421802c556fb2.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  <p class="powered-by">
+    ©2019 Nikhil Kaza
+  </p>
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    Published with
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic Website Builder</a>
+    
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
