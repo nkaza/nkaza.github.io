@@ -65,10 +65,8 @@
     
       
       
-        
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/github.min.css" crossorigin="anonymous" title="hl-light">
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
-        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/agate.min.css" crossorigin="anonymous" title="hl-light">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/agate.min.css" crossorigin="anonymous" title="hl-dark" disabled>
       
     
 
@@ -385,10 +383,6 @@
 
 
   
-
-
-
-
 
   <title>Matching Messy Texts | Nikhil Kaza</title>
 
@@ -862,7 +856,7 @@
 <ul>
 <li>Krolikowski, Pawel M. and Kurt G. Lunsford. 2020. “Advance Layoff Notices and Labor Market Forecasting.” Federal Reserve Bank of Cleveland, Working Paper no. 20-03. <a href="https://doi.org/10.26509/frbc-wp-202003" class="uri">https://doi.org/10.26509/frbc-wp-202003</a></li>
 </ul>
-<p>In this tutorial, I am going to use <code>stringr</code>, <code>stringdist</code> and <code>postmastr</code> packages in addition to other packages in R. <code>postmastr</code> and <code>censusxy</code> is not available on CRAN, but can be installed from github using</p>
+<p>In this tutorial, I am going to use <code>stringr</code>, <code>stringdist</code> and <code>postmastr</code> packages in addition to other packages in R. <code>postmastr</code> and <code>censusxy</code> are not yet available on CRAN, but can be installed from github using</p>
 <pre><code>remotes::install_github(&quot;slu-openGIS/postmastr&quot;)
 remotes::install_github(&quot;slu-openGIS/censusxy&quot;)</code></pre>
 <p><div class="alert alert-warning">
@@ -1052,7 +1046,7 @@ compnames &lt;- warn_parsed %&gt;%
     company = str_to_upper(company), # Convert to upper case.
     company = str_remove_all(company, paste0(&quot;\\b(&quot;,paste0(removalwords,  collapse=&quot;|&quot;), &quot;)\\b&quot;)), # Remove all the words that are in the list above.
    company = str_remove_all(company, paste0(&quot;\\b(&quot;,paste0(placenames,  collapse=&quot;|&quot;), &quot;)\\b&quot;)), # Remove place names from the company names. This may not work out well if the company is called for e.g. Charlotte Plastics.
-    name1 = str_split(company, &quot;DBA&quot;, n=2, simplify = T)[,1] %&gt;% str_squish(), #The following two lines split the names of the company at DBA.
+    name1 = str_split(company, &quot;DBA&quot;, n=2, simplify = T)[,1] %&gt;% str_squish(), #The following two lines split the names of the company at DBA (Doing Business As).
     name2 = str_split(company, &quot;DBA&quot;, n=2, simplify = T)[,2] %&gt;% str_squish()
   )</code></pre>
 <p>We can make educated guesses about what the NAICS codes for the WARN dataset are going to by searching for some common substrings associated with the industry. For example, sector 72 is Accommodation and Food Services.</p>
@@ -1151,12 +1145,10 @@ for (i in 1:dim(compnames)[1]){
     
     compnames$NAICS2[i]&lt;- 
       ifelse(length(closestmatch)&gt;0, 
-             refusa_select %&gt;%
-               #              st_set_geometry(NULL) %&gt;%
-               .[closestmatch,] %&gt;%
+               refusa_select[closestmatch,] %&gt;%
                group_by(NAICS2) %&gt;%
                summarize(no = n()) %&gt;%
-               slice_max(no, n=1) %&gt;% select(NAICS2) %&gt;% unlist() %&gt;% unname(),
+               slice_max(no, n=1, with_ties = FALSE) %&gt;% select(NAICS2) %&gt;% unlist() %&gt;% unname(),
              NA_character_
       )
     
@@ -1164,7 +1156,7 @@ for (i in 1:dim(compnames)[1]){
   }
 }
 </code></pre>
-<p>Of the 111 we are able to determine the NAICS codes for 87 companies, a 78.38 % hit rate . This seems reasonable.</p>
+<p>Of the 111 we are able to determine the NAICS codes for 87 companies, a 78.38 % hit rate. This seems reasonable, for short amount of work.</p>
 <hr />
 <p><strong>Exercise</strong></p>
 <ul>
@@ -1178,7 +1170,7 @@ for (i in 1:dim(compnames)[1]){
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
-<p>As you noticed, a lot of text/string manipulation relies on understanding the linguistic conventions and is an iterative processes. What works in one context may not work in another and you should be prepared to adapt. You will encounter edge cases much more frequently in this type of work, than other kinds of data munging operations. Nonetheless, it is a useful skill to have. In particular, it is useful get familiar with using Regular expression to search for patterns within strings. However, use it judiciously.</p>
+<p>As you noticed, a lot of text/string manipulation relies on understanding the linguistic conventions and is an iterative processes. What works in one context may not work in another and you should be prepared to adapt. You will encounter edge cases much more frequently in this type of work, than other kinds of data munging operations. Nonetheless, it is a useful skill to have. In particular, it is useful get familiar with using <a href="https://www.regexbuddy.com/">Regular Expressions</a> to search for patterns within strings. However, use it judiciously.</p>
 </div>
 <div id="additional-resources" class="section level1">
 <h1>Additional Resources</h1>
