@@ -383,6 +383,11 @@
 
 
   
+<script>
+  window.PlotlyConfig = {MathJaxConfig: 'local'}
+</script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 
   <title>Matching Messy Texts | Nikhil Kaza</title>
 
@@ -851,14 +856,13 @@
 </div>
 <div id="data-required-packages" class="section level1">
 <h1>Data &amp; Required Packages</h1>
-<p>The Worker Adjustment and Retraining Notification Act (WARN) requires employers with 100 or more employees (generally not counting those who have worked less than six months in the last 12 months and those who work an average of less than 20 hours a week) to provide at least 60 calendar days advance written notice of a plant closing and mass layoff affecting 50 or more employees at a single site of employment. In North Carolina, the Department of Commerce is in charge of collecting and archiving the notices. <a href="https://www.clevelandfed.org/~/media/content/newsroom%20and%20events/publications/working%20papers/2020/wp2003.pdf">Research</a> by Cleveland Federal Reserve Bank suggests that these notices are useful bellwethers for economic conditions in the state.</p>
+<p>The Worker Adjustment and Retraining Notification Act (WARN) requires employers with 100 or more employees (generally not counting those who have worked less than six months in the last 12 months and those who work an average of less than 20 hours a week) to provide at least 60 calendar days advance written notice of a plant closing and mass lay-off affecting 50 or more employees at a single site of employment. In North Carolina, the Department of Commerce is in charge of collecting and archiving the notices. <a href="https://www.clevelandfed.org/~/media/content/newsroom%20and%20events/publications/working%20papers/2020/wp2003.pdf">Research</a> by Cleveland Federal Reserve Bank suggests that these notices are useful bellwethers for economic conditions in the state.</p>
 <p>In this blog, I am going to use another business listings dataset from Infogroup called <a href="http://resource.referenceusa.com/available-databases/">ReferenceUSA</a> to establish additional information about the business that is listed in the WARN database. We are limiting <a href="https://www.dropbox.com/sh/a3eyf8n0u1ynqfn/AADM7S8ufQxlA3W_Y_m_bGmxa?dl=0">our analysis to Mecklenberg county</a> in North Carolina. ReferenceUSA data for the US can be obtained from UNC library. I obtained the WARN dataset from Cleveland Federal Reserve. Citation for the data is</p>
 <ul>
 <li>Krolikowski, Pawel M. and Kurt G. Lunsford. 2020. “Advance Layoff Notices and Labor Market Forecasting.” Federal Reserve Bank of Cleveland, Working Paper no. 20-03. <a href="https://doi.org/10.26509/frbc-wp-202003" class="uri">https://doi.org/10.26509/frbc-wp-202003</a></li>
 </ul>
-<p>In this tutorial, I am going to use <code>stringr</code>, <code>stringdist</code> and <code>postmastr</code> packages in addition to other packages in R. <code>postmastr</code> and <code>censusxy</code> are not yet available on CRAN, but can be installed from github using</p>
-<pre><code>remotes::install_github(&quot;slu-openGIS/postmastr&quot;)
-remotes::install_github(&quot;slu-openGIS/censusxy&quot;)</code></pre>
+<p>In this tutorial, I am going to use <code>stringr</code>, <code>stringdist</code> and <code>postmastr</code> packages in addition to other packages in R. <code>postmastr</code> is not yet available on CRAN, but can be installed from github using</p>
+<pre><code>remotes::install_github(&quot;slu-openGIS/postmastr&quot;)</code></pre>
 <p><div class="alert alert-warning">
   <div>
     </p>
