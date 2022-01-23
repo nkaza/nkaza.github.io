@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>teaching | Nikhil Kaza</title>
+    <link>https://nkaza.netlify.app/category/teaching/</link>
+      <atom:link href="https://nkaza.netlify.app/category/teaching/index.xml" rel="self" type="application/rss+xml" />
+    <description>teaching</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2022 Nikhil Kaza</copyright><lastBuildDate>Thu, 12 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.netlify.app/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>teaching</title>
+      <link>https://nkaza.netlify.app/category/teaching/</link>
+    </image>
+    
+    <item>
+      <title>Using Rstudio.cloud for Troubleshooting</title>
+      <link>https://nkaza.netlify.app/teaching/remote-instruction-672/</link>
+      <pubDate>Thu, 12 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.netlify.app/teaching/remote-instruction-672/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.netlify.app/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;asynchronous-communications-and-troubleshooting&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Asynchronous Communications and Troubleshooting&lt;/h2&gt;
+&lt;p&gt;We will continue to use Microsoft Teams for asynchronous communication and troubleshooting. Troubleshooting code errors without the cushion of in-person interactions forces us to communicate and act differently. Fortunately, this is an standard practice that has matured a lot in the last two decades. We can follow guidelines like these:&lt;/p&gt;
+&lt;p&gt;[1] &lt;a href=&#34;https://stackoverflow.com/help/how-to-ask&#34; class=&#34;uri&#34;&gt;https://stackoverflow.com/help/how-to-ask&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[2] &lt;a href=&#34;https://codereview.stackexchange.com/help/how-to-ask&#34; class=&#34;uri&#34;&gt;https://codereview.stackexchange.com/help/how-to-ask&lt;/a&gt;&lt;/p&gt;
+&lt;div id=&#34;using-rstudio-cloud&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Using RStudio Cloud&lt;/h4&gt;
+&lt;p&gt;We will use RStudio Cloud for troubleshooting in this course. Think of RStudio Cloud as an instance of RStudio in the cloud where you can share not only your script but also the whole environment. This increases the likelihood that others can replicate your results or troubles.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First, create an account in &lt;a href=&#34;https://rstudio.cloud&#34; class=&#34;uri&#34;&gt;https://rstudio.cloud&lt;/a&gt; like you would in any other website. Or login using your Github account. Here is the workflow of how this would work.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;../img/remoteinstruction/usecase.jpg&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Organize your work in Projects. Everything related to a particular exercise (script, data, markdowns, etc.) should be part of one project. To create a project, go to your RStudio Cloud homepage and click New Project.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;../img/remoteinstruction/rc1.PNG&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;&lt;i&gt;Start a project&lt;/i&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;This opens a RStudio interface in your browser. You can use this familiar interface to rename project, upload files, add new R script and more. See highlighted buttons in the following picture.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;../img/remoteinstruction/rc2.PNG&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;&lt;i&gt;The fundamentals&lt;/i&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;The only caveat with RStudio Cloud is the limited [1 GB] space for each project in the free accounts. Because the datasets we work with are often large, it is probably a good idea to subset the data and post it to the project.&lt;/p&gt;&lt;/p&gt;
+&lt;p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;After adding your scripts and files, you can share the project by sharing its URL. It looks like: &lt;a href=&#34;https://rstudio.cloud/project/1034476&#34; class=&#34;uri&#34;&gt;https://rstudio.cloud/project/1034476&lt;/a&gt;. Before sharing the project, click the gear sign on top-right of your project page, and change Access for Who can view this project to Everyone from the drop-down.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;../img/remoteinstruction/rc3.PNG&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;&lt;i&gt;Sharing your project&lt;/i&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;When you open a project link that your colleagues have shared on Microsoft Teams, it will create a temporary version of the project in your account. No changes made to the temporary version will change the original. After you have a clear solution, save a permanent copy. This will create a new URL that can be shared back.
+&lt;img src=&#34;../img/remoteinstruction/rc5.PNG&#34; alt=&#34;Responding to requests&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The 1 GB limit includes the space for the libraries from the Cloud console. In some instance installing libraries from the source (such as dplyr) might require more than 1 GB in memory. There are no easy solutions to that.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In case your space becomes full, download projects that you do not require in the cloud and delete them from your RStudio Cloud account. Check the box left to Cloud, click More and select Export.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;../img/remoteinstruction/rc4.PNG&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;&lt;i&gt;Exporting your project&lt;/i&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

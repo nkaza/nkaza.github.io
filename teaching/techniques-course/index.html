@@ -1,0 +1,1997 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="A full semester course on urban analytics in R. And a critical look at urban analytics." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.netlify.app/teaching/techniques-course/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.09d4529e4672bb97b44a6913e4a61a23.css" />
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.netlify.app/teaching/techniques-course/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.netlify.app/teaching/techniques-course/" />
+  <meta property="og:title" content="PLAN 672: Urban Data Analytics in R | Nikhil Kaza" />
+  <meta property="og:description" content="A full semester course on urban analytics in R. And a critical look at urban analytics." /><meta property="og:image" content="https://nkaza.netlify.app/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://nkaza.netlify.app/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2022-01-10T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2022-01-10T00:00:00&#43;00:00">
+  
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>PLAN 672: Urban Data Analytics in R | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="464998db36fcc7fdf17ae699b2b36b90" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>PLAN 672: Urban Data Analytics in R</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jan 10, 2022
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/r/">R</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#course-description-objectives">Course Description &amp; Objectives</a></li>
+<li><a href="#course-details">Course Details</a></li>
+<li><a href="#prerequisites-preparation">Prerequisites &amp; Preparation</a></li>
+<li><a href="#textbooks-readings">Textbooks &amp; Readings</a></li>
+<li><a href="#course-policies">Course Policies</a></li>
+<li><a href="#schedule-tentative">Schedule (Tentative)</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</div>
+
+<div id="course-description-objectives" class="section level1">
+<h1>Course Description &amp; Objectives</h1>
+<p>This course is about different techniques used in assembling, managing, analysing and predicting using heterogeneous data sets in urban environments. These data sets that are inherently messy and incomplete. Types of data include, point, polygon, raster, vector, text, image and network data; data sets with high cadence and high spatial resolution. This is a survey course for different techniques and approaches in dealing with these data in R. The objective of these analytical techniques is to inform both short term operational decisions and long term planning in cities. As such, the emphasis is on practical urban data analytics rather than in-depth discussion about the suitability and appropriateness of techniques and their associated theoretical assumptions.</p>
+<p>Unlike other courses of similar vein, I put inordinate emphasis on data visualisation and communication. The point of data analysis is to tell a compelling story, not to use latest analytical techniques.</p>
+<p>This is a companion course to <a href="https://planning.unc.edu/courses/673/"><em>PLAN 673: The Ethics and Politics of New Urban Analytics</em></a> (Seminar), which deals with problems, opportunities and hidden agendas with data generation, analysis and visualisation in urban settings. Students are encouraged to take them both.</p>
+</div>
+<div id="course-details" class="section level1">
+<h1>Course Details</h1>
+<ul>
+<li><strong>Instructor:</strong> <a href="http://nkaza.github.io">Nikhil Kaza</a></li>
+<li><strong>Teaching Assistant:</strong> Xijing Li</li>
+<li><strong>Classroom:</strong> New East 101</li>
+<li><strong>Hours:</strong> MW 4:40PM - 5:55PM</li>
+<li><strong>Office Hours:</strong> go.unc.edu/kaza</li>
+<li><strong>TA Office Hours:</strong> M 12-1 PM, Th 2-3 PM on <a href="https://unc.zoom.us/j/9238394823">Zoom</a></li>
+<li><strong>Web:</strong> nkaza.github.io &amp; sakai.unc.edu</li>
+</ul>
+</div>
+<div id="prerequisites-preparation" class="section level1">
+<h1>Prerequisites &amp; Preparation</h1>
+<p>The course will move quickly, cover a large number of analytical techniques, data sets, use cases and disciplinary domains. It requires significant investment on the part of the students to learn the technical skills as well as to learn about substantive urban and regional analyses.</p>
+<p>Much of the work in this course will be done using Open Source Software that is usually free.</p>
+<p>While it is not a prerequisite, the course assumes a working knowledge of <a href="http://www.%20r-project.org">R</a>. R is a programming language and a free software environment for statistical computing and graphics. There are a number of online resources that will help you with getting up to speed with R. You will have to use extensively the documentation, help and examples that R environment provides; i.e. Do not be afraid to use, for example,</p>
+<pre class="r"><code>?qplot
+??randomForest</code></pre>
+<p>to seek help for specific commands.</p>
+<p>One disadvantage with R is that it stores all its objects in memory. This means that your computer should have significant RAM to deal with large data sets.</p>
+<p>Another disadvantage with R is that it has a <a href="http://cockeyed.com/lessons/learning_curve/learning_curve.php"><em>shallow learning curve</em></a>. And it has some quirks. In particular, please pay attention to <a href="https://www.burns-stat.com/pages/Tutor/R_inferno.pdf">R-Inferno</a>. However, persistence will have long term benefits.</p>
+<p>You should have an aptitude for debugging computer code, thinking through edge cases in data sets, identifying and dealing with missing data and messy data sets.</p>
+<p>You should expect that the instructions and help provided may not work on your system due to different configurations, mismatched data types and differences in libraries. You should have an aptitude to troubleshoot the problems and figure out workarounds.</p>
+<p>It may be helpful to go through the materials from <a href="https://supermariogiacomazzo.github.io/STOR320_WEBSITE/">STOR 320: Introduction to Data Science</a></p>
+</div>
+<div id="textbooks-readings" class="section level1">
+<h1>Textbooks &amp; Readings</h1>
+<p>The following books are used implicitly in the class. You are not required to buy any of them but they are very useful to have on your bookshelf.</p>
+<p>
+<cite>Brewer, Cynthia A.
+(2015).
+<em>Designing Better Maps: A Guide for GIS Users</em>.
+2 edition.
+Redlands, California: Esri Press.
+ISBN: 978-1-58948-440-5.</cite>
+</p>
+<p>
+<cite>Few, Stephen
+(2015).
+<em>Signal: Understanding What Matters in a World of Noise</em>.
+Burlingame, California: Analytics Press.
+ISBN: 978-1-938377-05-1.</cite>
+</p>
+<p>
+<cite>Tufte, E. R
+(2001).
+<em>The Visual Display of Quantitative Information</em>.
+Cheshire, CT: Graphics Press.</cite>
+</p>
+<p>
+<cite>Wickham, Hadley
+(2016).
+<em>Ggplot2: Elegant Graphics for Data Analysis</em>.
+Springer-Verlag New York.
+ISBN: 978-3-319-24277-4.
+URL: <a href="https://ggplot2.tidyverse.org">https://ggplot2.tidyverse.org</a>.</cite>
+</p>
+<p>All the above books are about principles of information display and design rather than about data analysis techniques. Information visualisation is very important and much more so than analytical techniques though enough attention is not devoted to them. While we may not be using these textbooks explicitly in weekly readings, you are expected to critically engage with the materials and thoughtfully follow the principles laid out in the books throughout the course.</p>
+<p>For general purpose statistics, I have always enjoyed Tim Harford’s podcast called <a href="https://www.bbc.co.uk/programmes/p02nrss1/episodes/downloads">More or Less</a>. He has a recent book out that succinctly details the attitudes you want to take towards data analysis and telling stories with data. I highly recommend his new book.</p>
+<p>
+<cite>Harford, Tim
+(2021).
+<em>The Data Detective: Ten Easy Rules to Make Sense of Statistics</em>.
+New York: Riverhead Books.
+ISBN: 978-0-593-08459-5.</cite>
+</p>
+<p>The following books will get you started on some analytical techniques and can serve as a reference.</p>
+<p>
+<cite>Bivand, Roger S., Edzer Pebesma, and Virgilio GÃƒÂ³mez-Rubio
+(2013).
+<em>Applied Spatial Data Analysis with R</em>.
+2nd ed. 2013 edition.
+New York Heidelberg Dordrecht London: Springer.
+ISBN: 978-1-4614-7617-7.</cite>
+</p>
+<p>
+<cite>Grolemund, Garrett and Hadley Wickham
+(2017).
+<em>R for Data Science</em>.
+first.
+Sebastapol, CA: O’ Reilly.
+URL: <a href="http://r4ds.had.co.nz/">http://r4ds.had.co.nz/</a> (visited on May. 25, 2018).</cite>
+</p>
+<p>The following book is excellent for covering the latest techniques for Geospatial data in R</p>
+<p>
+<cite>Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow
+(2019).
+<em>Geocomputation with R</em>.
+1 edition.
+Boca Raton: Chapman and Hall/CRC.
+ISBN: 978-1-138-30451-2.
+URL: <a href="https://geocompr.robinlovelace.net/">https://geocompr.robinlovelace.net/</a> (visited on Dec. 01, 2019).</cite>
+</p>
+</div>
+<div id="course-policies" class="section level1">
+<h1>Course Policies</h1>
+<p>The following set of course policies is not meant as an exhaustive list. If in doubt, ask for permission and clarification.</p>
+<div id="logistics" class="section level2">
+<h2>Logistics</h2>
+<ul>
+<li><p>Your health and well-being is of paramount importance. You may also be primary care givers and might have substantial and increased demands on your time. You may not be able meet the requirements of the course, for any number of other reasons. Reach out to me, if you need any help, including if you need extensions or want to take an Incomplete or deal with it differently. I will deal with these on ad-hoc basis.</p></li>
+<li><p>I don’t need any advance notification for intermittent absences. You should make appropriate judgments based on your health and your peers. However, you are responsible for keeping up with the material. Because the materials are posted on-line and in advance, you should be able to work through the code. If you have issues, please use Microsoft Teams, Office Hours and other resources available to you.</p></li>
+<li><p>Microsoft Teams will be used for troubleshooting and announcements. Sakai will continue to be used for HW, lab and assignment submissions. In addition, please create an account on <a href="https://rstudio.cloud/">rstudio.cloud</a> (see below). You can sign in using your Github login.</p></li>
+<li><p>You should expect that the datasets you will need to download may not be available, because of server outages and lack of personnel to attend to these outages. We will cross those bridges, when we get to them.</p></li>
+<li><p>All bets are off, if I fall ill. Hopefully, there is enough course infrastructure already set up for you to achieve the learning objectives on your own. The department will figure out how to assign grades, in that eventuality.</p></li>
+</ul>
+</div>
+<div id="deadlines-extension-requests" class="section level2">
+<h2>Deadlines &amp; Extension Requests</h2>
+<p>Completed lab session materials are due by the end of lab (6 PM) in Sakai. You only need to submit one lab work for each topic.</p>
+<p>Homework assigned for the week is due on the deadline specified in Sakai.</p>
+<p>If there is a reason to extend the deadline for the entire class, please discuss with me at least a week ahead and make a cogent case.</p>
+<p>All labs and homework needs to be submitted as two files 1) a R markdown file (*.Rmd) and 2) html output (*.html) of the Markdown file.</p>
+</div>
+<div id="readingsresources" class="section level2">
+<h2>Readings/Resources</h2>
+<p>The weekly readings are provided as resources and references. You are not required to read all the materials in detail. But the readings are useful to learn the material in depth and troubleshoot some issues. In some cases, the software and techniques in the Resources may be dated. Please use the web to adapt and update them.</p>
+</div>
+<div id="tutorials" class="section level2">
+<h2>Tutorials</h2>
+<p>Often labs are accompanied by tutorials. The tutorials are usually self-contained and self-explanatory. In R, there are multiple ways to achieve the results, each with their own advantages and disadvantages. The tutorials may include different ways of data munging and analysis to expose you to different techniques. It is not implied that one is better than the others, though we all have our own preferences. If in doubt, rely on <a href="https://www.alexejgossmann.com/benchmarking_r/">benchmarking</a>.</p>
+</div>
+<div id="equipment" class="section level2">
+<h2>Equipment</h2>
+<p>We will conduct the class in the New East lab. However, it would be helpful if every student has a working laptop that has <a href="https://www.r-project.org/">R</a> and <a href="https://www.rstudio.com/">Rstudio</a> installed. The laptops should have sufficient memory and processing speed to deal with large data sets. If you have access to no such equipment, please see me immediately to discuss options.</p>
+</div>
+<div id="grading" class="section level2">
+<h2>Grading</h2>
+<p>While all assignments are posted on this website, they are to be submitted exclusively on Sakai and on time. Please refrain from emailing your submissions to the instructor or the TA.</p>
+<p>I am going to use a ‘Specification Grading’ in this course.</p>
+<ul>
+<li><p>Lab reports to be submitted at the end of the class (6 PM). (Individual/Collaborative)</p></li>
+<li><p>(Mostly) weekly homework (HW) programming assignments (Individual/Collaborative)</p></li>
+<li><p>Critique of a data visualisation. (Assignment 1) (Group)</p></li>
+<li><p>Final term project. (Assignment 2) (Individual)</p></li>
+</ul>
+<p>The assignments will be graded on an Satisfactory/Unsatisfactory scale. Satisfactory grade is equivalent to a B+ letter grade. The focus of these assignments is on learning outcomes such as mastery of the material, making innovative connections in the material and on-time submission.</p>
+<p>You will need to achieve Satisfactory grades on at least 5 HW and 5 labs and at least one of the major assignments to achieve a L (equivalent to a C grade). Fewer than 4 Satisfactory grades in labs and HW will result in a failing grade. In addition to the Satisfactory grades in 7 labs and 7 HW, Satisfactory grades should be achieved in the both the major assignments to achieve a P.</p>
+<p>Exceptional performance in the final term project, in addition to Satisfactory grade in 9 labs and 9 HW the other requirements, will result in H/A grade.</p>
+<p>This grading scale will be adjusted if the deliverables change depending course progress.</p>
+</div>
+<div id="consent-to-share" class="section level2">
+<h2>Consent to Share</h2>
+<p>I am reserving the right to post your ungraded submissions (including HW) in Sakai (restricted to the class) for current and future students, as examples, without comment or recommendation. If you wish to decline to consent, please send me a note. No explanation is necessary and opting out does not affect your grades.</p>
+</div>
+<div id="attendance-and-participation" class="section level2">
+<h2>Attendance and Participation</h2>
+<p>If you don’t attend classes, but submit the requirements on time, there is no penalty. Group assignments will get a single grade for the group. Continuous absences that affect the progress in the course should be discussed with the instructor to figure out remedial action.</p>
+</div>
+<div id="e-mail" class="section level2">
+<h2>E-mail</h2>
+<p>Sakai messaging system should be the preferred way to communicate with the instructor. Before you email either of us about homework or lab sessions, you should use resources on the web and on Sakai. Google, Stack Overflow and <a href="https://teams.microsoft.com/l/team/19%3aNkXCQbygFozl8aV0IqzNPKvZiwy4N0WPBtL9a7XTsPA1%40thread.tacv2/conversations?groupId=f82e1428-94d4-4019-97fb-38d4e694e3e7&amp;tenantId=58b3d54f-16c9-42d3-af08-1fcabd095666">Microsoft Teams</a> are your friends.</p>
+</div>
+<div id="asynchronous-communication-troubleshooting" class="section level2">
+<h2>Asynchronous Communication &amp; Troubleshooting</h2>
+<p>We will use Microsoft Teams for asynchronous communication and troubleshooting. We can follow guidelines like these that allow you to get to answers quickly:</p>
+<ul>
+<li><p><a href="https://stackoverflow.com/help/how-to-ask" class="uri">https://stackoverflow.com/help/how-to-ask</a></p></li>
+<li><p><a href="https://codereview.stackexchange.com/help/how-to-ask" class="uri">https://codereview.stackexchange.com/help/how-to-ask</a></p></li>
+</ul>
+<p>We will use <a href="https://rstudio.cloud">RStudio Cloud</a> for troubleshooting in this course. Think of RStudio Cloud as an instance of RStudio in the cloud where you can share not only your script but also the whole environment. This increases the likelihood that others can replicate your results or troubles. <a href="/teaching/remote-instruction-672/">Instructions are located here</a>.</p>
+</div>
+<div id="academic-conduct" class="section level2">
+<h2>Academic Conduct</h2>
+<p>I firmly believe in learning from your peers and from others. All homework and lab submissions could benefit from collaborations, however, the submissions are individual. This means that interpreting the data and the results, producing the visualisations, drawing appropriate conclusions from the data, is necessarily individual even when the strategies can be discussed and developed with others. <strong>All help including fragments of borrowed code</strong>, however, should be explicitly acknowledged. Severe penalties are imposed for non-attribution. In particular, please pay attention to the copyright restrictions and attribution requirements associated with the R-code that you might find elsewhere.</p>
+</div>
+<div id="additional-help" class="section level2">
+<h2>Additional Help</h2>
+<p>Please set up a time on <a href="https://nikhilkaza.youcanbook.me/">my calendar</a> to discuss any additional help you may require.</p>
+<p>I strongly recommend that you avail yourself of the <a href="http://ropenlabs.web.unc.edu/">R open labs</a> run by <a href="https://guides.lib.unc.edu/lorinbruckner">Lorin Bruckner</a> and <a href="https://guides.lib.unc.edu/mattjansen">Matt Jensen</a>.</p>
+<p>You can also request additional help from Lorin and Matt by setting up appointments with them from their website. In addition, Odum Institute has <a href="https://odum.unc.edu/research-support/quantitative-analysis/">walk-in consultations</a> and some of them have expertise in R.</p>
+<p><a href="https://library.unc.edu/about/staff/philip-mcdaniel/">Phil McDaniel</a> and <a href="https://guides.lib.unc.edu/amandahenley">Amanda Henley</a> are excellent resources for tracking down geospatial datasets and troubleshooting issues with them.</p>
+<p>You will probably extensively use Stack Overflow to troubleshoot and debug your code. Please be mindful of how you <a href="https://stackoverflow.com/help/how-to-ask">should ask questions on Stack Overflow</a> including providing minimum reproducible code and datasets.</p>
+<p>There are organisations that are devoted to ensuring diversity in the R community. See for example, R-ladies <a href="https://rladies.org/">meetup groups</a> and <a href="https://rladies-community-slack.herokuapp.com/">Slack channels</a>. Local groups may or may not be active.</p>
+</div>
+</div>
+<div id="schedule-tentative" class="section level1">
+<h1>Schedule (Tentative)</h1>
+<hr />
+<div id="introductory-materials" class="section level2">
+<h2>Introductory materials</h2>
+<hr />
+<div id="jan-10-mon-jan-12-wed-introduction.-r-qgis" class="section level3 tabset">
+<h3>Jan 10 (Mon), Jan 12 (Wed) Introduction. R &amp; QGIS</h3>
+<div id="tutorialsslides" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/slides/techniques_Introduction/Introduction_slides.html">Data &amp; Cities</a></li>
+<li><a href="/post/2019-12-31-introduction-to-r-r-markdown/">Create R markdown files and knit to HTML</a></li>
+<li><a href="/post/2019-12-31-starting-with-qgis/">Create a map in QGIS</a></li>
+<li><a href="https://stats.idre.ucla.edu/stat/data/intro_r/intro_r_interactive.html">Introduction to R - UCLA slides</a></li>
+</ul>
+</div>
+<div id="homework" class="section level4">
+<h4>Homework</h4>
+<div id="hw1" class="section level5">
+<h5>HW1</h5>
+<ul>
+<li><p>Download the <a href="https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr">building violations data</a> from Chicago. Using QGIS, map and style the building violations by for at least 4 periods since 2006. Export these maps as PNG/JPG files to embed them in a R markdown file.</p></li>
+<li><p>In the same R markdown file, using the pictures and some (any) basic R code (such as to produce historgrams) tell a short story about the evolution of building violations in Chicago.</p></li>
+</ul>
+</div>
+</div>
+<div id="resourcesreadings" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li>Chapters 1, 4, 8 &amp; 21 of <a href="https://r4ds.had.co.nz/"><span class="citation">(<a href="#ref-grolemundDataScience2017" role="doc-biblioref">Grolemund and Wickham 2017</a>)</span></a></li>
+<li>Modules 1, 2 &amp; 3 of <a href="https://docs.qgis.org/3.4/en/docs/training_manual/index.html">QGIS training manual</a></li>
+<li><a href="https://doi.org/10.3390/ijgi8120584"><span class="citation">(<a href="#ref-reschHumanCentricDataScience2019" role="doc-biblioref">Resch and Szell 2019</a>)</span></a></li>
+<li><a href="https://doi.org/10.1098/rsta.2016.0115"><span class="citation">(<a href="#ref-kitchinEthicsSmartCities2016" role="doc-biblioref">Kitchin 2016</a>)</span></a></li>
+<li><a href="https://github.com/alexsingleton/urban_analytics"><span class="citation">(<a href="#ref-singletonUrbanAnalytics2018" role="doc-biblioref">Singleton, Spielman, and Folch 2018</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="jan-19-wed-using-git-and-github" class="section level3 tabset">
+<h3>Jan 19 (Wed) Using Git and Github</h3>
+<p>This week is coordinated with PLAN 372.</p>
+<hr />
+</div>
+<div id="jan-24-mon-jan-26-wed-jan-31-mon-exploratory-data-analysis-visualisation" class="section level3 tabset">
+<h3>Jan 24 (Mon), Jan 26 (Wed), Jan 31 (Mon) Exploratory Data Analysis &amp; Visualisation</h3>
+<div id="tutorialsslides-1" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/post/exploratory-data-analysis-visualisation/">Starting with tidyverse &amp; ggplot</a></li>
+</ul>
+</div>
+<div id="homework-1" class="section level4">
+<h4>Homework</h4>
+<div id="hw-2" class="section level5">
+<h5>HW 2</h5>
+<p>In the tutorial, we used data for O<span class="math inline">\(_3\)</span>, a Criteria Air Polluatant (CAP). In this homework perform similar analysis for NO<span class="math inline">\(_2\)</span>, another CAP. For this you will need to download the data from <a href="https://aqs.epa.gov/aqsweb/airdata/download_files.html">EPA</a> and clean it.</p>
+<p>You will need to tell a story about this pollutant and its distribution (in various senses). You may consider the following questions to structure your anlayses. In no way, these are exhaustive. Feel free to tell the story that interests you.</p>
+<ul>
+<li>How many sensors are measuring NO<span class="math inline">\(_2\)</span>?</li>
+<li>Of what percentage of the year are the NO<span class="math inline">\(_2\)</span> sensors active? Where are the sensors that are not active? Map them.</li>
+<li>How does the geographical distribution of NO<span class="math inline">\(_2\)</span> AQI differ from that of O<span class="math inline">\(_3\)</span></li>
+<li>Which cities (CBSA, not counties) are worst affected by NO<span class="math inline">\(_2\)</span>?</li>
+<li>Does the spatial extent of the CBSA matter? (i.e. if you use the 2000 definitions of MSA vs 2018 definitions of CBSA does your conclusions change? Hint: Modifiable Areal Unit Problem)</li>
+<li>Is there a correlation between NO<span class="math inline">\(_2\)</span> and O<span class="math inline">\(_3\)</span>? Do different correlations matter? (i.e. correlations among AQIs of NO<span class="math inline">\(_2\)</span> and O<span class="math inline">\(_3\)</span> at site level, vs correlation of days AQI&gt;100 at CBSA level etc.)</li>
+<li>What does the scatterplot look like? What does facetting the scatter plot by state tell us (pick 5 or so states)?</li>
+<li>Link this with other data (temperature, population etc.)? Where to acquires these datasets? How to link them?</li>
+</ul>
+</div>
+<div id="other-deliverables" class="section level5">
+<h5>Other Deliverables</h5>
+<ul>
+<li>Assignment 1 proposal due on Wiki in Sakai by Friday 6 PM. Groups finalised. The proposal consists of 2-3 paragraphs and consists of the problem statement, concepts you will bring to bear and why it is important. It is posted so that everyone else has access and knowledge of the projects that your peers are working on. The proposal is posted on the wiki, on individual pages.</li>
+</ul>
+</div>
+</div>
+<div id="resourcesreadings-1" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li>Chapters 7 &amp; 9-16 of <a href="https://r4ds.had.co.nz/"><span class="citation">(<a href="#ref-grolemundDataScience2017" role="doc-biblioref">Grolemund and Wickham 2017</a>)</span></a></li>
+<li><a href="http://dx.doi.org/10.1198/jcgs.2009.07098"><span class="citation">(<a href="#ref-layered-grammar" role="doc-biblioref">Wickham 2010</a>)</span></a></li>
+<li><span class="citation">(<a href="#ref-tufteVisualDisplayQuantitative2001" role="doc-biblioref">Tufte 2001</a>)</span></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="feb-2-wed-feb-7-mon-feb-9-wed-maps-flows" class="section level3 tabset">
+<h3>Feb 2 (Wed), Feb 7 (Mon), Feb 9 (Wed) Maps &amp; Flows</h3>
+<div id="tutorialsslides-2" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/post/geospatial-data-in-r/">Geospatial Data in R</a></li>
+</ul>
+</div>
+<div id="homework-2" class="section level4">
+<h4>Homework</h4>
+<div id="hw-3" class="section level5">
+<h5>HW 3</h5>
+<p>Download the motor vehicle traffic collisions data from <a href="https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95">NYC Open data portal</a>.</p>
+<p>Answer the following questions</p>
+<ul>
+<li>Which locations have high incidences of traffic collisions?</li>
+<li>How are these high traffic collisions locations different at different times of the day?</li>
+<li>What are the most frequent casues of collisions and how do they differ by location, time of the day and day of the week?</li>
+<li>Visualise the correlation between home values in a block group and traffic collisions and tell a story.</li>
+</ul>
+</div>
+</div>
+<div id="resourcesreadings-2" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li>Chapters 1-8 <a href="https://geocompr.robinlovelace.net/"><span class="citation">(<a href="#ref-lovelaceGeocomputation2019" role="doc-biblioref">Lovelace, Nowosad, and Muenchow 2019</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="feb-14-mon-feb-16-wed-scraping-web-for-unstructured-data" class="section level3 tabset">
+<h3>Feb 14 (Mon), Feb 16 (Wed) Scraping Web for (Un)Structured Data</h3>
+<div id="tutorialsslides-3" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/post/2020-01-12-using-tidycensus/">Using Census APIs</a></li>
+<li><a href="/post/using-google-api-for-planning/">Scraping Structured Data from Google</a> | <a href="/post/2020-02-12-extracting-data-from-openstreetmap/">Alternate tutorial with OSM</a></li>
+<li><a href="/post/2020-02-04-scraping-craigslist-posts/">Unstructured Data</a></li>
+</ul>
+</div>
+<div id="homework-3" class="section level4">
+<h4>Homework</h4>
+<div id="hw-4" class="section level5">
+<h5>HW 4</h5>
+<p>Scrape Craigslist for houses available for rent in the Triangle and the Triad area. Using Google places, for each of those houses, extract different amenities (coffee shops, hospitals etc.) and construct a <a href="https://www.walkscore.com/methodology.shtml">Walk Score</a> like index for each listing. Tell a story about these indices (e.g. choice of amenities conditioning the results or spatial variation etc.)</p>
+</div>
+</div>
+<div id="resourcesreadings-3" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li><a href="http://www.r-datacollection.com/bookmaterials.html"><span class="citation">(<a href="#ref-munzertAutomatedDataCollection2014a" role="doc-biblioref">Munzert et al. 2014</a>)</span></a></li>
+<li><a href="https://doi.org/10.1080/01944363.2014.980439"><span class="citation">(<a href="#ref-schweitzerPlanningSocialMedia2014" role="doc-biblioref">Schweitzer 2014</a>)</span></a></li>
+<li><a href="https://doi-org/10.1177/0739456X16664789"><span class="citation">(<a href="#ref-boeingNewInsightsRental2017" role="doc-biblioref">Boeing and Waddell 2017</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="feb-21-mon-assignment-1-presentations" class="section level3">
+<h3>Feb 21 (Mon) Assignment 1 Presentations</h3>
+<hr />
+</div>
+</div>
+<div id="analytical-techniques" class="section level2">
+<h2>Analytical Techniques</h2>
+<hr />
+<div id="feb-23-wed-feb-28-mon-analysing-text" class="section level3 tabset">
+<h3>Feb 23 (Wed), Feb 28 (Mon) Analysing Text</h3>
+<div id="tutorialsslides-4" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/post/matching-messy-texts/">Matching Messy Texts</a></li>
+<li><a href="/post/analysing-free-form-text/">Sentiment Analysis of Emails</a></li>
+</ul>
+</div>
+<div id="homework-4" class="section level4">
+<h4>Homework</h4>
+<div id="hw-5" class="section level5">
+<h5>HW 5</h5>
+<p>In this week’s homework, I want you to analyse tweets in/referencing a city of your choice (e.g. Chicago). You are welcome to use a package that makes this easy for you such as <code>twitteR</code> or <code>rtweet</code>. However, you will need to set up a developer account and acquire credentials. (Hint: You may follow this <a href="https://rpubs.com/eduRodrigues/RetrievingTweets">tutorial</a>). The key tasks are think through the following issues and write a story.</p>
+<ul>
+<li>Analyse the sentiments of the tweets</li>
+<li>Think through how the sentiments are changing</li>
+<li>Do official accounts (such as @cta and @cta311) differ in the tweets compared to general public?</li>
+<li>How prevalent is the location information in the tweets? i.e. Are the tweets useful to planners to pin point issues and track them?</li>
+<li>Is twitter a useful mechanism to identify prevalence of sexual assault in public spaces such as transit?</li>
+</ul>
+<p>As usual, you are welcome to choose the scope and the above are not meant to be exhaustive.</p>
+<p>Note that you will need to use your own credentials and submitting them using a Rmd file might reveal them to me and to your classmates. To prevent this, I am asking you to only submit an html file.</p>
+</div>
+</div>
+<div id="resourcesreadings-4" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li><a href="https://www.tidytextmining.com/"><span class="citation">(<a href="#ref-boeingUrbanSpatialOrder2019" role="doc-biblioref">Boeing 2019</a>)</span></a></li>
+<li><a href="http://dx.doi.org/10.1111/rsp3.12292"><span class="citation">(<a href="#ref-chenMeasuringPolicyDebateInpress" role="doc-biblioref">Chen, Silva, and Reis In press</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="mar-2-wed-mar-7-mon-networks" class="section level3 tabset">
+<h3>Mar 2 (Wed), Mar 7 (Mon) Networks</h3>
+<div id="tutorialsslides-5" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/post/analysing-urban-neworks/">Network Analysis of Bikeshare systems</a></li>
+<li><a href="/post/using-network-ananlysis-to-identify-clusters-of-deprivation/">Spatial Relationships as Networks</a></li>
+</ul>
+</div>
+<div id="homework-5" class="section level4">
+<h4>Homework</h4>
+<div id="hw-6" class="section level5">
+<h5>HW 6</h5>
+<p>An input output table is a square matrix with rows representing originating industry sector and columns representing destination industry sector. The value in each cell represents the flow from one sector to another. The higher the number, the more tightly connected the two industries are.</p>
+<p>Download the Multi-Regional Input Output Matrix for China from <a href="https://www.nature.com/articles/sdata2018155"><span class="citation">(<a href="#ref-miMultiregionalInputoutputTable2018" role="doc-biblioref">Mi et al. 2018</a>)</span></a></p>
+<p>In this example, each node would be a combination of region-industry and the weight on the link is the interaction (flows) between the two nodes. There are 30 regions and 30 industries, so the full graph could potentially have 900 nodes and 810000 links (lot of them have zero or near zero weights). Note that this matrix is not symmetric and the diagonal elements are non-zero</p>
+<p>Do some data cleaning and explicitly convert the matrix to graph/network. In particular, be explicit about thresholds that you will use to include the links in your network.</p>
+<p>Tell a story about this network, by looking at (but not limited to) the following questions.</p>
+<ol style="list-style-type: decimal">
+<li><p>Identify the central region-industries in the entire network by constructing a betweenness centrality score. What can you conclude about the spatio-economic structure of China from these.</p></li>
+<li><p>What other centrality measures are appropriate for this network and why?</p></li>
+<li><p>Partition this network into communities using at least two different community detection algorithms. Do these results make intuitive sense?</p></li>
+<li><p>Pick a subset of industries in your favourite region and create a subgraph of all the region-industries they are linked to. Identify the potential disrupters of this subgraph. Are these different from considering the entire flow pattern?</p></li>
+<li><p>What is the relationship with this industry network with other network (labor markets, migration flows, road infrastructure etc.). Are there any connections you can draw? For this, you may have to scour the web for different datasets. Some of your classmates who are Mandarin speakers are probably better suited for this task. Again none of these are mandatory.</p></li>
+</ol>
+</div>
+<div id="other-deliverables-1" class="section level5">
+<h5>Other Deliverables</h5>
+<ul>
+<li>Assignment 2 proposal due on Wiki in Sakai by Friday 6 PM. Groups finalised. The proposal consists of 2-3 paragraphs and consists of the problem statement, concepts you will bring to bear and why it is important. It is posted so that everyone else has access and knowledge of the projects that your peers are working on. The proposal is posted on the wiki, on individual pages.</li>
+</ul>
+</div>
+</div>
+<div id="resourcesreadings-5" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li><a href="https://doi.org/10.1007/s41109-019-0189-1"><span class="citation">(<a href="#ref-boeingUrbanSpatialOrder2019" role="doc-biblioref">Boeing 2019</a>)</span></a></li>
+<li><a href="https://doi.org/10.1371/journal.pone.0166083"><span class="citation">(<a href="#ref-nelsonEconomicGeographyUnited2016" role="doc-biblioref">Nelson and Rae 2016</a>)</span></a></li>
+<li><a href="https://doi.org/10.1177/0160017620946082"><span class="citation">(<a href="#ref-kazaCharacterizingRegionalStructure2021" role="doc-biblioref">Kaza and Nesse 2021</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="mar-9-wed-mar-21-mon-analysing-raster-datasets" class="section level3 tabset">
+<h3>Mar 9 (Wed), Mar 21 (Mon) Analysing Raster Datasets</h3>
+<div id="tutorialsslides-6" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/post/2020-02-27-basic-raster-operations-in-r/">Basic Raster Analysis in R</a></li>
+<li><a href="/post/urban-morphology-landscape-metrics/">Urban Landscape Metrics</a></li>
+<li><a href="/post/land-suitabilty-with-ahp-wlc/">Land Suitability Analysis</a></li>
+</ul>
+</div>
+<div id="homeworkdeliverables" class="section level4">
+<h4>Homework/Deliverables</h4>
+<div id="hw-7" class="section level5">
+<h5>HW 7</h5>
+<p>Improve the land suitability analysis for locating a landfill in Durham County. For example, you can pick a non-trivial subset of the following</p>
+<ol style="list-style-type: decimal">
+<li>By explicitly accounting for Environmental Justice criteria (this is mandatory for everyone)</li>
+<li>By having a hierarchy of criteria and using the AHP process. e.g. Environmental, Social, Institutional at upper level and within each of those have multiple sub criteria (for e.g. poverty rates, minority population etc. are part of Social). Please make sure to ensure consistency using the AHP process</li>
+<li>By including soil characteristics from USGS ( <a href="https://nrcs.app.box.com/v/soils" class="uri">https://nrcs.app.box.com/v/soils</a>)</li>
+<li>By accounting for size of the site.</li>
+<li>By accounting for cost of parcel assembly.</li>
+<li>By accounting for the fact that some highways are limited access highways and can only be acccessed at the interchanges.</li>
+</ol>
+</div>
+<div id="other-deliverables-2" class="section level5">
+<h5>Other Deliverables</h5>
+<ul>
+<li>Final term paper proposal due on Wiki in Sakai by Friday 6 PM. The proposal is no more than 2 pages and should include succinctly, the research questions, datasets that are being used and the appropriateness of analytical techniques to the research question and the datasets. You should have acquired the datasets and performed exploratory analyses before submitting the proposal. The proposal should demonstrate both suitability and feasibility.</li>
+</ul>
+</div>
+</div>
+<div id="resourcesreadings-6" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li><a href="https://doi.org/10.1016/j.landurbplan.2015.03.008"><span class="citation">(<a href="#ref-mccartyUrbanFormAir2015" role="doc-biblioref">McCarty and Kaza 2015</a>)</span></a></li>
+<li><a href="https://doi.org/10.1016/j.landurbplan.2015.02.001"><span class="citation">(<a href="#ref-watsonRegionalScaleWind2015" role="doc-biblioref">Watson and Hudson 2015</a>)</span></a></li>
+<li><a href="https://doi.org/10.3390/geosciences8080275"><span class="citation">(<a href="#ref-rinconFloodRiskMapping2018" role="doc-biblioref">Rincón, Khan, and Armenakis 2018</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="mar-21-mon-dimensionality-reduction" class="section level3 tabset">
+<h3>Mar 21 (Mon) Dimensionality Reduction</h3>
+<div id="tutorialsslides-7" class="section level4">
+<h4>Tutorials/Slides</h4>
+</div>
+<div id="homework-6" class="section level4">
+<h4>Homework</h4>
+<ul>
+<li>[HW7 Posted]</li>
+</ul>
+</div>
+<div id="resourcesreadings-7" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li><a href="https://doi.org/10.1068/b32155"><span class="citation">(<a href="#ref-frenkelMeasuringUrbanSprawl2008" role="doc-biblioref">Frenkel and Ashkenazi 2008</a>)</span></a></li>
+<li><a href="https://www.tandfonline.com/doi/full/10.1080/17549170801903496"><span class="citation">(<a href="#ref-cliftonQuantitativeAnalysisUrban2008" role="doc-biblioref">Clifton et al. 2008</a>)</span></a></li>
+<li><a href="https://doi.org/10.5198/jtlu.2019.1472"><span class="citation">(<a href="#ref-golanGenderedWalkabilityBuilding2019" role="doc-biblioref">Golan et al. 2019</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="mar-28-mon-mar-30-wed-supervised-classification-with-trees-and-forests" class="section level3 tabset">
+<h3>Mar 28 (Mon), Mar 30 (Wed) Supervised Classification with Trees and Forests</h3>
+<div id="tutorialsslides-8" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/post/machine-learning-for-remote-sensing/">Classifying Remote Sensing Images</a></li>
+</ul>
+</div>
+<div id="homework-7" class="section level4">
+<h4>Homework</h4>
+<div id="hw-8" class="section level5">
+<h5>HW 8</h5>
+<p>Efforts to protect development along the coast through the placement of coastal protection infrastructure have fundamentally changed the composition of shorelines along the U.S. coast (Gittman et al. 2015). Coastal protection infrastructure, also called shoreline armoring, are physical structures typically made of rock or concrete that are placed along ocean-facing and inland shorelines in order to either (a) offer protection from storm surges and flooding, or (b) stabilize coastal land and halt erosion. Examples of these types of structures include seawalls, riprap, rock revetments, and bulkheads. These protections rarely accomplish their goals. Despite this, owners (including govts.) continue to invest in this infrastructure.</p>
+<p>In this homework, I want you to test the efficacy of different predictive (non-linear) model of whether or not a parcel is armored or not. The data set is coastal parcels for two counties in FL (posted in Sakai), which contains the variable <code>type</code> that refers to whether th parcel is armored or not. TYou have a wide range of options with regards to the predictors. You are welcome to construct additional predictors by taking advantage of the parcel boundaries and location (such as distance to highway interchange or size of the parcel etc.). Make sure that report on your preferred predictive model based on different accuracy statistics and validation. What are the most important/useful predictors?</p>
+</div>
+</div>
+<div id="readingsresources-1" class="section level4">
+<h4>Readings/Resources</h4>
+<ul>
+<li><a href="https://doi-org/10.1177/0042098018789054"><span class="citation">(<a href="#ref-readesUnderstandingUrbanGentrification2019" role="doc-biblioref">Reades, De Souza, and Hubbard 2019</a>)</span></a></li>
+<li><a href="https://doi-org/10.1371/journal.pone.0107042"><span class="citation">(<a href="#ref-stevensDisaggregatingCensusData2015" role="doc-biblioref">Stevens et al. 2015</a>)</span></a></li>
+<li><a href="https://doi-org/10.1177/0265813516659286"><span class="citation">(<a href="#ref-tribbyAnalyzingWalkingRoute2017" role="doc-biblioref">Tribby et al. 2017</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="apr-4-mon-apr-6-wed-clustering-unsupervised-classification" class="section level3 tabset">
+<h3>Apr 4 (Mon), Apr 6 (Wed) Clustering &amp; Unsupervised Classification</h3>
+<div id="tutorialsslides-9" class="section level4">
+<h4>Tutorials/Slides</h4>
+<ul>
+<li><a href="/post/cluster-detection-in-point-data/">Mapping Crime Clusters in Manchester</a></li>
+<li><a href="/post/2020-03-18-unsupervised-clustering/">Unsupervised Classification of Non-spatial Data</a></li>
+</ul>
+</div>
+<div id="homeworkdeliverables-1" class="section level4">
+<h4>Homework/Deliverables</h4>
+<div id="hw-9" class="section level5">
+<h5>HW 9</h5>
+<p><a href="https://fbaum.unc.edu">Frank Baumgartner’s</a> most recent book is <em>Suspect Citizens</em> (Cambridge, 2018), focusing on racial differences in the outcomes of routine traffic stops. In this homework, I want you to analyse a small portion of the summary dataset (by police agency), I acquired from him, to identify clusters of patterns. You are welcome to choose a subset of the variables, but you should pick at least some “Stop” and “Search” variables such as “Total stops” and “Total number of searches of Hispanic drivers.” Noting that the data is from different years, construct a reasonable ‘cross-sectional’ dataset and tell a compelling story about the nature of traffic stops in the United States. The dataset, along with the code book is posted on Sakai.</p>
+</div>
+</div>
+<div id="resourcesreadings-8" class="section level4">
+<h4>Resources/Readings</h4>
+<ul>
+<li><a href="https://doi.org/10.1177/0739456X05283254"><span class="citation">(<a href="#ref-batesDoesNeighborhoodReally2006" role="doc-biblioref">Bates 2006</a>)</span></a></li>
+<li><a href="https://doi.org/10.1016/j.jue.2005.10.003"><span class="citation">(<a href="#ref-clappDefiningNeighborhoodBoundaries2006" role="doc-biblioref">Clapp and Wang 2006</a>)</span></a></li>
+<li>Chapters 7 &amp; 9 <span class="citation">(<a href="#ref-bivandAppliedSpatialData2013" role="doc-biblioref">Bivand, Pebesma, and Gómez-Rubio 2013</a>)</span></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="apr-11-mon-apr-13-wed-neural-networks-deep-learning" class="section level3 tabset">
+<h3>Apr 11 (Mon), Apr 13 (Wed) Neural Networks &amp; Deep Learning</h3>
+<div id="tutorialsslides-10" class="section level4">
+<h4>Tutorials/Slides</h4>
+</div>
+<div id="homework-8" class="section level4">
+<h4>Homework</h4>
+<ul>
+<li>[HW 10 Posted]</li>
+</ul>
+</div>
+<div id="readingsresources-2" class="section level4">
+<h4>Readings/Resources</h4>
+<ul>
+<li>Chapters 1-5 <a href="https://www.manning.com/books/deep-learning-with-r"><span class="citation">(<a href="#ref-cholletDeepLearning2018" role="doc-biblioref">Chollet and Allaire 2018</a>)</span></a></li>
+<li><a href="https://doi.org/10.1073/pnas.1700035114"><span class="citation">(<a href="#ref-gebruUsingDeepLearning2017" role="doc-biblioref">Gebru et al. 2017</a>)</span></a></li>
+<li><a href="https://arxiv.org/abs/1807.07155"><span class="citation">(<a href="#ref-lawTakeLookUsing2019a" role="doc-biblioref">Law, Brooks, and Russell 2019</a>)</span></a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="apr-18-mon-apr-20-wed-individual-work-on-assignment-3" class="section level3">
+<h3>Apr 18 (Mon), Apr 20 (Wed) Individual Work on Assignment 3</h3>
+<hr />
+</div>
+<div id="apr-25-mon-apr-27-wed-assignment-3-presentations-subject-to-change-based-on-exam-day" class="section level3">
+<h3>Apr 25 (Mon), Apr 27 (Wed) Assignment 3 Presentations (subject to change based on exam day)</h3>
+<hr />
+</div>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-batesDoesNeighborhoodReally2006" class="csl-entry">
+Bates, Lisa K. 2006. <span>“Does <span>Neighborhood Really Matter</span>?: <span>Comparing Historically Defined Neighborhood Boundaries</span> with <span>Housing Submarkets</span>.”</span> <em>Journal of Planning Education and Research</em> 26 (1): 5–17. <a href="https://doi.org/10.1177/0739456X05283254">https://doi.org/10.1177/0739456X05283254</a>.
+</div>
+<div id="ref-bivandAppliedSpatialData2013" class="csl-entry">
+Bivand, Roger S., Edzer Pebesma, and Virgilio Gómez-Rubio. 2013. <em>Applied <span>Spatial Data Analysis</span> with <span>R</span></em>. 2nd ed. 2013 edition. <span>New York Heidelberg Dordrecht London</span>: <span>Springer</span>.
+</div>
+<div id="ref-boeingUrbanSpatialOrder2019" class="csl-entry">
+Boeing, Geoff. 2019. <span>“Urban Spatial Order: Street Network Orientation, Configuration, and Entropy.”</span> <em>Applied Network Science</em> 4 (1): 1–19. <a href="https://doi.org/10.1007/s41109-019-0189-1">https://doi.org/10.1007/s41109-019-0189-1</a>.
+</div>
+<div id="ref-boeingNewInsightsRental2017" class="csl-entry">
+Boeing, Geoff, and Paul Waddell. 2017. <span>“New <span>Insights</span> into <span>Rental Housing Markets</span> Across the <span>United States</span>: <span>Web Scraping</span> and <span>Analyzing Craigslist Rental Listings</span>.”</span> <em>Journal of Planning Education and Research</em> 37 (4): 457–76. <a href="https://doi.org/10.1177/0739456X16664789">https://doi.org/10.1177/0739456X16664789</a>.
+</div>
+<div id="ref-chenMeasuringPolicyDebateInpress" class="csl-entry">
+Chen, Yiqiao, Elisabete A. Silva, and José P. Reis. In press. <span>“Measuring Policy Debate in a Regrowing City by Sentiment Analysis Using Online Media Data: <span>A</span> Case Study of <span>Leipzig</span> 2030.”</span> <em>Regional Science Policy &amp; Practice</em>, In press. <a href="https://doi.org/10.1111/rsp3.12292">https://doi.org/10.1111/rsp3.12292</a>.
+</div>
+<div id="ref-cholletDeepLearning2018" class="csl-entry">
+Chollet, Francois, and J. J. Allaire. 2018. <em>Deep <span>Learning</span> with <span>R</span></em>. 1 edition. <span>Shelter Island, NY</span>: <span>Manning Publications</span>.
+</div>
+<div id="ref-clappDefiningNeighborhoodBoundaries2006" class="csl-entry">
+Clapp, John M., and Yazhen Wang. 2006. <span>“Defining Neighborhood Boundaries: <span>Are</span> Census Tracts Obsolete?”</span> <em>Journal of Urban Economics</em> 59 (2): 259–84. https://doi.org/<a href="http://dx.doi.org/10.1016/j.jue.2005.10.003">http://dx.doi.org/10.1016/j.jue.2005.10.003</a>.
+</div>
+<div id="ref-cliftonQuantitativeAnalysisUrban2008" class="csl-entry">
+Clifton, Kelly, Reid Ewing, Gerrit-Jan Knaap, and Yan Song. 2008. <span>“Quantitative Analysis of Urban Form: A Multidisciplinary Review.”</span> <em>Journal of Urbanism: International Research on Placemaking and Urban Sustainability</em> 1 (1): 17–45. <a href="https://doi.org/10.1080/17549170801903496">https://doi.org/10.1080/17549170801903496</a>.
+</div>
+<div id="ref-frenkelMeasuringUrbanSprawl2008" class="csl-entry">
+Frenkel, Amnon, and Maya Ashkenazi. 2008. <span>“Measuring <span>Urban Sprawl</span>: <span>How Can We Deal</span> with <span>It</span>?”</span> <em>Environment and Planning B: Planning and Design</em> 35 (1): 56–79. <a href="https://doi.org/10.1068/b32155">https://doi.org/10.1068/b32155</a>.
+</div>
+<div id="ref-gebruUsingDeepLearning2017" class="csl-entry">
+Gebru, Timnit, Jonathan Krause, Yilun Wang, Duyun Chen, Jia Deng, Erez Lieberman Aiden, and Li Fei-Fei. 2017. <span>“Using Deep Learning and <span>Google Street View</span> to Estimate the Demographic Makeup of Neighborhoods Across the <span>United States</span>.”</span> <em>Proceedings of the National Academy of Sciences</em> 114 (50): 13108–13. <a href="https://doi.org/10.1073/pnas.1700035114">https://doi.org/10.1073/pnas.1700035114</a>.
+</div>
+<div id="ref-golanGenderedWalkabilityBuilding2019" class="csl-entry">
+Golan, Yael, Nancy Wilkinson, Jason M. Henderson, and Aiko Weverka. 2019. <span>“Gendered Walkability: <span>Building</span> a Daytime Walkability Index for Women.”</span> <em>Journal of Transport and Land Use</em> 12 (1). <a href="https://doi.org/10.5198/jtlu.2019.1472">https://doi.org/10.5198/jtlu.2019.1472</a>.
+</div>
+<div id="ref-grolemundDataScience2017" class="csl-entry">
+Grolemund, Garrett, and Hadley Wickham. 2017. <em>R for <span>Data Science</span></em>. First. <span>Sebastapol, CA</span>: <span>O’ Reilly</span>. <a href="http://r4ds.had.co.nz/">http://r4ds.had.co.nz/</a>.
+</div>
+<div id="ref-kazaCharacterizingRegionalStructure2021" class="csl-entry">
+Kaza, Nikhil, and Katherine Nesse. 2021. <span>“Characterizing the <span>Regional Structure</span> in the <span>United States</span>: <span class="nocase">A County-based Analysis</span> of <span>Labor Market Centrality</span>.”</span> <em>International Regional Science Review</em> 44 (5): 560–81. <a href="https://doi.org/10.1177/0160017620946082">https://doi.org/10.1177/0160017620946082</a>.
+</div>
+<div id="ref-kitchinEthicsSmartCities2016" class="csl-entry">
+Kitchin, Rob. 2016. <span>“The Ethics of Smart Cities and Urban Science.”</span> <em>Philosophical Transactions. Series A, Mathematical, Physical, and Engineering Sciences</em> 374 (2083). <a href="https://doi.org/10.1098/rsta.2016.0115">https://doi.org/10.1098/rsta.2016.0115</a>.
+</div>
+<div id="ref-lawTakeLookUsing2019a" class="csl-entry">
+Law, Stephen, Piage Brooks, and Chris Russell. 2019. <span>“Take a <span>Look Around</span>: <span>Using Street View</span> and <span>Satellite Images</span> to <span>Estimate House Prices</span>.”</span> <em>ACM Transactions on Intelligent Systems and Technology (TIST)</em> 10 (5). <a href="https://dl.acm.org/doi/abs/10.1145/3342240">https://dl.acm.org/doi/abs/10.1145/3342240</a>.
+</div>
+<div id="ref-lovelaceGeocomputation2019" class="csl-entry">
+Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. <em>Geocomputation with <span>R</span></em>. 1 edition. <span>Boca Raton</span>: <span>Chapman and Hall/CRC</span>. <a href="https://geocompr.robinlovelace.net/">https://geocompr.robinlovelace.net/</a>.
+</div>
+<div id="ref-mccartyUrbanFormAir2015" class="csl-entry">
+McCarty, J., and N. Kaza. 2015. <span>“Urban Form and Air Quality in the <span>United States</span>.”</span> <em>Landscape and Urban Planning</em> 139: 168–79. <a href="https://doi.org/10.1016/j.landurbplan.2015.03.008">https://doi.org/10.1016/j.landurbplan.2015.03.008</a>.
+</div>
+<div id="ref-miMultiregionalInputoutputTable2018" class="csl-entry">
+Mi, Zhifu, Jing Meng, Heran Zheng, Yuli Shan, Yi-Ming Wei, and Dabo Guan. 2018. <span>“A Multi-Regional Input-Output Table Mapping <span>China</span>’s Economic Outputs and Interdependencies in 2012.”</span> <em>Scientific Data</em> 5 (1): 1–12. <a href="https://doi.org/10.1038/sdata.2018.155">https://doi.org/10.1038/sdata.2018.155</a>.
+</div>
+<div id="ref-munzertAutomatedDataCollection2014a" class="csl-entry">
+Munzert, Simon, Christian Rubba, Peter Meißner, and Dominic Nyhuis. 2014. <em>Automated <span>Data Collection</span> with <span>R</span>: <span>A Practical Guide</span> to <span>Web Scraping</span> and <span>Text Mining</span></em>. 1 edition. <span>Chichester, West Sussex, United Kingdom</span>: <span>Wiley</span>.
+</div>
+<div id="ref-nelsonEconomicGeographyUnited2016" class="csl-entry">
+Nelson, Garrett Dash, and Alasdair Rae. 2016. <span>“An <span>Economic Geography</span> of the <span>United States</span>: <span>From Commutes</span> to <span>Megaregions</span>.”</span> <em>PLOS ONE</em> 11 (11): e0166083. <a href="https://doi.org/10.1371/journal.pone.0166083">https://doi.org/10.1371/journal.pone.0166083</a>.
+</div>
+<div id="ref-readesUnderstandingUrbanGentrification2019" class="csl-entry">
+Reades, Jonathan, Jordan De Souza, and Phil Hubbard. 2019. <span>“Understanding Urban Gentrification Through Machine Learning.”</span> <em>Urban Studies</em> 56 (5): 922–42. <a href="https://doi.org/10.1177/0042098018789054">https://doi.org/10.1177/0042098018789054</a>.
+</div>
+<div id="ref-reschHumanCentricDataScience2019" class="csl-entry">
+Resch, Bernd, and Michael Szell. 2019. <span>“Human-<span>Centric Data Science</span> for <span>Urban Studies</span>.”</span> <em>ISPRS International Journal of Geo-Information</em> 8 (12): 584. <a href="https://doi.org/10.3390/ijgi8120584">https://doi.org/10.3390/ijgi8120584</a>.
+</div>
+<div id="ref-rinconFloodRiskMapping2018" class="csl-entry">
+Rincón, Daniela, Usman T. Khan, and Costas Armenakis. 2018. <span>“Flood <span>Risk Mapping Using GIS</span> and <span>Multi-Criteria Analysis</span>: <span>A Greater Toronto Area Case Study</span>.”</span> <em>Geosciences</em> 8 (8): 275. <a href="https://doi.org/10.3390/geosciences8080275">https://doi.org/10.3390/geosciences8080275</a>.
+</div>
+<div id="ref-schweitzerPlanningSocialMedia2014" class="csl-entry">
+Schweitzer, Lisa. 2014. <span>“Planning and <span>Social Media</span>: <span>A Case Study</span> of <span>Public Transit</span> and <span>Stigma</span> on <span>Twitter</span>.”</span> <em>Journal of the American Planning Association</em> 80 (3): 218–38. <a href="https://doi.org/10.1080/01944363.2014.980439">https://doi.org/10.1080/01944363.2014.980439</a>.
+</div>
+<div id="ref-singletonUrbanAnalytics2018" class="csl-entry">
+Singleton, Alex David, Seth Spielman, and David Folch. 2018. <em>Urban <span>Analytics</span></em>. First edition. <span>Los Angeles</span>: <span>SAGE Publications Ltd</span>.
+</div>
+<div id="ref-stevensDisaggregatingCensusData2015" class="csl-entry">
+Stevens, Forrest R., Andrea E. Gaughan, Catherine Linard, and Andrew J. Tatem. 2015. <span>“Disaggregating <span>Census Data</span> for <span>Population Mapping Using Random Forests</span> with <span>Remotely-Sensed</span> and <span>Ancillary Data</span>.”</span> <em>PLOS ONE</em> 10 (2): e0107042. <a href="https://doi.org/10.1371/journal.pone.0107042">https://doi.org/10.1371/journal.pone.0107042</a>.
+</div>
+<div id="ref-tribbyAnalyzingWalkingRoute2017" class="csl-entry">
+Tribby, Calvin P., Harvey J. Miller, Barbara B. Brown, Carol M. Werner, and Ken R. Smith. 2017. <span>“Analyzing <span>Walking Route Choice</span> Through <span>Built Environments</span> Using <span>Random Forests</span> and <span>Discrete Choice Techniques</span>.”</span> <em>Environment &amp; Planning B : Urban Analytics &amp; City Science</em> 44 (6): 1145–67. <a href="https://doi.org/10.1177/0265813516659286">https://doi.org/10.1177/0265813516659286</a>.
+</div>
+<div id="ref-tufteVisualDisplayQuantitative2001" class="csl-entry">
+Tufte, E. R. 2001. <em>The <span>Visual</span> Display of <span>Quantitative Information</span></em>. <span>Cheshire, CT</span>: <span>Graphics Press</span>.
+</div>
+<div id="ref-watsonRegionalScaleWind2015" class="csl-entry">
+Watson, Joss J. W., and Malcolm D. Hudson. 2015. <span>“Regional <span>Scale</span> Wind Farm and Solar Farm Suitability Assessment Using <span class="nocase">GIS-assisted</span> Multi-Criteria Evaluation.”</span> <em>Landscape and Urban Planning</em> 138 (June): 20–31. <a href="https://doi.org/10.1016/j.landurbplan.2015.02.001">https://doi.org/10.1016/j.landurbplan.2015.02.001</a>.
+</div>
+<div id="ref-layered-grammar" class="csl-entry">
+Wickham, Hadley. 2010. <span>“A Layered Grammar of Graphics.”</span> <em>Journal of Computational and Graphical Statistics</em> 19 (1): 3–28. <a href="https://doi.org/10.1198/jcgs.2009.07098">https://doi.org/10.1198/jcgs.2009.07098</a>.
+</div>
+</div>
+</div>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/new-urban-analytics/">new-urban-analytics</a>
+  
+  <a class="badge badge-light" href="/tag/teaching/">teaching</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.netlify.app/teaching/techniques-course/&amp;text=PLAN%20672:%20Urban%20Data%20Analytics%20in%20R" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.netlify.app/teaching/techniques-course/&amp;t=PLAN%20672:%20Urban%20Data%20Analytics%20in%20R" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=PLAN%20672:%20Urban%20Data%20Analytics%20in%20R&amp;body=https://nkaza.netlify.app/teaching/techniques-course/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.netlify.app/teaching/techniques-course/&amp;title=PLAN%20672:%20Urban%20Data%20Analytics%20in%20R" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=PLAN%20672:%20Urban%20Data%20Analytics%20in%20R%20https://nkaza.netlify.app/teaching/techniques-course/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.netlify.app/teaching/techniques-course/&amp;title=PLAN%20672:%20Urban%20Data%20Analytics%20in%20R" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.netlify.app/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.netlify.app/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/nikhil_kaza" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+
+  
+  <p class="powered-by">
+    © 2018-2022 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-themes" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>
