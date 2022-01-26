@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>web-scraping | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/category/web-scraping/</link>
+      <atom:link href="https://nkaza.github.io/category/web-scraping/index.xml" rel="self" type="application/rss+xml" />
+    <description>web-scraping</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2022 Nikhil Kaza</copyright><lastBuildDate>Fri, 21 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>web-scraping</title>
+      <link>https://nkaza.github.io/category/web-scraping/</link>
+    </image>
+    
+    <item>
+      <title>Using Google API for Planning</title>
+      <link>https://nkaza.github.io/post/using-google-api-for-planning/</link>
+      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/using-google-api-for-planning/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/using-google-api-for-planning/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#collect-points-of-interest-poi-from-google&#34;&gt;Collect points of interest (POI) from Google&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#collect-streetview-images-from-google&#34;&gt;Collect streetview images from Google&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#local-servers&#34;&gt;Local servers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#acknowledgements&#34;&gt;Acknowledgements&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;Extracting data from un/semi/structured websites is becoming increasingly common place. Since data is collected, modified and refined continuously, it is increasingly useful to both serve them via web protocols rather than flat files that are downloaded. Furthermore, much of spatial data collection has become private, which also means that firms have stronger incentives to protect their datasets and curate what is available to the others. In other instances, the user or the analyst requires only a small section of the dataset. In these instances and others, data is served by a web-based protocol. Harvesting data usually takes the form of automating the process of sending requests to the webserver and parsing the output to extract relevant data for storage and analysis.&lt;/p&gt;
+&lt;div id=&#34;legality&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Legality&lt;/h2&gt;
+&lt;p&gt;Different jurisdictions have different legal restrictions and permissions on web scraping. There are also end user agreements that prevent certain actions (storage, retrieval, replication etc.). Please make sure that you are aware of these before attempting to make a local copy of the data that might be privately owned.&lt;/p&gt;
+&lt;p&gt;In general, scraping requires automated and repeated requests to the server. As long as these requests are not a disruptive rate, it is unlikely that you will run afoul of legality. Local data storage and replication of services is an entirely different ball game. Please consult a lawyer.&lt;/p&gt;
+&lt;p&gt;Many public and government websites are also now serving up data using web protocols. It is, therefore, useful to learn how to parse the outputs of these requests. In some instances, private firms such as Google, Baidu, Instagram etc. also provide Application Programming Interfaces (API) that serve data in a structured format. In these instances, subject to end user agreements, rate limits and daily quotas, restrictions on storage and transfer, it may be possible to access datasets that are otherwise unavailable.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;collect-points-of-interest-poi-from-google&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Collect points of interest (POI) from Google&lt;/h1&gt;
+&lt;p&gt;Points of interest are both businesses as well as other locations from around the US that allow us to understand the neighborhood character. Google has one of the largest collections of these to enable their maps and directions interfaces. They are of different types from ‘accounting’ to ‘zoo’ (see &lt;a href=&#34;https://developers.google.com/places/web-service/supported_types&#34;&gt;documentation&lt;/a&gt;). In this post, we will use Google PLACE API as a example to scrape the resturants around UNC-Chapel Hill. For more detailed information about how the API works, Please see the &lt;a href=&#34;https://developers.google.com/places/web-service/search&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;acquiring-api-keys.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acquiring API keys.&lt;/h2&gt;
+&lt;p&gt;Every request to API requires a key so the website can authorize and control the how much and who can access the information. To acquire a key from Google you need to follow &lt;a href=&#34;https://developers.google.com/places/web-service/get-api-key&#34;&gt;these instructions&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;According to the recent Google policy &lt;a href=&#34;https://developers.google.com/places/web-service/usage-and-billing&#34;&gt;documentation&lt;/a&gt; that only&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;address_component, adr_address, alt_id, formatted_address, geometry, icon, id, name, permanently_closed, photo, place_id, scope, type, url, utc_offset, vicinity. If you are interested for other information you need to enable billing option to be charged.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div id=&#34;scraping&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Scraping&lt;/h2&gt;
+&lt;p&gt;Once you acquired the API key, you need to follow a few steps iteratively to get at the results.&lt;/p&gt;
+&lt;p&gt;The steps are:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Intialise your R session&lt;/li&gt;
+&lt;li&gt;Set the parameters of the query&lt;/li&gt;
+&lt;li&gt;Send the query repreatedly to get all the results&lt;/li&gt;
+&lt;li&gt;Cleaning and exporting the data&lt;/li&gt;
+&lt;li&gt;Visualize the result&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The two main packages, we are going to use for scraping the Google is &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;RCurl&lt;/a&gt; and &lt;a href=&#34;https://CRAN.R-project.org/package=jsonlite&#34;&gt;jsonlite&lt;/a&gt;. Install them, if necessary and intialise them into the library.&lt;/p&gt;
+&lt;p&gt;Curl is a command line tool that allows us to transfer data especially over the web. Rcurl is an interface for that tool. Because the result of the API query is formatted in JavaScript Object Notation (JSON), we use jsonlite to parse it easily. JSON is lightweight data-interchange format.&lt;/p&gt;
+&lt;div id=&#34;intialise-your-r-session&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Intialise your R session&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;##################### USE YOUR OWN KEY #########################
+key = &amp;quot;_YOUR_KEY_HERE_&amp;quot;
+
+
+
+library(RCurl)
+library(tidyverse) 
+library(sf)
+################################################################&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;set-parameters&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Set parameters&lt;/h3&gt;
+&lt;p&gt;According to the &lt;a href=&#34;https://developers.google.com/places/web-service/search&#34;&gt;API documentation&lt;/a&gt;, we need to set a number of parameters to send the request to API. First, we will use the “round buffer” API to search all the restraunts within 2000 meters distance around UNC-Chapel Hill. You can extract the coordinates from &lt;a href=&#34;https://www.gps-coordinates.net/&#34; class=&#34;uri&#34;&gt;https://www.gps-coordinates.net/&lt;/a&gt; by searching for “Old Well”. The coordinates extracted are:Latitude: 35.912073 | Longitude: -79.05123. You can also use Google maps, select a point and right click to get to ‘What is here?’ and copy the latitude and logitude.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Places API allows you to query for place information on a variety of categories, such as: establishments, prominent points of interest, geographic locations, and more. You can search for places either by proximity or a text string. A Place Search returns a list of places along with summary information about each place; additional information is available via a Place Details query.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;There are three type of requests in Places API, “Find Places”,“Nearby Search”,“Text Search”
+To scrape POI based on the location criteria, the request need to be use here is “Nearby Search”, according to the document:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;A Nearby Search lets you search for places within a specified area. You can refine your search request by supplying keywords or specifying the type of place you are searching for.
+A Nearby Search request is an HTTP URL of the following form:
+&lt;a href=&#34;https://maps.googleapis.com/maps/api/place/nearbysearch/output?parameters&#34; class=&#34;uri&#34;&gt;https://maps.googleapis.com/maps/api/place/nearbysearch/output?parameters&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&amp;amp;radius=1500&amp;amp;type=restaurant&amp;amp;keyword=cruise&amp;amp;key=YOUR_API_KEY&#34; class=&#34;uri&#34;&gt;https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&amp;amp;radius=1500&amp;amp;type=restaurant&amp;amp;keyword=cruise&amp;amp;key=YOUR_API_KEY&lt;/a&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;location &amp;lt;- &amp;quot;35.912073,-79.05123&amp;quot;   #range,Latitude and Longitude as a string.
+radius &amp;lt;- 2000 # max is 50000
+type &amp;lt;- &amp;quot;restaurant&amp;quot; ### set the type of poi, for supported types: https://developers.google.com/places/web-service/supported_types&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;querying-the-api&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Querying the API&lt;/h3&gt;
+&lt;p&gt;Querying the API is simply passing the url string to the server. &lt;code&gt;paste&lt;/code&gt; and &lt;code&gt;paste0&lt;/code&gt; are quite useful for constructing these queries&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;searchURL &amp;lt;- paste(&amp;quot;https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=&amp;quot;,
+                      key,
+                      &amp;quot;&amp;amp;location=&amp;quot;,location,
+                      &amp;quot;&amp;amp;radius=&amp;quot;,radius,
+                      &amp;quot;&amp;amp;type=&amp;quot;,type,
+                      sep=&amp;quot;&amp;quot;)
+
+
+result &amp;lt;- getURL(url = URLencode(searchURL),ssl.verifypeer = FALSE)
+
+library(jsonlite)
+
+tmp &amp;lt;- jsonlite::fromJSON(result)
+str(tmp, max.level = 2) # Setting max.level so that it won&amp;#39;t overwhelm the page. Feel free to explore.
+# List of 4
+#  $ error_message    : chr &amp;quot;You must enable Billing on the Google Cloud Project at https://console.cloud.google.com/project/_/billing/enabl&amp;quot;| __truncated__
+#  $ html_attributions: list()
+#  $ results          : list()
+#  $ status           : chr &amp;quot;REQUEST_DENIED&amp;quot;
+
+tmp$status
+# [1] &amp;quot;REQUEST_DENIED&amp;quot;
+
+names(tmp$results) # Print the attributes in the response.
+# NULL
+
+restaurants &amp;lt;- tmp$results # This is fine, only because the status is OK. &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;One advantage of using the &lt;code&gt;fromJSON&lt;/code&gt; from Jsonlite package instead of the &lt;code&gt;rjson&lt;/code&gt; package is that the results are automatically a data frame. This makes it easier to work with. If you do use the &lt;code&gt;rjson::fromJSON&lt;/code&gt; you will have to parse the list into a data frame.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualise-these-results&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Visualise these results&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(leaflet)
+
+
+m &amp;lt;-  leaflet(cbind(restaurants$geometry$location$lng, restaurants$geometry$location$lat)) %&amp;gt;%
+    addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+    addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+    addCircles(group = &amp;quot;POI&amp;quot;,popup = restaurants$name)%&amp;gt;%
+    addLayersControl(
+        overlayGroups = c(&amp;quot;POI&amp;quot;, &amp;#39;Basemap&amp;#39;),
+        options = layersControlOptions(collapsed = FALSE)
+    )
+# Error in derivePoints(data, lng, lat, missing(lng), missing(lat), &amp;quot;addCircles&amp;quot;): Point data not found; please provide addCircles with data and/or lng/lat arguments
+
+library(widgetframe)
+frameWidget(m)
+# Error in &amp;quot;widgetframe&amp;quot; %in% class(targetWidget): object &amp;#39;m&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The query results only in 20 restaurants at the one time. But there is a next page token that allows you to query for more. Write a loop to continue to request more restaurants, until they are exhausted.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Make sure that you are not overloading the server and not going over your query limit. Implement sanity checks.&lt;/li&gt;
+&lt;li&gt;Make sure your loop recovers gracefully from any errors. Use TryCatch and check for status with each query.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Instead of restaurants search for day care centers around UNC. What can you infer from the results?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Find all the fire stations in Orange county and store them on the disk. We will use this later.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;The advantage of the above code is that it is generalisable. As long as the API has good documentation, you can adapt the code to extract information from it. In some instances, instead of JSON, XML output is generated. In such cases, it is customary to use &lt;code&gt;xml2&lt;/code&gt; instead of &lt;code&gt;jsonlite&lt;/code&gt; to convert to tables, tibbles and dataframes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-prebuilt-packages&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Using prebuilt packages&lt;/h3&gt;
+&lt;p&gt;For common APIs, R has some convenience packages. For example, we can use &lt;code&gt;googleway&lt;/code&gt; to access much of the google API functionality for users to access the Google Place API. According to its &lt;a href=&#34;https://cran.r-project.org/web/packages/googleway/vignettes/googleway-vignette.html&#34;&gt;package document&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Googleway provides access to Google Maps APIs, and the ability to plot an interactive Google Map overlayed with various layers and shapes, including markers, circles, rectangles, polygons, lines (polylines) and heatmaps. You can also overlay traffic information, transit and cycling routes.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(googleway)
+## not specifying the api will add the key as your &amp;#39;default&amp;#39;
+## Set the key for the package to use
+set_key(key = key)
+#google_keys()  # Use this to find
+
+## Send the Query
+tmp &amp;lt;- google_places(search_string = &amp;quot;Restaurant&amp;quot;, location = c(35.912073,-79.05123), radius = 2000, key = key)
+# [1] &amp;quot;https://maps.googleapis.com/maps/api/place/textsearch/json?query=Restaurant&amp;amp;location=35.912073,-79.05123&amp;amp;radius=2000&amp;amp;key=AIzaSyCH8PT6KCdGjuhtJo-NmyRLjw6l6qzfIJ8&amp;quot;
+
+## All the result is already compiled into a R dataframe for further analysis, which is much eaiser to manipulate later.
+restaurants2 &amp;lt;- tmp$results
+
+restaurants2[, c(&amp;#39;name&amp;#39;, &amp;#39;rating&amp;#39;, &amp;#39;price_level&amp;#39;)] %&amp;gt;% head()
+# NULL&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Googleway package has the abiltity to get more complicated data as well. For example, you can access the route between two points (say Old well to Southpoint mall)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tmp &amp;lt;- google_directions(origin = c(35.912073,-79.05123),
+                         destination = c(35.90497, -78.946485),
+                        mode = &amp;quot;walking&amp;quot;,
+                         key = directionskey, # Make sure that your API key has directions enabled.
+                         simplify = TRUE) %&amp;gt;%
+                    direction_polyline() %&amp;gt;%
+                    decode_pl() %&amp;gt;%
+                    .[,c(2,1)] %&amp;gt;%
+                    as.matrix() %&amp;gt;% 
+                    st_linestring() %&amp;gt;%
+                    st_sfc(crs=&amp;quot;+init=epsg:4326&amp;quot;) 
+# Error in lst[[c(&amp;quot;routes&amp;quot;, &amp;quot;overview_polyline&amp;quot;, &amp;quot;points&amp;quot;)]]: no such index at level 2
+
+library(mapview)
+mapview(tmp)
+# NULL&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I recommend that you walk through the above code step by step. Especially notice how decoding a google encoded polyline results in a lat/lon data frame but sf wants a lon/lat data frame.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;For each centroid of block group in Orange County, NC, find and visualise the google recommended routes by walking, biking and driving to UNC campus. Draw conclusions about the efficacy of google’s directions.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Using Distance Matrix from Google, find the shortest distance from each centroid of the block group to each of the fire stations that you discovered earlier.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can use tigris package to download the blockgroup geometry from census.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;collect-streetview-images-from-google&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Collect streetview images from Google&lt;/h1&gt;
+&lt;p&gt;In this section, we will use Google streeview API to download the streetview images around UNC. For more detailed information about how the API works, Please see the &lt;a href=&#34;https://developers.google.com/maps/documentation/streetview/intro&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There are two ways to send requests for streetview API, based on location or photoid. For this task we will use the location method to send the request.&lt;/p&gt;
+&lt;p&gt;Accoriding to the document:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Street View API will snap to the panorama photographed closest to this location. When an address text string is provided, the API may use a different camera location to better display the specified location. When a lat/lng is provided, the API searches a 50 meter radius for a photograph closest to this location. Because Street View imagery is periodically refreshed, and photographs may be taken from slightly different positions each time, it’s possible that your location may snap to a different panorama when imagery is updated.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt; 
+#35.913697, -79.054205 &amp;lt;- Franklin street coordinate
+set_key(key = key)
+# we use the google_streeview function in googleway package to compile the request url.
+SearchURL &amp;lt;- google_streetview(location =c(35.91357,-79.054596),key = directionskey, output = &amp;quot;html&amp;quot;)
+
+library(httr)
+library(jpeg)
+
+#For image data, we need to use the GET function from httr package to extract the data
+t &amp;lt;- httr::GET(SearchURL)
+
+#Save data using the writeJPEG function from jpeg package
+writeJPEG(content(t),&amp;quot;name.jpg&amp;quot;)
+# Error in writeJPEG(content(t), &amp;quot;name.jpg&amp;quot;): image must be a matrix or array of raw or real numbers&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are other parameters that can be manipulate the outcome such as size, heading, fov and pitch&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;size - numeric vector of length 2, specifying the output size of the image in pixels, given in width x height. For example, c(600, 400) returns an image 600 pixles wide and 400 pixles high.&lt;/li&gt;
+&lt;li&gt;heading - indicates the compass heading of the camera. Accepted values are from 0 to 360 (both 0 and 360 indicate north), 90 indicates east, 180 south and 270 west. If no heading is specified a value will be calculated that directs the camera to wards the specified location, from the point at which the closest photograph was taken.&lt;/li&gt;
+&lt;li&gt;fov - determines the horizontal field of view of the image. The field of view is expressed in degrees, with a maximum allowed value of 120. When dealing with a fixed-size viewport, as with Street View image of a set size, field of view in essence represents zoom, with small numbers indicating a higher level of zoom.&lt;/li&gt;
+&lt;li&gt;pitch - specifies the up or down angle of the camera relative to the Street View vehicle. This is often, but not always, flat horizontal. Positive values angle the camera up (with 90 degrees indicating straight up); negative values angle the camera down (with -90 indicating straight down)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Download the streetview images from 20 random points near the fire stations around Orange County and store them. Use different parameters for same location and notice the differences. What impact does this have on analysis when you use them for say segmenting the street scene into % area covered in ‘trees’, ‘roads’, ‘buildings’, ‘store front’ etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;local-servers&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Local servers&lt;/h1&gt;
+&lt;p&gt;There is no reason to think that servers have to be remote. You can also query a local (on your computer) server and your R session acts like a client (e.g. browser). We can demonstrate this using OSRM server and constructing Isocrhrones. &lt;a href=&#34;https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times&#34;&gt;Isochrones&lt;/a&gt; are area you can reach from a point within a specified time. We can plot isochornes of every 2 min biking, around some random points in Orange County, NC For this we use the Open Source Routing Library (OSRM), though any other API works as well (e.g. Google, Mapbox etc. &lt;a href=&#34;https://mrakow.wordpress.com/2015/11/30/isochrone-generation-with-the-google-maps-api-using-a-quadtree/&#34;&gt;see this blog&lt;/a&gt; for example.) .&lt;/p&gt;
+&lt;p&gt;For our purposes, we are going to &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34;&gt;set up a OSRM server&lt;/a&gt; on your computer.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Different OS require different instructions, so please follow the &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34;&gt;website&lt;/a&gt; to construct the backend for your OS.&lt;/li&gt;
+&lt;li&gt;Download North Carolina road network from Openstreetmap from &lt;a href=&#34;https://download.geofabrik.de/north-america.html&#34;&gt;Geofabrik&lt;/a&gt; for example (use the pbf file).&lt;/li&gt;
+&lt;li&gt;Construct a graph that can be used for finding shortest routes. Use suitably modified versions of
+&lt;ul&gt;
+&lt;li&gt;osrm-extract nc.osm.pbf -p ./profiles/bicycle.lua&lt;/li&gt;
+&lt;li&gt;osrm-partition nc.osrm&lt;/li&gt;
+&lt;li&gt;osrm-customize nc.osrm&lt;/li&gt;
+&lt;li&gt;osrm-routed –algorithm=MLD nc.osrm&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;in the command window/terminal (outside R). If all goes well, this sequence of steps will create local server ready to accept your requests. You can always shut it down by closing the terminal/command window, after you are done with your analysis. The server will be ready to be queried at &lt;a href=&#34;http://localhost:5000/&#34; class=&#34;uri&#34;&gt;http://localhost:5000/&lt;/a&gt; or &lt;a href=&#34;http://127.0.0.1:5000&#34; class=&#34;uri&#34;&gt;http://127.0.0.1:5000&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;To get other modes, simply change the &lt;code&gt;lua&lt;/code&gt; profile.&lt;/p&gt;
+&lt;p&gt;The following code is here for the sake of completeness and is not evaluated&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(osrm)
+# Ideally set these options up
+ options(osrm.server = &amp;quot;http://localhost:5000/&amp;quot;)
+options(osrm.profile = &amp;#39;bike&amp;#39;) 
+
+randompoints &amp;lt;- matrix(c( -79.065443, 35.924787, -79.087353, 35.914525, -79.066203, 35.881521), 
+                       ncol=2, byrow =TRUE) %&amp;gt;%
+                      data.frame()
+names(randompoints) &amp;lt;- c(&amp;#39;lng&amp;#39;, &amp;#39;lat&amp;#39;)
+randompoints$name &amp;lt;- c(&amp;#39;pt1&amp;#39;, &amp;#39;pt2&amp;#39;, &amp;#39;pt3&amp;#39;)
+
+rt &amp;lt;- osrmRoute(src = randompoints[1,c(&amp;#39;name&amp;#39;, &amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], 
+                dst = randompoints[2,c(&amp;#39;name&amp;#39;,&amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], 
+                sp = TRUE) %&amp;gt;% st_as_sf()
+
+rt %&amp;gt;% leaflet() %&amp;gt;%
+    addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints[1:2,], ~lng, ~lat) %&amp;gt;%
+  addPolylines(weight =5, smoothFactor = .5, color=&amp;#39;red&amp;#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OSRM is a convenience package that is wrapping the calls to the server and parsing the output into Spatial*. For example, the curl query in the backend looks like&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://localhost:5000/route/v1/biking/-78.901330,36.002806,-78.909020,36.040266&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iso &amp;lt;- list()
+for (i in 1:nrow(randompoints)){
+iso[[i]] &amp;lt;- osrmIsochrone(loc = randompoints[i,c(&amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], breaks = seq(from = 0,to = 15, by = 2)) %&amp;gt;% st_as_sf()
+}
+
+iso &amp;lt;- do.call(&amp;#39;rbind&amp;#39;, iso)
+
+ Npal &amp;lt;- colorNumeric(
+   palette = &amp;quot;Reds&amp;quot;, n = 5,
+   domain = iso$center
+ )
+ 
+iso %&amp;gt;% leaflet() %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints, ~lng, ~lat) %&amp;gt;%
+  addPolygons(color = &amp;quot;#444444&amp;quot;, weight = 1, smoothFactor = 0.5,
+    opacity = 1.0, fillOpacity = 0.5, fillColor = ~Npal(iso$center),
+    group = &amp;quot;Isochrone&amp;quot;) %&amp;gt;%
+  addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~iso$center,
+            title = &amp;quot;Biking Time (min)&amp;quot;,opacity = 1
+            )
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The result should looks similar to the following.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/isochrones.png&#34; style=&#34;width:200.0%;height:200.0%&#34; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Find the areas of Orange county that are not within 15 minute response time of any of the fire station. By using the demographic information on the gaps, what conclusions can you draw ?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;JSON files are well-structured. Therefore, it is relatively easy to parse them. If the files are unstructured, a lot of effort goes into figuring out different structures and searches that will yield the dataset that is necessary. In general, packages such as &lt;code&gt;xml2&lt;/code&gt; and &lt;code&gt;rvest&lt;/code&gt; will help such tasks. This is left for a different day.&lt;/p&gt;
+&lt;p&gt;Reading data from server based APIs are no different from reading and parsing a local file. However, unlike local files that are well structured, and OS handling handling of low level functions of memory management and error recovery, we ought to be extra mindful of how errors might affect and break our code. Once the data is scraped, analysis proceeds in the usual fashion. However, because the data is not of specific vintage, reproducibility of research is a serious concern. You should note it and be able to provide archival of scraped data for others to use, subject to end use restrictions. In any case, currency of the data should be balanced with the archival mission of the organisation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acknowledgements&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Acknowledgements&lt;/h1&gt;
+&lt;p&gt;Parts of the code in this post is written by &lt;a href=&#34;https://planning.unc.edu/student/chenyan/&#34;&gt;Yan Chen&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

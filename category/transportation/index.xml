@@ -5,12 +5,197 @@
     <link>https://nkaza.github.io/category/transportation/</link>
       <atom:link href="https://nkaza.github.io/category/transportation/index.xml" rel="self" type="application/rss+xml" />
     <description>transportation</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2022 Nikhil Kaza</copyright><lastBuildDate>Sun, 29 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2022 Nikhil Kaza</copyright><lastBuildDate>Tue, 25 Jan 2022 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
       <title>transportation</title>
       <link>https://nkaza.github.io/category/transportation/</link>
     </image>
+    
+    <item>
+      <title>Isochrones from Routing Engines (OSRM)</title>
+      <link>https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/</link>
+      <pubDate>Tue, 25 Jan 2022 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In other posts, I have shown how to use external servers (google, craigslist etc.) to access information.  You can also query a local (on your computer) server and your R session acts like a client (e.g. browser).&lt;/p&gt;
+&lt;p&gt;We can demonstrate this using (Open Source Routing Machine) OSRM server and constructing Isocrhrones. &lt;a href=&#34;https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Isochrones&lt;/a&gt; are area you can reach from a point within a specified time. Often isochrones are used to identify gaps in the service area boundaries (e.g. 15 min distance from fire stations).&lt;/p&gt;
+&lt;p&gt;We can plot isochornes of every 2 min biking, around some random points in Orange County, NC For this we use the Open Source Routing Library (OSRM), though any other API works as well (e.g. Google, Mapbox etc. &lt;a href=&#34;https://mrakow.wordpress.com/2015/11/30/isochrone-generation-with-the-google-maps-api-using-a-quadtree/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;see this blog&lt;/a&gt; for example.) .&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    I am using a OSRM server. There are other option available such as &lt;a href=&#34;https://github.com/valhalla/valhalla&#34;&gt;Valhalla&lt;/a&gt; routing engine and associated R packages. Use whichever one suits your needs.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;setting-up-a-osrm-server&#34;&gt;Setting up a OSRM server&lt;/h2&gt;
+&lt;p&gt;We are going to &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;set up a OSRM server&lt;/a&gt; on your computer.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Different OS require different instructions, so please follow the &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;website&lt;/a&gt; to construct the backend for your OS.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Download North Carolina road network from Openstreetmap from &lt;a href=&#34;https://download.geofabrik.de/north-america.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geofabrik&lt;/a&gt; for example (use the pbf file).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Construct a graph that can be used for finding shortest routes. Use suitably modified versions of (mind the file locations)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;    - osrm-extract nc.osm.pbf -p ./profiles/bicycle.lua
+    - osrm-partition nc.osrm
+    - osrm-customize nc.osrm
+    - osrm-routed --algorithm mld nc.osrm 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;in the command window/terminal (outside R). If all goes well, this sequence of steps will create local server ready to accept your requests.  The server will be ready to be queried at  http://localhost:5000/ or http://127.0.0.1:5000&lt;/p&gt;
+&lt;p&gt;To get other modes, simply change the &lt;code&gt;lua&lt;/code&gt; profile.&lt;/p&gt;
+&lt;p&gt;The following code is here for the sake of completeness and is not evaluated. it can only be evaluated with the server is runnign in the background at &lt;code&gt;localhost:5000&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osrm)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(widgetframe)
+
+# Ideally set these options up
+ options(osrm.server = &amp;quot;http://localhost:5000/&amp;quot;)
+options(osrm.profile = &#39;bike&#39;) 
+
+randompoints &amp;lt;- matrix(c( -79.065443, 35.924787, -79.087353, 35.914525, -79.066203, 35.881521), 
+                       ncol=2, byrow =TRUE) %&amp;gt;%
+                      data.frame()
+names(randompoints) &amp;lt;- c(&#39;lng&#39;, &#39;lat&#39;)
+randompoints$name &amp;lt;- c(&#39;pt1&#39;, &#39;pt2&#39;, &#39;pt3&#39;)
+
+rt &amp;lt;- osrmRoute(src = randompoints[1,c(&#39;name&#39;, &#39;lng&#39;,&#39;lat&#39;)], 
+                dst = randompoints[2,c(&#39;name&#39;,&#39;lng&#39;,&#39;lat&#39;)], 
+                returnclass = &amp;quot;sf&amp;quot;)
+
+m1 &amp;lt;- 
+rt %&amp;gt;% leaflet() %&amp;gt;%
+    addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints[1:2,], ~lng, ~lat) %&amp;gt;%
+  addPolylines(weight =5, smoothFactor = .5, color=&#39;red&#39;)
+
+
+frameWidget(m1)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OSRM is a convenience package that is wrapping the calls to the server and parsing the output into sf classes. For example, the curl query in the backend looks like&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://localhost:5000/route/v1/biking/-78.901330,36.002806,-78.909020,36.040266&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and should result in the following image&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/single_route.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+
+You can always shut the server down by closing the terminal/command window, after you are done with your analysis.&lt;/p&gt;
+&lt;p&gt;To get a matrix of distances and durations between multiple points,&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ttmatrix &amp;lt;- osrmTable(loc=randompoints[, c(&#39;name&#39;, &#39;lng&#39;, &#39;lat&#39;)], measure = c(&#39;duration&#39;, &#39;distance&#39;))
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;ttmatrix$durations&lt;/code&gt; should return a table similar to&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;pt1&lt;/th&gt;
+&lt;th&gt;pt2&lt;/th&gt;
+&lt;th&gt;pt3&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;em&gt;pt1&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;0.0&lt;/td&gt;
+&lt;td&gt;22.8&lt;/td&gt;
+&lt;td&gt;32.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;em&gt;pt2&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;22.8&lt;/td&gt;
+&lt;td&gt;0.0&lt;/td&gt;
+&lt;td&gt;25.1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;em&gt;pt3&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;32.9&lt;/td&gt;
+&lt;td&gt;25.8&lt;/td&gt;
+&lt;td&gt;0.0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;querying-a-osrm-server&#34;&gt;Querying a OSRM server&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;iso &amp;lt;- list()
+for (i in 1:nrow(randompoints)){
+iso[[i]] &amp;lt;- osrmIsochrone(loc = randompoints[i,c(&#39;lng&#39;,&#39;lat&#39;)], breaks = seq(from = 0,to = 15, by = 2)) %&amp;gt;% st_as_sf()
+}
+
+iso &amp;lt;- do.call(&#39;rbind&#39;, iso)
+
+ Npal &amp;lt;- colorNumeric(
+   palette = &amp;quot;Reds&amp;quot;, n = 5,
+   domain = iso$center
+ )
+ 
+iso %&amp;gt;% leaflet() %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints, ~lng, ~lat) %&amp;gt;%
+  addPolygons(color = &amp;quot;#444444&amp;quot;, weight = 1, smoothFactor = 0.5,
+    opacity = 1.0, fillOpacity = 0.5, fillColor = ~Npal(iso$center),
+    group = &amp;quot;Isochrone&amp;quot;) %&amp;gt;%
+  addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~iso$center,
+            title = &amp;quot;Biking Time (min)&amp;quot;,opacity = 1
+            )
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The result should looks similar to the following.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/isochrones.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Change the profile of the OSRM server to car and notice the differences in the Isochrones (shapes and extents).&lt;/li&gt;
+&lt;li&gt;Repeat the entire exercise for all the major shopping areas in the Triangle.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;It should be obvious that having a local server might reduce latency and allow for quicker turnaround. However, there are some distinct disadvantages compared to commercial option, including but not limited to incorporating real time information, setup costs and maintenance costs. Nonetheless, it is useful to think about how these might be beneficial within an organisation.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Geospatial Data in R</title>

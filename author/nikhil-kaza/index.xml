@@ -48,6 +48,329 @@ types of plans. Some unimplementable plans are worth making.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Extracting Data from OpenStreetMap</title>
+      <link>https://nkaza.github.io/post/extracting-data-from-osm/</link>
+      <pubDate>Wed, 12 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/extracting-data-from-osm/</guid>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;This tutorial covers obtaining free OpenStreetMap (OSM) data. &lt;em&gt;OpenstreetMap (OSM)&lt;/em&gt; is a free and open map of the world created largely by voluntary contribution of millions of people around the world. Much like Wikipedia. Since the data is free and open, there are much less restrictions to obtaining and using the data. The only condition of using OSM data is proper attribution to OSM contributors.&lt;/p&gt;
+&lt;h2 id=&#34;comparison-between-osm-and-google&#34;&gt;Comparison between OSM and Google&lt;/h2&gt;
+&lt;p&gt;Availability of data is reasonably good in both Goolge and OSM in most parts of the world. However, the availability of Google data is better in places where there is more commercial interest and that in OSM where there is more humanitarian interst. You can use &lt;a href = &#34;https://tools.geofabrik.de/mc/&#34;&gt;Map Compare&lt;/a&gt; to compare OSM and Google in particular locations.&lt;/p&gt;
+&lt;p&gt;OSM data is free to download. Overpass can be used free of cost to download small amount of data. For large datasets, use &lt;a href = &#34;https://download.geofabrik.de/&#34;&gt;Geofabrik&lt;/a&gt;. Google requires users to pay based on volume of data served after a limited daily quota. Policies of Google change frequently, so note that your code will eventually and frequently break.&lt;/p&gt;
+&lt;h2 id=&#34;downloading-data&#34;&gt;Downloading data&lt;/h2&gt;
+&lt;p&gt;OSM serves two APIs, namely Main API for editing OSM, and Overpass API for providing OSM data. We will use Overpass API to gather data in this tutorial just like in the &lt;a href=&#34;https://nkaza.github.io/post/intersection-density-from-osm-using-qgis-r/&#34;&gt;tutorial about OSM and QGIS&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Data can be queried for download using a combination of search criteria lke location and type of objects. It helps to understand how OSM data is structured. OSM data is stored as a list of attributes tagged in key - value pairs of geospatial objects (points, lines or polygons). For example, for an architect’s office, the key is “office,” and the value is “architect.” For the name of the office, key is “name” and value is “ABC Design Studio.” Access an extensive list of key-value pairs through &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Map_Features%22%3EMap%20features&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;OSM Wiki&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;obtaining-point-locations-of-restaurants-in-durham-from-osm&#34;&gt;Obtaining point locations of restaurants in Durham from OSM&lt;/h3&gt;
+&lt;p&gt;restaurants are tagged under amenities. Amenities, according to OSM Wiki are facilities used by visitors and residents. Here, ‘key’ is “amenity” and ‘value’ is “restaurant.” Do not forget to look for related amenities such as “pub,” “food court,” “cafe,” “fast food,” etc. Other amenities include: “university,” “music school,” “kindergarten” and the likes in education, “bus station,” “fuel,” “parking” and others in transportation, and much more.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osmdata)
+library(sf)
+library(tidyverse)
+library(leaflet)
+library(widgetframe)
+
+data_from_osm_df &amp;lt;- opq (getbb (&amp;quot;Durham, North carolina&amp;quot;)) %&amp;gt;% #gets bounding box
+  add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;) %&amp;gt;% #searches for restaurants
+  osmdata_sf() #download OSM data as sf
+
+#select name and geometry from point data for restaurants
+cafe_osm &amp;lt;- data_from_osm_df$osm_points %&amp;gt;% #select point data from downloaded OSM data
+  select(name, geometry) #for now just selecting the name and geometry to plot
+
+#create a plot in leaflet
+m1 &amp;lt;-
+leaflet() %&amp;gt;%
+  addProviderTiles(&amp;quot;CartoDB.Positron&amp;quot;) %&amp;gt;%
+  addCircles(data = cafe_osm)
+
+frameWidget(m1)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-1.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;It is helpful to learn about the distinctions between different tags (key-value pairs). For example, the key “landuse” is used to describe the purpose for which an area is being used. Examples of values for the key “landuse” are “commercial,” “retail,” “vineyard,” “cemetery,” “religious,” etc. Landuse tags are more generic than amenities and are only used for area objects while amenities can also be used for point objects. In case of any confusion, refer to &lt;a href = &#34; https://wiki.openstreetmap.org/wiki/Map_Features&#34;&gt;Map features&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Various amenities, land-use, roads (e.g. key=“highway,” value = “primary,” “service,” “footway”), natural land features (key=“natural,” value = “grassland”), settlements (key = “place,” value = “suburb”), power (key=“power,” value=“line,” “pole,” “transformer”), etc. may be useful in planning applications.
+&lt;br /&gt;&lt;/p&gt;
+&lt;h2 id=&#34;comparing-with-google-places&#34;&gt;Comparing with Google Places&lt;/h2&gt;
+&lt;p&gt;It is useful to compare the output of OSM to Google Places. I am going to use &lt;code&gt;googleway&lt;/code&gt; package for this analysis.&lt;/p&gt;
+&lt;div class=&#34;alert alert-Note&#34;&gt;
+  &lt;div&gt;
+    To make this portion of the code work, you will need an API key from Google. Instructions to get and set an API key are located here.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Note the use of loops to get the next page.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(googleway)
+
+str &amp;lt;- &amp;quot;restaurants in Durham, NC&amp;quot;  # Construct a search string
+
+res &amp;lt;- google_places(search_string = str, key = YOUR_API_KEY)  #Query google servers. Do not forget to set your Google API key 
+
+str(res)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## List of 4
+##  $ html_attributions: list()
+##  $ next_page_token  : chr &amp;quot;Aap_uEDz7qvtl081hZODaq6CLvwxXBcWwRyFYT9kOd1wWdfljRo08jW5CEgBVUa2jKQ6Y9AV_oDXpqNk3q2O5wXqxKo3pIagXycsj0LrAwjuhW0&amp;quot;| __truncated__
+##  $ results          :&#39;data.frame&#39;:   20 obs. of  16 variables:
+##   ..$ business_status      : chr [1:20] &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; ...
+##   ..$ formatted_address    : chr [1:20] &amp;quot;1200 W Chapel Hill St, Durham, NC 27701, United States&amp;quot; &amp;quot;8128 Renaissance Pkwy #114, Durham, NC 27713, United States&amp;quot; &amp;quot;737 9th St #210, Durham, NC 27705, United States&amp;quot; &amp;quot;2726 Durham-Chapel Hill Blvd, Durham, NC 27707, United States&amp;quot; ...
+##   ..$ geometry             :&#39;data.frame&#39;:    20 obs. of  2 variables:
+##   .. ..$ location:&#39;data.frame&#39;:  20 obs. of  2 variables:
+##   .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
+##   .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   .. ..$ viewport:&#39;data.frame&#39;:  20 obs. of  2 variables:
+##   .. .. ..$ northeast:&#39;data.frame&#39;:  20 obs. of  2 variables:
+##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
+##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   .. .. ..$ southwest:&#39;data.frame&#39;:  20 obs. of  2 variables:
+##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
+##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   ..$ icon                 : chr [1:20] &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; ...
+##   ..$ icon_background_color: chr [1:20] &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; ...
+##   ..$ icon_mask_base_uri   : chr [1:20] &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; ...
+##   ..$ name                 : chr [1:20] &amp;quot;GRUB Durham&amp;quot; &amp;quot;Harvest 18 Restaurant&amp;quot; &amp;quot;Juju Durham&amp;quot; &amp;quot;The Refectory Cafe&amp;quot; ...
+##   ..$ opening_hours        :&#39;data.frame&#39;:    20 obs. of  1 variable:
+##   .. ..$ open_now: logi [1:20] TRUE TRUE TRUE TRUE TRUE TRUE ...
+##   ..$ photos               :List of 20
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2268
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/116038233183567696806\&amp;quot;&amp;gt;Brian Jordan&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECP5UX9KQ7WeVocbhSWlQslnEf0uROrJE4Dng0KyGb2exx2__uVvEUGsKirBOsbXScQvJuy5CsqMZ98Hami7shazfLc84zec4CeIA1kjW-&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2340
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114770559454901883104\&amp;quot;&amp;gt;Mike Little&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECKt-0GQaxOb0rpHD0nS8RKfd5VbODehsr7W8N2dz2aWPAgII1OkvXNCgC8CWdVG-g-_ti5TsLcKWx3j9QwY_MyVLsKPr6p1GSHwVCkwo8&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4160
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1365
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/101715461096256363950\&amp;quot;&amp;gt;Juju Durham&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAYdiayaQSGfOM58qXm1dIXv7m3cOQCG2S8g3ZsjFwQdZRMqQT0W94ayBBy8afJ8dVz_IUCWNph8ppyRf8Xf3KTrwR3J-sB1nawF3_zZ0r&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 2048
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1960
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115200244530553280646\&amp;quot;&amp;gt;Jesse Locklear&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEB-wKDoxQW-RyDVTQSdopDIk344z0o5sgIbtZBucTYM3BKM2ryRtgblSFWlL_0II01PC2tFeTgKdyIYGxhU7ZFJ7DFwECywiyUVrrPViKk&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3840
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/110406871396037806571\&amp;quot;&amp;gt;Chris Florio&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAySlpbP3OV-3gRjPByIfelIdEepFXEyLMbxO2LdUHKD8XrDhjmlY3eqZnH_5wHIWb5NM1Rs--hnd3X37XVT8pQ-gNHmXhBP39vCRu4-23&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 5760
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 759
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/112182744125527300635\&amp;quot;&amp;gt;A Google User&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEALryxfVAI0q2U0Q9ikNLSVsZSYvLn_xyGRGXj_KIN-mAI9_cDiEM0SyqYgb6u6VmwVPaYlLE1E2gBczk8UCk41n7ggk9R9PQGRPRnPzGj&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 1140
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/113029887293590173135\&amp;quot;&amp;gt;Kevin Primus&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAeKSKeiM23rD8lzKS5Xhll9qcb0ErySI4rTepVuHnGGXT5ahp_5sMDMwvBobZj7TFl0dtkkLHkWh-XwHIOAkUsF_324kXtSRi07IzjeKg&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 3024
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114073771529466701161\&amp;quot;&amp;gt;Charles Jolley&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECJhHC0LI7Hzo-JqBGvRfBCIHsz1dptvFqGgLEm-mW0FFxYq9rFWWAGkeR7hrnt0Bni2pU0A7PzJBHschKbyYew8_A2qSPzAivmioPIWlh&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3465
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114657080188950072058\&amp;quot;&amp;gt;Firebirds Wood Fired Grill&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECRp0ZTIgg97N_k52LNL0aoAXAXBIw7tdrr3AsMRO1hcAhiVFOW8sGYgE-HwWAEyXJ4KZXX_dVboVOWTO-H9hHoOAMzoGx-jzymPmam31u&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 5202
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115591303687864814152\&amp;quot;&amp;gt;warada shafi&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEDMfPwEX43OuAigWC7kBbdtXW0WgEIXr9e6mzChxXdRIMwb4j_X87ubRLQnp4H0ASOm9MMoGNFVq6QR71rUNNqb3t9I3lLF4ltyskIi7sM&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3264
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/110287574629885866131\&amp;quot;&amp;gt;ggle screwedup&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAX28RS26E44Q27nb9-xRteL5a7BCe5nx8Fc2spEj6f2qXMysh2bcJUwsIOfrwRXKm6DRg_SUxg87Yjr4nStJauifLJo-abrnPlGtkmbUt&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4928
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/102661117264282773668\&amp;quot;&amp;gt;Marianne Germann&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEDoSL8nJXaelIfGwhicCJz2KXn737YE8OROc0x9b0eXi_fu9NyH4UTsyt7xlsM4ZT80V-BOH7FCDXdNzrKGDKd8jJuE73mqRSKUR4uRAFN&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/101822245344530912517\&amp;quot;&amp;gt;A Google User&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEDkXqjRlNKK81MifgMHVi0o1Ox-473hjjsN2WkOyOH2NR3av3CpNG47Sf9phd-3MkiWRgiCbahz6tPIRkZDSucNcZvXXVrwRjY8Lpw2DXn&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/118299821446006535378\&amp;quot;&amp;gt;Jonathan Herbin&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAxqP65t4QWw1dRaxqXI5birKrgwQ7gTLRaQ8f9Fgc_32JrUUHGW7ZeS10UG_GtC67NNRoGVfULLaFm8L1Sq3FFjQILCKRau9TNGZzeX0b&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115630244379686871545\&amp;quot;&amp;gt;David Martinak&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEDLnIMNjBlFMZk9WGAUvqJ5sESpaLuW5d-Yf4tojNBkPF4rZuDSxvGxvtef354X6lZMn9jf3p1bFK9p6FBH2p72g2g3lIaai-Pip-UajfL&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 4032
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/112811475890442238108\&amp;quot;&amp;gt;Al Betts&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECFyvefFwkTzGccf4SUssGNF28MqawJT9S18vXN5Fxj0Thkdjbu7qfISyWrLDMN777mo_qIEncxvhq28hppBb9kibRDpeKe4Ag0Ldpt83b&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 3024
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115712679935541822299\&amp;quot;&amp;gt;Melody Kuroda&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAN3HSkKRyn55cm8NZxoa8uFe8RUOrtd1dCLxJHiBT7H0xGvjrkTIVoq_eHtTa5GOvR4U8foc3DCvbvXKOCGqxxfBhaeVaKweRhiOH4iun&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1440
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/107563912532869932686\&amp;quot;&amp;gt;Bethany Elai.&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEABMhL-3pxp1wQerpvvCdkmo_IH6zfotxUeltqEm5694SfVtjvdJb-GfxVfzNF3NrDZgcmdx6rjptGbNG5wVg0DCV8nEZhpvehaNrQ4Lj6&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 2560
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1659
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115728368975913921650\&amp;quot;&amp;gt;Natasha Johnson&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEBJh3NVA3ztYj1tZmcWO_M5gd6c0kfwOCwZZWZJVNmmJjaItvGML5ZI7xECuA_D9i_POJ6lHS_C8AOlo1a09h5LmgR2ScvgFwkhsa7t_AH&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 2500
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 4032
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/105297074549593408929\&amp;quot;&amp;gt;Toast&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uED9Cfgb3MaAEs8Lf-gLhbdwDs8u5_NqAx10z__4WxwaUNHx5yypjHegHD470dGvWnJo_E7WZECgioqBtSrdNKq2K9Eb8uANh7DoWQmeWYY&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 3024
+##   ..$ place_id             : chr [1:20] &amp;quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&amp;quot; &amp;quot;ChIJj6foxurorIkRhlH7GB_PMo0&amp;quot; &amp;quot;ChIJ608CRgfkrIkRzaPpHby3GS4&amp;quot; &amp;quot;ChIJHVocmIPmrIkRsVAlSGbptok&amp;quot; ...
+##   ..$ plus_code            :&#39;data.frame&#39;:    20 obs. of  2 variables:
+##   .. ..$ compound_code: chr [1:20] &amp;quot;X3WJ+QW Durham, North Carolina&amp;quot; &amp;quot;W23W+8Q Durham, North Carolina&amp;quot; &amp;quot;235H+W2 Durham, North Carolina&amp;quot; &amp;quot;X3F8+QQ Durham, North Carolina&amp;quot; ...
+##   .. ..$ global_code  : chr [1:20] &amp;quot;8773X3WJ+QW&amp;quot; &amp;quot;8773W23W+8Q&amp;quot; &amp;quot;8783235H+W2&amp;quot; &amp;quot;8773X3F8+QQ&amp;quot; ...
+##   ..$ price_level          : int [1:20] 2 2 3 2 2 2 2 2 2 2 ...
+##   ..$ rating               : num [1:20] 4.5 4.4 4.5 4.4 4.4 4.2 4.5 4.4 4.3 4.3 ...
+##   ..$ reference            : chr [1:20] &amp;quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&amp;quot; &amp;quot;ChIJj6foxurorIkRhlH7GB_PMo0&amp;quot; &amp;quot;ChIJ608CRgfkrIkRzaPpHby3GS4&amp;quot; &amp;quot;ChIJHVocmIPmrIkRsVAlSGbptok&amp;quot; ...
+##   ..$ types                :List of 20
+##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:6] &amp;quot;restaurant&amp;quot; &amp;quot;cafe&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
+##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
+##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:7] &amp;quot;bakery&amp;quot; &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; ...
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:5] &amp;quot;restaurant&amp;quot; &amp;quot;bar&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   ..$ user_ratings_total   : int [1:20] 1550 966 774 891 1566 901 1062 1608 1388 1684 ...
+##  $ status           : chr &amp;quot;OK&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Notice that the result has Status code and next page token. We are going to use them to extract the restaurants.
+
+# Initiatlise some values.
+nextpage_yes_no &amp;lt;- !is.null(res$next_page_token)
+token &amp;lt;- res$next_page_token
+i &amp;lt;- 1
+cafe_google_list &amp;lt;- NULL
+
+# extract only when status is OK.
+
+if(res$status == &amp;quot;OK&amp;quot;) {
+    cafe_google_list[[i]] &amp;lt;- 
+                        cbind (&amp;quot;id&amp;quot; = res$results$id, 
+                               &amp;quot;name&amp;quot; = res$results$name,
+                               &amp;quot;address&amp;quot; = res$results$formatted_address,
+                               &amp;quot;longitude&amp;quot; = res$results$geometry$location$lng,  # Notice that we are going multiple levels down in the data frame.  You should really examine the structure of the res and results to understand what is going on here.
+                               &amp;quot;latitude&amp;quot; = res$results$geometry$location$lat,
+                               &amp;quot;plus_code&amp;quot; = res$results$plus_code$compound_code,
+                               &amp;quot;price_level&amp;quot; = res$results$price_level,
+                               &amp;quot;rating&amp;quot; = res$results$rating
+                               ) %&amp;gt;% as_tibble()
+
+}
+
+
+# The loop begins.
+
+while(nextpage_yes_no == TRUE){ #See if the loop will run at least once.
+  i &amp;lt;- i+1 #increment i.
+  res_next &amp;lt;- google_places(search_string = str,
+                          page_token = token,
+                          key = YOUR_API_KEY)
+
+  if(res_next$status == &amp;quot;OK&amp;quot;) {
+    cafe_google_list[[i]] &amp;lt;- 
+                        cbind (&amp;quot;id&amp;quot; = res_next$results$id, 
+                               &amp;quot;name&amp;quot; = res_next$results$name,
+                               &amp;quot;address&amp;quot; = res_next$results$formatted_address,
+                               &amp;quot;longitude&amp;quot; = res_next$results$geometry$location$lng,
+                               &amp;quot;latitude&amp;quot; = res_next$results$geometry$location$lat,
+                               &amp;quot;plus_code&amp;quot; = res_next$results$plus_code$compound_code,
+                               &amp;quot;price_level&amp;quot; = res_next$results$price_level,
+                               &amp;quot;rating&amp;quot; = res_next$results$rating
+                               ) %&amp;gt;% as_tibble()
+
+}
+
+
+  token &amp;lt;- res_next$next_page_token # notice the update of the token 
+  nextpage_yes_no &amp;lt;- !is.null(res_next$next_page_token) # Notice the update of nextpage_yes_no. If you don&#39;t do it, you can potentially run the loop forever (or at least till the server shuts you down.)
+  rm(res_next)  # clean up the temporary objects. Good practise/
+  Sys.sleep(5) # Introduce a time delay, so that you do not overwhelm the server.
+}  # The loop concludes
+
+
+# Convert the list to a sf object to visualise
+cafe_google &amp;lt;- plyr::compact(cafe_google_list) %&amp;gt;% bind_rows 
+cafe_google &amp;lt;- st_as_sf(cafe_google,  coords = c(&amp;quot;longitude&amp;quot;, &amp;quot;latitude&amp;quot;), crs=4326)
+
+m1 &amp;lt;-
+leaflet() %&amp;gt;%
+  addProviderTiles(&amp;quot;CartoDB.Positron&amp;quot;) %&amp;gt;%
+  addCircles(data = cafe_google)
+
+frameWidget(m1)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-2.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Note that OSM report 958 entries while Google reports 20 restaurants.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Why is there a difference between Google and OSM? (Hint: Read the documentation)&lt;/li&gt;
+&lt;li&gt;If there is a marked difference between OSM and Google, what implication does this have for any analysis that you might do using their data?&lt;/li&gt;
+&lt;li&gt;Notice that repeated application of the same query produce different results in in the same system. Why? What implication does this have for reproducibility?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;The povenance of the data and the continual update of data on servers have serious implications for reproducibility. On the other hand, the updates allow for timeliness of analysis. It is important to recognise the limitations and potential.&lt;/p&gt;
+&lt;h1 id=&#34;acknowledgements&#34;&gt;Acknowledgements&lt;/h1&gt;
+&lt;p&gt;Much of the post is written by &lt;a href=&#34;https://planning.unc.edu/student/kshitiz-khanal-2/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kshitiz Khanal&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Urban Form and Transportation Energy Consumption</title>
       <link>https://nkaza.github.io/talk/urban-form-and-transportation-energy-consumption/</link>
       <pubDate>Thu, 24 Oct 2019 16:00:00 +0000</pubDate>
