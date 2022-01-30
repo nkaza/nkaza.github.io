@@ -5,7 +5,7 @@
     <link>https://nkaza.github.io/tag/new-urban-analytics/</link>
       <atom:link href="https://nkaza.github.io/tag/new-urban-analytics/index.xml" rel="self" type="application/rss+xml" />
     <description>new-urban-analytics</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2022 Nikhil Kaza</copyright><lastBuildDate>Mon, 10 Jan 2022 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2022 Nikhil Kaza</copyright><lastBuildDate>Fri, 03 Aug 2018 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
       <title>new-urban-analytics</title>
@@ -13,542 +13,295 @@
     </image>
     
     <item>
-      <title>PLAN 672: Urban Data Analytics in R</title>
-      <link>https://nkaza.github.io/teaching/techniques-course/</link>
-      <pubDate>Mon, 10 Jan 2022 00:00:00 +0000</pubDate>
-      <guid>https://nkaza.github.io/teaching/techniques-course/</guid>
-      <description>&lt;h1 id=&#34;course-description--objectives&#34;&gt;Course Description &amp;amp; Objectives&lt;/h1&gt;
-&lt;p&gt;This course is about different techniques used in assembling, managing, analysing and predicting using heterogeneous data sets in urban environments. These data sets that are inherently messy and incomplete. Types of data include, point, polygon, raster, vector, text, image and network data; data sets with high cadence and high spatial resolution. This is a survey course for different techniques and approaches in dealing with these data in R. The objective of these analytical techniques is to inform both short term operational decisions and long term planning in cities. As such, the emphasis is on practical urban data analytics rather than in-depth discussion about the suitability and appropriateness of techniques and their associated theoretical assumptions.&lt;/p&gt;
-&lt;p&gt;Unlike other courses of similar vein, I put inordinate emphasis on data visualisation and communication. The point of data analysis is to tell a compelling story, not to use latest analytical techniques.&lt;/p&gt;
-&lt;p&gt;This is a companion course to &lt;a href=&#34;https://planning.unc.edu/courses/673/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;em&gt;PLAN 673: The Ethics and Politics of New Urban Analytics&lt;/em&gt;&lt;/a&gt; (Seminar), which deals with problems, opportunities and hidden agendas with data generation, analysis and visualisation in urban settings. Students are encouraged to take them both.&lt;/p&gt;
-&lt;h1 id=&#34;course-details&#34;&gt;Course Details&lt;/h1&gt;
+      <title>Scraping web for data</title>
+      <link>https://nkaza.github.io/post/scraping-web-for-data/</link>
+      <pubDate>Fri, 03 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/scraping-web-for-data/</guid>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Instructor:&lt;/strong&gt; &lt;a href=&#34;http://nkaza.github.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Nikhil Kaza&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Teaching Assistant:&lt;/strong&gt; Xijing Li&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Classroom:&lt;/strong&gt; New East 101&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Hours:&lt;/strong&gt; MW 4:40PM - 5:55PM&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Office Hours:&lt;/strong&gt; go.unc.edu/kaza&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;TA Office Hours:&lt;/strong&gt; M 12-1 PM, Th 2-3 PM on &lt;a href=&#34;https://unc.zoom.us/j/9238394823&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Zoom&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Web:&lt;/strong&gt; nkaza.github.io &amp;amp; sakai.unc.edu&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#legality&#34;&gt;Legality&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#an-example-using-baidu&#34;&gt;An example using Baidu&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#apis-for-non-point-data&#34;&gt;APIs for non-point data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#unstructured-data&#34;&gt;Unstructured data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#acknowledgements&#34;&gt;Acknowledgements&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h1 id=&#34;prerequisites--preparation&#34;&gt;Prerequisites &amp;amp; Preparation&lt;/h1&gt;
-&lt;p&gt;The course will move quickly, cover a large number of analytical techniques, data sets, use cases and disciplinary domains. It requires significant investment on the part of the students to learn the technical skills as well as to learn about substantive urban and regional analyses.&lt;/p&gt;
-&lt;p&gt;Much of the work in this course will be done using Open Source Software that is usually free.&lt;/p&gt;
-&lt;p&gt;While it is not a prerequisite, the course assumes a working knowledge of &lt;a href=&#34;http://www.%20r-project.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt;. R is a programming language and a free software environment for statistical computing and graphics. There are a number of online resources that will help you with getting up to speed with R. You will have to use extensively the documentation, help and examples that R environment provides; i.e. Do not be afraid to use, for example,&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;?qplot
-??randomForest
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;to seek help for specific commands.&lt;/p&gt;
-&lt;p&gt;One disadvantage with R is that it stores all its objects in memory. This means that your computer should have significant RAM to deal with large data sets.&lt;/p&gt;
-&lt;p&gt;Another disadvantage with R is that it has a &lt;a href=&#34;http://cockeyed.com/lessons/learning_curve/learning_curve.php&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;em&gt;shallow learning curve&lt;/em&gt;&lt;/a&gt;. And it has some quirks. In particular, please pay attention to &lt;a href=&#34;https://www.burns-stat.com/pages/Tutor/R_inferno.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R-Inferno&lt;/a&gt;. However, persistence will have long term benefits.&lt;/p&gt;
-&lt;p&gt;You should have an aptitude for debugging computer code, thinking through edge cases in data sets, identifying and dealing with missing data and messy data sets.&lt;/p&gt;
-&lt;p&gt;You should expect that the instructions and help provided may not work on your system due to different configurations, mismatched data types and differences in libraries. You should have an aptitude to troubleshoot the problems and figure out workarounds.&lt;/p&gt;
-&lt;p&gt;It may be helpful to go through the materials from &lt;a href=&#34;https://supermariogiacomazzo.github.io/STOR320_WEBSITE/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;STOR 320: Introduction to Data Science&lt;/a&gt;&lt;/p&gt;
-&lt;h1 id=&#34;textbooks--readings&#34;&gt;Textbooks &amp;amp; Readings&lt;/h1&gt;
-&lt;p&gt;The following books are used implicitly in the class. You are not required to buy any of them but they are very useful to have on your bookshelf.&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Brewer, Cynthia A.
-(2015).
-&lt;em&gt;Designing Better Maps: A Guide for GIS Users&lt;/em&gt;.
-2 edition.
-Redlands, California: Esri Press.
-ISBN: 978-1-58948-440-5.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Few, Stephen
-(2015).
-&lt;em&gt;Signal: Understanding What Matters in a World of Noise&lt;/em&gt;.
-Burlingame, California: Analytics Press.
-ISBN: 978-1-938377-05-1.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Tufte, E. R
-(2001).
-&lt;em&gt;The Visual Display of Quantitative Information&lt;/em&gt;.
-Cheshire, CT: Graphics Press.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Wickham, Hadley
-(2016).
-&lt;em&gt;Ggplot2: Elegant Graphics for Data Analysis&lt;/em&gt;.
-Springer-Verlag New York.
-ISBN: 978-3-319-24277-4.
-URL: &lt;a href=&#34;https://ggplot2.tidyverse.org&#34;&gt;https://ggplot2.tidyverse.org&lt;/a&gt;.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;All the above books are about principles of information display and design rather than about data analysis techniques. Information visualisation is very important and much more so than analytical techniques though enough attention is not devoted to them. While we may not be using these textbooks explicitly in weekly readings, you are expected to critically engage with the materials and thoughtfully follow the principles laid out in the books throughout the course.&lt;/p&gt;
-&lt;p&gt;For general purpose statistics, I have always enjoyed Tim Harford’s podcast called &lt;a href=&#34;https://www.bbc.co.uk/programmes/p02nrss1/episodes/downloads&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;More or Less&lt;/a&gt;. He has a recent book out that succinctly details the attitudes you want to take towards data analysis and telling stories with data. I highly recommend his new book.&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Harford, Tim
-(2021).
-&lt;em&gt;The Data Detective: Ten Easy Rules to Make Sense of Statistics&lt;/em&gt;.
-New York: Riverhead Books.
-ISBN: 978-0-593-08459-5.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;The following books will get you started on some analytical techniques and can serve as a reference.&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Bivand, Roger S., Edzer Pebesma, and Virgilio Gómez-Rubio
-(2013).
-&lt;em&gt;Applied Spatial Data Analysis with R&lt;/em&gt;.
-2nd ed. 2013 edition.
-New York Heidelberg Dordrecht London: Springer.
-ISBN: 978-1-4614-7617-7.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Grolemund, Garrett and Hadley Wickham
-(2017).
-&lt;em&gt;R for Data Science&lt;/em&gt;.
-first.
-Sebastapol, CA: O’ Reilly.
-URL: &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;http://r4ds.had.co.nz/&lt;/a&gt; (visited on May. 25, 2018).&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;The following book is excellent for covering the latest techniques for Geospatial data in R&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow
-(2019).
-&lt;em&gt;Geocomputation with R&lt;/em&gt;.
-1 edition.
-Boca Raton: Chapman and Hall/CRC.
-ISBN: 978-1-138-30451-2.
-URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocompr.robinlovelace.net/&lt;/a&gt; (visited on Dec. 01, 2019).&lt;/cite&gt;
-&lt;/p&gt;
-&lt;h1 id=&#34;course-policies&#34;&gt;Course Policies&lt;/h1&gt;
-&lt;p&gt;The following set of course policies is not meant as an exhaustive list. If in doubt, ask for permission and clarification.&lt;/p&gt;
-&lt;h2 id=&#34;logistics&#34;&gt;Logistics&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Your health and well-being is of paramount importance. You may also be primary care givers and might have substantial and increased demands on your time. You may not be able meet the requirements of the course, for any number of other reasons. Reach out to me, if you need any help, including if you need extensions or want to take an Incomplete or deal with it differently. I will deal with these on ad-hoc basis.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;I don’t need any advance notification for intermittent absences. You should make appropriate judgments based on your health and your peers. However, you are responsible for keeping up with the material. Because the materials are posted on-line and in advance, you should be able to work through the code. If you have issues, please use Microsoft Teams, Office Hours and other resources available to you.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Microsoft Teams will be used for troubleshooting and announcements. Sakai will continue to be used for HW, lab and assignment submissions. In addition, please create an account on &lt;a href=&#34;https://rstudio.cloud/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;rstudio.cloud&lt;/a&gt; (see below). You can sign in using your Github login.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;You should expect that the datasets you will need to download may not be available, because of server outages and lack of personnel to attend to these outages. We will cross those bridges, when we get to them.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;All bets are off, if I fall ill. Hopefully, there is enough course infrastructure already set up for you to achieve the learning objectives on your own. The department will figure out how to assign grades, in that eventuality.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;deadlines--extension-requests&#34;&gt;Deadlines &amp;amp; Extension Requests&lt;/h2&gt;
-&lt;p&gt;Completed lab session materials are due by the end of lab (6 PM) in Sakai. You only need to submit one lab work for each topic.&lt;/p&gt;
-&lt;p&gt;Homework assigned for the week is due on the deadline specified in Sakai.&lt;/p&gt;
-&lt;p&gt;If there is a reason to extend the deadline for the entire class, please discuss with me at least a week ahead and make a cogent case.&lt;/p&gt;
-&lt;p&gt;All labs and homework needs to be submitted as two files 1) a R markdown file (*.Rmd) and 2) html output (*.html) of the Markdown file.&lt;/p&gt;
-&lt;h2 id=&#34;readingsresources&#34;&gt;Readings/Resources&lt;/h2&gt;
-&lt;p&gt;The weekly readings are provided as resources and references. You are not required to read all the materials in detail. But the readings are useful to learn the material in depth and troubleshoot some issues. In some cases, the software and techniques in the Resources may be dated. Please use the web to adapt and update them.&lt;/p&gt;
-&lt;h2 id=&#34;tutorials&#34;&gt;Tutorials&lt;/h2&gt;
-&lt;p&gt;Often labs are accompanied by tutorials. The tutorials are usually self-contained and self-explanatory. In R, there are multiple ways to achieve the results, each with their own advantages and disadvantages. The tutorials may include different ways of data munging and analysis to expose you to different techniques. It is not implied that one is better than the others, though we all have our own preferences. If in doubt, rely on &lt;a href=&#34;https://www.alexejgossmann.com/benchmarking_r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;benchmarking&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;equipment&#34;&gt;Equipment&lt;/h2&gt;
-&lt;p&gt;We will conduct the class in the New East lab. However, it would be helpful if every student has a working laptop that has &lt;a href=&#34;https://www.r-project.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt; and &lt;a href=&#34;https://www.rstudio.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Rstudio&lt;/a&gt; installed. The laptops should have sufficient memory and processing speed to deal with large data sets. If you have access to no such equipment, please see me immediately to discuss options.&lt;/p&gt;
-&lt;h2 id=&#34;grading&#34;&gt;Grading&lt;/h2&gt;
-&lt;p&gt;While all assignments are posted on this website, they are to be submitted exclusively on Sakai and on time. Please refrain from emailing your submissions to the instructor or the TA.&lt;/p&gt;
-&lt;p&gt;I am going to use a ‘Specification Grading’ in this course.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Lab reports to be submitted at the end of the class (6 PM). (Individual/Collaborative)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;(Mostly) weekly homework (HW) programming assignments (Individual/Collaborative)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Critique of a data visualisation. (Assignment 1) (Group)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Final term project. (Assignment 2) (Individual)&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The assignments will be graded on an Satisfactory/Unsatisfactory scale. Satisfactory grade is equivalent to a B+ letter grade. The focus of these assignments is on learning outcomes such as mastery of the material, making innovative connections in the material and on-time submission.&lt;/p&gt;
-&lt;p&gt;You will need to achieve Satisfactory grades on at least 5 HW and 5 labs and at least one of the major assignments to achieve a L (equivalent to a C grade). Fewer than 4 Satisfactory grades in labs and HW will result in a failing grade. In addition to the Satisfactory grades in 7 labs and 7 HW, Satisfactory grades should be achieved in the both the major assignments to achieve a P.&lt;/p&gt;
-&lt;p&gt;Exceptional performance in the final term project, in addition to Satisfactory grade in 9 labs and 9 HW the other requirements, will result in H/A grade.&lt;/p&gt;
-&lt;p&gt;This grading scale will be adjusted if the deliverables change depending course progress.&lt;/p&gt;
-&lt;h2 id=&#34;consent-to-share&#34;&gt;Consent to Share&lt;/h2&gt;
-&lt;p&gt;I am reserving the right to post your ungraded submissions (including HW) in Sakai (restricted to the class) for current and future students, as examples, without comment or recommendation. If you wish to decline to consent, please send me a note. No explanation is necessary and opting out does not affect your grades.&lt;/p&gt;
-&lt;h2 id=&#34;attendance-and-participation&#34;&gt;Attendance and Participation&lt;/h2&gt;
-&lt;p&gt;If you don’t attend classes, but submit the requirements on time, there is no penalty. Group assignments will get a single grade for the group. Continuous absences that affect the progress in the course should be discussed with the instructor to figure out remedial action.&lt;/p&gt;
-&lt;h2 id=&#34;e-mail&#34;&gt;E-mail&lt;/h2&gt;
-&lt;p&gt;Sakai messaging system should be the preferred way to communicate with the instructor. Before you email either of us about homework or lab sessions, you should use resources on the web and on Sakai. Google, Stack Overflow and &lt;a href=&#34;https://teams.microsoft.com/l/team/19%3aNkXCQbygFozl8aV0IqzNPKvZiwy4N0WPBtL9a7XTsPA1%40thread.tacv2/conversations?groupId=f82e1428-94d4-4019-97fb-38d4e694e3e7&amp;amp;tenantId=58b3d54f-16c9-42d3-af08-1fcabd095666&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Microsoft Teams&lt;/a&gt; are your friends.&lt;/p&gt;
-&lt;h2 id=&#34;asynchronous-communication--troubleshooting&#34;&gt;Asynchronous Communication &amp;amp; Troubleshooting&lt;/h2&gt;
-&lt;p&gt;We will use Microsoft Teams for asynchronous communication and troubleshooting. We can follow guidelines like these that allow you to get to answers quickly:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://stackoverflow.com/help/how-to-ask&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://stackoverflow.com/help/how-to-ask&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://codereview.stackexchange.com/help/how-to-ask&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://codereview.stackexchange.com/help/how-to-ask&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We will use &lt;a href=&#34;https://rstudio.cloud&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RStudio Cloud&lt;/a&gt; for troubleshooting in this course. Think of RStudio Cloud as an instance of RStudio in the cloud where you can share not only your script but also the whole environment. This increases the likelihood that others can replicate your results or troubles. &lt;a href=&#34;https://nkaza.github.io/teaching/remote-instruction-672/&#34;&gt;Instructions are located here&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;academic-conduct&#34;&gt;Academic Conduct&lt;/h2&gt;
-&lt;p&gt;I firmly believe in learning from your peers and from others. All homework and lab submissions could benefit from collaborations, however, the submissions are individual. This means that interpreting the data and the results, producing the visualisations, drawing appropriate conclusions from the data, is necessarily individual even when the strategies can be discussed and developed with others. &lt;strong&gt;All help including fragments of borrowed code&lt;/strong&gt;, however, should be explicitly acknowledged. Severe penalties are imposed for non-attribution. In particular, please pay attention to the copyright restrictions and attribution requirements associated with the R-code that you might find elsewhere.&lt;/p&gt;
-&lt;h2 id=&#34;additional-help&#34;&gt;Additional Help&lt;/h2&gt;
-&lt;p&gt;Please set up a time on &lt;a href=&#34;https://nikhilkaza.youcanbook.me/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;my calendar&lt;/a&gt; to discuss any additional help you may require.&lt;/p&gt;
-&lt;p&gt;I strongly recommend that you avail yourself of the &lt;a href=&#34;http://ropenlabs.web.unc.edu/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R open labs&lt;/a&gt; run by &lt;a href=&#34;https://guides.lib.unc.edu/lorinbruckner&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Lorin Bruckner&lt;/a&gt; and &lt;a href=&#34;https://guides.lib.unc.edu/mattjansen&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Matt Jensen&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can also request additional help from Lorin and Matt by setting up appointments with them from their website. In addition, Odum Institute has &lt;a href=&#34;https://odum.unc.edu/research-support/quantitative-analysis/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;walk-in consultations&lt;/a&gt; and some of them have expertise in R.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://library.unc.edu/about/staff/philip-mcdaniel/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Phil McDaniel&lt;/a&gt; and &lt;a href=&#34;https://guides.lib.unc.edu/amandahenley&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Amanda Henley&lt;/a&gt; are excellent resources for tracking down geospatial datasets and troubleshooting issues with them.&lt;/p&gt;
-&lt;p&gt;You will probably extensively use Stack Overflow to troubleshoot and debug your code. Please be mindful of how you &lt;a href=&#34;https://stackoverflow.com/help/how-to-ask&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;should ask questions on Stack Overflow&lt;/a&gt; including providing minimum reproducible code and datasets.&lt;/p&gt;
-&lt;p&gt;There are organisations that are devoted to ensuring diversity in the R community. See for example, R-ladies &lt;a href=&#34;https://rladies.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;meetup groups&lt;/a&gt; and &lt;a href=&#34;https://rladies-community-slack.herokuapp.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Slack channels&lt;/a&gt;. Local groups may or may not be active.&lt;/p&gt;
-&lt;h1 id=&#34;schedule-tentative&#34;&gt;Schedule (Tentative)&lt;/h1&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;introductory-materials&#34;&gt;Introductory materials&lt;/h2&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;jan-10-mon-jan-12-wed-introduction-r--qgis&#34;&gt;Jan 10 (Mon), Jan 12 (Wed) Introduction. R &amp;amp; QGIS&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/slides/techniques_Introduction/Introduction_slides.html&#34;&gt;Data &amp;amp; Cities&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/introduction-to-r-rmarkdown/&#34;&gt;Create R markdown files and knit to HTML&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/starting-with-qgis/&#34;&gt;Create a map in QGIS&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://stats.idre.ucla.edu/stat/data/intro_r/intro_r_interactive.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Introduction to R - UCLA slides&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homework&#34;&gt;Homework&lt;/h4&gt;
-&lt;h5 id=&#34;hw1&#34;&gt;HW1&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Download the &lt;a href=&#34;https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;building violations data&lt;/a&gt; from Chicago. Using QGIS, map and style the building violations by for at least 4 periods since 2006. Export these maps as PNG/JPG files to embed them in a R markdown file.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;In the same R markdown file, using the pictures and some (any) basic R code (such as to produce historgrams) tell a short story about the evolution of building violations in Chicago.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Chapters 1, 4, 8 &amp;amp; 21 of &lt;a href=&#34;https://r4ds.had.co.nz/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Grolemund and Wickham 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Modules 1, 2 &amp;amp; 3 of &lt;a href=&#34;https://docs.qgis.org/3.4/en/docs/training_manual/index.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;QGIS training manual&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.3390/ijgi8120584&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Resch and Szell 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1098/rsta.2016.0115&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Kitchin 2016)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/alexsingleton/urban_analytics&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Singleton, Spielman, and Folch 2018)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;jan-19-wed-using-git-and-github&#34;&gt;Jan 19 (Wed) Using Git and Github&lt;/h3&gt;
-&lt;p&gt;This week is coordinated with PLAN 372.&lt;/p&gt;
-&lt;h4 id=&#34;resourcesreadings-1&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://happygitwithr.com&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Bryan n.d.)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;jan-24-mon-jan-26-wed-jan-31-mon-exploratory-data-analysis--visualisation&#34;&gt;Jan 24 (Mon), Jan 26 (Wed), Jan 31 (Mon) Exploratory Data Analysis &amp;amp; Visualisation&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-1&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/exploratory-data-analysis-and-visualisation/&#34;&gt;Starting with tidyverse &amp;amp; ggplot&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homework-1&#34;&gt;Homework&lt;/h4&gt;
-&lt;h5 id=&#34;hw-2&#34;&gt;HW 2&lt;/h5&gt;
-&lt;p&gt;In the tutorial, we used data for O$_3$, a Criteria Air Polluatant (CAP). In this homework perform similar analysis for NO$_2$, another CAP. For this you will need to download the data from &lt;a href=&#34;https://aqs.epa.gov/aqsweb/airdata/download_files.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;EPA&lt;/a&gt; and clean it.&lt;/p&gt;
-&lt;p&gt;You will need to tell a story about this pollutant and its distribution (in various senses). You may consider the following questions to structure your anlayses. In no way, these are exhaustive. Feel free to tell the story that interests you.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;How many sensors are measuring NO$_2$?&lt;/li&gt;
-&lt;li&gt;Of what percentage of the year are the NO$_2$ sensors active? Where are the sensors that are not active? Map them.&lt;/li&gt;
-&lt;li&gt;How does the geographical distribution of NO$_2$ AQI differ from that of O$_3$&lt;/li&gt;
-&lt;li&gt;Which cities (CBSA, not counties) are worst affected by NO$_2$?&lt;/li&gt;
-&lt;li&gt;Does the spatial extent of the CBSA matter? (i.e. if you use the 2000 definitions of MSA vs 2018 definitions of CBSA does your conclusions change? Hint: Modifiable Areal Unit Problem)&lt;/li&gt;
-&lt;li&gt;Is there a correlation between NO$_2$ and O$_3$? Do different correlations matter? (i.e. correlations among AQIs of NO$_2$ and O$_3$ at site level, vs correlation of days AQI&amp;gt;100 at CBSA level etc.)&lt;/li&gt;
-&lt;li&gt;What does the scatterplot look like? What does facetting the scatter plot by state tell us (pick 5 or so states)?&lt;/li&gt;
-&lt;li&gt;Link this with other data (temperature, population etc.)? Where to acquires these datasets? How to link them?&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;other-deliverables&#34;&gt;Other Deliverables&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;Assignment 1 proposal due on Wiki in Sakai by Friday 6 PM. Groups finalised. The proposal consists of 2-3 paragraphs and consists of the problem statement, concepts you will bring to bear and why it is important. It is posted so that everyone else has access and knowledge of the projects that your peers are working on. The proposal is posted on the wiki, on individual pages.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-2&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Chapters 7 &amp;amp; 9-16 of &lt;a href=&#34;https://r4ds.had.co.nz/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Grolemund and Wickham 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://dx.doi.org/10.1198/jcgs.2009.07098&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Wickham 2010)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;(Tufte 2001)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;feb-2-wed-feb-7-mon-feb-9-wed-maps--flows&#34;&gt;Feb 2 (Wed), Feb 7 (Mon), Feb 9 (Wed) Maps &amp;amp; Flows&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-2&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/geospatial-data-in-r/&#34;&gt;Geospatial Data in R&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homework-2&#34;&gt;Homework&lt;/h4&gt;
-&lt;h5 id=&#34;hw-3&#34;&gt;HW 3&lt;/h5&gt;
-&lt;p&gt;Download the motor vehicle traffic collisions data from &lt;a href=&#34;https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;NYC Open data portal&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Answer the following questions&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Which locations have high incidences of traffic collisions?&lt;/li&gt;
-&lt;li&gt;How are these high traffic collisions locations different at different times of the day?&lt;/li&gt;
-&lt;li&gt;What are the most frequent casues of collisions and how do they differ by location, time of the day and day of the week?&lt;/li&gt;
-&lt;li&gt;Visualise the correlation between home values in a block group and traffic collisions and tell a story.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-3&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Chapters 1-8 &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Lovelace, Nowosad, and Muenchow 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;feb-14-mon-feb-16-wed-scraping-web-for-unstructured-data&#34;&gt;Feb 14 (Mon), Feb 16 (Wed) Scraping Web for (Un)Structured Data&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-3&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/2020-01-12-using-tidycensus/&#34;&gt;Using Census APIs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/using-google-api-for-planning/&#34;&gt;Scraping Structured Data from Google&lt;/a&gt; | &lt;a href=&#34;https://nkaza.github.io/post/2020-02-12-extracting-data-from-openstreetmap/&#34;&gt;Alternate tutorial with OSM&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/2020-02-04-scraping-craigslist-posts/&#34;&gt;Unstructured Data&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homework-3&#34;&gt;Homework&lt;/h4&gt;
-&lt;h5 id=&#34;hw-4&#34;&gt;HW 4&lt;/h5&gt;
-&lt;p&gt;Scrape Craigslist for houses available for rent in the Triangle and the Triad area. Using Google places, for each of those houses, extract different amenities (coffee shops, hospitals etc.) and construct a &lt;a href=&#34;https://www.walkscore.com/methodology.shtml&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Walk Score&lt;/a&gt; like index for each listing. Tell a story about these indices (e.g. choice of amenities conditioning the results or spatial variation etc.)&lt;/p&gt;
-&lt;h4 id=&#34;resourcesreadings-4&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.r-datacollection.com/bookmaterials.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Munzert et al. 2014)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1080/01944363.2014.980439&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Schweitzer 2014)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0739456X16664789&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing and Waddell 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;feb-21-mon-assignment-1-presentations&#34;&gt;Feb 21 (Mon) Assignment 1 Presentations&lt;/h3&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;analytical-techniques&#34;&gt;Analytical Techniques&lt;/h2&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;feb-23-wed-feb-28-mon-analysing-text&#34;&gt;Feb 23 (Wed), Feb 28 (Mon) Analysing Text&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-4&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/matching-messy-texts/&#34;&gt;Matching Messy Texts&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/analysing-free-form-text/&#34;&gt;Sentiment Analysis of Emails&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homework-4&#34;&gt;Homework&lt;/h4&gt;
-&lt;h5 id=&#34;hw-5&#34;&gt;HW 5&lt;/h5&gt;
-&lt;p&gt;In this week’s homework, I want you to analyse tweets in/referencing a city of your choice (e.g. Chicago). You are welcome to use a package that makes this easy for you such as &lt;code&gt;twitteR&lt;/code&gt; or &lt;code&gt;rtweet&lt;/code&gt;. However, you will need to set up a developer account and acquire credentials. (Hint: You may follow this &lt;a href=&#34;https://rpubs.com/eduRodrigues/RetrievingTweets&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tutorial&lt;/a&gt;). The key tasks are think through the following issues and write a story.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Analyse the sentiments of the tweets&lt;/li&gt;
-&lt;li&gt;Think through how the sentiments are changing&lt;/li&gt;
-&lt;li&gt;Do official accounts (such as @cta and @cta311) differ in the tweets compared to general public?&lt;/li&gt;
-&lt;li&gt;How prevalent is the location information in the tweets? i.e. Are the tweets useful to planners to pin point issues and track them?&lt;/li&gt;
-&lt;li&gt;Is twitter a useful mechanism to identify prevalence of sexual assault in public spaces such as transit?&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;As usual, you are welcome to choose the scope and the above are not meant to be exhaustive.&lt;/p&gt;
-&lt;p&gt;Note that you will need to use your own credentials and submitting them using a Rmd file might reveal them to me and to your classmates. To prevent this, I am asking you to only submit an html file.&lt;/p&gt;
-&lt;h4 id=&#34;resourcesreadings-5&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.tidytextmining.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://dx.doi.org/10.1111/rsp3.12292&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Chen, Silva, and Reis In press)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;mar-2-wed-mar-7-mon-networks&#34;&gt;Mar 2 (Wed), Mar 7 (Mon) Networks&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-5&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/analysing-urban-neworks/&#34;&gt;Network Analysis of Bikeshare systems&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/&#34;&gt;Spatial Relationships as Networks&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homework-5&#34;&gt;Homework&lt;/h4&gt;
-&lt;h5 id=&#34;hw-6&#34;&gt;HW 6&lt;/h5&gt;
-&lt;p&gt;An input output table is a square matrix with rows representing originating industry sector and columns representing destination industry sector. The value in each cell represents the flow from one sector to another. The higher the number, the more tightly connected the two industries are.&lt;/p&gt;
-&lt;p&gt;Download the Multi-Regional Input Output Matrix for China from &lt;a href=&#34;https://www.nature.com/articles/sdata2018155&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Mi et al. 2018)&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;In this example, each node would be a combination of region-industry and the weight on the link is the interaction (flows) between the two nodes. There are 30 regions and 30 industries, so the full graph could potentially have 900 nodes and 810000 links (lot of them have zero or near zero weights). Note that this matrix is not symmetric and the diagonal elements are non-zero&lt;/p&gt;
-&lt;p&gt;Do some data cleaning and explicitly convert the matrix to graph/network. In particular, be explicit about thresholds that you will use to include the links in your network.&lt;/p&gt;
-&lt;p&gt;Tell a story about this network, by looking at (but not limited to) the following questions.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Identify the central region-industries in the entire network by constructing a betweenness centrality score. What can you conclude about the spatio-economic structure of China from these.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;What other centrality measures are appropriate for this network and why?&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Partition this network into communities using at least two different community detection algorithms. Do these results make intuitive sense?&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Pick a subset of industries in your favourite region and create a subgraph of all the region-industries they are linked to. Identify the potential disrupters of this subgraph. Are these different from considering the entire flow pattern?&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;What is the relationship with this industry network with other network (labor markets, migration flows, road infrastructure etc.). Are there any connections you can draw? For this, you may have to scour the web for different datasets. Some of your classmates who are Mandarin speakers are probably better suited for this task. Again none of these are mandatory.&lt;/p&gt;
-&lt;/li&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;Extracting data from un/semi/structured websites is becoming increasingly common place. Since data is collected, modified and refined continuously, it is increasingly useful to both serve them via web protocols rather than flat files that are downloaded. Furthermore, much of spatial data collection has become private, which also means that firms have stronger incentives to protect their datasets and curate what is available to the others. In other instances, the user or the analyst requires only a small section of the dataset. In these instances and others, data is served by a web-based protocol. Harvesting data usually takes the form of automating the process of sending requests to the webserver and parsing the output to extract relevant data for storage and analysis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;legality&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Legality&lt;/h1&gt;
+&lt;p&gt;Different jurisdictions have different legal restrictions and permissions on web scraping. There are also end user agreements that prevent certain actions (storage, retrieval, replication etc.). Please make sure that you are aware of these before attempting to make a local copy of the data that might be privately owned.&lt;/p&gt;
+&lt;p&gt;In general, scraping requires automated and repeated requests to the server. As long as these requests are not a disruptive rate, it is unlikely that you will run afoul of legality. Local data storage and replication of services is an entirely different ball game. Please consult a lawyer.&lt;/p&gt;
+&lt;p&gt;Many public and government websites are also now serving up data using web protocols. It is, therefore, useful to learn how to parse the outputs of these requests. In some instances, private firms such as Google, Baidu, Instagram etc. also provide application programming interfaces (API) that serve data in a structured format. In these instances, subject to end user agreements, rate limits and daily quotas, restrictions on storage and transfer, it may be possible to access datasets that are otherwise unavailable.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;an-example-using-baidu&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;An example using Baidu&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.baidu.com/&#34;&gt;Baidu&lt;/a&gt; is a technology service company that provides a number of services including maps and social networking. According to Wikipedia,&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The name Baidu (百度) literally means “a hundred times”, or alternatively, “countless times”. It is a quote from the last line of Xin Qiji (辛弃疾)’s classical poem “Green Jade Table in The Lantern Festival” (青玉案·元夕) saying: “Having searched hundreds of times in the crowd, suddenly turning back, She is there in the dimmest candlelight.” (众里寻他千百度，蓦然回首，那人却在灯火阑珊处。)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In this post, we are going to query Baidu for points of interest around &lt;a href=&#34;https://www.travelchinaguide.com/cityguides/wuhan.htm&#34;&gt;Wuhan, China&lt;/a&gt;. This is similar to Google Places.&lt;/p&gt;
+&lt;div id=&#34;setting-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setting up&lt;/h2&gt;
+&lt;p&gt;In general, all API require registration and perusal of documentation, so that queries can be structured appropriately. In the case of Baidu, there are additional steps that are required so that the IP address of the computer that you are querying from is not blacklisted for abuse. Please see the &lt;a href=&#34;http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi&#34;&gt;documentation&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acquiring-api-keys.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acquiring API keys.&lt;/h2&gt;
+&lt;p&gt;Every request to API requires a key so the website can control the how much and who can access the information. To acquire a key we need to :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Have a Baidu account. Register at &lt;a href=&#34;https://passport.baidu.com/v2/?reg&#34; class=&#34;uri&#34;&gt;https://passport.baidu.com/v2/?reg&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h5 id=&#34;other-deliverables-1&#34;&gt;Other Deliverables&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;Assignment 2 proposal due on Wiki in Sakai by Friday 6 PM. The proposal consists of 2-3 paragraphs and consists of the problem statement, concepts you will bring to bear and why it is important. It is posted so that everyone else has access and knowledge of the projects that your peers are working on. The proposal is posted on the wiki, on individual pages.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-6&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1007/s41109-019-0189-1&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1371/journal.pone.0166083&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Nelson and Rae 2016)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1177/0160017620946082&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Kaza and Nesse 2021)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;mar-9-wed-mar-21-mon-analysing-raster-datasets&#34;&gt;Mar 9 (Wed), Mar 21 (Mon) Analysing Raster Datasets&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-6&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/2020-02-27-basic-raster-operations-in-r/&#34;&gt;Basic Raster Analysis in R&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/&#34;&gt;Urban Landscape Metrics&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/&#34;&gt;Land Suitability Analysis&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homeworkdeliverables&#34;&gt;Homework/Deliverables&lt;/h4&gt;
-&lt;h5 id=&#34;hw-7&#34;&gt;HW 7&lt;/h5&gt;
-&lt;p&gt;Improve the land suitability analysis for locating a landfill in Durham County. For example, you can pick a non-trivial subset of the following&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;By explicitly accounting for Environmental Justice criteria (this is mandatory for everyone)&lt;/li&gt;
-&lt;li&gt;By having a hierarchy of criteria and using the AHP process. e.g. Environmental, Social, Institutional at upper level and within each of those have multiple sub criteria (for e.g. poverty rates, minority population etc. are part of Social). Please make sure to ensure consistency using the AHP process&lt;/li&gt;
-&lt;li&gt;By including soil characteristics from USGS ( &lt;a href=&#34;https://nrcs.app.box.com/v/soils&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://nrcs.app.box.com/v/soils&lt;/a&gt;)&lt;/li&gt;
-&lt;li&gt;By accounting for size of the site.&lt;/li&gt;
-&lt;li&gt;By accounting for cost of parcel assembly.&lt;/li&gt;
-&lt;li&gt;By accounting for the fact that some highways are limited access highways and can only be acccessed at the interchanges.&lt;/li&gt;
+&lt;p&gt;&lt;img src=&#34;img/1.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Find your computer IP address. Preferably use &lt;a href=&#34;http://ifconfig.me/&#34;&gt;ifconfig&lt;/a&gt; or &lt;a href=&#34;http://ip138.com/&#34;&gt;ip138&lt;/a&gt;
+&lt;img src=&#34;img/2.png&#34; alt=&#34;ifconfig.me&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Login your Baidu account and go to &lt;a href=&#34;http://lbsyun.baidu.com/apiconsole/key?application=key&#34; class=&#34;uri&#34;&gt;http://lbsyun.baidu.com/apiconsole/key?application=key&lt;/a&gt;, click “创建应用” to create a new application. Use the IP address from the previous step to “IP白名单”, then submit the application.
+&lt;img src=&#34;img/3.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;After getting back to the application management page, make a note of the api key. You will need to use it in your R code.
+&lt;img src=&#34;img/4.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h5 id=&#34;other-deliverables-2&#34;&gt;Other Deliverables&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div id=&#34;scraping&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Scraping&lt;/h2&gt;
+&lt;p&gt;There are There are a few steps to scrape and visualize information fro web queries. In this post, we will use Baidu API as a example to scrape the resturants around Huazhong Agricultural University (HZAU). For the moment, we will deal with structured data. Parsing unstructured data is for a different time.&lt;/p&gt;
+&lt;p&gt;The steps are:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Intialise your R session&lt;/li&gt;
+&lt;li&gt;Set the parameters of the query&lt;/li&gt;
+&lt;li&gt;Send the query repreatedly to get all the results&lt;/li&gt;
+&lt;li&gt;Cleaning and exporting the data&lt;/li&gt;
+&lt;li&gt;Visualize the result&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The two main packages, we are going to use for scraping the web is &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;RCurl&lt;/a&gt; and &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;rjson&lt;/a&gt;. Install them, if necessary and intialise them into the library. We will also use &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;devtools&lt;/a&gt; package to install packages that are not on Comprehensive R Archive Network &lt;a href=&#34;https://cran.r-project.org&#34;&gt;(CRAN)&lt;/a&gt;, but on places like &lt;a href=&#34;http://github.com&#34;&gt;Github&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Curl is a command line tool that allows us to transfer data especially over the web. Rcurl is an interface for that tool. Because the result of the API query is formatted in JavaScript Object Notation (JSON), we use RJSON to parse it easily. JSON is lightweight data-interchange format.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;##################### USE YOUR OWN KEY #########################
+### aquire the key from: http://lbsyun.baidu.com/apiconsole/key?application=key
+key = &amp;quot;_YOUR_KEY_HERE_&amp;quot;
+library(rjson)
+library(RCurl)
+library(tidyverse) # We have seen this package before.
+################################################################&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;parameters-of-the-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Parameters of the query&lt;/h3&gt;
+&lt;p&gt;According to the &lt;a href=&#34;http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi&#34;&gt;API documentation&lt;/a&gt;, we need to set a number of parameters to send the request to API. First, we will use the “round buffer” API to search all the restraunts within 2km distance around Huazhong Agricultural University. You can extract the coordinates from &lt;a href=&#34;http://api.map.baidu.com/lbsapi/getpoint/index.html&#34; class=&#34;uri&#34;&gt;http://api.map.baidu.com/lbsapi/getpoint/index.html&lt;/a&gt; by searching for 华中农业大学. Also Note the lat/long format, instead of the long/lat format we should be using. Pay attention to what the API requires.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;location &amp;lt;- &amp;quot;30.48178,114.363708&amp;quot;   #Latitude and Longitude as a string.
+keyword &amp;lt;- &amp;quot;餐馆&amp;quot; %&amp;gt;% curlEscape() ### set the keyword to search for in this case, resturants
+city &amp;lt;- &amp;quot;武汉&amp;quot; %&amp;gt;% curlEscape() ### set the city to search
+
+radius &amp;lt;- 4000 ### set the search radius as 2000 meters
+page_size &amp;lt;- 20 ### set the number of records in each page of the response
+
+#It will be replaced by the actual value of the result once get the first response
+placeIDSet = name = lat = lng = address = NULL ### set the initial value of the other parameters&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;querying-the-api&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Querying the API&lt;/h3&gt;
+&lt;p&gt;Querying the API is simply passing the url string to the server. &lt;code&gt;paste&lt;/code&gt; and &lt;code&gt;paste0&lt;/code&gt; are quite useful for constructing these queries&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(searchURL &amp;lt;- paste(&amp;quot;http://api.map.baidu.com/place/v2/search?query=&amp;quot;,
+                      keyword,
+                      &amp;quot;&amp;amp;location=&amp;quot;,location,
+                      &amp;quot;&amp;amp;radius=&amp;quot;,radius,
+                      &amp;quot;&amp;amp;scope=&amp;quot;,1,
+                      &amp;quot;&amp;amp;page_num=&amp;quot;, 1,
+                      &amp;quot;&amp;amp;page_size=&amp;quot;,page_size,
+                      &amp;quot;&amp;amp;region=&amp;quot;,city,
+                      &amp;quot;&amp;amp;output=json&amp;quot;,
+                      &amp;quot;&amp;amp;ak=&amp;quot;,key,
+                      sep=&amp;quot;&amp;quot;))
+# [1] &amp;quot;http://api.map.baidu.com/place/v2/search?query=%E9%A4%90%E9%A6%86&amp;amp;location=30.48178,114.363708&amp;amp;radius=4000&amp;amp;scope=1&amp;amp;page_num=1&amp;amp;page_size=20&amp;amp;region=%E6%AD%A6%E6%B1%89&amp;amp;output=json&amp;amp;ak=mSWfSeru2jtlMtAutjy9Vv28XLC568N3&amp;quot;
+
+
+result &amp;lt;- getURL(url = URLencode(searchURL),ssl.verifypeer = FALSE)
+x &amp;lt;- fromJSON(result)
+str(x, max.level = 2) # Setting max.level so that it won&amp;#39;t overwhelm the page. Feel free to explore.
+# List of 2
+#  $ status : num 210
+#  $ message: chr &amp;quot;APP IPæ ¡éªŒå¤±è´¥&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Final term paper proposal due on Wiki in Sakai by Friday 6 PM. The proposal is no more than 2 pages and should include succinctly, the research questions, datasets that are being used and the appropriateness of analytical techniques to the research question and the datasets. You should have acquired the datasets and performed exploratory analyses before submitting the proposal. The proposal should demonstrate both suitability and feasibility.&lt;/li&gt;
+&lt;li&gt;Query Baidu for Parks around 1 km of Huazhong Agricultural University and print raw results&lt;/li&gt;
+&lt;li&gt;Query Baidu for bus and train stations around Wuhan University and print the results&lt;/li&gt;
+&lt;li&gt;How many day care centers are there in this area?&lt;/li&gt;
+&lt;li&gt;Intepret these results&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-7&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;repeated-queries&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Repeated queries&lt;/h3&gt;
+&lt;p&gt;Because many of the results are paginated, it is imperative that we query the server repeatedly to get all the results we want. In the following code, we query until all the results are retrieved. We use the while loop for this, though other loops might be more suitable for particular use cases.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+page_num &amp;lt;- 0 ### set the starting page 
+total &amp;lt;- 20 ### the total number of records, initial value is 20, 
+
+while(page_num &amp;lt;= ceiling(total/page_size)-1){
+    ### run the query to get the result from the server
+    searchURL &amp;lt;- paste(&amp;quot;http://api.map.baidu.com/place/v2/search?query=&amp;quot;,
+                      keyword,
+                      &amp;quot;&amp;amp;location=&amp;quot;,location,
+                      &amp;quot;&amp;amp;radius=&amp;quot;,radius,
+                      &amp;quot;&amp;amp;scope=&amp;quot;,1,
+                      &amp;quot;&amp;amp;page_num=&amp;quot;,page_num,
+                      &amp;quot;&amp;amp;page_size=&amp;quot;,page_size,
+                      &amp;quot;&amp;amp;region=&amp;quot;,city,
+                      &amp;quot;&amp;amp;output=json&amp;quot;,
+                      &amp;quot;&amp;amp;ak=&amp;quot;,key,
+                      sep=&amp;quot;&amp;quot;)
+    result = getURL(url = searchURL,ssl.verifypeer = FALSE)
+    ### transfer the result from json to a list format in R
+    x = fromJSON(result)
+    ### get the number of total records from the result
+    total = x$total
+    ### print the process
+    cat(&amp;quot;Retrieving&amp;quot;,page_num+1,&amp;quot;from total&amp;quot;,ceiling(total/page_size),&amp;quot;pages ...\n&amp;quot;)
+    page_num = page_num + 1
+    ### extract the value from the result
+    
+    # PLACEID
+    placeIDSet = c(placeIDSet,
+                   unlist(lapply(X = x$results,FUN = function(x)return(x$uid))))
+    # Name of the place
+    name = c(name,
+             unlist(lapply(X = x$results,FUN = function(x)return(x$name))))
+    #latitude
+    lat = c(lat,
+            unlist(lapply(X = x$results,FUN = function(x)return(x$location$lat))))
+    #longitude
+    lng = c(lng,
+            unlist(lapply(X = x$results,FUN = function(x)return(x$location$lng))))
+    #address
+    address = c(address,
+                unlist(lapply(X = x$results,FUN = function(x)return(x$address))))
+    Sys.sleep(1) # Set this so that you do not bombard the server. The process stops for 1s. Change this to suit your purpose. 
+}
+# Retrieving 1 from total  pages ...
+# Error in while (page_num &amp;lt;= ceiling(total/page_size) - 1) {: argument is of length zero
+# save the extracted information as a dataframe
+dat &amp;lt;- data.frame(name,lng,lat,address,placeIDSet)
+nrow(dat)
+# [1] 0&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.03.008&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(McCarty and Kaza 2015)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.02.001&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Watson and Hudson 2015)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.3390/geosciences8080275&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Rincón, Khan, and Armenakis 2018)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;The above is a very brittle code. If the server returns an error because of heavy volume, the loop fails. Use &lt;code&gt;tryCatch&lt;/code&gt; to trap errors and continue loop and keep track of which pages have returned errors. In particular use the status and message of the results to write more graceful code that will survive.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;mar-21-mon-dimensionality-reduction&#34;&gt;Mar 21 (Mon) Dimensionality Reduction&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-7&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;h4 id=&#34;homework-6&#34;&gt;Homework&lt;/h4&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cleaning-and-exporting-the-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Cleaning and exporting the data&lt;/h3&gt;
+&lt;p&gt;Baidu has its own projection system. To visualize the data, we need to transform the coordinates from BD09 coordinate system to the commonly used WGS84 system (epsg:4326). To achieve that, we need use a customized package on github. &amp;quot;devtools“ package is required here.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(devtools)
+install_github(&amp;quot;waholulu/bd09towgs84&amp;quot;)
+library(bdtowgs)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we can use its build-in function “bd09towgs84” to project the coordinates.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coord &amp;lt;- subset(dat, select = c(&amp;quot;lng&amp;quot;, &amp;quot;lat&amp;quot;))
+# Error in `[.data.frame`(x, r, vars, drop = drop): undefined columns selected
+transfer &amp;lt;- as.data.frame(t(apply(coord,1,bd09towgs84)))
+# Error in apply(coord, 1, bd09towgs84): object &amp;#39;coord&amp;#39; not found
+dat$lng &amp;lt;- transfer$V1
+# Error in eval(expr, envir, enclos): object &amp;#39;transfer&amp;#39; not found
+dat$lat &amp;lt;- transfer$V2
+# Error in eval(expr, envir, enclos): object &amp;#39;transfer&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then the data can be saved as a csv file.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# save the information as an excel file
+write_csv(dat, path= &amp;quot;search_results.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualise-results&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Visualise results&lt;/h3&gt;
+&lt;p&gt;Now we can use leaflet to visuzalize the locations of the restaurants.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# Error in `[.data.frame`(dat, , c(&amp;quot;lng&amp;quot;, &amp;quot;lat&amp;quot;, &amp;quot;name&amp;quot;)): undefined columns selected
+# Error in structure(list(options = options), leafletData = data): object &amp;#39;locations_df&amp;#39; not found
+# Error in eval(expr, envir, enclos): object &amp;#39;m&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;[HW7 Posted]&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Instead of a buffer search, use a bounding box search to return the results for restaurants (“餐馆”). Use the bounds as &lt;code&gt;c(30.531539,114.357628,30.552129,114.385296)&lt;/code&gt; (SW-NE corner points). Display on a map.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What happens you search for day care centers?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-8&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1068/b32155&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Frenkel and Ashkenazi 2008)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.tandfonline.com/doi/full/10.1080/17549170801903496&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Clifton et al. 2008)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.5198/jtlu.2019.1472&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Golan et al. 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;mar-28-mon-mar-30-wed-supervised-classification-with-trees-and-forests&#34;&gt;Mar 28 (Mon), Mar 30 (Wed) Supervised Classification with Trees and Forests&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-8&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/&#34;&gt;Classifying Remote Sensing Images&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homework-7&#34;&gt;Homework&lt;/h4&gt;
-&lt;h5 id=&#34;hw-8&#34;&gt;HW 8&lt;/h5&gt;
-&lt;p&gt;Efforts to protect development along the coast through the placement of coastal protection infrastructure have fundamentally changed the composition of shorelines along the U.S. coast (Gittman et al. 2015). Coastal protection infrastructure, also called shoreline armoring, are physical structures typically made of rock or concrete that are placed along ocean-facing and inland shorelines in order to either (a) offer protection from storm surges and flooding, or (b) stabilize coastal land and halt erosion. Examples of these types of structures include seawalls, riprap, rock revetments, and bulkheads. These protections rarely accomplish their goals. Despite this, owners (including govts.) continue to invest in this infrastructure.&lt;/p&gt;
-&lt;p&gt;In this homework, I want you to test the efficacy of different predictive (non-linear) model of whether or not a parcel is armored or not. The data set is coastal parcels for two counties in FL (posted in Sakai), which contains the variable &lt;code&gt;type&lt;/code&gt; that refers to whether th parcel is armored or not. TYou have a wide range of options with regards to the predictors. You are welcome to construct additional predictors by taking advantage of the parcel boundaries and location (such as distance to highway interchange or size of the parcel etc.). Make sure that report on your preferred predictive model based on different accuracy statistics and validation. What are the most important/useful predictors?&lt;/p&gt;
-&lt;h4 id=&#34;readingsresources-1&#34;&gt;Readings/Resources&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0042098018789054&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Reades, De Souza, and Hubbard 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1371/journal.pone.0107042&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Stevens et al. 2015)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0265813516659286&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Tribby et al. 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;apr-4-mon-apr-6-wed-clustering--unsupervised-classification&#34;&gt;Apr 4 (Mon), Apr 6 (Wed) Clustering &amp;amp; Unsupervised Classification&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-9&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/&#34;&gt;Mapping Crime Clusters in Manchester&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/2020-03-18-unsupervised-clustering/&#34;&gt;Unsupervised Classification of Non-spatial Data&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;homeworkdeliverables-1&#34;&gt;Homework/Deliverables&lt;/h4&gt;
-&lt;h5 id=&#34;hw-9&#34;&gt;HW 9&lt;/h5&gt;
-&lt;p&gt;&lt;a href=&#34;https://fbaum.unc.edu&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Frank Baumgartner’s&lt;/a&gt; most recent book is &lt;em&gt;Suspect Citizens&lt;/em&gt; (Cambridge, 2018), focusing on racial differences in the outcomes of routine traffic stops. In this homework, I want you to analyse a small portion of the summary dataset (by police agency), I acquired from him, to identify clusters of patterns. You are welcome to choose a subset of the variables, but you should pick at least some “Stop” and “Search” variables such as “Total stops” and “Total number of searches of Hispanic drivers.” Noting that the data is from different years, construct a reasonable ‘cross-sectional’ dataset and tell a compelling story about the nature of traffic stops in the United States. The dataset, along with the code book is posted on Sakai.&lt;/p&gt;
-&lt;h4 id=&#34;resourcesreadings-9&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1177/0739456X05283254&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Bates 2006)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1016/j.jue.2005.10.003&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Clapp and Wang 2006)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Chapters 7 &amp;amp; 9 (Bivand, Pebesma, and Gómez-Rubio 2013)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;apr-11-mon-apr-13-wed-neural-networks--deep-learning&#34;&gt;Apr 11 (Mon), Apr 13 (Wed) Neural Networks &amp;amp; Deep Learning&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-10&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;h4 id=&#34;homework-8&#34;&gt;Homework&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;[HW 10 Posted]&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;readingsresources-2&#34;&gt;Readings/Resources&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Chapters 1-5 &lt;a href=&#34;https://www.manning.com/books/deep-learning-with-r&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Chollet and Allaire 2018)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1073/pnas.1700035114&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Gebru et al. 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://arxiv.org/abs/1807.07155&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Law, Brooks, and Russell 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;apr-18-mon-apr-20-wed-individual-work-on-assignment-3&#34;&gt;Apr 18 (Mon), Apr 20 (Wed) Individual Work on Assignment 3&lt;/h3&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;apr-25-mon-apr-27-wed-assignment-3-presentations-subject-to-change-based-on-exam-day&#34;&gt;Apr 25 (Mon), Apr 27 (Wed) Assignment 3 Presentations (subject to change based on exam day)&lt;/h3&gt;
-&lt;hr&gt;
-&lt;h1 id=&#34;references&#34;&gt;References&lt;/h1&gt;
-&lt;div id=&#34;refs&#34; class=&#34;references csl-bib-body hanging-indent&#34;&gt;
-&lt;div id=&#34;ref-batesDoesNeighborhoodReally2006&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Bates, Lisa K. 2006. “Does Neighborhood Really Matter?: Comparing Historically Defined Neighborhood Boundaries with Housing Submarkets.” &lt;em&gt;Journal of Planning Education and Research&lt;/em&gt; 26 (1): 5–17. &lt;a href=&#34;https://doi.org/10.1177/0739456X05283254&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0739456X05283254&lt;/a&gt;.&lt;/p&gt;
+&lt;hr /&gt;
 &lt;/div&gt;
-&lt;div id=&#34;ref-bivandAppliedSpatialData2013&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Bivand, Roger S., Edzer Pebesma, and Virgilio Gómez-Rubio. 2013. &lt;em&gt;Applied Spatial Data Analysis with R&lt;/em&gt;. 2nd ed. 2013 edition. New York Heidelberg Dordrecht London: Springer.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;ref-boeingUrbanSpatialOrder2019&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Boeing, Geoff. 2019. “Urban Spatial Order: Street Network Orientation, Configuration, and Entropy.” &lt;em&gt;Applied Network Science&lt;/em&gt; 4 (1): 1–19. &lt;a href=&#34;https://doi.org/10.1007/s41109-019-0189-1&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1007/s41109-019-0189-1&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;ref-boeingNewInsightsRental2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Boeing, Geoff, and Paul Waddell. 2017. “New Insights into Rental Housing Markets Across the United States: Web Scraping and Analyzing Craigslist Rental Listings.” &lt;em&gt;Journal of Planning Education and Research&lt;/em&gt; 37 (4): 457–76. &lt;a href=&#34;https://doi.org/10.1177/0739456X16664789&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0739456X16664789&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;apis-for-non-point-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;APIs for non-point data&lt;/h1&gt;
+&lt;p&gt;In the above, we primarily used API to query point location information. There is no reason to think that this is limited to points. For example we can get routing information or travel time isoschornes or whatever API is serving that can be read.&lt;/p&gt;
+&lt;p&gt;To demonstrate this, we can plot &lt;a href=&#34;https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times&#34;&gt;Isochrones&lt;/a&gt; of every 2 min biking, around some random points in Wuhan. For this we use the Open Source Routing Library (OSRM), though any other API works as well (e.g. Google, Mapbox etc.). For this purposes, we are going to use the demo server for OSRM, though ideally you will &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34;&gt;set one up&lt;/a&gt; for your purposes. If you set one up for yourself, you can get other directions and travel such as walking, driving etc.&lt;/p&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    &lt;/p&gt;
+&lt;p&gt;You should be careful using the OSRM demo server, it is not always very stable.&lt;/p&gt;
+&lt;p&gt;
+  &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;ref-bryanHappyGitGitHub&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Bryan, Jenny. n.d. &lt;em&gt;Happy Git and GitHub for the &lt;span class=&#34;nocase&#34;&gt;useR&lt;/span&gt;&lt;/em&gt;. Accessed January 24, 2022. &lt;a href=&#34;https://happygitwithr.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://happygitwithr.com/&lt;/a&gt;.&lt;/p&gt;
+&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(sf)
+library(osrm)
+# Ideally set these options up
+ options(osrm.server = &amp;quot;http://localhost:5000/&amp;quot;)
+options(osrm.profile = &amp;#39;bike&amp;#39;) #Change this for other modes. However, the demo server only returns car profile
+
+randompoints &amp;lt;- matrix(c(114.346566,30.533282,
+                           114.298273,30.381364,
+                           114.347141,30.599453), ncol=2, byrow =TRUE) %&amp;gt;% data.frame()
+names(randompoints) &amp;lt;- c(&amp;#39;lng&amp;#39;, &amp;#39;lat&amp;#39;)
+randompoints$name &amp;lt;- c(&amp;#39;pt1&amp;#39;, &amp;#39;pt2&amp;#39;, &amp;#39;pt3&amp;#39;)
+
+rt &amp;lt;- osrmRoute(src = randompoints[1,c(&amp;#39;name&amp;#39;, &amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], 
+                dst = randompoints[2,c(&amp;#39;name&amp;#39;,&amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], 
+                sp = TRUE) %&amp;gt;% st_as_sf()
+# Error in UseMethod(&amp;quot;st_as_sf&amp;quot;): no applicable method for &amp;#39;st_as_sf&amp;#39; applied to an object of class &amp;quot;NULL&amp;quot;
+
+rt %&amp;gt;% leaflet() %&amp;gt;%
+    addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints[1:2,], ~lng, ~lat) %&amp;gt;%
+  addPolylines(weight =5, smoothFactor = .5, color=&amp;#39;red&amp;#39;)
+# Error in polygonData.default(data): Don&amp;#39;t know how to get path data from object of class function&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OSRM is a convenience package that is wrapping the calls to the server and parsing the output into Spatial*. For example, the curl query in the backend looks like&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://router.project-osrm.org/route/v1/driving/114.346566,30.533282,114.298273,30.381364&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iso &amp;lt;- list()
+for (i in 1:nrow(randompoints)){
+iso[[i]] &amp;lt;- osrmIsochrone(loc = randompoints[i,c(&amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], breaks = seq(from = 0,to = 20, by = 2)) %&amp;gt;% st_as_sf()
+}
+# Error in (function (classes, fdef, mtable) : unable to find an inherited method for function &amp;#39;coordinates&amp;#39; for signature &amp;#39;&amp;quot;NULL&amp;quot;&amp;#39;
+
+iso &amp;lt;- do.call(&amp;#39;rbind&amp;#39;, iso)
+
+ Npal &amp;lt;- colorNumeric(
+   palette = &amp;quot;Reds&amp;quot;, n = 5,
+   domain = iso$center
+ )
+ 
+iso %&amp;gt;% leaflet() %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints, ~lng, ~lat) %&amp;gt;%
+  addPolygons(color = &amp;quot;#444444&amp;quot;, weight = 1, smoothFactor = 0.5,
+    opacity = 1.0, fillOpacity = 0.5, fillColor = ~Npal(iso$center),
+    group = &amp;quot;Isochrone&amp;quot;) %&amp;gt;%
+  addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~iso$center,
+            title = &amp;quot;Biking Time (min)&amp;quot;,opacity = 1
+            )
+# Error in derivePolygons(data, lng, lat, missing(lng), missing(lat), &amp;quot;addPolygons&amp;quot;): Polygon data not found; please provide addPolygons with data and/or lng/lat arguments&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;ref-chenMeasuringPolicyDebateInpress&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Chen, Yiqiao, Elisabete A. Silva, and José P. Reis. In press. “Measuring Policy Debate in a Regrowing City by Sentiment Analysis Using Online Media Data: A Case Study of Leipzig 2030.” &lt;em&gt;Regional Science Policy &amp;amp; Practice&lt;/em&gt;, In press. &lt;a href=&#34;https://doi.org/10.1111/rsp3.12292&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1111/rsp3.12292&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;unstructured-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Unstructured data&lt;/h1&gt;
+&lt;p&gt;JSON files are well-structured. Therefore, it is relatively easy to parse them. If the files are unstructured, a lot of effort goes into figuring out different structures and searches that will yield the dataset that is necessary. In general, packages such as &lt;code&gt;xml2&lt;/code&gt; and &lt;code&gt;rvest&lt;/code&gt; will help such tasks. This is left for a different day.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;ref-cholletDeepLearning2018&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Chollet, Francois, and J. J. Allaire. 2018. &lt;em&gt;Deep Learning with R&lt;/em&gt;. 1 edition. Shelter Island, NY: Manning Publications.&lt;/p&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Reading data from server based APIs are no different from reading and parsing a local file. However, unlike local files that are well structured, and OS handling handling of low level functions of memory management and error recovery, we ought to be extra mindful of how errors might affect and break our code. Once the data is scraped, analysis proceeds in the usual fashion. However, because the data is not of specific vintage, reproducibility of research is a serious concern. You should note it and be able to provide archival of scraped data for others to use, subject to end use restrictions. In any case, currency of the data should be balanced with the archival mission of the organisation.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;ref-clappDefiningNeighborhoodBoundaries2006&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Clapp, John M., and Yazhen Wang. 2006. “Defining Neighborhood Boundaries: Are Census Tracts Obsolete?” &lt;em&gt;Journal of Urban Economics&lt;/em&gt; 59 (2): 259–84. &lt;a href=&#34;https://doi.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/&lt;/a&gt;&lt;a href=&#34;http://dx.doi.org/10.1016/j.jue.2005.10.003&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;http://dx.doi.org/10.1016/j.jue.2005.10.003&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-cliftonQuantitativeAnalysisUrban2008&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Clifton, Kelly, Reid Ewing, Gerrit-Jan Knaap, and Yan Song. 2008. “Quantitative Analysis of Urban Form: A Multidisciplinary Review.” &lt;em&gt;Journal of Urbanism: International Research on Placemaking and Urban Sustainability&lt;/em&gt; 1 (1): 17–45. &lt;a href=&#34;https://doi.org/10.1080/17549170801903496&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1080/17549170801903496&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-frenkelMeasuringUrbanSprawl2008&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Frenkel, Amnon, and Maya Ashkenazi. 2008. “Measuring Urban Sprawl: How Can We Deal with It?” &lt;em&gt;Environment and Planning B: Planning and Design&lt;/em&gt; 35 (1): 56–79. &lt;a href=&#34;https://doi.org/10.1068/b32155&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1068/b32155&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-gebruUsingDeepLearning2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Gebru, Timnit, Jonathan Krause, Yilun Wang, Duyun Chen, Jia Deng, Erez Lieberman Aiden, and Li Fei-Fei. 2017. “Using Deep Learning and Google Street View to Estimate the Demographic Makeup of Neighborhoods Across the United States.” &lt;em&gt;Proceedings of the National Academy of Sciences&lt;/em&gt; 114 (50): 13108–13. &lt;a href=&#34;https://doi.org/10.1073/pnas.1700035114&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1073/pnas.1700035114&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-golanGenderedWalkabilityBuilding2019&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Golan, Yael, Nancy Wilkinson, Jason M. Henderson, and Aiko Weverka. 2019. “Gendered Walkability: Building a Daytime Walkability Index for Women.” &lt;em&gt;Journal of Transport and Land Use&lt;/em&gt; 12 (1). &lt;a href=&#34;https://doi.org/10.5198/jtlu.2019.1472&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.5198/jtlu.2019.1472&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-grolemundDataScience2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Grolemund, Garrett, and Hadley Wickham. 2017. &lt;em&gt;R for Data Science&lt;/em&gt;. First. Sebastapol, CA: O’ Reilly. &lt;a href=&#34;http://r4ds.had.co.nz/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;http://r4ds.had.co.nz/&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-kazaCharacterizingRegionalStructure2021&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Kaza, Nikhil, and Katherine Nesse. 2021. “Characterizing the Regional Structure in the United States: &lt;span class=&#34;nocase&#34;&gt;A County-based Analysis&lt;/span&gt; of Labor Market Centrality.” &lt;em&gt;International Regional Science Review&lt;/em&gt; 44 (5): 560–81. &lt;a href=&#34;https://doi.org/10.1177/0160017620946082&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0160017620946082&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-kitchinEthicsSmartCities2016&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Kitchin, Rob. 2016. “The Ethics of Smart Cities and Urban Science.” &lt;em&gt;Philosophical Transactions. Series A, Mathematical, Physical, and Engineering Sciences&lt;/em&gt; 374 (2083). &lt;a href=&#34;https://doi.org/10.1098/rsta.2016.0115&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1098/rsta.2016.0115&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-lawTakeLookUsing2019a&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Law, Stephen, Piage Brooks, and Chris Russell. 2019. “Take a Look Around: Using Street View and Satellite Images to Estimate House Prices.” &lt;em&gt;ACM Transactions on Intelligent Systems and Technology (TIST)&lt;/em&gt; 10 (5). &lt;a href=&#34;https://dl.acm.org/doi/abs/10.1145/3342240&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://dl.acm.org/doi/abs/10.1145/3342240&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-lovelaceGeocomputation2019&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. &lt;em&gt;Geocomputation with R&lt;/em&gt;. 1 edition. Boca Raton: Chapman and Hall/CRC. &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://geocompr.robinlovelace.net/&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-mccartyUrbanFormAir2015&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;McCarty, J., and N. Kaza. 2015. “Urban Form and Air Quality in the United States.” &lt;em&gt;Landscape and Urban Planning&lt;/em&gt; 139: 168–79. &lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.03.008&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1016/j.landurbplan.2015.03.008&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-miMultiregionalInputoutputTable2018&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Mi, Zhifu, Jing Meng, Heran Zheng, Yuli Shan, Yi-Ming Wei, and Dabo Guan. 2018. “A Multi-Regional Input-Output Table Mapping China’s Economic Outputs and Interdependencies in 2012.” &lt;em&gt;Scientific Data&lt;/em&gt; 5 (1): 1–12. &lt;a href=&#34;https://doi.org/10.1038/sdata.2018.155&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1038/sdata.2018.155&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-munzertAutomatedDataCollection2014a&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Munzert, Simon, Christian Rubba, Peter Meißner, and Dominic Nyhuis. 2014. &lt;em&gt;Automated Data Collection with R: A Practical Guide to Web Scraping and Text Mining&lt;/em&gt;. 1 edition. Chichester, West Sussex, United Kingdom: Wiley.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-nelsonEconomicGeographyUnited2016&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Nelson, Garrett Dash, and Alasdair Rae. 2016. “An Economic Geography of the United States: From Commutes to Megaregions.” &lt;em&gt;PLOS ONE&lt;/em&gt; 11 (11): e0166083. &lt;a href=&#34;https://doi.org/10.1371/journal.pone.0166083&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1371/journal.pone.0166083&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-readesUnderstandingUrbanGentrification2019&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Reades, Jonathan, Jordan De Souza, and Phil Hubbard. 2019. “Understanding Urban Gentrification Through Machine Learning.” &lt;em&gt;Urban Studies&lt;/em&gt; 56 (5): 922–42. &lt;a href=&#34;https://doi.org/10.1177/0042098018789054&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0042098018789054&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-reschHumanCentricDataScience2019&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Resch, Bernd, and Michael Szell. 2019. “Human-Centric Data Science for Urban Studies.” &lt;em&gt;ISPRS International Journal of Geo-Information&lt;/em&gt; 8 (12): 584. &lt;a href=&#34;https://doi.org/10.3390/ijgi8120584&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.3390/ijgi8120584&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-rinconFloodRiskMapping2018&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Rincón, Daniela, Usman T. Khan, and Costas Armenakis. 2018. “Flood Risk Mapping Using GIS and Multi-Criteria Analysis: A Greater Toronto Area Case Study.” &lt;em&gt;Geosciences&lt;/em&gt; 8 (8): 275. &lt;a href=&#34;https://doi.org/10.3390/geosciences8080275&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.3390/geosciences8080275&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-schweitzerPlanningSocialMedia2014&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Schweitzer, Lisa. 2014. “Planning and Social Media: A Case Study of Public Transit and Stigma on Twitter.” &lt;em&gt;Journal of the American Planning Association&lt;/em&gt; 80 (3): 218–38. &lt;a href=&#34;https://doi.org/10.1080/01944363.2014.980439&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1080/01944363.2014.980439&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-singletonUrbanAnalytics2018&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Singleton, Alex David, Seth Spielman, and David Folch. 2018. &lt;em&gt;Urban Analytics&lt;/em&gt;. First edition. Los Angeles: SAGE Publications Ltd.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-stevensDisaggregatingCensusData2015&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Stevens, Forrest R., Andrea E. Gaughan, Catherine Linard, and Andrew J. Tatem. 2015. “Disaggregating Census Data for Population Mapping Using Random Forests with Remotely-Sensed and Ancillary Data.” &lt;em&gt;PLOS ONE&lt;/em&gt; 10 (2): e0107042. &lt;a href=&#34;https://doi.org/10.1371/journal.pone.0107042&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1371/journal.pone.0107042&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-tribbyAnalyzingWalkingRoute2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Tribby, Calvin P., Harvey J. Miller, Barbara B. Brown, Carol M. Werner, and Ken R. Smith. 2017. “Analyzing Walking Route Choice Through Built Environments Using Random Forests and Discrete Choice Techniques.” &lt;em&gt;Environment &amp;amp; Planning B : Urban Analytics &amp;amp; City Science&lt;/em&gt; 44 (6): 1145–67. &lt;a href=&#34;https://doi.org/10.1177/0265813516659286&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0265813516659286&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-tufteVisualDisplayQuantitative2001&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Tufte, E. R. 2001. &lt;em&gt;The Visual Display of Quantitative Information&lt;/em&gt;. Cheshire, CT: Graphics Press.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-watsonRegionalScaleWind2015&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Watson, Joss J. W., and Malcolm D. Hudson. 2015. “Regional Scale Wind Farm and Solar Farm Suitability Assessment Using &lt;span class=&#34;nocase&#34;&gt;GIS-assisted&lt;/span&gt; Multi-Criteria Evaluation.” &lt;em&gt;Landscape and Urban Planning&lt;/em&gt; 138 (June): 20–31. &lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.02.001&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1016/j.landurbplan.2015.02.001&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-layered-grammar&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Wickham, Hadley. 2010. “A Layered Grammar of Graphics.” &lt;em&gt;Journal of Computational and Graphical Statistics&lt;/em&gt; 19 (1): 3–28. &lt;a href=&#34;https://doi.org/10.1198/jcgs.2009.07098&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1198/jcgs.2009.07098&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
+&lt;div id=&#34;acknowledgements&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Acknowledgements&lt;/h1&gt;
+&lt;p&gt;Parts of the code in this post is written by &lt;a href=&#34;https://planning.unc.edu/student/chenyan/&#34;&gt;Yan Chen&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>

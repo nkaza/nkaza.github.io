@@ -5,12 +5,306 @@
     <link>https://nkaza.github.io/tag/techniques-short-course/</link>
       <atom:link href="https://nkaza.github.io/tag/techniques-short-course/index.xml" rel="self" type="application/rss+xml" />
     <description>techniques-short-course</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2022 Nikhil Kaza</copyright><lastBuildDate>Thu, 26 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2022 Nikhil Kaza</copyright><lastBuildDate>Fri, 03 Aug 2018 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
       <title>techniques-short-course</title>
       <link>https://nkaza.github.io/tag/techniques-short-course/</link>
     </image>
+    
+    <item>
+      <title>Scraping web for data</title>
+      <link>https://nkaza.github.io/post/scraping-web-for-data/</link>
+      <pubDate>Fri, 03 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/scraping-web-for-data/</guid>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#legality&#34;&gt;Legality&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#an-example-using-baidu&#34;&gt;An example using Baidu&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#apis-for-non-point-data&#34;&gt;APIs for non-point data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#unstructured-data&#34;&gt;Unstructured data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#acknowledgements&#34;&gt;Acknowledgements&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;Extracting data from un/semi/structured websites is becoming increasingly common place. Since data is collected, modified and refined continuously, it is increasingly useful to both serve them via web protocols rather than flat files that are downloaded. Furthermore, much of spatial data collection has become private, which also means that firms have stronger incentives to protect their datasets and curate what is available to the others. In other instances, the user or the analyst requires only a small section of the dataset. In these instances and others, data is served by a web-based protocol. Harvesting data usually takes the form of automating the process of sending requests to the webserver and parsing the output to extract relevant data for storage and analysis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;legality&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Legality&lt;/h1&gt;
+&lt;p&gt;Different jurisdictions have different legal restrictions and permissions on web scraping. There are also end user agreements that prevent certain actions (storage, retrieval, replication etc.). Please make sure that you are aware of these before attempting to make a local copy of the data that might be privately owned.&lt;/p&gt;
+&lt;p&gt;In general, scraping requires automated and repeated requests to the server. As long as these requests are not a disruptive rate, it is unlikely that you will run afoul of legality. Local data storage and replication of services is an entirely different ball game. Please consult a lawyer.&lt;/p&gt;
+&lt;p&gt;Many public and government websites are also now serving up data using web protocols. It is, therefore, useful to learn how to parse the outputs of these requests. In some instances, private firms such as Google, Baidu, Instagram etc. also provide application programming interfaces (API) that serve data in a structured format. In these instances, subject to end user agreements, rate limits and daily quotas, restrictions on storage and transfer, it may be possible to access datasets that are otherwise unavailable.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;an-example-using-baidu&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;An example using Baidu&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.baidu.com/&#34;&gt;Baidu&lt;/a&gt; is a technology service company that provides a number of services including maps and social networking. According to Wikipedia,&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The name Baidu (百度) literally means “a hundred times”, or alternatively, “countless times”. It is a quote from the last line of Xin Qiji (辛弃疾)’s classical poem “Green Jade Table in The Lantern Festival” (青玉案·元夕) saying: “Having searched hundreds of times in the crowd, suddenly turning back, She is there in the dimmest candlelight.” (众里寻他千百度，蓦然回首，那人却在灯火阑珊处。)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In this post, we are going to query Baidu for points of interest around &lt;a href=&#34;https://www.travelchinaguide.com/cityguides/wuhan.htm&#34;&gt;Wuhan, China&lt;/a&gt;. This is similar to Google Places.&lt;/p&gt;
+&lt;div id=&#34;setting-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setting up&lt;/h2&gt;
+&lt;p&gt;In general, all API require registration and perusal of documentation, so that queries can be structured appropriately. In the case of Baidu, there are additional steps that are required so that the IP address of the computer that you are querying from is not blacklisted for abuse. Please see the &lt;a href=&#34;http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi&#34;&gt;documentation&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acquiring-api-keys.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acquiring API keys.&lt;/h2&gt;
+&lt;p&gt;Every request to API requires a key so the website can control the how much and who can access the information. To acquire a key we need to :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Have a Baidu account. Register at &lt;a href=&#34;https://passport.baidu.com/v2/?reg&#34; class=&#34;uri&#34;&gt;https://passport.baidu.com/v2/?reg&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;img/1.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Find your computer IP address. Preferably use &lt;a href=&#34;http://ifconfig.me/&#34;&gt;ifconfig&lt;/a&gt; or &lt;a href=&#34;http://ip138.com/&#34;&gt;ip138&lt;/a&gt;
+&lt;img src=&#34;img/2.png&#34; alt=&#34;ifconfig.me&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Login your Baidu account and go to &lt;a href=&#34;http://lbsyun.baidu.com/apiconsole/key?application=key&#34; class=&#34;uri&#34;&gt;http://lbsyun.baidu.com/apiconsole/key?application=key&lt;/a&gt;, click “创建应用” to create a new application. Use the IP address from the previous step to “IP白名单”, then submit the application.
+&lt;img src=&#34;img/3.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;After getting back to the application management page, make a note of the api key. You will need to use it in your R code.
+&lt;img src=&#34;img/4.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;scraping&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Scraping&lt;/h2&gt;
+&lt;p&gt;There are There are a few steps to scrape and visualize information fro web queries. In this post, we will use Baidu API as a example to scrape the resturants around Huazhong Agricultural University (HZAU). For the moment, we will deal with structured data. Parsing unstructured data is for a different time.&lt;/p&gt;
+&lt;p&gt;The steps are:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Intialise your R session&lt;/li&gt;
+&lt;li&gt;Set the parameters of the query&lt;/li&gt;
+&lt;li&gt;Send the query repreatedly to get all the results&lt;/li&gt;
+&lt;li&gt;Cleaning and exporting the data&lt;/li&gt;
+&lt;li&gt;Visualize the result&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The two main packages, we are going to use for scraping the web is &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;RCurl&lt;/a&gt; and &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;rjson&lt;/a&gt;. Install them, if necessary and intialise them into the library. We will also use &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;devtools&lt;/a&gt; package to install packages that are not on Comprehensive R Archive Network &lt;a href=&#34;https://cran.r-project.org&#34;&gt;(CRAN)&lt;/a&gt;, but on places like &lt;a href=&#34;http://github.com&#34;&gt;Github&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Curl is a command line tool that allows us to transfer data especially over the web. Rcurl is an interface for that tool. Because the result of the API query is formatted in JavaScript Object Notation (JSON), we use RJSON to parse it easily. JSON is lightweight data-interchange format.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;##################### USE YOUR OWN KEY #########################
+### aquire the key from: http://lbsyun.baidu.com/apiconsole/key?application=key
+key = &amp;quot;_YOUR_KEY_HERE_&amp;quot;
+library(rjson)
+library(RCurl)
+library(tidyverse) # We have seen this package before.
+################################################################&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;parameters-of-the-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Parameters of the query&lt;/h3&gt;
+&lt;p&gt;According to the &lt;a href=&#34;http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi&#34;&gt;API documentation&lt;/a&gt;, we need to set a number of parameters to send the request to API. First, we will use the “round buffer” API to search all the restraunts within 2km distance around Huazhong Agricultural University. You can extract the coordinates from &lt;a href=&#34;http://api.map.baidu.com/lbsapi/getpoint/index.html&#34; class=&#34;uri&#34;&gt;http://api.map.baidu.com/lbsapi/getpoint/index.html&lt;/a&gt; by searching for 华中农业大学. Also Note the lat/long format, instead of the long/lat format we should be using. Pay attention to what the API requires.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;location &amp;lt;- &amp;quot;30.48178,114.363708&amp;quot;   #Latitude and Longitude as a string.
+keyword &amp;lt;- &amp;quot;餐馆&amp;quot; %&amp;gt;% curlEscape() ### set the keyword to search for in this case, resturants
+city &amp;lt;- &amp;quot;武汉&amp;quot; %&amp;gt;% curlEscape() ### set the city to search
+
+radius &amp;lt;- 4000 ### set the search radius as 2000 meters
+page_size &amp;lt;- 20 ### set the number of records in each page of the response
+
+#It will be replaced by the actual value of the result once get the first response
+placeIDSet = name = lat = lng = address = NULL ### set the initial value of the other parameters&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;querying-the-api&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Querying the API&lt;/h3&gt;
+&lt;p&gt;Querying the API is simply passing the url string to the server. &lt;code&gt;paste&lt;/code&gt; and &lt;code&gt;paste0&lt;/code&gt; are quite useful for constructing these queries&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(searchURL &amp;lt;- paste(&amp;quot;http://api.map.baidu.com/place/v2/search?query=&amp;quot;,
+                      keyword,
+                      &amp;quot;&amp;amp;location=&amp;quot;,location,
+                      &amp;quot;&amp;amp;radius=&amp;quot;,radius,
+                      &amp;quot;&amp;amp;scope=&amp;quot;,1,
+                      &amp;quot;&amp;amp;page_num=&amp;quot;, 1,
+                      &amp;quot;&amp;amp;page_size=&amp;quot;,page_size,
+                      &amp;quot;&amp;amp;region=&amp;quot;,city,
+                      &amp;quot;&amp;amp;output=json&amp;quot;,
+                      &amp;quot;&amp;amp;ak=&amp;quot;,key,
+                      sep=&amp;quot;&amp;quot;))
+# [1] &amp;quot;http://api.map.baidu.com/place/v2/search?query=%E9%A4%90%E9%A6%86&amp;amp;location=30.48178,114.363708&amp;amp;radius=4000&amp;amp;scope=1&amp;amp;page_num=1&amp;amp;page_size=20&amp;amp;region=%E6%AD%A6%E6%B1%89&amp;amp;output=json&amp;amp;ak=mSWfSeru2jtlMtAutjy9Vv28XLC568N3&amp;quot;
+
+
+result &amp;lt;- getURL(url = URLencode(searchURL),ssl.verifypeer = FALSE)
+x &amp;lt;- fromJSON(result)
+str(x, max.level = 2) # Setting max.level so that it won&amp;#39;t overwhelm the page. Feel free to explore.
+# List of 2
+#  $ status : num 210
+#  $ message: chr &amp;quot;APP IPæ ¡éªŒå¤±è´¥&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Query Baidu for Parks around 1 km of Huazhong Agricultural University and print raw results&lt;/li&gt;
+&lt;li&gt;Query Baidu for bus and train stations around Wuhan University and print the results&lt;/li&gt;
+&lt;li&gt;How many day care centers are there in this area?&lt;/li&gt;
+&lt;li&gt;Intepret these results&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;repeated-queries&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Repeated queries&lt;/h3&gt;
+&lt;p&gt;Because many of the results are paginated, it is imperative that we query the server repeatedly to get all the results we want. In the following code, we query until all the results are retrieved. We use the while loop for this, though other loops might be more suitable for particular use cases.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+page_num &amp;lt;- 0 ### set the starting page 
+total &amp;lt;- 20 ### the total number of records, initial value is 20, 
+
+while(page_num &amp;lt;= ceiling(total/page_size)-1){
+    ### run the query to get the result from the server
+    searchURL &amp;lt;- paste(&amp;quot;http://api.map.baidu.com/place/v2/search?query=&amp;quot;,
+                      keyword,
+                      &amp;quot;&amp;amp;location=&amp;quot;,location,
+                      &amp;quot;&amp;amp;radius=&amp;quot;,radius,
+                      &amp;quot;&amp;amp;scope=&amp;quot;,1,
+                      &amp;quot;&amp;amp;page_num=&amp;quot;,page_num,
+                      &amp;quot;&amp;amp;page_size=&amp;quot;,page_size,
+                      &amp;quot;&amp;amp;region=&amp;quot;,city,
+                      &amp;quot;&amp;amp;output=json&amp;quot;,
+                      &amp;quot;&amp;amp;ak=&amp;quot;,key,
+                      sep=&amp;quot;&amp;quot;)
+    result = getURL(url = searchURL,ssl.verifypeer = FALSE)
+    ### transfer the result from json to a list format in R
+    x = fromJSON(result)
+    ### get the number of total records from the result
+    total = x$total
+    ### print the process
+    cat(&amp;quot;Retrieving&amp;quot;,page_num+1,&amp;quot;from total&amp;quot;,ceiling(total/page_size),&amp;quot;pages ...\n&amp;quot;)
+    page_num = page_num + 1
+    ### extract the value from the result
+    
+    # PLACEID
+    placeIDSet = c(placeIDSet,
+                   unlist(lapply(X = x$results,FUN = function(x)return(x$uid))))
+    # Name of the place
+    name = c(name,
+             unlist(lapply(X = x$results,FUN = function(x)return(x$name))))
+    #latitude
+    lat = c(lat,
+            unlist(lapply(X = x$results,FUN = function(x)return(x$location$lat))))
+    #longitude
+    lng = c(lng,
+            unlist(lapply(X = x$results,FUN = function(x)return(x$location$lng))))
+    #address
+    address = c(address,
+                unlist(lapply(X = x$results,FUN = function(x)return(x$address))))
+    Sys.sleep(1) # Set this so that you do not bombard the server. The process stops for 1s. Change this to suit your purpose. 
+}
+# Retrieving 1 from total  pages ...
+# Error in while (page_num &amp;lt;= ceiling(total/page_size) - 1) {: argument is of length zero
+# save the extracted information as a dataframe
+dat &amp;lt;- data.frame(name,lng,lat,address,placeIDSet)
+nrow(dat)
+# [1] 0&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The above is a very brittle code. If the server returns an error because of heavy volume, the loop fails. Use &lt;code&gt;tryCatch&lt;/code&gt; to trap errors and continue loop and keep track of which pages have returned errors. In particular use the status and message of the results to write more graceful code that will survive.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cleaning-and-exporting-the-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Cleaning and exporting the data&lt;/h3&gt;
+&lt;p&gt;Baidu has its own projection system. To visualize the data, we need to transform the coordinates from BD09 coordinate system to the commonly used WGS84 system (epsg:4326). To achieve that, we need use a customized package on github. &amp;quot;devtools“ package is required here.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(devtools)
+install_github(&amp;quot;waholulu/bd09towgs84&amp;quot;)
+library(bdtowgs)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we can use its build-in function “bd09towgs84” to project the coordinates.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coord &amp;lt;- subset(dat, select = c(&amp;quot;lng&amp;quot;, &amp;quot;lat&amp;quot;))
+# Error in `[.data.frame`(x, r, vars, drop = drop): undefined columns selected
+transfer &amp;lt;- as.data.frame(t(apply(coord,1,bd09towgs84)))
+# Error in apply(coord, 1, bd09towgs84): object &amp;#39;coord&amp;#39; not found
+dat$lng &amp;lt;- transfer$V1
+# Error in eval(expr, envir, enclos): object &amp;#39;transfer&amp;#39; not found
+dat$lat &amp;lt;- transfer$V2
+# Error in eval(expr, envir, enclos): object &amp;#39;transfer&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then the data can be saved as a csv file.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# save the information as an excel file
+write_csv(dat, path= &amp;quot;search_results.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualise-results&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Visualise results&lt;/h3&gt;
+&lt;p&gt;Now we can use leaflet to visuzalize the locations of the restaurants.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# Error in `[.data.frame`(dat, , c(&amp;quot;lng&amp;quot;, &amp;quot;lat&amp;quot;, &amp;quot;name&amp;quot;)): undefined columns selected
+# Error in structure(list(options = options), leafletData = data): object &amp;#39;locations_df&amp;#39; not found
+# Error in eval(expr, envir, enclos): object &amp;#39;m&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Instead of a buffer search, use a bounding box search to return the results for restaurants (“餐馆”). Use the bounds as &lt;code&gt;c(30.531539,114.357628,30.552129,114.385296)&lt;/code&gt; (SW-NE corner points). Display on a map.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What happens you search for day care centers?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;apis-for-non-point-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;APIs for non-point data&lt;/h1&gt;
+&lt;p&gt;In the above, we primarily used API to query point location information. There is no reason to think that this is limited to points. For example we can get routing information or travel time isoschornes or whatever API is serving that can be read.&lt;/p&gt;
+&lt;p&gt;To demonstrate this, we can plot &lt;a href=&#34;https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times&#34;&gt;Isochrones&lt;/a&gt; of every 2 min biking, around some random points in Wuhan. For this we use the Open Source Routing Library (OSRM), though any other API works as well (e.g. Google, Mapbox etc.). For this purposes, we are going to use the demo server for OSRM, though ideally you will &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34;&gt;set one up&lt;/a&gt; for your purposes. If you set one up for yourself, you can get other directions and travel such as walking, driving etc.&lt;/p&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    &lt;/p&gt;
+&lt;p&gt;You should be careful using the OSRM demo server, it is not always very stable.&lt;/p&gt;
+&lt;p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(sf)
+library(osrm)
+# Ideally set these options up
+ options(osrm.server = &amp;quot;http://localhost:5000/&amp;quot;)
+options(osrm.profile = &amp;#39;bike&amp;#39;) #Change this for other modes. However, the demo server only returns car profile
+
+randompoints &amp;lt;- matrix(c(114.346566,30.533282,
+                           114.298273,30.381364,
+                           114.347141,30.599453), ncol=2, byrow =TRUE) %&amp;gt;% data.frame()
+names(randompoints) &amp;lt;- c(&amp;#39;lng&amp;#39;, &amp;#39;lat&amp;#39;)
+randompoints$name &amp;lt;- c(&amp;#39;pt1&amp;#39;, &amp;#39;pt2&amp;#39;, &amp;#39;pt3&amp;#39;)
+
+rt &amp;lt;- osrmRoute(src = randompoints[1,c(&amp;#39;name&amp;#39;, &amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], 
+                dst = randompoints[2,c(&amp;#39;name&amp;#39;,&amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], 
+                sp = TRUE) %&amp;gt;% st_as_sf()
+# Error in UseMethod(&amp;quot;st_as_sf&amp;quot;): no applicable method for &amp;#39;st_as_sf&amp;#39; applied to an object of class &amp;quot;NULL&amp;quot;
+
+rt %&amp;gt;% leaflet() %&amp;gt;%
+    addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints[1:2,], ~lng, ~lat) %&amp;gt;%
+  addPolylines(weight =5, smoothFactor = .5, color=&amp;#39;red&amp;#39;)
+# Error in polygonData.default(data): Don&amp;#39;t know how to get path data from object of class function&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OSRM is a convenience package that is wrapping the calls to the server and parsing the output into Spatial*. For example, the curl query in the backend looks like&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://router.project-osrm.org/route/v1/driving/114.346566,30.533282,114.298273,30.381364&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iso &amp;lt;- list()
+for (i in 1:nrow(randompoints)){
+iso[[i]] &amp;lt;- osrmIsochrone(loc = randompoints[i,c(&amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], breaks = seq(from = 0,to = 20, by = 2)) %&amp;gt;% st_as_sf()
+}
+# Error in (function (classes, fdef, mtable) : unable to find an inherited method for function &amp;#39;coordinates&amp;#39; for signature &amp;#39;&amp;quot;NULL&amp;quot;&amp;#39;
+
+iso &amp;lt;- do.call(&amp;#39;rbind&amp;#39;, iso)
+
+ Npal &amp;lt;- colorNumeric(
+   palette = &amp;quot;Reds&amp;quot;, n = 5,
+   domain = iso$center
+ )
+ 
+iso %&amp;gt;% leaflet() %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints, ~lng, ~lat) %&amp;gt;%
+  addPolygons(color = &amp;quot;#444444&amp;quot;, weight = 1, smoothFactor = 0.5,
+    opacity = 1.0, fillOpacity = 0.5, fillColor = ~Npal(iso$center),
+    group = &amp;quot;Isochrone&amp;quot;) %&amp;gt;%
+  addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~iso$center,
+            title = &amp;quot;Biking Time (min)&amp;quot;,opacity = 1
+            )
+# Error in derivePolygons(data, lng, lat, missing(lng), missing(lat), &amp;quot;addPolygons&amp;quot;): Polygon data not found; please provide addPolygons with data and/or lng/lat arguments&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;unstructured-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Unstructured data&lt;/h1&gt;
+&lt;p&gt;JSON files are well-structured. Therefore, it is relatively easy to parse them. If the files are unstructured, a lot of effort goes into figuring out different structures and searches that will yield the dataset that is necessary. In general, packages such as &lt;code&gt;xml2&lt;/code&gt; and &lt;code&gt;rvest&lt;/code&gt; will help such tasks. This is left for a different day.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Reading data from server based APIs are no different from reading and parsing a local file. However, unlike local files that are well structured, and OS handling handling of low level functions of memory management and error recovery, we ought to be extra mindful of how errors might affect and break our code. Once the data is scraped, analysis proceeds in the usual fashion. However, because the data is not of specific vintage, reproducibility of research is a serious concern. You should note it and be able to provide archival of scraped data for others to use, subject to end use restrictions. In any case, currency of the data should be balanced with the archival mission of the organisation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acknowledgements&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Acknowledgements&lt;/h1&gt;
+&lt;p&gt;Parts of the code in this post is written by &lt;a href=&#34;https://planning.unc.edu/student/chenyan/&#34;&gt;Yan Chen&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Techniques &amp; Politics of New Urban Analytics</title>

@@ -245,7 +245,7 @@
   
   
   
-  <link rel="stylesheet" href="/css/wowchemy.09d4529e4672bb97b44a6913e4a61a23.css" />
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
 
   
 
@@ -926,7 +926,7 @@
 <li>Use comments liberally using &ldquo;#&rdquo;.</li>
 <li>Avoid <code>setwd()</code> and use only relative paths. If you must, use <code>setwd()</code> only at the top of the script.</li>
 <li>Distinct components of the code should ideally be separate and be accessed using <code>source()</code>. This improves legibility.</li>
-<li>Use a consistent style within your code. For example, name all dataframes to something ending in _df.</li>
+<li>Use a consistent style within your code. For example, name all data frames to something ending in _df.</li>
 <li>Keep all of your source files for a project in the same directory, then use relative paths as necessary to access them.</li>
 <li>Memory is a problem for R, because it stores all objects in memory (mostly true). Follow good practice of deleting objects that you don&rsquo;t need using  <code>rm()</code>. It is rarely necessary for you to use garbage collection <code>gc()</code>. If you are running to into problems constantly
 <ul>
@@ -940,12 +940,12 @@
 <p>Once you have R &amp; Rstudio installed, run the following to see if it is working correctly.</p>
 <pre><code class="language-r">1 + 1   #add 1 + 1
 # [1] 2
-a&lt;-2:5  #Assign vector 2:5 to a variable a
+a &lt;- 2:5  #Assign vector 2:5 to a variable a
 a      #print a to console
 # [1] 2 3 4 5
 runif(5)   #Generate 5 random numbers
-# [1] 0.88991236 0.56977398 0.41888366 0.94886682 0.06351703
-sessionInfo()     #What is my computer environment? (Mac, Windows, libraries etc.)
+# [1] 0.96863004 0.30872470 0.26212556 0.02766248 0.30882430
+sessionInfo()     #What is my computer environment? (Mac, Windows, packages etc.)
 # R version 4.0.3 (2020-10-10)
 # Platform: x86_64-apple-darwin17.0 (64-bit)
 # Running under: macOS Big Sur 10.16
@@ -962,11 +962,11 @@ sessionInfo()     #What is my computer environment? (Mac, Windows, libraries etc
 # 
 # loaded via a namespace (and not attached):
 #  [1] bookdown_0.24   digest_0.6.29   R6_2.5.1        jsonlite_1.7.3 
-#  [5] magrittr_2.0.1  evaluate_0.14   blogdown_1.7.3  stringi_1.7.6  
-#  [9] rlang_0.4.12    jquerylib_0.1.4 bslib_0.3.1     rmarkdown_2.11 
-# [13] tools_4.0.3     stringr_1.4.0   xfun_0.29       yaml_2.2.1     
-# [17] fastmap_1.1.0   compiler_4.0.3  htmltools_0.5.2 knitr_1.37     
-# [21] sass_0.4.0
+#  [5] magrittr_2.0.2  evaluate_0.14   blogdown_1.7.3  stringi_1.7.6  
+#  [9] rlang_1.0.0     cli_3.1.1       rstudioapi_0.13 jquerylib_0.1.4
+# [13] bslib_0.3.1     rmarkdown_2.11  tools_4.0.3     stringr_1.4.0  
+# [17] xfun_0.29       yaml_2.2.2      fastmap_1.1.0   compiler_4.0.3 
+# [21] htmltools_0.5.2 knitr_1.37      sass_0.4.0
 </code></pre>
 <p>The output of the last two commands will be different on your computer than what is being shown.</p>
 <hr>
@@ -1665,9 +1665,9 @@ for (yr2 in 2006:2020){
       
       <li><a href="/post/intersection-density-from-osm-using-qgis-r/">Intersection Density From OSM using QGIS &amp; R</a></li>
       
-      <li><a href="/post/extracting-data-from-osm/">Extracting Data from OpenStreetMap</a></li>
+      <li><a href="/teaching/techniques-course/">PLAN 672: Urban Data Analytics in R</a></li>
       
-      <li><a href="/post/geospatial-data-in-r/">Geospatial Data in R</a></li>
+      <li><a href="/post/analysing-free-form-text/">Analysing Free Form Text</a></li>
       
     </ul>
   </div>
@@ -1750,14 +1750,6 @@ for (yr2 in 2006:2020){
   <p class="powered-by">
     
     
-    
-      
-      
-      
-      
-      
-      
-      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-themes" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
     
   </p>
 </footer>

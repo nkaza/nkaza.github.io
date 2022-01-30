@@ -766,5 +766,373 @@ frameWidget(tmap_leaflet(m5))
 </description>
     </item>
     
+    <item>
+      <title>Analysing Urban Neworks</title>
+      <link>https://nkaza.github.io/post/analysing-urban-neworks/</link>
+      <pubDate>Wed, 12 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/analysing-urban-neworks/</guid>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Networks are ubiqutous in a urban systems. The more obvious ones are street, rail and utility networks that undergird the city. However, as planners we also focus on less obvious networks; e.g. social networks of people that allow for community formation, the transactional activity of firms that allow us to identify clusters of firms or industries, the mismatch between job seekers and job locations to better plan for social and physical infrastructure and information flow through organisational linkages during a disaster management process. These are but a few examples of network analysis in the urban domain. The problem definition frames the analytical tools used in the process.&lt;/p&gt;
+&lt;h2 id=&#34;acquire-data&#34;&gt;Acquire Data&lt;/h2&gt;
+&lt;p&gt;Let’s begin by using the bike share data from New York, we are familiar with. We &lt;a href=&#34;https://nkaza.github.io/post/geospatial-data-in-r/&#34;&gt;already did some network analysis&lt;/a&gt; with it (inadvertently). Let’s formalise it.
+Much of the following &lt;a href=&#34;https://www.dropbox.com/s/wbzs2qisfgc2fts/201806-citibike-tripdata.csv?dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;data&lt;/a&gt; cleaning that you should be familiar with now.&lt;/p&gt;
+&lt;h2 id=&#34;key-nodes-in-a-network&#34;&gt;Key nodes in a network&lt;/h2&gt;
+&lt;p&gt;Networks are representation of connections between two nodes. As such bike stations, could be treated a vertex/node and each trip between any two stations could be treated as a link. In another representation, you can treat all stations connected with one another, if they belong to the same company that you can check out and return these bikes and treat the number of trips as weights on that edge; so some edges will have zero weights. In other instances, you may disallow edges that have zero weights, i.e. remove the connection between two stations if there are no trips between them (or number of trips below a threshold).&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyverse)
+library(igraph)
+library(here)
+
+
+tripdata &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;nycbikeshare&amp;quot;, &amp;quot;201806-citibike-tripdata.csv&amp;quot;) %&amp;gt;% read_csv()
+
+tripdata &amp;lt;- rename(tripdata,              #rename column names to get rid of the space
+                   Slat = `start station latitude`,
+                   Slon = `start station longitude`,
+                   Elat = `end station latitude`,
+                   Elon = `end station longitude`,
+                   Sstid = `start station id`,
+                   Estid = `end station id`,
+                   Estname = `end station name`,
+                   Sstname = `start station name`
+                   
+)
+diffdesttrips &amp;lt;- tripdata[tripdata$Estid != tripdata$Sstid, ] # to make sure there are no loops or self-connections. 
+
+
+(trips_graph &amp;lt;- diffdesttrips %&amp;gt;% 
+        select(Sstid,Estid) %&amp;gt;%
+        graph.data.frame(directed = T)) #We are using directed graph because the links have from and to edges. You can choose to ignore them.
+# IGRAPH 1e55545 DN-- 773 1909858 -- 
+# + attr: name (v/c)
+# + edges from 1e55545 (vertex names):
+#  [1] 72-&amp;gt;173  72-&amp;gt;477  72-&amp;gt;457  72-&amp;gt;379  72-&amp;gt;459  72-&amp;gt;446  72-&amp;gt;212  72-&amp;gt;458 
+#  [9] 72-&amp;gt;212  72-&amp;gt;514  72-&amp;gt;514  72-&amp;gt;465  72-&amp;gt;173  72-&amp;gt;524  72-&amp;gt;173  72-&amp;gt;212 
+# [17] 72-&amp;gt;382  72-&amp;gt;462  72-&amp;gt;3141 72-&amp;gt;456  72-&amp;gt;519  72-&amp;gt;328  72-&amp;gt;426  72-&amp;gt;3659
+# [25] 72-&amp;gt;359  72-&amp;gt;525  72-&amp;gt;405  72-&amp;gt;458  72-&amp;gt;457  72-&amp;gt;3163 72-&amp;gt;426  72-&amp;gt;328 
+# [33] 72-&amp;gt;376  72-&amp;gt;3459 72-&amp;gt;304  72-&amp;gt;457  72-&amp;gt;486  72-&amp;gt;527  72-&amp;gt;490  72-&amp;gt;459 
+# [41] 72-&amp;gt;459  72-&amp;gt;3178 72-&amp;gt;3178 72-&amp;gt;515  72-&amp;gt;459  72-&amp;gt;388  72-&amp;gt;500  72-&amp;gt;508 
+# [49] 72-&amp;gt;173  72-&amp;gt;426  72-&amp;gt;368  72-&amp;gt;3258 72-&amp;gt;532  72-&amp;gt;478  72-&amp;gt;514  72-&amp;gt;533 
+# [57] 72-&amp;gt;519  72-&amp;gt;423  72-&amp;gt;3457 72-&amp;gt;525  72-&amp;gt;525  72-&amp;gt;490  72-&amp;gt;529  72-&amp;gt;405 
+# + ... omitted several edges
+
+
+vcount(trips_graph)
+# [1] 773
+ecount(trips_graph)
+# [1] 1909858
+is.directed(trips_graph)
+# [1] TRUE
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can access the vertices and edges using &lt;code&gt;V&lt;/code&gt; and &lt;code&gt;E&lt;/code&gt; functions.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;V(trips_graph) %&amp;gt;% head()
+# + 6/773 vertices, named, from 1e55545:
+# [1] 72  79  82  83  119 120
+E(trips_graph) %&amp;gt;% head()
+# + 6/1909858 edges from 1e55545 (vertex names):
+# [1] 72-&amp;gt;173 72-&amp;gt;477 72-&amp;gt;457 72-&amp;gt;379 72-&amp;gt;459 72-&amp;gt;446
+
+tmp1 &amp;lt;- diffdesttrips %&amp;gt;%
+  group_by(Sstid) %&amp;gt;%
+  summarise(
+    stname = first(Sstname),
+    lon = first(Slon),
+    lat = first(Slat))%&amp;gt;%
+  rename(stid = Sstid)
+
+tmp2 &amp;lt;- diffdesttrips %&amp;gt;%
+  group_by(Estid) %&amp;gt;%
+  summarise(
+    stname = first(Estname),
+    lon = first(Elon),
+    lat = first(Elat)) %&amp;gt;%
+  rename(stid = Estid)
+
+station_locs &amp;lt;- rbind(tmp1, tmp2) %&amp;gt;% unique()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can extract subgraphs for a subset of vertices&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.seed(200) # For reproducibility because of randomisation below
+station_sample &amp;lt;- sample(V(trips_graph), 20)
+sub_trips &amp;lt;- induced_subgraph(trips_graph, station_sample)
+
+
+# plot using ggraph
+library(ggraph)
+ggraph(sub_trips, layout = &#39;kk&#39;) + 
+    geom_edge_fan(show.legend = FALSE) +
+    geom_node_point()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;Note that the graph does not respect the geographic locations. If you want to fix the positions relative to their lat/long coordinates, you should can specify them using layout parameters.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use different layouts (such as star and cricle) to visualise the network.&lt;/li&gt;
+&lt;li&gt;Use different edge attributes to style the edges of the above graph&lt;/li&gt;
+&lt;li&gt;Style the vertices using for e.g. number of incoming trips per day, or their location in different boroughs.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;degrees--their-distribution&#34;&gt;Degrees &amp;amp; their distribution.&lt;/h3&gt;
+&lt;p&gt;Degree of a vertex, in graph theory, refers to the number of edges that has the vertex as one of its ends. An in-degree and out-degree qualifies it, by counting only edges that start and end at the vertex. Degree distributions are important for graphs as they tell us about how connected the graph is and which if any of the vertices are more important than others.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;degree(trips_graph, mode = &#39;out&#39;) %&amp;gt;%
+  as.tibble %&amp;gt;%
+  ggplot()+
+  geom_density(aes(x=value))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;degree.distribution(trips_graph) %&amp;gt;% head() # Check out what the degree.distribution produces and how to interpret the results.
+# [1] 0.000000000 0.003880983 0.005174644 0.002587322 0.001293661 0.001293661
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In particular, you want to look for the outliers in the distribution. For example to find the stations with only end trips but no start trips, i.e stations that are solely destinations&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;V(trips_graph)$name[degree(trips_graph, mode=&amp;quot;out&amp;quot;) == 0 &amp;amp; degree(trips_graph, mode=&amp;quot;in&amp;quot;) &amp;gt; 0]
+#  [1] &amp;quot;3245&amp;quot; &amp;quot;3267&amp;quot; &amp;quot;3275&amp;quot; &amp;quot;3192&amp;quot; &amp;quot;3276&amp;quot; &amp;quot;3184&amp;quot; &amp;quot;3214&amp;quot; &amp;quot;3651&amp;quot; &amp;quot;3198&amp;quot; &amp;quot;3199&amp;quot;
+# [11] &amp;quot;3203&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can also visualise these stations that are popular origins on the map. However, we need to attach the values to the station locations tibble.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+tmp &amp;lt;- degree(trips_graph, mode = &#39;out&#39;) %&amp;gt;%
+  as.tibble() %&amp;gt;%
+  rename(Outdegree = value)%&amp;gt;%
+  mutate(stid = V(trips_graph)$name %&amp;gt;% as.numeric()) 
+
+
+station_locs &amp;lt;- station_locs %&amp;gt;% 
+  left_join(tmp, by=&#39;stid&#39;)
+
+library(leaflet)
+
+ Npal &amp;lt;- colorNumeric(
+   palette = &amp;quot;Reds&amp;quot;, n = 5,
+   domain = station_locs$Outdegree
+ )
+
+
+ m1 &amp;lt;- 
+station_locs %&amp;gt;%
+    leaflet()  %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+   addCircles(
+     lng = station_locs$lon,
+     lat = station_locs$lat,
+     radius = (station_locs$Outdegree - mean(station_locs$Outdegree))/sd(station_locs$Outdegree) * 30,
+     fillOpacity = .6,
+    fillColor = Npal(station_locs$Outdegree),
+     group = &#39;Stations&#39;,
+     stroke=FALSE
+   ) %&amp;gt;%
+  addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~Outdegree,
+            labFormat = function(type, cuts, p) {
+              n = length(cuts) 
+              paste0(prettyNum(cuts[-n], digits=0, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=0, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+            },
+            title = &amp;quot;Out degree/Trip Starts&amp;quot;,
+            opacity = 1
+  )
+
+library(widgetframe)
+frameWidget(m1)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-6.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;You can also find out which stations are predominantly origin stations and which are predominantly destinations. I use 20% more as a cut off (arbitrary).&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Careful with division. If you have a nodes that are only origins, i.e. in-degree is 0, you will have a divison by 0 problem.
+
+V(trips_graph)$name[degree(trips_graph, mode=&amp;quot;out&amp;quot;) / degree(trips_graph, mode=&amp;quot;in&amp;quot;) &amp;gt; 1.2]
+#  [1] &amp;quot;216&amp;quot;  &amp;quot;258&amp;quot;  &amp;quot;266&amp;quot;  &amp;quot;289&amp;quot;  &amp;quot;339&amp;quot;  &amp;quot;356&amp;quot;  &amp;quot;391&amp;quot;  &amp;quot;397&amp;quot;  &amp;quot;399&amp;quot;  &amp;quot;443&amp;quot; 
+# [11] &amp;quot;469&amp;quot;  &amp;quot;3152&amp;quot; &amp;quot;3161&amp;quot; &amp;quot;3164&amp;quot; &amp;quot;3177&amp;quot; &amp;quot;3302&amp;quot; &amp;quot;3316&amp;quot; &amp;quot;3366&amp;quot; &amp;quot;3536&amp;quot; &amp;quot;3539&amp;quot;
+# [21] &amp;quot;3542&amp;quot; &amp;quot;3620&amp;quot; &amp;quot;3623&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Identify the popular origin stations of the trips by different times of the day and day of the week&lt;/li&gt;
+&lt;li&gt;Modify the above code slightly to identify the popular destinations by different times of the day and day of the week.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;other-centrality-measures&#34;&gt;Other centrality measures&lt;/h3&gt;
+&lt;h4 id=&#34;eigen-centrality&#34;&gt;Eigen centrality&lt;/h4&gt;
+&lt;p&gt;If (A = (a_{ij})) be the adjacency matrix of a graph, where (a_{ij} = 1) when (i) and (j) nodes are connected, (0) otherwise. The eigenvector centrality &lt;code&gt;\(x_{i}\)&lt;/code&gt; of node &lt;code&gt;\(i\)&lt;/code&gt; is given by:&lt;/p&gt;
+&lt;p&gt;(x_i = &lt;em&gt;{k} a&lt;/em&gt;{ki} , x_k)&lt;/p&gt;
+&lt;p&gt;where () is a constant.&lt;/p&gt;
+&lt;p&gt;Intuitively, a node is considered more central/important, if it is connected to large number of highly central/important nodes. So, a node may have a high degree score (i.e. many connections) but a relatively low eigen centrality score if many of those connections are with similarly low-scored nodes.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;station_locs$eigencentrality &amp;lt;- eigen_centrality(trips_graph)$vector
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-9.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h3 id=&#34;page-rank-centrality&#34;&gt;Page rank centrality&lt;/h3&gt;
+&lt;p&gt;Page rank is a version of eigen centrality, made popular by the founders of Google. We can use boxplot in the standard graphics package to identify the outliers. .&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmp  &amp;lt;- page_rank(trips_graph)$vector %&amp;gt;% 
+    boxplot.stats() %&amp;gt;%
+    .[[&amp;quot;out&amp;quot;]] %&amp;gt;% ## Box plot identifies the oultiers, outside the whiskers. The default value is 1.5 outside the box.
+     names() %&amp;gt;% 
+    as.numeric()
+
+station_locs %&amp;gt;% 
+  filter(stid %in% tmp) %&amp;gt;%
+  select(&#39;stname&#39;)
+# # A tibble: 17 × 1
+#    stname                       
+#    &amp;lt;chr&amp;gt;                        
+#  1 Broadway &amp;amp; E 14 St           
+#  2 Christopher St &amp;amp; Greenwich St
+#  3 Carmine St &amp;amp; 6 Ave           
+#  4 Centre St &amp;amp; Chambers St      
+#  5 Broadway &amp;amp; E 22 St           
+#  6 West St &amp;amp; Chambers St        
+#  7 W 21 St &amp;amp; 6 Ave              
+#  8 W 41 St &amp;amp; 8 Ave              
+#  9 8 Ave &amp;amp; W 33 St              
+# 10 W 33 St &amp;amp; 7 Ave              
+# 11 E 17 St &amp;amp; Broadway           
+# 12 Broadway &amp;amp; W 60 St           
+# 13 12 Ave &amp;amp; W 40 St             
+# 14 Pershing Square North        
+# 15 Central Park S &amp;amp; 6 Ave       
+# 16 South End Ave &amp;amp; Liberty St   
+# 17 Kent Ave &amp;amp; N 7 St
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;closeness-centrality&#34;&gt;Closeness centrality&lt;/h4&gt;
+&lt;p&gt;While the above measures of centrality depend on local neighborhood, we can also take into account the whole graph. For example, if a station can every station within a few hops, then it is considered more central than ones that may have more localised trips within the neighborhood.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmp &amp;lt;- closeness(trips_graph, mode=&#39;all&#39;) %&amp;gt;% 
+  boxplot.stats() %&amp;gt;%
+  .[[&#39;out&#39;]] %&amp;gt;%
+   names() %&amp;gt;%
+    as.numeric()
+
+station_locs %&amp;gt;% 
+  filter(stid %in% tmp) %&amp;gt;%
+  select(&#39;stname&#39;)
+# # A tibble: 7 × 1
+#   stname                
+#   &amp;lt;chr&amp;gt;                 
+# 1 Paulus Hook           
+# 2 Liberty Light Rail    
+# 3 Heights Elevator      
+# 4 Hamilton Park         
+# 5 Essex Light Rail      
+# 6 Morris Canal          
+# 7 Bike Mechanics at Riis
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;These seems like unsual stations to be outliers in a centrality index (bike mechanics??) and unlike the page rank index. A closer look at the centrality using box plot reveals that these are outliers at the left end of the centrality distribution.&lt;/p&gt;
+&lt;p&gt;There are hundreds of centrality measures out there. Be careful to pick and choose the right ones for your proiblem. To assist with this, you can use &lt;code&gt;CINNA&lt;/code&gt; (Central Informative Nodes in Network Analysis) package for computing, analyzing and comparing centrality measures submitted to CRAN repository.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(CINNA)
+proper_centralities(trips_graph)
+#  [1] &amp;quot;Alpha Centrality&amp;quot;                                
+#  [2] &amp;quot;Bonacich power centralities of positions&amp;quot;        
+#  [3] &amp;quot;Page Rank&amp;quot;                                       
+#  [4] &amp;quot;Average Distance&amp;quot;                                
+#  [5] &amp;quot;Barycenter Centrality&amp;quot;                           
+#  [6] &amp;quot;BottleNeck Centrality&amp;quot;                           
+#  [7] &amp;quot;Centroid value&amp;quot;                                  
+#  [8] &amp;quot;Closeness Centrality (Freeman)&amp;quot;                  
+#  [9] &amp;quot;ClusterRank&amp;quot;                                     
+# [10] &amp;quot;Decay Centrality&amp;quot;                                
+# [11] &amp;quot;Degree Centrality&amp;quot;                               
+# [12] &amp;quot;Diffusion Degree&amp;quot;                                
+# [13] &amp;quot;DMNC - Density of Maximum Neighborhood Component&amp;quot;
+# [14] &amp;quot;Eccentricity Centrality&amp;quot;                         
+# [15] &amp;quot;Harary Centrality&amp;quot;                               
+# [16] &amp;quot;eigenvector centralities&amp;quot;                        
+# [17] &amp;quot;K-core Decomposition&amp;quot;                            
+# [18] &amp;quot;Geodesic K-Path Centrality&amp;quot;                      
+# [19] &amp;quot;Katz Centrality (Katz Status Index)&amp;quot;             
+# [20] &amp;quot;Kleinberg&#39;s authority centrality scores&amp;quot;         
+# [21] &amp;quot;Kleinberg&#39;s hub centrality scores&amp;quot;               
+# [22] &amp;quot;clustering coefficient&amp;quot;                          
+# [23] &amp;quot;Lin Centrality&amp;quot;                                  
+# [24] &amp;quot;Lobby Index (Centrality)&amp;quot;                        
+# [25] &amp;quot;Markov Centrality&amp;quot;                               
+# [26] &amp;quot;Radiality Centrality&amp;quot;                            
+# [27] &amp;quot;Shortest-Paths Betweenness Centrality&amp;quot;           
+# [28] &amp;quot;Current-Flow Closeness Centrality&amp;quot;               
+# [29] &amp;quot;Closeness centrality (Latora)&amp;quot;                   
+# [30] &amp;quot;Communicability Betweenness Centrality&amp;quot;          
+# [31] &amp;quot;Community Centrality&amp;quot;                            
+# [32] &amp;quot;Cross-Clique Connectivity&amp;quot;                       
+# [33] &amp;quot;Entropy Centrality&amp;quot;                              
+# [34] &amp;quot;EPC - Edge Percolated Component&amp;quot;                 
+# [35] &amp;quot;Laplacian Centrality&amp;quot;                            
+# [36] &amp;quot;Leverage Centrality&amp;quot;                             
+# [37] &amp;quot;MNC - Maximum Neighborhood Component&amp;quot;            
+# [38] &amp;quot;Hubbell Index&amp;quot;                                   
+# [39] &amp;quot;Semi Local Centrality&amp;quot;                           
+# [40] &amp;quot;Closeness Vitality&amp;quot;                              
+# [41] &amp;quot;Residual Closeness Centrality&amp;quot;                   
+# [42] &amp;quot;Stress Centrality&amp;quot;                               
+# [43] &amp;quot;Load Centrality&amp;quot;                                 
+# [44] &amp;quot;Flow Betweenness Centrality&amp;quot;                     
+# [45] &amp;quot;Information Centrality&amp;quot;                          
+# [46] &amp;quot;Dangalchev Closeness Centrality&amp;quot;                 
+# [47] &amp;quot;Group Centrality&amp;quot;                                
+# [48] &amp;quot;Harmonic Centrality&amp;quot;                             
+# [49] &amp;quot;Local Bridging Centrality&amp;quot;                       
+# [50] &amp;quot;Wiener Index Centrality&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;community-detection&#34;&gt;Community Detection&lt;/h2&gt;
+&lt;p&gt;Finding a community structure in a network is to identify clusters of nodes that are more strongly connected within the cluster than to nodes outside the cluster. There are many algorithms that identify community structures. Some work on weigthed networks and some work on digraphs. In any case it is better to convert multigraph (graph with two nodes having multiple edges) into a simple graph with edge weights, representing the number of trips.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;E(trips_graph)$weight &amp;lt;- 1
+station_graph  &amp;lt;- simplify(trips_graph, edge.attr.comb=&amp;quot;sum&amp;quot;)
+
+ecount(station_graph) == ecount(trips_graph)
+# [1] FALSE
+sum(E(station_graph)$weight) == ecount(trips_graph)
+# [1] TRUE
+all.equal(vcount(station_graph), vcount(trips_graph))
+# [1] TRUE
+
+is.directed(station_graph)
+# [1] TRUE
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Walktrap algorithm finds the communities by random walks in the graph. The intuition is that random walks are more likely to be within a community that across communities.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;wlktrp_mmbr &amp;lt;- data.frame (clstrmm  = cluster_walktrap(station_graph)$membership %&amp;gt;% as.factor, 
+                          stid = V(station_graph)$name %&amp;gt;% as.numeric()
+                          ) %&amp;gt;% as.tibble()
+
+
+wlktrp_mmbr$clstrmm %&amp;gt;% summary()
+#   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15 
+#  80 218 207  61   3 195   1   1   1   1   1   1   1   1   1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It seems like there are 5 distinct and non-trivial clusters of stations. You can visualise these results by joining them back to tibbles with location information.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;station_locs &amp;lt;- station_locs %&amp;gt;%
+                inner_join(wlktrp_mmbr, by=&#39;stid&#39;)
+
+
+library(ggmap)
+library(sf)
+bnds &amp;lt;- station_locs %&amp;gt;% st_as_sf(coords=c(&amp;quot;lon&amp;quot;,&#39;lat&#39;)) %&amp;gt;% st_bbox %&amp;gt;% unname
+
+nybg &amp;lt;- get_stamenmap(bbox=bnds, maptype = &#39;toner-lite&#39;, zoom = 11)
+
+library(RColorBrewer)
+numColors &amp;lt;- levels(station_locs$clstrmm) %&amp;gt;% length()
+myColors &amp;lt;- colorRampPalette(brewer.pal(8,&amp;quot;Dark2&amp;quot;))(numColors) # Expanding the number of colors available from 8 
+
+  ggmap(nybg)+
+  geom_point(aes(x=lon, y=lat, color=clstrmm), alpha=.9, data=station_locs)+
+  scale_color_manual(values = myColors)+ 
+     scale_x_continuous(&amp;quot;&amp;quot;, breaks=NULL)+
+   scale_y_continuous(&amp;quot;&amp;quot;, breaks=NULL)+
+   theme(panel.background = element_rect(fill=&#39;white&#39;,colour=&#39;white&#39;), legend.position = &amp;quot;none&amp;quot;) +
+  labs(colour = &amp;quot;Communities&amp;quot;) 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Do the clusters change if you use a different algorithm?&lt;/li&gt;
+&lt;li&gt;Are the clusters different for customers and subscribers? Men and Women?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;Network analysis techniques provide a very useful set of tools that we can apply in many contexts in urban analytics. Networks are ubiquitous and the above two are but few of the situations where network tools can be readily applied. They need to be used more, and used judiciously.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>
