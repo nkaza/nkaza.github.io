@@ -5277,5 +5277,338 @@ grid.arrange(g1,g2, ncol=2)
 </description>
     </item>
     
+    <item>
+      <title>Identifying Employment Centers</title>
+      <link>https://nkaza.github.io/post/identifying-employment-centers/</link>
+      <pubDate>Wed, 04 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/identifying-employment-centers/</guid>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;p&gt;In this post, I am going to show the techniques behind identifying centers. Centers are defined collections of contiguous high value (e.g. employment, opportunity, activity etc.) locations. This is related to, but different from using autocorrelation statistics such as Local Indicators of Spatial Autocorrelation. The methods described in this post draw from &lt;a href=&#34;https://doi.org/10.1006/juec.2001.2228&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;McMillen (2001)&lt;/a&gt; and &lt;a href=&#34;https://doi.org/10.1016/0166-0462%2891%2990032-I&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Giuliano &amp;amp; Small (1991)&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
+&lt;p&gt;This requires &lt;a href=&#34;http://r-project.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt;, and many libraries including &lt;a href=&#34;https://cran.r-project.org/web/packages/igraph/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;igraph&lt;/a&gt;,&lt;a href=&#34;https://cran.r-project.org/web/packages/spdep/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;spdep&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/web/packages/rgdal&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;rgdal&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/package=tigris&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tigris&lt;/a&gt; &lt;a href=&#34;https://cran.r-project.org/package=locfit&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;locfit&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/package=leaflet&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;leaflet&lt;/a&gt;. You should install them, as necessary, with &lt;code&gt;install.packages()&lt;/code&gt; command.&lt;/p&gt;
+&lt;p&gt;Most of the methods and results are discussed in &lt;a href=&#34;https://nkaza.github.io/publication/kazaedq/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Hartley, Kaza &amp;amp; Lester (2016)&lt;/a&gt; and &lt;a href=&#34;https://nkaza.github.io/publication/lesterkazamcadam2018&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Lester, Kaza &amp;amp; McAdam (in review)&lt;/a&gt;. Please refer to those articles.&lt;/p&gt;
+&lt;h1 id=&#34;additional-resources&#34;&gt;Additional resources&lt;/h1&gt;
+&lt;p&gt;I strongly recommend that you read through some of the tutorials on using &lt;a href=&#34;http://www.nickeubank.com/gis-in-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R for GIS&lt;/a&gt;. You should have &lt;a href=&#34;http://www.asdar-book.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Applied Spatial Data Analysis in R&lt;/a&gt; by Bivand et.al in your library.&lt;/p&gt;
+&lt;h2 id=&#34;acquire-data&#34;&gt;Acquire data&lt;/h2&gt;
+&lt;p&gt;The data I will use in this exercise will be downloaded directly from Census. For this work, we will use the Work Area Characteristics files from Local Origin Destination Employment Statistics (LODES). &lt;a href=&#34;https://lehd.ces.census.gov/data/lodes/LODES7/LODESTechDoc7.3.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;LODES&lt;/a&gt; is a synthetic data set that provides, if not spatially accurate, distributionally consistent annual employment information as well as commuting information. We will restrict our attention to the Kentucky. Let’s download and set up the data.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(data.table)
+library(rgdal)
+library(spdep)
+library(rgeos)
+library(igraph)
+library(ggplot2)
+library(tigris)
+library(tidyverse)
+
+state &amp;lt;- &amp;quot;ky&amp;quot;
+baseurl &amp;lt;- &#39;http://lehd.ces.census.gov/data/lodes/LODES7/&#39;
+years &amp;lt;- as.character(2015)
+wac_file &amp;lt;- NULL
+for (year in years){
+  filename &amp;lt;- paste(state, &amp;quot;_wac_S000_JT00_&amp;quot;, year, &amp;quot;.csv.gz&amp;quot;, sep=&amp;quot;&amp;quot; ) #State, S000-Total Number of jobs , JT00,- All jobs
+  url &amp;lt;- paste(baseurl, state, &amp;quot;/wac/&amp;quot;, filename, sep=&amp;quot;&amp;quot; )
+  if(!file.exists(filename)){download.file(url, filename, mode=&#39;wb&#39;)}
+  wac_file[[year]] &amp;lt;- data.table(read.csv(filename, colClasses = c(&#39;character&#39;, rep(&#39;integer&#39;,51), &#39;character&#39;))) ##based on the documentation of the classes
+wac_file &amp;lt;- rbindlist(wac_file, idcol=&amp;quot;Year&amp;quot;, use.names = TRUE)
+}
+
+ky_tr &amp;lt;- tracts(&amp;quot;Kentucky&amp;quot;, year=2010, progress_bar =FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    I am using &lt;code&gt;read.csv&lt;/code&gt; only because I am using a much faster &lt;code&gt;data.table&lt;/code&gt; package for illustration purposes. The code can be easily adapted to &lt;code&gt;tibbles&lt;/code&gt; using &lt;code&gt;read_csv&lt;/code&gt;.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;data-preparation--exploration&#34;&gt;Data preparation &amp;amp; exploration&lt;/h2&gt;
+&lt;p&gt;The data set is at a block level. This level of geography is far too fine (28,996 blocks) for our analyses. Lets aggregate it up to census tracts. Since blocks are nested within the tract, all we need to do is to trim the GEOID and aggregate the data.table to the trimmed GEOID.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;wac_file$w_geocode_tr &amp;lt;- substr(wac_file$w_geocode, 1,11) #trim GEOID to 11. Trim it to 12 if Blockgroups are needed
+setkey(wac_file, w_geocode_tr, Year)
+cols = sapply(wac_file, is.numeric)  #identify the columns where summation can be applied.
+cols = names(cols)[cols]
+wac_file_tr &amp;lt;- wac_file[,lapply(.SD, sum), .SDcols = cols, by=list(w_geocode_tr, Year)] # Aggregate the columns to tract ids.
+
+#C000 is the column that contains the numbers for total jobs.
+summary(wac_file_tr$C000)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     1.0   250.5   763.5  1646.8  1950.5 57291.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We have now a manageable number of geographic units (1,112 tracts). The summary statistics look pretty skewed. It is useful to visualise the inequality of the distribution. We can use Lorenz curve for this. We need the &lt;code&gt;ineq&lt;/code&gt; package for this.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(ineq)
+ plot(Lc(wac_file_tr$C000), xlab=&amp;quot;Cumulative % of tracts&amp;quot;, ylab=&amp;quot;Cumulative % of Jobs&amp;quot;)
+ abline(v =.5, lty=2, col=&#39;blue&#39;)
+ abline(h=.09, lty=2, col=&#39;blue&#39;)
+ abline(v=.9, lty=2, col=&#39;red&#39;)
+ abline(h=.53, lty=2, col=&#39;red&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;
+The bottom 50% of the tracts only contribute to less than 10% of the total employment, while the top 10% of the tracts contribute to more than 45% of employment. About 11% of tracts have less than 100 jobs. This shows that jobs are pretty well concentrated in particular centers.
+&lt;p&gt;We can visualise the spatial distribution of jobs. We already used &lt;code&gt;tigris&lt;/code&gt; to download and load the polygons, and &lt;code&gt;leaflet&lt;/code&gt; to visualise the information. Tigris is a convenience package that automatically downloads TIGER files from Census for particular geography. Visualising complicated geography is problematic, so we will use a polygon simplifier &lt;a href=&#34;https://bost.ocks.org/mike/simplify/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Visvasalingam algorithm&lt;/a&gt; to simplify the boundaries. As long as the topology is preserved, we don’t loose much for this analysis.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;##Simplify shape for display and analysis. As long as the topology is preserved, complicated boundaries are not necessary for this purpose.
+library(rmapshaper)
+ky_tr_simple &amp;lt;- rmapshaper::ms_simplify(ky_tr)
+c(object.size(ky_tr), object.size(ky_tr_simple))
+# [1] 20041168  2299040
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Merge the spatial polygons with the WAC file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_tr_simple &amp;lt;-  ky_tr_simple %&amp;gt;% 
+                  left_join(wac_file_tr[Year==year, .(w_geocode_tr, C000),], by = c(&amp;quot;GEOID10&amp;quot;=&amp;quot;w_geocode_tr&amp;quot;))
+
+ky_tr_simple$C000[is.na(ky_tr_simple$C000)] &amp;lt;- 0 #set NAs to 0. This may not be kosher depending on your application.
+ky_tr_simple$empdens &amp;lt;- ky_tr_simple$C000/(ky_tr_simple$ALAND10) * 10^4 #Jobs per ha. ALAND10 is in sq.m
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;visualising-spatial-data&#34;&gt;Visualising spatial data&lt;/h2&gt;
+&lt;p&gt;Let us visualise the spatial distribution of employment. Note the use of Quintile colour cuts. There may be other cuts that are more preferable.&lt;/p&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    The Leaflet package expects all point, line, and shape data to be specified in latitude and longitude using WGS 84 (a.k.a. EPSG:4326). By default, when displaying this data it projects everything to EPSG:3857 and expects that any map tiles are also displayed in EPSG:3857. Other projections are not fully supported. It turns out that Census files are in that coordinate system, however, you may have to pay attention To the projections, when using your own polygon files. See &lt;a href=&#34;https://rstudio.github.io/leaflet/projections.html&#34;&gt;https://rstudio.github.io/leaflet/projections.html&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(leaflet)
+
+m &amp;lt;-  leaflet(ky_tr_simple) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;,
+                   options = providerTileOptions(minZoom = 7, maxZoom = 11)) %&amp;gt;%
+   addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;,
+                    options = providerTileOptions(minZoom = 7, maxZoom = 11)) 
+ 
+
+Qpal &amp;lt;- colorQuantile(
+  palette = &amp;quot;BuPu&amp;quot;, n = 7,
+  domain = ky_tr_simple$C000
+)
+
+
+labels &amp;lt;- sprintf(
+  &amp;quot;Tract #: %s &amp;lt;br/&amp;gt; Jobs: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_tr_simple$GEOID10, ky_tr_simple$C000
+) %&amp;gt;% lapply(htmltools::HTML)
+
+  
+m2 &amp;lt;- m %&amp;gt;%
+     addPolygons(color = &amp;quot;#CBC7C6&amp;quot;, weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+             fillColor = Qpal(ky_tr_simple$C000),
+              highlightOptions = highlightOptions(color = &amp;quot;white&amp;quot;, weight = 2, bringToFront = TRUE),
+             label = labels,
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;),
+             group = &amp;quot;Tracts&amp;quot;
+             ) %&amp;gt;%
+   addLegend(&amp;quot;topleft&amp;quot;, pal = Qpal, values = ~C000,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=0, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=0, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+             },
+             title = &amp;quot;Number of Jobs&amp;quot;,
+             opacity = 1
+   ) %&amp;gt;%
+  addLayersControl(
+    overlayGroups = c(&amp;quot;Tracts&amp;quot;, &#39;Basemap&#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+
+library(widgetframe) 
+frameWidget(m2)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-6.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;The problem with choropleth maps is that large spatial areas visually draw attention and skew the perception of the map. See for example, the small tracts in Louisville compared to rural tracts around Bradstown. One way to deal with this issue, is to intensify the color of smaller tracts by normalising employment with some variable (area or per capita) to visualise the spatial distribution better. Sometimes, it is also better to ignore the boundaries. It does not get solve the problem completely.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;Qpal &amp;lt;- colorQuantile(
+  palette = &amp;quot;BuPu&amp;quot;, n = 5,
+  domain = ky_tr_simple$empdens
+)
+
+
+labels &amp;lt;- sprintf(
+  &amp;quot;Tract #: %s &amp;lt;br/&amp;gt; Job Density: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_tr_simple$GEOID10, prettyNum(ky_tr_simple$empdens, digits=2, big.mark = &amp;quot;,&amp;quot;)
+) %&amp;gt;% lapply(htmltools::HTML)
+
+  
+m2 &amp;lt;- m %&amp;gt;%
+     addPolygons(color = &amp;quot;#CBC7C6&amp;quot;, weight = 0, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+             fillColor = Qpal(ky_tr_simple$empdens),
+              highlightOptions = highlightOptions(color = &amp;quot;white&amp;quot;, weight = 2, bringToFront = TRUE),
+             label = labels,
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;),
+             group = &amp;quot;Tracts&amp;quot;
+             ) %&amp;gt;%
+   addLegend(&amp;quot;topleft&amp;quot;, pal = Qpal, values = ~empdens,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=2, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=2, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+             },
+             title = &amp;quot;Employment Density per ha&amp;quot;,
+             opacity = 1
+   ) %&amp;gt;%
+  addLayersControl(
+    overlayGroups = c(&amp;quot;Tracts&amp;quot;, &#39;Basemap&#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+ 
+frameWidget(m2)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-7.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;employment-center-definitions&#34;&gt;Employment center definitions&lt;/h2&gt;
+&lt;p&gt;What counts as an employment center depends on what definition you use. Giuliano &amp;amp; Small use a density floor (~25 jobs per ha) and floor on the total jobs ( at least 10,000 jobs). i.e. an employment center is defined as collection of contiguous geographies whose sum total of employment is more than 10,000 and whose density is more than 25 jobs per ha. Notice that these cutoffs are arbitrary and different values give different results. In this post, I am not going to use this definition, though the code is below.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;subgs &amp;lt;-function(shpfile,dens,emp,mind=25,totemp=10000, wmat=0) {
+  if (identical(wmat,0)) {
+    neighbors &amp;lt;- poly2nb(shpfile,queen=TRUE)
+    wmat &amp;lt;- nb2mat(neighbors,style=&amp;quot;B&amp;quot;,zero.policy=TRUE)
+  }
+  dens &amp;lt;- ifelse(is.na(dens),0,dens)
+  obs &amp;lt;- seq(1:length(dens))
+  densobs &amp;lt;- obs[dens&amp;gt;mind]
+  wmat &amp;lt;- wmat[densobs,densobs]
+  n = nrow(wmat)
+  amat &amp;lt;- matrix(0,nrow=n,ncol=n)
+  amat[row(amat)==col(amat)] &amp;lt;- 1
+  bmat &amp;lt;- wmat
+  wmat1 &amp;lt;- wmat
+  newnum = sum(bmat)
+  cnt = 1
+  while (newnum&amp;gt;0) {
+    amat &amp;lt;- amat+bmat
+    wmat2 &amp;lt;- wmat1%*%wmat
+    bmat &amp;lt;- ifelse(wmat2&amp;gt;0&amp;amp;amat==0,1,0)
+    wmat1 &amp;lt;- wmat2
+    newnum = sum(bmat)
+    cnt = cnt+1
+  }
+  emat &amp;lt;- emp[dens&amp;gt;mind]
+  tmat &amp;lt;- amat%*%emat
+  obsmat &amp;lt;- densobs[tmat&amp;gt;totemp]
+  
+  subemp &amp;lt;- array(0,dim=length(dens))
+  subemp[obsmat] &amp;lt;- tmat[tmat&amp;gt;totemp]
+  subobs &amp;lt;- ifelse(subemp&amp;gt;0,1,0)
+  
+  tab &amp;lt;- tabulate(factor(subemp))
+  numsub = sum(tab&amp;gt;0)-1
+  
+  cat(&amp;quot;Number of Subcenters = &amp;quot;,numsub,&amp;quot;\n&amp;quot;)
+  cat(&amp;quot;Total Employment and Number of Tracts in each Subcenter&amp;quot;,&amp;quot;\n&amp;quot;)
+  print(table(subemp))
+  
+  out &amp;lt;- list(subemp,subobs)
+  names(out) &amp;lt;- c(&amp;quot;subemp&amp;quot;,&amp;quot;subobs&amp;quot;)
+  return(out)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;McMillen, on the other hand, uses a non-parametric method. He fits a employment density surface based on local neighborhood values and predicts the employment density at a location. If the actual employment density is &lt;em&gt;substanially higher&lt;/em&gt; than predicted values then the tract is labelled an employment center. Note the choice of the parameters, &lt;code&gt;window&lt;/code&gt;, (observations that are defined as neighborhood) and the &lt;code&gt;pval&lt;/code&gt; (statistical significance). They are as arbitrary as Giuliano and Small’s parameters, but are more widely accepted.&lt;/p&gt;
+&lt;p&gt;In the later part, we will merge such contiguous tracts. For this section we use &lt;code&gt;locfit&lt;/code&gt; package&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(locfit)
+ #### This is the McMillen&#39;s method for determining the tracts that are significantly different from the neighbours. 
+ subnp &amp;lt;- function(ydens,long,lat,window=.5,pval=.10) {
+   data &amp;lt;- data.frame(ydens,long,lat)
+   names(data) &amp;lt;- c(&amp;quot;ydens&amp;quot;,&amp;quot;long&amp;quot;,&amp;quot;lat&amp;quot;)
+   fit &amp;lt;- locfit(ydens~lp(long,lat,nn=window,deg=1),kern=&amp;quot;tcub&amp;quot;,ev=dat(cv=FALSE),data=data)
+   mat &amp;lt;- predict(fit,se.fit=TRUE,band=&amp;quot;pred&amp;quot;)
+   yhat &amp;lt;- mat$fit
+   sehat &amp;lt;- mat$se.fit
+   upper &amp;lt;- yhat - qnorm(pval/2)*sehat
+   subobs &amp;lt;- ifelse(ydens&amp;gt;upper,1,0)
+   
+   cat(&amp;quot;Number of tracts identified as part of subcenters:  &amp;quot;,sum(subobs),&amp;quot;\n&amp;quot;)
+   out &amp;lt;- list(subobs)
+   names(out) &amp;lt;- c(&amp;quot;subobs&amp;quot;)
+   return(out)
+ }
+
+temp &amp;lt;-  subnp(ky_tr_simple$empdens, ky_tr_simple$INTPTLON10, ky_tr_simple$INTPTLAT10)
+# Number of tracts identified as part of subcenters:   23
+ky_tr_simple$empcenter &amp;lt;- temp$subobs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;visualise-the-results&#34;&gt;Visualise the results&lt;/h2&gt;
+&lt;p&gt;We use the same code as before, except styling the colors using &lt;code&gt;colorFactor&lt;/code&gt; instead of &lt;code&gt;colorQuantile&lt;/code&gt; to visualise the outputs.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-10.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;merge-contiguous-tracts-and-aggregate-values&#34;&gt;Merge contiguous tracts and aggregate values&lt;/h2&gt;
+&lt;p&gt;One of the neat tricks that &lt;code&gt;spdep&lt;/code&gt; package allows us to do is to construct a graph from spatial adjacency matrix. Once a graph is created, it is simply a matter of finding the connected components of the graph and then merging based on the component name.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_empc_tr &amp;lt;- ky_tr_simple[ky_tr_simple$empcenter==1,]
+
+g &amp;lt;- ky_empc_tr %&amp;gt;% as(&amp;quot;Spatial&amp;quot;) %&amp;gt;%
+  poly2nb(queen=T, row.names=ky_empc_tr$GEOID10) %&amp;gt;%
+  nb2mat(zero.policy=TRUE, style=&amp;quot;B&amp;quot;) %&amp;gt;%
+  graph.adjacency(mode=&#39;undirected&#39;, add.rownames=&amp;quot;NULL&amp;quot;)
+
+ky_empc_tr$clustermember &amp;lt;- paste0(&amp;quot;C&amp;quot;,clusters(g)$membership)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Dissolving polygons is a breeze due to &lt;code&gt;sf&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_empc_pt &amp;lt;- 
+    ky_empc_tr %&amp;gt;% 
+      group_by(clustermember) %&amp;gt;%
+      summarise(emp = sum(C000), area = sum(ALAND10)) %&amp;gt;%
+      mutate(empdens = emp/area *10^4) %&amp;gt;% 
+      st_centroid %&amp;gt;%
+      st_as_sf()
+# Warning in st_centroid.sf(.): st_centroid assumes attributes are constant over
+# geometries of x
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We went from 23 tracts to 14 centers due to this merging. Final visualisation could be done using markers, instead of a choropleth plot. The tracts are used for visualisation, only to show the extent.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;labels2 &amp;lt;- sprintf(
+  &amp;quot;Employment Cluster #: %s &amp;lt;br/&amp;gt; Jobs: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;, Density: &amp;lt;strong&amp;gt;%s per ha&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_empc_pt$clustermember, prettyNum(ky_empc_pt$emp, big.mark = &amp;quot;,&amp;quot;, scientific=F), prettyNum(ky_empc_pt$empdens, digits=2)
+) %&amp;gt;% lapply(htmltools::HTML)
+
+
+
+
+m4 &amp;lt;- leaflet(ky_empc_pt) %&amp;gt;%
+  addTiles() %&amp;gt;%
+  addPolygons(data= ky_empc_tr, weight = 0,fillOpacity = 0.5, fillColor = &#39;red&#39; ) %&amp;gt;%
+  addMarkers(label = ~labels2, 
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;))
+
+frameWidget(m4)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-13.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;further-explorations&#34;&gt;Further explorations&lt;/h2&gt;
+&lt;p&gt;Many improvements and extensions are possible. For example,&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In this post, I only used 2015 employment. But the code is set up to download and run for multiple years with suitable modifications. Have the employment center locations and characteristics changed between 2002 and 2015?&lt;/li&gt;
+&lt;li&gt;It turns out KY has only 14 employment centers through out the state. How does KY fare compared to rest of the US?&lt;/li&gt;
+&lt;li&gt;These centers (23 tracts) only account for 12.95% of the state employment. Yet we saw from the Lorenz cure that that the top 10% (~111 tracts ) have about 45% of employment. So what is happening with the other 88 tracts? Are they dispersed? clustered? Why did not they show up?&lt;/li&gt;
+&lt;li&gt;Based on the above, what improvements can we make to McMillen method?&lt;/li&gt;
+&lt;li&gt;What are the outcomes if we use Giuliano and Small’s method?&lt;/li&gt;
+&lt;li&gt;What are the impacts of different parameters on identification?&lt;/li&gt;
+&lt;li&gt;What is the impact of spatial scale? In this analyses we used Census tracts. Are results dramatically different, if we use block groups or blocks?&lt;/li&gt;
+&lt;li&gt;Is total employment even a relevant indicator for employment centers? Should we be identifying specialised employment centers by industry or occupation?&lt;/li&gt;
+&lt;li&gt;How can be adapt this method to identify other concentrated activities (such as retail etc.)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;accomplishments&#34;&gt;Accomplishments&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Downloading and reading vector data&lt;/li&gt;
+&lt;li&gt;Vector data operations (Union, neighbors)&lt;/li&gt;
+&lt;li&gt;Visualising spatial data with leaflet&lt;/li&gt;
+&lt;li&gt;Switching between spatial and network conceptual frames&lt;/li&gt;
+&lt;li&gt;Local regression with spatial coordinates&lt;/li&gt;
+&lt;li&gt;Spatial outlier detection&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

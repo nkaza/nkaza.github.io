@@ -5703,5 +5703,505 @@ grid.arrange(g1,g2, ncol=2)
 </description>
     </item>
     
+    <item>
+      <title>Spatial Regression Discontinuity Design Setup</title>
+      <link>https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/</link>
+      <pubDate>Sun, 08 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#point-set-theory-and-the-de-9im-matrix&#34;&gt;Point Set Theory and the DE-9IM Matrix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;The current gold standard for testing the efficacy of an intervention/program/procedure requires this randomisation of participants to treatment and control. The following video by &lt;a href=&#34;https://www.povertyactionlab.org/&#34;&gt;J-PAL&lt;/a&gt; gives a simple explanation of why this may be the case.&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/Uxqw2Pgm7s8&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;In many cases, randomisation to some program is not feasible. There may be political issues, information leaks and other real world problems that &lt;a href=&#34;http://www.nber.org/papers/t0295&#34;&gt;affect the conclusions&lt;/a&gt; that can be drawn. There are also number of &lt;a href=&#34;https://doi.org/10.1016/j.socscimed.2017.12.005&#34;&gt;theoretical critiques&lt;/a&gt; for randomised controlled trials.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;regression-discontinuity&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Regression Discontinuity&lt;/h2&gt;
+&lt;p&gt;Sometimes it is possible to exploit the sharp discontinuity in program application to see what the effect of the program is at the discontinuity. The key intuition is that at the &lt;strong&gt;a priori&lt;/strong&gt; selected discontinuity, in a small window on either side of the discontinuity, the observations are essentially similar except for the treatment. For example, &lt;a href=&#34;http://dx.doi.org/10.1002/pam.21929&#34;&gt;Ellen, Horn &amp;amp; Schwartz (2016)&lt;/a&gt; test the effect of residential location choices of households, whose oldest child becomes eligible for kindergarten. To do this, they focus on voucher receiving households whose oldest child just met the kindergarten eligibility cut-off date and those who missed the cut-off. The &lt;em&gt;rating variable&lt;/em&gt; in this case is age in years by Sep 1 (or some other date) and &lt;em&gt;cut-point&lt;/em&gt; is 5 years. Because the cut-off is determined independent of the participants in the program and by looking at the effect of vouchers in a local neighborhood around the cut-off, they determined the effect of vouchers on residential mobility.&lt;/p&gt;
+&lt;p&gt;There are multiple ways to conceptualise this design; 1) Discontinuity at the cut-point 2) local randomization at the cut-point. See below images for visualisation. In particular, please pay attention to the boxes around the cut-off that symblolise local neighborhood.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/RDD_before.png&#34; style=&#34;width:50.0%&#34; alt=&#34;Before&#34; /&gt; &lt;img src=&#34;img/RDD_after.png&#34; style=&#34;width:50.0%&#34; alt=&#34;After&#34; /&gt;
+&lt;em&gt;Images adapted from &lt;a href=&#34;https://www.mdrc.org/sites/default/files/RDD%20Guide_Full%20rev%202016_0.pdf&#34;&gt;Jacob et. al (2012)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spatial-regression-discontinuity&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Spatial Regression Discontinuity&lt;/h2&gt;
+&lt;p&gt;It is relatively straightforward to construct a regression discontinuity when the rating variable is on a real line and cut-point is a point on that line, due to fact that real numbers is a &lt;a href=&#34;http://mathworld.wolfram.com/TotallyOrderedSet.html&#34;&gt;totally ordered set&lt;/a&gt;, in particular, the comparability property w.r.t. &lt;span class=&#34;math inline&#34;&gt;\(\lt\)&lt;/span&gt; holds. However, it is often the case that the discontinuity is a spatial one.&lt;/p&gt;
+&lt;p&gt;For example, a subsidy for rooftop solar is implemented by a city within its jurisdiction, and we want to test if the subsidy increased the adoption of rooftop solar. The idea is parcels and households on both sides of the edge of the jurisdictions are similar and the key difference is the eligibility to the subsidy and therefore comparing the adoption rates among those households will help us identify if the subsidy has any effect.&lt;/p&gt;
+&lt;p&gt;Another example could be the effect of minimum wage regulation on employment levels as studied by &lt;a href=&#34;https://doi.org/10.1162/REST_a_00039&#34;&gt;Dube, Lester and Reich (2010)&lt;/a&gt;. They do not employ a regression discontinuity design, but a matching design, but the intuition still applies. Counties at the state borders are likely to be similar and state policy on minimum wage is the only differentiator and differences in employment trends among these subset of counties (at the border) are an estimate of whether minimum wage policies reduce employment levels or not.&lt;/p&gt;
+&lt;p&gt;Similar design for testing the effect of Clean Cities Coalition (CCC) program on air quality and number of alternative fueling stations in counties within and outside the coalition boundaries can be found in &lt;a href=&#34;http://doi.og/10.1016/j.scitotenv.2016.11.119&#34;&gt;Qiu and Kaza (2016)&lt;/a&gt;. In this study, we not only use the spatial discontinuity of the boundaries but also the temporal discontinuity of when the CCC came into existence.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/ccc.jpg&#34; width=&#34;600&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Illustration of research design in &lt;a href=&#34;http://doi.og/10.1016/j.scitotenv.2016.11.119&#34;&gt;Qiu &amp;amp; Kaza (2016)&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are some key differences between standard regression discontinuity and the spatial version. See &lt;a href=&#34;http://doi.og/10.1093/pan/mpu014&#34;&gt;Keele and Titiunik (2015)&lt;/a&gt;. They are 1) different measures of distance from the cutoffs may require different identification assumptions 2) Compound treatments 3) Boundary points at the cut-off have different interpretation.&lt;/p&gt;
+&lt;p&gt;For the most part, I am going to ignore these differences in this post for the sake of illustration. In particular, when polygonal entities (instead of points) are the observations of interest, many of the differences are not that important.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;identifying-relevant-observations-on-either-side-of-the-spatial-discontinuity.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Identifying relevant observations on either side of the spatial discontinuity.&lt;/h2&gt;
+&lt;p&gt;Let us assume that we have a discontinuity at the edge of the metropolitan statistical areas. For the purposes of illustration, I am going to download CBSA and county shapefiles from Census using &lt;code&gt;tigris&lt;/code&gt; package. I am going to restrict my attention to Illinois for the sake of exposition.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+cbsa &amp;lt;- core_based_statistical_areas()
+cty_shp &amp;lt;- counties(state=&amp;quot;il&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#library(rgeos)
+library(sf)
+library(tidyverse)
+library(tigris)
+
+msa &amp;lt;- cbsa[cbsa$LSAD==&amp;quot;M1&amp;quot;,] # Restrict attention only to Metro areas, ignore Micro
+msa_IL &amp;lt;- msa[st_centroid(cty_shp, byid=T),] # Select metros that are in IL. &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    If we used the &lt;strong&gt;“[”&lt;/strong&gt; method using a polygon instead of points it selects MSAs that are also outside IL but are adjacent to IL county boundary files. It does not matter for the illustration, but may be problematic for other work. Hence we are keeping only those MSAs where the IL county centroids are in a MSA.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;There are 102 counties in IL.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-3.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Before running any topology operations, it is always a good idea to check to see if the geometry is valid (e.g. no self-intersections etc.)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cty_shp[!st_is_valid(cty_shp, byid = TRUE),]
+# Simple feature collection with 0 features and 17 fields
+# Bounding box:  xmin: NA ymin: NA xmax: NA ymax: NA
+# Geodetic CRS:  NAD83
+#  [1] STATEFP  COUNTYFP COUNTYNS GEOID    NAME     NAMELSAD LSAD     CLASSFP 
+#  [9] MTFCC    CSAFP    CBSAFP   METDIVFP FUNCSTAT ALAND    AWATER   INTPTLAT
+# [17] INTPTLON geometry
+# &amp;lt;0 rows&amp;gt; (or 0-length row.names)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Since this returns an empty list, lets proceed to extract all the counties within the MSA and outside MSA and use the TOUCHES relationship with the MSA boundary to extract counties within and outside the MSA. Note the &amp;gt; 0, for the reason that counties can be adjacent to many MSA boundaries.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;msa_ctyID &amp;lt;- cty_shp$CBSAFP %in% msa_IL$CBSAFP
+msa_cty &amp;lt;- cty_shp[msa_ctyID,]
+nonmsa_cty &amp;lt;- cty_shp[!msa_ctyID,]
+treat_cty &amp;lt;- msa_cty[rowSums(st_touches(msa_cty, st_boundary(msa_IL),sparse=F)) &amp;gt; 0,]
+cntrl_cty &amp;lt;- nonmsa_cty[rowSums(st_touches(nonmsa_cty, st_boundary(msa_IL), sparse=F)) &amp;gt; 0,]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is a visual representation.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-6.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Note how Kane and Dupage counties, near Chicago, that are completely within MSA, are not part of the treatment. Nor are Clark and Cumberland near Terra Haute, IN that are outisde MSA but not touching the boundary are not in Controls. It looks like we have achieved the right results.&lt;/p&gt;
+&lt;p&gt;Now that treatment and control groups are formulated at the spatial discontinuity boundary, standard techniques will then be followed to estimate the local treatment effect.&lt;/p&gt;
+&lt;p&gt;A major point to note, however, is the distinction between what is considered ‘local’ around the cutoff in RDD. In the standard case, the local is defined as a neighborhood based on the distance to the rating variable, i.e. rectangle around the cut-off. In the spatial case, the local is defined as any region that is on either side of the discontinuity (at least in this case). In some senses, Touches criterion is also a ‘distance’ metric, if we were to reimagine the regions as network nodes, where two nodes are connected by a link, if they are contigous. The network distance threshold is then 1. One could also imagine a different neighborhood around the discontinuity e.g. all regions within a k-buffer around the discontinuity, or all regions that are continguous of order 2 etc. The choice of this neighborhood is largely arbitrary and based on convention in the field.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;point-set-theory-and-the-de-9im-matrix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Point Set Theory and the DE-9IM Matrix&lt;/h1&gt;
+&lt;p&gt;Another way of doing this would be to use the function &lt;code&gt;st_relate&lt;/code&gt; in sf or &lt;code&gt;gRelate&lt;/code&gt; in &lt;code&gt;rgeos&lt;/code&gt;. These functions would give the DE-9IM relation for each pair of polygons (e.g. FF2FF1212). Then it is a matter of parsing the code to figure out which ones are exterior and which ones are interior to MSA polygons.&lt;/p&gt;
+&lt;p&gt;It is useful to digress into some topology and &lt;a href=&#34;http://docs.geotools.org/stable/userguide/library/jts/dim9.html&#34;&gt;summarize the relationships and their representations&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We need concepts for interior, exterior and a boundary for various spatial types of points, lines and polygons&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Point: Everything outside the point is in the exterior, no boundary&lt;/li&gt;
+&lt;li&gt;Line: All points along length is interior, boundary is the two end points and exterior is everything outside the line.&lt;/li&gt;
+&lt;li&gt;polygons: Standard definitions apply (see below), however, pay attention to the holes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Relationships between polygons are described as a matrix produced by comparing the intersection of the Interior, Boundary and Exterior properties of both polygons. This comparison referred to as the Dimensionally Extended 9-Intersection Matrix or DE-9IM.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/twopolygons.png&#34; width=&#34;500&#34; height=&#34;500&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Image from &lt;a href=&#34;https://en.wikipedia.org/wiki/DE-9IM&#34;&gt;Wikipedia&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The above figure has the DE-9IM(&lt;em&gt;a&lt;/em&gt;,&lt;em&gt;b&lt;/em&gt;) string code is ‘212101212’, each character corresponding to the dimension of the intersction in the above matrix. Thus the relationship between two spatial entities can be described has string of 9 characters.&lt;/p&gt;
+&lt;p&gt;Consider the following definition of Area/Area overlap:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;OVERLAP&lt;/th&gt;
+&lt;th&gt;Interior&lt;/th&gt;
+&lt;th&gt;Boundary&lt;/th&gt;
+&lt;th&gt;Exterior&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Interior&lt;/td&gt;
+&lt;td&gt;T&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;td&gt;T&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Boundary&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Exterior&lt;/td&gt;
+&lt;td&gt;T&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Where T is dimension &lt;span class=&#34;math inline&#34;&gt;\(\ge\)&lt;/span&gt; 0, F is &lt;span class=&#34;math inline&#34;&gt;\(\neg\)&lt;/span&gt; T and * is any. So the binary representation for overlap is “T*T***T**”. Interpretation is that interiors of the two areas intersect, exteriors of the two areas intersect and atleast exterior of region &lt;em&gt;a&lt;/em&gt; (row) intersects with interior of region &lt;em&gt;b&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Another relevant relationship for this post is is TOUCHES, whose binary representation is “F***T****”, i.e. interiors do not intersect, but boundaries do (when &lt;em&gt;a&lt;/em&gt; and &lt;em&gt;b&lt;/em&gt; are not points).&lt;/p&gt;
+&lt;p&gt;So to return to our example to get control and treatment counties we can exploit these patterns. Counties at the edge of the MSA but are within it, intersect on the interior and the boundary but the no intersection among the exterior and the boundary. Counties at the edge of MSA that are outside the MSA, have intersection of the interior of the county and exterior of the MSA, boundaries of of the MSA and counties, and no intersection between interiors.&lt;/p&gt;
+&lt;p&gt;We will also exploit the feature that counties belong to a single MSA but could be exterior to multiple MSA. To account for that in the control observations, we simply exclude the observations that are already selected as treatment in the prior step.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+msaId2 &amp;lt;- rowSums(st_relate(cty_shp, msa_IL, pattern=&amp;quot;T*F*TF***&amp;quot;, sparse = F)) &amp;gt; 0
+treat_cty2 &amp;lt;- cty_shp[msaId2,] #Interiors and boundaries intersect, exteriors and interior does not and neither does boundary and exterior.
+cntrl_cty2 &amp;lt;- cty_shp[rowSums(st_relate(cty_shp, msa_IL, pattern=&amp;quot;F*T*T****&amp;quot;, sparse =F)) &amp;gt; 0 &amp;amp; !msaId2,] #Interiors do not intersect, boundaries intersect, exteriors of MSA and interior of county intersects. Also ignore the ones that are already selected into treatment.
+all.equal(treat_cty, treat_cty2)
+# [1] TRUE
+all.equal(cntrl_cty, cntrl_cty2)
+# [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;limitations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;There are many limitations of RD designs and the some of those limitations translate to spatial discontinuity designs. But there are three chief limitations, we should pay attention to.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Apriori determination/Endogeneity: It is mostly not true that the discontinuity is exogenous and determined &lt;em&gt;a priori&lt;/em&gt;. For example, the MSA boundaries are largely determined by economic activity and inclusion in an MSA is usually correlated with the variable we are seeking to observe. Thus in many situations, it will not be possible to over come these limitations. One way to validate the results is to change the spatial discontinuity (by buffering outwards and inwards for example) and see if there is an observed effect of the ‘real’ boundary.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Fuzzy boundaries and Errors: Spatial operations are notoriously susceptible to boundary errors. Just as on real line, machine tolerances and representations of numbers trip up &lt;span class=&#34;math inline&#34;&gt;\(\lt\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(=\)&lt;/span&gt; operators, errors at the boundary lines, accuracy and scale crucially determine whether the topological relations are identified or not (especially &lt;code&gt;st_relate&lt;/code&gt;). To see this issue in the example in the post, download and rerun the analysis with cartographic boundary files, e.g. using tigris download command &lt;code&gt;counties(state=&#34;IL&#34;, cb=TRUE)&lt;/code&gt; etc. One can overcome this by considering all the polygons within the bounding box or &lt;span class=&#34;math inline&#34;&gt;\(\epsilon\)&lt;/span&gt; distance between the boundaries.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exchangeability: Exchangeability is an assumption that states that assignment of observations to the treatment condition is random, in other words, control regions could potentially be treatment regions. This is often a problem, if there are dramatic differences between regions within and outside the spatial discontinuity. For example, notice that we paid no attention to the size of the county in our analyses and if counties within MSA are smaller (on popultion, area, economic activity etc.) than outside MSA then there is a violation of exchangeability assumption. This assumption is often violated, so special attention should be paid to the descriptives.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;All in all spatial regression discontinuity is becoming increasingly popular method to evaluate the effect of various programs, especially in a political system that is federated and the jurisdictional boundaries often serve as spatial discontinuity. While care should be paid to the analysis and the assumptions, it is a useful tool.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Identifying Employment Centers</title>
+      <link>https://nkaza.github.io/post/identifying-employment-centers/</link>
+      <pubDate>Wed, 04 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/identifying-employment-centers/</guid>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;p&gt;In this post, I am going to show the techniques behind identifying centers. Centers are defined collections of contiguous high value (e.g. employment, opportunity, activity etc.) locations. This is related to, but different from using autocorrelation statistics such as Local Indicators of Spatial Autocorrelation. The methods described in this post draw from &lt;a href=&#34;https://doi.org/10.1006/juec.2001.2228&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;McMillen (2001)&lt;/a&gt; and &lt;a href=&#34;https://doi.org/10.1016/0166-0462%2891%2990032-I&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Giuliano &amp;amp; Small (1991)&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
+&lt;p&gt;This requires &lt;a href=&#34;http://r-project.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt;, and many libraries including &lt;a href=&#34;https://cran.r-project.org/web/packages/igraph/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;igraph&lt;/a&gt;,&lt;a href=&#34;https://cran.r-project.org/web/packages/spdep/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;spdep&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/web/packages/rgdal&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;rgdal&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/package=tigris&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tigris&lt;/a&gt; &lt;a href=&#34;https://cran.r-project.org/package=locfit&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;locfit&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/package=leaflet&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;leaflet&lt;/a&gt;. You should install them, as necessary, with &lt;code&gt;install.packages()&lt;/code&gt; command.&lt;/p&gt;
+&lt;p&gt;Most of the methods and results are discussed in &lt;a href=&#34;https://nkaza.github.io/publication/kazaedq/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Hartley, Kaza &amp;amp; Lester (2016)&lt;/a&gt; and &lt;a href=&#34;https://nkaza.github.io/publication/lesterkazamcadam2018&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Lester, Kaza &amp;amp; McAdam (in review)&lt;/a&gt;. Please refer to those articles.&lt;/p&gt;
+&lt;h1 id=&#34;additional-resources&#34;&gt;Additional resources&lt;/h1&gt;
+&lt;p&gt;I strongly recommend that you read through some of the tutorials on using &lt;a href=&#34;http://www.nickeubank.com/gis-in-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R for GIS&lt;/a&gt;. You should have &lt;a href=&#34;http://www.asdar-book.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Applied Spatial Data Analysis in R&lt;/a&gt; by Bivand et.al in your library.&lt;/p&gt;
+&lt;h2 id=&#34;acquire-data&#34;&gt;Acquire data&lt;/h2&gt;
+&lt;p&gt;The data I will use in this exercise will be downloaded directly from Census. For this work, we will use the Work Area Characteristics files from Local Origin Destination Employment Statistics (LODES). &lt;a href=&#34;https://lehd.ces.census.gov/data/lodes/LODES7/LODESTechDoc7.3.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;LODES&lt;/a&gt; is a synthetic data set that provides, if not spatially accurate, distributionally consistent annual employment information as well as commuting information. We will restrict our attention to the Kentucky. Let’s download and set up the data.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(data.table)
+library(rgdal)
+library(spdep)
+library(rgeos)
+library(igraph)
+library(ggplot2)
+library(tigris)
+library(tidyverse)
+
+state &amp;lt;- &amp;quot;ky&amp;quot;
+baseurl &amp;lt;- &#39;http://lehd.ces.census.gov/data/lodes/LODES7/&#39;
+years &amp;lt;- as.character(2015)
+wac_file &amp;lt;- NULL
+for (year in years){
+  filename &amp;lt;- paste(state, &amp;quot;_wac_S000_JT00_&amp;quot;, year, &amp;quot;.csv.gz&amp;quot;, sep=&amp;quot;&amp;quot; ) #State, S000-Total Number of jobs , JT00,- All jobs
+  url &amp;lt;- paste(baseurl, state, &amp;quot;/wac/&amp;quot;, filename, sep=&amp;quot;&amp;quot; )
+  if(!file.exists(filename)){download.file(url, filename, mode=&#39;wb&#39;)}
+  wac_file[[year]] &amp;lt;- data.table(read.csv(filename, colClasses = c(&#39;character&#39;, rep(&#39;integer&#39;,51), &#39;character&#39;))) ##based on the documentation of the classes
+wac_file &amp;lt;- rbindlist(wac_file, idcol=&amp;quot;Year&amp;quot;, use.names = TRUE)
+}
+
+ky_tr &amp;lt;- tracts(&amp;quot;Kentucky&amp;quot;, year=2010, progress_bar =FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    I am using &lt;code&gt;read.csv&lt;/code&gt; only because I am using a much faster &lt;code&gt;data.table&lt;/code&gt; package for illustration purposes. The code can be easily adapted to &lt;code&gt;tibbles&lt;/code&gt; using &lt;code&gt;read_csv&lt;/code&gt;.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;data-preparation--exploration&#34;&gt;Data preparation &amp;amp; exploration&lt;/h2&gt;
+&lt;p&gt;The data set is at a block level. This level of geography is far too fine (28,996 blocks) for our analyses. Lets aggregate it up to census tracts. Since blocks are nested within the tract, all we need to do is to trim the GEOID and aggregate the data.table to the trimmed GEOID.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;wac_file$w_geocode_tr &amp;lt;- substr(wac_file$w_geocode, 1,11) #trim GEOID to 11. Trim it to 12 if Blockgroups are needed
+setkey(wac_file, w_geocode_tr, Year)
+cols = sapply(wac_file, is.numeric)  #identify the columns where summation can be applied.
+cols = names(cols)[cols]
+wac_file_tr &amp;lt;- wac_file[,lapply(.SD, sum), .SDcols = cols, by=list(w_geocode_tr, Year)] # Aggregate the columns to tract ids.
+
+#C000 is the column that contains the numbers for total jobs.
+summary(wac_file_tr$C000)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     1.0   250.5   763.5  1646.8  1950.5 57291.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We have now a manageable number of geographic units (1,112 tracts). The summary statistics look pretty skewed. It is useful to visualise the inequality of the distribution. We can use Lorenz curve for this. We need the &lt;code&gt;ineq&lt;/code&gt; package for this.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(ineq)
+ plot(Lc(wac_file_tr$C000), xlab=&amp;quot;Cumulative % of tracts&amp;quot;, ylab=&amp;quot;Cumulative % of Jobs&amp;quot;)
+ abline(v =.5, lty=2, col=&#39;blue&#39;)
+ abline(h=.09, lty=2, col=&#39;blue&#39;)
+ abline(v=.9, lty=2, col=&#39;red&#39;)
+ abline(h=.53, lty=2, col=&#39;red&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;
+The bottom 50% of the tracts only contribute to less than 10% of the total employment, while the top 10% of the tracts contribute to more than 45% of employment. About 11% of tracts have less than 100 jobs. This shows that jobs are pretty well concentrated in particular centers.
+&lt;p&gt;We can visualise the spatial distribution of jobs. We already used &lt;code&gt;tigris&lt;/code&gt; to download and load the polygons, and &lt;code&gt;leaflet&lt;/code&gt; to visualise the information. Tigris is a convenience package that automatically downloads TIGER files from Census for particular geography. Visualising complicated geography is problematic, so we will use a polygon simplifier &lt;a href=&#34;https://bost.ocks.org/mike/simplify/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Visvasalingam algorithm&lt;/a&gt; to simplify the boundaries. As long as the topology is preserved, we don’t loose much for this analysis.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;##Simplify shape for display and analysis. As long as the topology is preserved, complicated boundaries are not necessary for this purpose.
+library(rmapshaper)
+ky_tr_simple &amp;lt;- rmapshaper::ms_simplify(ky_tr)
+c(object.size(ky_tr), object.size(ky_tr_simple))
+# [1] 20041168  2299040
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Merge the spatial polygons with the WAC file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_tr_simple &amp;lt;-  ky_tr_simple %&amp;gt;% 
+                  left_join(wac_file_tr[Year==year, .(w_geocode_tr, C000),], by = c(&amp;quot;GEOID10&amp;quot;=&amp;quot;w_geocode_tr&amp;quot;))
+
+ky_tr_simple$C000[is.na(ky_tr_simple$C000)] &amp;lt;- 0 #set NAs to 0. This may not be kosher depending on your application.
+ky_tr_simple$empdens &amp;lt;- ky_tr_simple$C000/(ky_tr_simple$ALAND10) * 10^4 #Jobs per ha. ALAND10 is in sq.m
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;visualising-spatial-data&#34;&gt;Visualising spatial data&lt;/h2&gt;
+&lt;p&gt;Let us visualise the spatial distribution of employment. Note the use of Quintile colour cuts. There may be other cuts that are more preferable.&lt;/p&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    The Leaflet package expects all point, line, and shape data to be specified in latitude and longitude using WGS 84 (a.k.a. EPSG:4326). By default, when displaying this data it projects everything to EPSG:3857 and expects that any map tiles are also displayed in EPSG:3857. Other projections are not fully supported. It turns out that Census files are in that coordinate system, however, you may have to pay attention To the projections, when using your own polygon files. See &lt;a href=&#34;https://rstudio.github.io/leaflet/projections.html&#34;&gt;https://rstudio.github.io/leaflet/projections.html&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(leaflet)
+
+m &amp;lt;-  leaflet(ky_tr_simple) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;,
+                   options = providerTileOptions(minZoom = 7, maxZoom = 11)) %&amp;gt;%
+   addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;,
+                    options = providerTileOptions(minZoom = 7, maxZoom = 11)) 
+ 
+
+Qpal &amp;lt;- colorQuantile(
+  palette = &amp;quot;BuPu&amp;quot;, n = 7,
+  domain = ky_tr_simple$C000
+)
+
+
+labels &amp;lt;- sprintf(
+  &amp;quot;Tract #: %s &amp;lt;br/&amp;gt; Jobs: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_tr_simple$GEOID10, ky_tr_simple$C000
+) %&amp;gt;% lapply(htmltools::HTML)
+
+  
+m2 &amp;lt;- m %&amp;gt;%
+     addPolygons(color = &amp;quot;#CBC7C6&amp;quot;, weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+             fillColor = Qpal(ky_tr_simple$C000),
+              highlightOptions = highlightOptions(color = &amp;quot;white&amp;quot;, weight = 2, bringToFront = TRUE),
+             label = labels,
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;),
+             group = &amp;quot;Tracts&amp;quot;
+             ) %&amp;gt;%
+   addLegend(&amp;quot;topleft&amp;quot;, pal = Qpal, values = ~C000,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=0, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=0, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+             },
+             title = &amp;quot;Number of Jobs&amp;quot;,
+             opacity = 1
+   ) %&amp;gt;%
+  addLayersControl(
+    overlayGroups = c(&amp;quot;Tracts&amp;quot;, &#39;Basemap&#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+
+library(widgetframe) 
+frameWidget(m2)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-6.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;The problem with choropleth maps is that large spatial areas visually draw attention and skew the perception of the map. See for example, the small tracts in Louisville compared to rural tracts around Bradstown. One way to deal with this issue, is to intensify the color of smaller tracts by normalising employment with some variable (area or per capita) to visualise the spatial distribution better. Sometimes, it is also better to ignore the boundaries. It does not get solve the problem completely.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;Qpal &amp;lt;- colorQuantile(
+  palette = &amp;quot;BuPu&amp;quot;, n = 5,
+  domain = ky_tr_simple$empdens
+)
+
+
+labels &amp;lt;- sprintf(
+  &amp;quot;Tract #: %s &amp;lt;br/&amp;gt; Job Density: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_tr_simple$GEOID10, prettyNum(ky_tr_simple$empdens, digits=2, big.mark = &amp;quot;,&amp;quot;)
+) %&amp;gt;% lapply(htmltools::HTML)
+
+  
+m2 &amp;lt;- m %&amp;gt;%
+     addPolygons(color = &amp;quot;#CBC7C6&amp;quot;, weight = 0, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+             fillColor = Qpal(ky_tr_simple$empdens),
+              highlightOptions = highlightOptions(color = &amp;quot;white&amp;quot;, weight = 2, bringToFront = TRUE),
+             label = labels,
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;),
+             group = &amp;quot;Tracts&amp;quot;
+             ) %&amp;gt;%
+   addLegend(&amp;quot;topleft&amp;quot;, pal = Qpal, values = ~empdens,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=2, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=2, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+             },
+             title = &amp;quot;Employment Density per ha&amp;quot;,
+             opacity = 1
+   ) %&amp;gt;%
+  addLayersControl(
+    overlayGroups = c(&amp;quot;Tracts&amp;quot;, &#39;Basemap&#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+ 
+frameWidget(m2)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-7.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;employment-center-definitions&#34;&gt;Employment center definitions&lt;/h2&gt;
+&lt;p&gt;What counts as an employment center depends on what definition you use. Giuliano &amp;amp; Small use a density floor (~25 jobs per ha) and floor on the total jobs ( at least 10,000 jobs). i.e. an employment center is defined as collection of contiguous geographies whose sum total of employment is more than 10,000 and whose density is more than 25 jobs per ha. Notice that these cutoffs are arbitrary and different values give different results. In this post, I am not going to use this definition, though the code is below.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;subgs &amp;lt;-function(shpfile,dens,emp,mind=25,totemp=10000, wmat=0) {
+  if (identical(wmat,0)) {
+    neighbors &amp;lt;- poly2nb(shpfile,queen=TRUE)
+    wmat &amp;lt;- nb2mat(neighbors,style=&amp;quot;B&amp;quot;,zero.policy=TRUE)
+  }
+  dens &amp;lt;- ifelse(is.na(dens),0,dens)
+  obs &amp;lt;- seq(1:length(dens))
+  densobs &amp;lt;- obs[dens&amp;gt;mind]
+  wmat &amp;lt;- wmat[densobs,densobs]
+  n = nrow(wmat)
+  amat &amp;lt;- matrix(0,nrow=n,ncol=n)
+  amat[row(amat)==col(amat)] &amp;lt;- 1
+  bmat &amp;lt;- wmat
+  wmat1 &amp;lt;- wmat
+  newnum = sum(bmat)
+  cnt = 1
+  while (newnum&amp;gt;0) {
+    amat &amp;lt;- amat+bmat
+    wmat2 &amp;lt;- wmat1%*%wmat
+    bmat &amp;lt;- ifelse(wmat2&amp;gt;0&amp;amp;amat==0,1,0)
+    wmat1 &amp;lt;- wmat2
+    newnum = sum(bmat)
+    cnt = cnt+1
+  }
+  emat &amp;lt;- emp[dens&amp;gt;mind]
+  tmat &amp;lt;- amat%*%emat
+  obsmat &amp;lt;- densobs[tmat&amp;gt;totemp]
+  
+  subemp &amp;lt;- array(0,dim=length(dens))
+  subemp[obsmat] &amp;lt;- tmat[tmat&amp;gt;totemp]
+  subobs &amp;lt;- ifelse(subemp&amp;gt;0,1,0)
+  
+  tab &amp;lt;- tabulate(factor(subemp))
+  numsub = sum(tab&amp;gt;0)-1
+  
+  cat(&amp;quot;Number of Subcenters = &amp;quot;,numsub,&amp;quot;\n&amp;quot;)
+  cat(&amp;quot;Total Employment and Number of Tracts in each Subcenter&amp;quot;,&amp;quot;\n&amp;quot;)
+  print(table(subemp))
+  
+  out &amp;lt;- list(subemp,subobs)
+  names(out) &amp;lt;- c(&amp;quot;subemp&amp;quot;,&amp;quot;subobs&amp;quot;)
+  return(out)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;McMillen, on the other hand, uses a non-parametric method. He fits a employment density surface based on local neighborhood values and predicts the employment density at a location. If the actual employment density is &lt;em&gt;substanially higher&lt;/em&gt; than predicted values then the tract is labelled an employment center. Note the choice of the parameters, &lt;code&gt;window&lt;/code&gt;, (observations that are defined as neighborhood) and the &lt;code&gt;pval&lt;/code&gt; (statistical significance). They are as arbitrary as Giuliano and Small’s parameters, but are more widely accepted.&lt;/p&gt;
+&lt;p&gt;In the later part, we will merge such contiguous tracts. For this section we use &lt;code&gt;locfit&lt;/code&gt; package&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(locfit)
+ #### This is the McMillen&#39;s method for determining the tracts that are significantly different from the neighbours. 
+ subnp &amp;lt;- function(ydens,long,lat,window=.5,pval=.10) {
+   data &amp;lt;- data.frame(ydens,long,lat)
+   names(data) &amp;lt;- c(&amp;quot;ydens&amp;quot;,&amp;quot;long&amp;quot;,&amp;quot;lat&amp;quot;)
+   fit &amp;lt;- locfit(ydens~lp(long,lat,nn=window,deg=1),kern=&amp;quot;tcub&amp;quot;,ev=dat(cv=FALSE),data=data)
+   mat &amp;lt;- predict(fit,se.fit=TRUE,band=&amp;quot;pred&amp;quot;)
+   yhat &amp;lt;- mat$fit
+   sehat &amp;lt;- mat$se.fit
+   upper &amp;lt;- yhat - qnorm(pval/2)*sehat
+   subobs &amp;lt;- ifelse(ydens&amp;gt;upper,1,0)
+   
+   cat(&amp;quot;Number of tracts identified as part of subcenters:  &amp;quot;,sum(subobs),&amp;quot;\n&amp;quot;)
+   out &amp;lt;- list(subobs)
+   names(out) &amp;lt;- c(&amp;quot;subobs&amp;quot;)
+   return(out)
+ }
+
+temp &amp;lt;-  subnp(ky_tr_simple$empdens, ky_tr_simple$INTPTLON10, ky_tr_simple$INTPTLAT10)
+# Number of tracts identified as part of subcenters:   23
+ky_tr_simple$empcenter &amp;lt;- temp$subobs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;visualise-the-results&#34;&gt;Visualise the results&lt;/h2&gt;
+&lt;p&gt;We use the same code as before, except styling the colors using &lt;code&gt;colorFactor&lt;/code&gt; instead of &lt;code&gt;colorQuantile&lt;/code&gt; to visualise the outputs.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-10.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;merge-contiguous-tracts-and-aggregate-values&#34;&gt;Merge contiguous tracts and aggregate values&lt;/h2&gt;
+&lt;p&gt;One of the neat tricks that &lt;code&gt;spdep&lt;/code&gt; package allows us to do is to construct a graph from spatial adjacency matrix. Once a graph is created, it is simply a matter of finding the connected components of the graph and then merging based on the component name.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_empc_tr &amp;lt;- ky_tr_simple[ky_tr_simple$empcenter==1,]
+
+g &amp;lt;- ky_empc_tr %&amp;gt;% as(&amp;quot;Spatial&amp;quot;) %&amp;gt;%
+  poly2nb(queen=T, row.names=ky_empc_tr$GEOID10) %&amp;gt;%
+  nb2mat(zero.policy=TRUE, style=&amp;quot;B&amp;quot;) %&amp;gt;%
+  graph.adjacency(mode=&#39;undirected&#39;, add.rownames=&amp;quot;NULL&amp;quot;)
+
+ky_empc_tr$clustermember &amp;lt;- paste0(&amp;quot;C&amp;quot;,clusters(g)$membership)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Dissolving polygons is a breeze due to &lt;code&gt;sf&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_empc_pt &amp;lt;- 
+    ky_empc_tr %&amp;gt;% 
+      group_by(clustermember) %&amp;gt;%
+      summarise(emp = sum(C000), area = sum(ALAND10)) %&amp;gt;%
+      mutate(empdens = emp/area *10^4) %&amp;gt;% 
+      st_centroid %&amp;gt;%
+      st_as_sf()
+# Warning in st_centroid.sf(.): st_centroid assumes attributes are constant over
+# geometries of x
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We went from 23 tracts to 14 centers due to this merging. Final visualisation could be done using markers, instead of a choropleth plot. The tracts are used for visualisation, only to show the extent.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;labels2 &amp;lt;- sprintf(
+  &amp;quot;Employment Cluster #: %s &amp;lt;br/&amp;gt; Jobs: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;, Density: &amp;lt;strong&amp;gt;%s per ha&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_empc_pt$clustermember, prettyNum(ky_empc_pt$emp, big.mark = &amp;quot;,&amp;quot;, scientific=F), prettyNum(ky_empc_pt$empdens, digits=2)
+) %&amp;gt;% lapply(htmltools::HTML)
+
+
+
+
+m4 &amp;lt;- leaflet(ky_empc_pt) %&amp;gt;%
+  addTiles() %&amp;gt;%
+  addPolygons(data= ky_empc_tr, weight = 0,fillOpacity = 0.5, fillColor = &#39;red&#39; ) %&amp;gt;%
+  addMarkers(label = ~labels2, 
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;))
+
+frameWidget(m4)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-13.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;further-explorations&#34;&gt;Further explorations&lt;/h2&gt;
+&lt;p&gt;Many improvements and extensions are possible. For example,&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In this post, I only used 2015 employment. But the code is set up to download and run for multiple years with suitable modifications. Have the employment center locations and characteristics changed between 2002 and 2015?&lt;/li&gt;
+&lt;li&gt;It turns out KY has only 14 employment centers through out the state. How does KY fare compared to rest of the US?&lt;/li&gt;
+&lt;li&gt;These centers (23 tracts) only account for 12.95% of the state employment. Yet we saw from the Lorenz cure that that the top 10% (~111 tracts ) have about 45% of employment. So what is happening with the other 88 tracts? Are they dispersed? clustered? Why did not they show up?&lt;/li&gt;
+&lt;li&gt;Based on the above, what improvements can we make to McMillen method?&lt;/li&gt;
+&lt;li&gt;What are the outcomes if we use Giuliano and Small’s method?&lt;/li&gt;
+&lt;li&gt;What are the impacts of different parameters on identification?&lt;/li&gt;
+&lt;li&gt;What is the impact of spatial scale? In this analyses we used Census tracts. Are results dramatically different, if we use block groups or blocks?&lt;/li&gt;
+&lt;li&gt;Is total employment even a relevant indicator for employment centers? Should we be identifying specialised employment centers by industry or occupation?&lt;/li&gt;
+&lt;li&gt;How can be adapt this method to identify other concentrated activities (such as retail etc.)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;accomplishments&#34;&gt;Accomplishments&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Downloading and reading vector data&lt;/li&gt;
+&lt;li&gt;Vector data operations (Union, neighbors)&lt;/li&gt;
+&lt;li&gt;Visualising spatial data with leaflet&lt;/li&gt;
+&lt;li&gt;Switching between spatial and network conceptual frames&lt;/li&gt;
+&lt;li&gt;Local regression with spatial coordinates&lt;/li&gt;
+&lt;li&gt;Spatial outlier detection&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>
