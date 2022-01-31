@@ -967,6 +967,11 @@
 <hr>
 <h2 id="tidycensus">TidyCensus</h2>
 <p>While the above is a generic way of constructing the query and getting the results using APIs, tidycensus is a package that wraps this all in different convenience functions such as <code>get_decennial</code> and <code>get_acs</code>. Note that, this package is tailored only towards US Census and not for any other Census agencies or for that matter other US government data.</p>
+<div class="alert alert-note">
+  <div>
+    You should check out Kyle Walker’s excellent book <a href="https://walker-data.com/census-r/">Analyzing US Census Data: Methods, Maps, and Models in R</a>
+  </div>
+</div>
 <p>In the rest of the tutorial, I am going to demonstrate how to download, construct and visualise unemployment rates and poverty rates at a Census tract level. We are going to use the 5 year ACS 2012-2017 data.</p>
 <h3 id="poverty-rates-using-tidycensus">Poverty Rates using TidyCensus</h3>
 <pre><code class="language-r">library(tidyverse)
