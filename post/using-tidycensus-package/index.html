@@ -1142,7 +1142,7 @@ unemprate17 &lt;-
 </ul>
 <hr>
 <p>Is the spatial distribution of unemployment rate, same as the spatial distribution of poverty rate? On some occasions it may be useful to put those maps side by side (small multiples in Tufte parlance) and compare them. Fortunately, tmap does it automatically, when you supply multiple variables.</p>
-<p>However, notice that there are 2,168 observations in Unemployment Rate data and <code>r</code>nrow(povrate17)` in poverty rate data. Let’s see what the issue might be</p>
+<p>However, notice that there are 2,168 observations in Unemployment Rate data and 2,162 in poverty rate data. Let’s see what the issue might be</p>
 <pre><code class="language-r"> unemprate17 %&gt;%
      left_join(povrate17 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
       filter(is.na(pov_rate)|is.na(unemp_rate))
