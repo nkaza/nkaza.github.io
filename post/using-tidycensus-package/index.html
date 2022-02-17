@@ -982,7 +982,7 @@
 <p>To get started you need a US census API key. <a href="http://api.census.gov/data/key_signup.html" target="_blank" rel="noopener">Signup for one</a> and store it in a secure place. Whenever “YOUR_API_KEY” appears in the code below, you should substitute this key.</p>
 <h2 id="querying-census-servers">Querying Census Servers</h2>
 <p>Different APIs have different requirements, so you will have to use the documentation specific to the endpoint. To illustrate, let’s use the <a href="https://www.census.gov/data/developers/data-sets/acs-5year.html" target="_blank" rel="noopener">American Community Survey API</a>. For example, paste the following into your web browser after suitably editing for the “YOUR_API_KEY”</p>
-<p><code>https://api.census.gov/data/2017/acs/acs5?key=[YOUR_API_KEY]&amp;get=B01003_001E&amp;for=zip%20code%20tabulation%20area:27514,27510</code></p>
+<p><code>https://api.census.gov/data/2017/acs/acs5?key=YOUR_API_KEY&amp;get=B01003_001E&amp;for=zip%20code%20tabulation%20area:27514,27510&amp;in=state:37</code></p>
 <p>The output should look like the following in the JSON format</p>
 <p>
 
@@ -1020,6 +1020,9 @@
 </li>
 <li>
 <p><code>for=zip%20code%20tabulation%20area:27514,27510</code> for the census geography ZCTA for Chapel Hill(27514) and Carrboro (27510). The <code>%20</code> is a hexademical representation of “unsafe” space character. There are <a href="https://www.w3schools.com/tags/ref_urlencode.ASP" target="_blank" rel="noopener">many such special characters</a> that need to be properly encoded, if they need to be passed to the server.</p>
+</li>
+<li>
+<p><code>in=state:37</code> refers to the FIPS code for North Carolina.</p>
 </li>
 <li>
 <p>Note that the all the arguments are concatenated using <code>&amp;</code>.</p>
