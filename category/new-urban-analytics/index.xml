@@ -2185,7 +2185,7 @@ frameWidget(m1)
 &lt;ol&gt;
 &lt;li&gt;Cities are subdomains. i.e. if you need to information about Raleigh, you need to use &lt;code&gt;https://raleigh.craigslist.org/&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;The second bit of it &lt;code&gt;/d/apts-housing-for-rent/search/apa&lt;/code&gt; is same for all cities but will change if you want to scrape something other than apartments.&lt;/li&gt;
-&lt;li&gt;The browser uses a &lt;code&gt;https&lt;/code&gt; protocol instead of a &lt;code&gt;http&lt;/code&gt; protocol. This is more secure, but ocassionally poses problems for accessing the web using &lt;code&gt;curl&lt;/code&gt; instead of a browser. cURL is a command-line tool for getting or sending data including files using URL syntax often used explcitly within scripts that are used for webscraping.&lt;/li&gt;
+&lt;li&gt;The browser uses a &lt;code&gt;https&lt;/code&gt; protocol instead of a &lt;code&gt;http&lt;/code&gt; protocol. This is more secure, but occasionally poses problems for accessing the web using &lt;code&gt;curl&lt;/code&gt; instead of a browser. cURL is a command-line tool for getting or sending data including files using URL syntax often used explicitly within scripts that are used for web scraping.&lt;/li&gt;
 &lt;li&gt;The arguments start after &lt;code&gt;?&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;Match the options checked on the browser to the variables in the url and the values they take. For example, &lt;code&gt;postedToday&lt;/code&gt; and &lt;code&gt;broker_fee&lt;/code&gt; are set to 1 when corresponding boxes are checked.&lt;/li&gt;
 &lt;li&gt;Variables are concatenated using &lt;code&gt;&amp;amp;&lt;/code&gt; in the url string.&lt;/li&gt;
@@ -2319,12 +2319,12 @@ raw_query
 raw_ads &amp;lt;- html_nodes(raw_query, &amp;quot;li.result-row&amp;quot;)
 raw_ads %&amp;gt;% head()
 # {xml_nodeset (6)}
-# [1] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7438854211&amp;quot;&amp;gt;\n\n        &amp;lt;a href=&amp;quot;https:/ ...
-# [2] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7438822746&amp;quot;&amp;gt;\n\n        &amp;lt;a href=&amp;quot;https:/ ...
-# [3] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7438781676&amp;quot; data-repost-of=&amp;quot;7433707903&amp;quot;&amp;gt; ...
-# [4] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7438780530&amp;quot; data-repost-of=&amp;quot;7433691959&amp;quot;&amp;gt; ...
-# [5] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7438774910&amp;quot; data-repost-of=&amp;quot;7429107938&amp;quot;&amp;gt; ...
-# [6] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7438772915&amp;quot;&amp;gt;\n\n        &amp;lt;a href=&amp;quot;https:/ ...
+# [1] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7450216459&amp;quot;&amp;gt;\n\n        &amp;lt;a href=&amp;quot;https:/ ...
+# [2] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7450209549&amp;quot;&amp;gt;\n\n        &amp;lt;a href=&amp;quot;https:/ ...
+# [3] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7450142443&amp;quot;&amp;gt;\n\n        &amp;lt;a href=&amp;quot;https:/ ...
+# [4] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7450142437&amp;quot; data-repost-of=&amp;quot;7436846787&amp;quot;&amp;gt; ...
+# [5] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7450067338&amp;quot;&amp;gt;\n\n        &amp;lt;a href=&amp;quot;https:/ ...
+# [6] &amp;lt;li class=&amp;quot;result-row&amp;quot; data-pid=&amp;quot;7450064894&amp;quot;&amp;gt;\n\n        &amp;lt;a href=&amp;quot;https:/ ...
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;In the following bit of code, I extract the entire list of attributes that are part of each result-row. In particular, I want to extact id, title, price, date and locale. Notice how each of them require some special manipulation to get into a right format.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ids &amp;lt;-
@@ -2340,7 +2340,7 @@ prices &amp;lt;-
    raw_ads %&amp;gt;% 
      html_node(&amp;quot;span.result-price&amp;quot;) %&amp;gt;%
      html_text() %&amp;gt;%
-     str_extract(&amp;quot;[0-9]+&amp;quot;) %&amp;gt;%
+     str_replace_all(&amp;quot;\\$|,+&amp;quot;, &amp;quot;&amp;quot;) %&amp;gt;% # This is a function that includes a regular expression to extract a special symbol $ and , and replace them with nothing.
      as.numeric()
 
 dates &amp;lt;-
@@ -2360,7 +2360,16 @@ locales &amp;lt;-
 &lt;p&gt;Notice the different functions &lt;code&gt;html_attr&lt;/code&gt; and &lt;code&gt;html_text&lt;/code&gt; that are used in different situations. Can you explain which is used when?&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Create a vector of sq.ft and number of bedrooms for these ads&lt;/p&gt;
+&lt;p&gt;Examine when you need to use “.” within html_node and when you don’t. for e.g. why is &lt;code&gt;html_node(&#39;time&#39;)&lt;/code&gt; vs &lt;code&gt;html_node(&amp;quot;.result_hood&amp;quot;)&lt;/code&gt; used in different contexts?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create a vector of sq.ft and number of bedrooms for these ads. You can use &lt;code&gt;lapply&lt;/code&gt; or &lt;code&gt;map&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Since the tutorial has been created &lt;code&gt;html_node&lt;/code&gt; is superseded by &lt;code&gt;html_element&lt;/code&gt;. Rewrite the code to account for these changes.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Use &lt;a href=&#34;https://selectorgadget.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;selectorgadget&lt;/a&gt; Chrome extension or bookmarklet to figure out which elements to extract more easily.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
@@ -2394,16 +2403,16 @@ latlongs
 # # A tibble: 120 × 3
 #    `data-latitude` `data-longitude` `data-accuracy`
 #              &amp;lt;dbl&amp;gt;            &amp;lt;dbl&amp;gt;           &amp;lt;dbl&amp;gt;
-#  1            42.5            -70.9              10
-#  2            42.4            -71.0              20
-#  3            42.4            -71.1              20
-#  4            42.4            -71.1              20
-#  5            42.3            -71.1              99
-#  6            42.5            -70.9              10
-#  7            42.3            -71.1               5
-#  8            42.5            -70.9              10
-#  9            42.5            -71.0              22
-# 10            42.5            -70.9              22
+#  1            42.4            -71.1              10
+#  2            42.3            -71.0              20
+#  3            42.3            -71.1              15
+#  4            42.2            -71.0              22
+#  5            42.2            -71.0              10
+#  6            42.2            -71.0              10
+#  7            42.3            -71.2              10
+#  8            42.3            -71.1              10
+#  9            42.3            -71.0              22
+# 10            42.3            -71.1              10
 # # … with 110 more rows
 &lt;/code&gt;&lt;/pre&gt;
 &lt;hr&gt;

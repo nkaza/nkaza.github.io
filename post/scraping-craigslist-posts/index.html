@@ -932,7 +932,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    8 min read
+    9 min read
   </span>
   
 
@@ -1025,7 +1025,7 @@
 <ol>
 <li>Cities are subdomains. i.e. if you need to information about Raleigh, you need to use <code>https://raleigh.craigslist.org/</code></li>
 <li>The second bit of it <code>/d/apts-housing-for-rent/search/apa</code> is same for all cities but will change if you want to scrape something other than apartments.</li>
-<li>The browser uses a <code>https</code> protocol instead of a <code>http</code> protocol. This is more secure, but ocassionally poses problems for accessing the web using <code>curl</code> instead of a browser. cURL is a command-line tool for getting or sending data including files using URL syntax often used explcitly within scripts that are used for webscraping.</li>
+<li>The browser uses a <code>https</code> protocol instead of a <code>http</code> protocol. This is more secure, but occasionally poses problems for accessing the web using <code>curl</code> instead of a browser. cURL is a command-line tool for getting or sending data including files using URL syntax often used explicitly within scripts that are used for web scraping.</li>
 <li>The arguments start after <code>?</code>.</li>
 <li>Match the options checked on the browser to the variables in the url and the values they take. For example, <code>postedToday</code> and <code>broker_fee</code> are set to 1 when corresponding boxes are checked.</li>
 <li>Variables are concatenated using <code>&amp;</code> in the url string.</li>
@@ -1159,12 +1159,12 @@ raw_query
 raw_ads &lt;- html_nodes(raw_query, &quot;li.result-row&quot;)
 raw_ads %&gt;% head()
 # {xml_nodeset (6)}
-# [1] &lt;li class=&quot;result-row&quot; data-pid=&quot;7438854211&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
-# [2] &lt;li class=&quot;result-row&quot; data-pid=&quot;7438822746&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
-# [3] &lt;li class=&quot;result-row&quot; data-pid=&quot;7438781676&quot; data-repost-of=&quot;7433707903&quot;&gt; ...
-# [4] &lt;li class=&quot;result-row&quot; data-pid=&quot;7438780530&quot; data-repost-of=&quot;7433691959&quot;&gt; ...
-# [5] &lt;li class=&quot;result-row&quot; data-pid=&quot;7438774910&quot; data-repost-of=&quot;7429107938&quot;&gt; ...
-# [6] &lt;li class=&quot;result-row&quot; data-pid=&quot;7438772915&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [1] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450216459&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [2] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450209549&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [3] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450142443&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [4] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450142437&quot; data-repost-of=&quot;7436846787&quot;&gt; ...
+# [5] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450067338&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [6] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450064894&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
 </code></pre>
 <p>In the following bit of code, I extract the entire list of attributes that are part of each result-row. In particular, I want to extact id, title, price, date and locale. Notice how each of them require some special manipulation to get into a right format.</p>
 <pre><code class="language-r">ids &lt;-
@@ -1180,7 +1180,7 @@ prices &lt;-
    raw_ads %&gt;% 
      html_node(&quot;span.result-price&quot;) %&gt;%
      html_text() %&gt;%
-     str_extract(&quot;[0-9]+&quot;) %&gt;%
+     str_replace_all(&quot;\\$|,+&quot;, &quot;&quot;) %&gt;% # This is a function that includes a regular expression to extract a special symbol $ and , and replace them with nothing.
      as.numeric()
 
 dates &lt;-
@@ -1200,7 +1200,16 @@ locales &lt;-
 <p>Notice the different functions <code>html_attr</code> and <code>html_text</code> that are used in different situations. Can you explain which is used when?</p>
 </li>
 <li>
-<p>Create a vector of sq.ft and number of bedrooms for these ads</p>
+<p>Examine when you need to use “.” within html_node and when you don’t. for e.g. why is <code>html_node('time')</code> vs <code>html_node(&quot;.result_hood&quot;)</code> used in different contexts?</p>
+</li>
+<li>
+<p>Create a vector of sq.ft and number of bedrooms for these ads. You can use <code>lapply</code> or <code>map</code>.</p>
+</li>
+<li>
+<p>Since the tutorial has been created <code>html_node</code> is superseded by <code>html_element</code>. Rewrite the code to account for these changes.</p>
+</li>
+<li>
+<p>Use <a href="https://selectorgadget.com/" target="_blank" rel="noopener">selectorgadget</a> Chrome extension or bookmarklet to figure out which elements to extract more easily.</p>
 </li>
 </ul>
 <hr>
@@ -1234,16 +1243,16 @@ latlongs
 # # A tibble: 120 × 3
 #    `data-latitude` `data-longitude` `data-accuracy`
 #              &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;
-#  1            42.5            -70.9              10
-#  2            42.4            -71.0              20
-#  3            42.4            -71.1              20
-#  4            42.4            -71.1              20
-#  5            42.3            -71.1              99
-#  6            42.5            -70.9              10
-#  7            42.3            -71.1               5
-#  8            42.5            -70.9              10
-#  9            42.5            -71.0              22
-# 10            42.5            -70.9              22
+#  1            42.4            -71.1              10
+#  2            42.3            -71.0              20
+#  3            42.3            -71.1              15
+#  4            42.2            -71.0              22
+#  5            42.2            -71.0              10
+#  6            42.2            -71.0              10
+#  7            42.3            -71.2              10
+#  8            42.3            -71.1              10
+#  9            42.3            -71.0              22
+# 10            42.3            -71.1              10
 # # … with 110 more rows
 </code></pre>
 <hr>

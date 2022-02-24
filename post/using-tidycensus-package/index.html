@@ -1177,11 +1177,11 @@ unique(fips_codes$state_code)[1:10] %&gt;%  # We extract unique state FIPS codes
 </ul>
 <hr>
 <h3 id="unemployment-rates-using-tidycensus">Unemployment Rates using TidyCensus</h3>
-<p>Unemployment rate is trickier, because it needs to track both the labour force as well as unemployed persons. In general, we consider people of the ages between 16 and 64 to be in the labour force. It turns out that ACS only provides labour force and unemployment for males and females separtely and by different age categories. So we need to assemble them and combine them. We return to NC for the sake of simplicity.</p>
+<p>Unemployment rate is trickier, because it needs to track both the labour force as well as unemployed persons. In general, we consider people of the ages between 16 and 64 to be in the labour force. It turns out that ACS only provides labour force and unemployment for males and females separately and by different age categories. So we need to assemble them and combine them. We return to NC for the sake of simplicity.</p>
 <pre><code class="language-r"> # Variable names
 
 #Labour Force
-lf_m &lt;- paste(&quot;B23001_&quot;, formatC(seq(4,67,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;) # Males. Check to make sure these are indeed the variables representing the labor force for men in different age categories
+lf_m &lt;- paste(&quot;B23001_&quot;, formatC(seq(4,67,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;) # Males. Check to make sure these are indeed the variables representing the labour force for men in different age categories
 lf_f &lt;- paste(&quot;B23001_&quot;, formatC(seq(90,153,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;) # Females
 
 lf_t &lt;- 
