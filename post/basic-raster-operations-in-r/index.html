@@ -932,7 +932,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    10 min read
+    11 min read
   </span>
   
 
@@ -986,7 +986,8 @@
 <p>You can download the datasets used in this tutorial <a href="https://www.dropbox.com/s/5ecfr5zm49fr3p9/Archive.zip?dl=0" target="_blank" rel="noopener">here</a></p>
 <h2 id="reading-in-rasters">Reading in Rasters</h2>
 <p>Let’s start with toy examples and examine the use of functions in the raster library.</p>
-<pre><code class="language-r">library(raster)
+<pre><code class="language-r">
+library(raster)
 library(rasterVis)
 library(sf)
 library(tidyverse)
@@ -1031,7 +1032,8 @@ values(raster_object) &lt;- runif(ncell(raster_object))
 plot(raster_object)
 </code></pre>
 <img src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/figure-html/unnamed-chunk-1-1.png" width="672" />
-<pre><code class="language-r"># Basic airthmetic is treated as 
+<pre><code class="language-r">
+# Basic airthmetic is treated as 
 raster_object2 &lt;- raster_object * 2
 </code></pre>
 <hr>
@@ -1042,7 +1044,8 @@ raster_object2 &lt;- raster_object * 2
 <hr>
 <p>Of course, the real advantage is to reading in rasters that we can work with in the urban policy arena. <a href="https://gdal.org/drivers/raster/index.html" target="_blank" rel="noopener">Rasters come in many formats</a>.</p>
 <p>Say for example, we want to read in tree cover data in the ERDAS Imagine (*.img) format.</p>
-<pre><code class="language-r">library(here)
+<pre><code class="language-r">
+library(here)
 
 
 (durham_treecover_raster &lt;- here(&quot;tutorials_datasets&quot;, &quot;basicraster&quot;, &quot;durham_treecover.img&quot;) %&gt;% raster)
@@ -1052,7 +1055,7 @@ raster_object2 &lt;- raster_object * 2
 # extent     : 1510245, 1536885, 1558875, 1603365  (xmin, xmax, ymin, ymax)
 # crs        : +proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs 
 # source     : durham_treecover.img 
-# names      : durham_treecover 
+# names      : Layer_1 
 # values     : 0, 100  (min, max)
 
 
@@ -1064,7 +1067,8 @@ durhamcty_sf &lt;- counties(state = 37, refresh=TRUE, cb=TRUE, progress_bar = FA
                   st_transform(crs = crs(durham_treecover_raster))
 </code></pre>
 <p>Note that the durham_treecover_raster only is a reference to a file and not loaded fully into memory. Also note the resolution, origin and dimensions. The tree cover is also an integer raster with values ranging from 0 to 100. Integers take up fewer bytes than floats and doubles, in general. The raster can be visualised as a static plot or in leaflet.</p>
-<pre><code class="language-r">rasterVis::levelplot(durham_treecover_raster,
+<pre><code class="language-r">
+rasterVis::levelplot(durham_treecover_raster,
                      ylab=NULL, xlab=NULL,
                      scales=list(y=list(draw=FALSE), x=list(draw=FALSE)),
                      col.regions = rgb(0,0:100/100,0:50/100),
@@ -1073,7 +1077,8 @@ durhamcty_sf &lt;- counties(state = 37, refresh=TRUE, cb=TRUE, progress_bar = FA
   latticeExtra::layer(sp.lines(as(durhamcty_sf, &quot;Spatial&quot;), col=&quot;gray30&quot;, lwd=4))
 </code></pre>
 <img src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
-<pre><code class="language-r">library(widgetframe)
+<pre><code class="language-r">
+library(widgetframe)
 
 leaflet() %&gt;% 
   addRasterImage(durham_treecover_raster, layerId = &quot;values&quot;, colors = colorNumeric(&quot;Greens&quot;, domain = 0:100)) %&gt;% 
@@ -1089,7 +1094,8 @@ leaflet() %&gt;%
   </div>
 </div>
 <p>In addition to visualisation we can process the entire raster or use a focal window. The first bit provides the median of all the values of the raster (removing NAs automatically) and the second creates a raster, whose value is the the median in 3x3 window around the focal cell. Note that we have treat NAs explicitly in the focal operations.</p>
-<pre><code class="language-r">cellStats(durham_treecover_raster, &quot;sd&quot;, asSample = FALSE)  
+<pre><code class="language-r">
+cellStats(durham_treecover_raster, &quot;sd&quot;, asSample = FALSE)  
 # [1] 39.14223
 
 durham_treecover_focal &lt;- focal(durham_treecover_raster, w = matrix(1, nrow = 3, ncol = 3), fun = function(x,...){sd(x,na.rm=TRUE)})
@@ -1124,7 +1130,8 @@ rasterVis::levelplot(unevenness_raster,
 <h2 id="vectors--rasters">Vectors &amp; Rasters</h2>
 <p>In addition to raster based windows, we can use vector based neighborhoods and calculate the statistics (or any other metric). The only difference is that in a focal operation, the windows move over the raster cell by cell, where as zonal operations are exclusive, i.e. if a cell belongs to a zone, it is does not belong to another zone. For example, the following code calculates the Median and Interquartile ranges in each tract of Durham and stores them per tract.</p>
 <p>This is where <code>terra</code> shines. I am going to convert the Rasterlayer to SpatRaster and proceed. However, terra requires the vector layer to be in its proprietary format. Fortunately, <code>vect</code> easily converts an <code>sf</code> object to a <code>vect</code> object.</p>
-<pre><code class="language-r">durham_tracts_sf &lt;- tracts(state='37', county='063', progress_bar = FALSE) %&gt;% 
+<pre><code class="language-r">
+durham_tracts_sf &lt;- tracts(state='37', county='063', progress_bar = FALSE, year='2010') %&gt;% 
   st_as_sf() %&gt;%
   st_transform(crs = crs(durham_treecover_raster))
 
@@ -1135,8 +1142,8 @@ tree_bg &lt;- terra::extract(durham_treecover_terra, vect(durham_tracts_sf))
 
 tree_bg_summary &lt;-tree_bg %&gt;% 
                     group_by(ID) %&gt;% 
-                    dplyr::summarise(treecover_iqr = IQR(durham_treecover, na.rm=T),
-                                      treecover_median = median(durham_treecover, na.rm=T))        
+                    dplyr::summarise(treecover_iqr = IQR(Layer_1, na.rm=T),
+                                      treecover_median = median(Layer_1, na.rm=T))        
 
 
 durham_tracts_sf &lt;- cbind(durham_tracts_sf, tree_bg_summary) # Can do this because extract uses the record ID and we have not scrambled the sf object. Use with caution. See further down for a better method
@@ -1218,17 +1225,17 @@ durham_tracts_sf %&gt;%
 <td style="text-align:right">45.5</td>
 <td style="text-align:right">65.5</td>
 <td style="text-align:right">92</td>
-<td style="text-align:left">▅▃▇▃▃</td>
+<td style="text-align:left">▃▅▇▃▃</td>
 </tr>
 <tr>
 <td style="text-align:left">treecover_iqr</td>
 <td style="text-align:right">0</td>
 <td style="text-align:right">1</td>
-<td style="text-align:right">61.32</td>
-<td style="text-align:right">20.28</td>
+<td style="text-align:right">61.33</td>
+<td style="text-align:right">20.29</td>
 <td style="text-align:right">0</td>
 <td style="text-align:right">48</td>
-<td style="text-align:right">62.5</td>
+<td style="text-align:right">62.0</td>
 <td style="text-align:right">79.0</td>
 <td style="text-align:right">94</td>
 <td style="text-align:left">▁▂▇▇▇</td>
@@ -1240,7 +1247,7 @@ durham_tracts_sf %&gt;%
 <ul>
 <li>Notice the output differences when you use <code>raster::extract</code> and <code>terra::extract</code>.
 <ul>
-<li>Modify the code so that you can merge with the sf object. Hint: you may need to use <code>map_dbl</code> because of the structure of the input.</li>
+<li>Modify the code so that you can merge with the sf object.</li>
 <li>Run microbenchmarks on these two functions and see which is faster and more efficient. Also think about the collection of functions to get to the output and run the microbenchmarks. Bottlenecks can be in different places.</li>
 </ul>
 </li>
@@ -1251,6 +1258,7 @@ durham_tracts_sf %&gt;%
 Explicit care should be taken to analyse these categorical rasters.</p>
 <p>In particular, use ratify function to create a Raster Attribute Table and use it for analyses and visualisation as below.</p>
 <pre><code class="language-r">
+
 
 durham_lc_raster &lt;- here(&quot;tutorials_datasets&quot;, &quot;basicraster&quot;, &quot;c11_37063.img&quot;) %&gt;% 
                   raster() %&gt;%
@@ -1269,291 +1277,46 @@ levelplot(durham_lc_raster, att=&quot;Classification&quot;, ylab=NULL, xlab=NULL
 </code></pre>
 <img src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/figure-html/unnamed-chunk-7-1.png" width="672" />
 <p>We can also extract all cells with in each polygon and produce counts using the <code>table</code> function. Confirm to make sure that the projections and vectors and rasters are the same.</p>
-<pre><code class="language-r">proj4string(durham_lc_raster)
+<pre><code class="language-r">
+proj4string(durham_lc_raster)
 # [1] &quot;+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs&quot;
 crs(durham_tracts_sf)
-# Coordinate Reference System:
-# Deprecated Proj.4 representation:
-#  +proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0
-# +ellps=GRS80 +units=m +no_defs 
-# WKT2 2019 representation:
-# PROJCRS[&quot;Albers&quot;,
-#     BASEGEOGCRS[&quot;GCS_GRS 1980(IUGG, 1980)&quot;,
-#         DATUM[&quot;D_unknown&quot;,
-#             ELLIPSOID[&quot;GRS80&quot;,6378137,298.257222101,
-#                 LENGTHUNIT[&quot;metre&quot;,1,
-#                     ID[&quot;EPSG&quot;,9001]]]],
-#         PRIMEM[&quot;Greenwich&quot;,0,
-#             ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433]]],
-#     CONVERSION[&quot;unnamed&quot;,
-#         METHOD[&quot;Albers Equal Area&quot;,
-#             ID[&quot;EPSG&quot;,9822]],
-#         PARAMETER[&quot;Latitude of false origin&quot;,23,
-#             ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
-#             ID[&quot;EPSG&quot;,8821]],
-#         PARAMETER[&quot;Longitude of false origin&quot;,-96,
-#             ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
-#             ID[&quot;EPSG&quot;,8822]],
-#         PARAMETER[&quot;Latitude of 1st standard parallel&quot;,29.5,
-#             ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
-#             ID[&quot;EPSG&quot;,8823]],
-#         PARAMETER[&quot;Latitude of 2nd standard parallel&quot;,45.5,
-#             ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
-#             ID[&quot;EPSG&quot;,8824]],
-#         PARAMETER[&quot;Easting at false origin&quot;,0,
-#             LENGTHUNIT[&quot;metre&quot;,1],
-#             ID[&quot;EPSG&quot;,8826]],
-#         PARAMETER[&quot;Northing at false origin&quot;,0,
-#             LENGTHUNIT[&quot;metre&quot;,1],
-#             ID[&quot;EPSG&quot;,8827]]],
-#     CS[Cartesian,2],
-#         AXIS[&quot;easting&quot;,east,
-#             ORDER[1],
-#             LENGTHUNIT[&quot;metre&quot;,1,
-#                 ID[&quot;EPSG&quot;,9001]]],
-#         AXIS[&quot;northing&quot;,north,
-#             ORDER[2],
-#             LENGTHUNIT[&quot;metre&quot;,1,
-#                 ID[&quot;EPSG&quot;,9001]]]]
+# [1] &quot;PROJCRS[\&quot;Albers\&quot;,\n    BASEGEOGCRS[\&quot;GCS_GRS 1980(IUGG, 1980)\&quot;,\n        DATUM[\&quot;D_unknown\&quot;,\n            ELLIPSOID[\&quot;GRS80\&quot;,6378137,298.257222101,\n                LENGTHUNIT[\&quot;metre\&quot;,1,\n                    ID[\&quot;EPSG\&quot;,9001]]]],\n        PRIMEM[\&quot;Greenwich\&quot;,0,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433]]],\n    CONVERSION[\&quot;unnamed\&quot;,\n        METHOD[\&quot;Albers Equal Area\&quot;,\n            ID[\&quot;EPSG\&quot;,9822]],\n        PARAMETER[\&quot;Latitude of false origin\&quot;,23,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8821]],\n        PARAMETER[\&quot;Longitude of false origin\&quot;,-96,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8822]],\n        PARAMETER[\&quot;Latitude of 1st standard parallel\&quot;,29.5,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8823]],\n        PARAMETER[\&quot;Latitude of 2nd standard parallel\&quot;,45.5,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8824]],\n        PARAMETER[\&quot;Easting at false origin\&quot;,0,\n            LENGTHUNIT[\&quot;metre\&quot;,1],\n            ID[\&quot;EPSG\&quot;,8826]],\n        PARAMETER[\&quot;Northing at false origin\&quot;,0,\n            LENGTHUNIT[\&quot;metre\&quot;,1],\n            ID[\&quot;EPSG\&quot;,8827]]],\n    CS[Cartesian,2],\n        AXIS[\&quot;(E)\&quot;,east,\n            ORDER[1],\n            LENGTHUNIT[\&quot;metre\&quot;,1,\n                ID[\&quot;EPSG\&quot;,9001]]],\n        AXIS[\&quot;(N)\&quot;,north,\n            ORDER[2],\n            LENGTHUNIT[\&quot;metre\&quot;,1,\n                ID[\&quot;EPSG\&quot;,9001]]]]&quot;
 
 durham_lc_terra &lt;- rast(durham_lc_raster)
-
-
-lc_tracts &lt;- terra::extract(durham_lc_terra, vect(durham_tracts_sf), list = TRUE) %&gt;%
-          set_names(durham_tracts_sf$GEOID)
-
-lc_tracts_tbl &lt;-   map_dfr(lc_tracts, function(x){
-                    table(x[[1]]) %&gt;%
-                    enframe() %&gt;%
-                    mutate(name = paste0(&quot;lc&quot;,name)) %&gt;%
-                    pivot_wider(names_from = name, values_from = value)
-                }) %&gt;%
-                mutate(GEOID = names(lc_tracts))
-
-               
-
-skim(lc_tracts_tbl)
 </code></pre>
-<table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:left"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Name</td>
-<td style="text-align:left">lc_tracts_tbl</td>
-</tr>
-<tr>
-<td style="text-align:left">Number of rows</td>
-<td style="text-align:left">60</td>
-</tr>
-<tr>
-<td style="text-align:left">Number of columns</td>
-<td style="text-align:left">16</td>
-</tr>
-<tr>
-<td style="text-align:left">_______________________</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left">Column type frequency:</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left">character</td>
-<td style="text-align:left">16</td>
-</tr>
-<tr>
-<td style="text-align:left">________________________</td>
-<td style="text-align:left"></td>
-</tr>
-<tr>
-<td style="text-align:left">Group variables</td>
-<td style="text-align:left">None</td>
-</tr>
-</tbody>
-</table>
-<p>Table 2: Data summary</p>
-<p><strong>Variable type: character</strong></p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">skim_variable</th>
-<th style="text-align:right">n_missing</th>
-<th style="text-align:right">complete_rate</th>
-<th style="text-align:right">min</th>
-<th style="text-align:right">max</th>
-<th style="text-align:right">empty</th>
-<th style="text-align:right">n_unique</th>
-<th style="text-align:right">whitespace</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">lc11</td>
-<td style="text-align:right">27</td>
-<td style="text-align:right">0.55</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">30</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc21</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">1.00</td>
-<td style="text-align:right">2</td>
-<td style="text-align:right">5</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">60</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc22</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">1.00</td>
-<td style="text-align:right">3</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">59</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc23</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">1.00</td>
-<td style="text-align:right">2</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">60</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc24</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0.93</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">53</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc41</td>
-<td style="text-align:right">11</td>
-<td style="text-align:right">0.82</td>
-<td style="text-align:right">2</td>
-<td style="text-align:right">5</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">49</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc42</td>
-<td style="text-align:right">12</td>
-<td style="text-align:right">0.80</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">5</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">48</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc43</td>
-<td style="text-align:right">13</td>
-<td style="text-align:right">0.78</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">43</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc52</td>
-<td style="text-align:right">25</td>
-<td style="text-align:right">0.58</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">32</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc71</td>
-<td style="text-align:right">19</td>
-<td style="text-align:right">0.68</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">5</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">38</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc81</td>
-<td style="text-align:right">27</td>
-<td style="text-align:right">0.55</td>
-<td style="text-align:right">2</td>
-<td style="text-align:right">5</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">30</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc82</td>
-<td style="text-align:right">44</td>
-<td style="text-align:right">0.27</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">16</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc90</td>
-<td style="text-align:right">20</td>
-<td style="text-align:right">0.67</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">39</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc31</td>
-<td style="text-align:right">45</td>
-<td style="text-align:right">0.25</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">3</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">14</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">lc95</td>
-<td style="text-align:right">42</td>
-<td style="text-align:right">0.30</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">3</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">17</td>
-<td style="text-align:right">0</td>
-</tr>
-<tr>
-<td style="text-align:left">GEOID</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">1.00</td>
-<td style="text-align:right">11</td>
-<td style="text-align:right">11</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">60</td>
-<td style="text-align:right">0</td>
-</tr>
-</tbody>
-</table>
+<p><code>extract</code> from terra conflicts with the same function from raster, so it is useful to explicitly specify the package the function comes from.</p>
+<p>Furthermore, extract relies on on the record number or row number. It is useful to create a new table with the row number and an ID column like GEOID10 which can then be used to merge back.</p>
+<pre><code class="language-r">tract_geoid &lt;- tibble(ID = 1:nrow(durham_tracts_sf), GEOID10 = durham_tracts_sf$GEOID10)
+
+
+lc_tracts &lt;- terra::extract(durham_lc_terra, vect(durham_tracts_sf)) %&gt;% 
+              mutate(Layer_1 = paste0(&quot;lc&quot;, Layer_1)) %&gt;% # This is an easy way to convert to characters and therefore to factors. Layer_1 and ID are columns in the tibble that results from from terra::extract
+              group_by(ID, Layer_1)  %&gt;%
+              summarize(count = n()) 
+
+lc_tracts_tbl &lt;- lc_tracts %&gt;% 
+                 ungroup() %&gt;% # Groups are no longer necessary
+                  pivot_wider(names_from = Layer_1, values_from = count) %&gt;%
+                  left_join(tract_geoid)
+
+lc_tracts_tbl
+# # A tibble: 60 × 17
+#       ID  lc11  lc21  lc22  lc23  lc24  lc41  lc42  lc43  lc52  lc71  lc81  lc90
+#    &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+#  1     1    35  3994  2233   790   176  1373  1139   224    91   175    72     7
+#  2     2     9  4099   633   276    22   371   308    79     1    18    NA   854
+#  3     3    NA   429   618   249   253    NA    NA    NA    NA    NA    NA    NA
+#  4     4  3907 12486  2371   723   209 85032 25850  8729  5115 11342 39446  7882
+#  5     5    NA   690   950   859   157    51    17    NA    NA    NA    NA    NA
+#  6     6  9776  4085   755   412    76 25189 15132  4238  3421  5364  4986  1674
+#  7     7    NA  2517   566   458   156    41    NA    35    NA     7    NA    NA
+#  8     8   914  5732  1114   212     5 12414  2242   919   565  1498  2801  1371
+#  9     9   153  6603   731   108    NA 11765  3395  1670   381   952  1489    75
+# 10    10   130  5958  1996  1387   224  3112  2519   410   105   369   308  3490
+# # … with 50 more rows, and 4 more variables: lc31 &lt;int&gt;, lc82 &lt;int&gt;,
+# #   lc95 &lt;int&gt;, GEOID10 &lt;chr&gt;
+</code></pre>
 <h2 id="tips--tricks">Tips &amp; Tricks</h2>
 <h3 id="exploit-rasteroptions">Exploit RasterOptions</h3>
 <p>There are two parameters that have a lot of influence on the performance of the package: chunksize and maxmemory.</p>
