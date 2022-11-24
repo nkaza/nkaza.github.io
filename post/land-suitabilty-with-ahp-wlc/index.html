@@ -1159,6 +1159,12 @@ grid.arrange(p1,p2, ncol=2)
 Trmatx &lt;- transition(1/(raster(combined_speed_raster)*0.44704) , function(x){1/mean(x)}, 8, symm=TRUE) %&gt;%
           geoCorrection # 0.44704 is conversion between mph and m/s
 </code></pre>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>This particular methodology assumes a number of things, including distances by traversing the cells is a good proxy for real travel distance. But sometimes, it may not be. For example, limited access highways can only accessed at very specific locations (interchanges). So least cost travel distance will have to account for the fact that sometimes you will have to travel futher to access a higher speed cell. How would you adjust this method to account for these features?</li>
+</ul>
+<hr>
 <p>In this example, I am going to use population centres as defined  high population density and high population and calculate the network distance to these centres for each pixel in the raster. I am arbitrarily setting that being 1200s is ideal and deviation in either direction is penalised. As usual, I am categorizing the distance raster.</p>
 <pre><code class="language-r">library(units)
 #library(tidycensus) # In Oct 2022, the census website was down.
