@@ -18,7 +18,6 @@
       <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/</guid>
       <description>
-&lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
@@ -27,11 +26,11 @@
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#extent-shape-adjustment&#34;&gt;Extent Shape Adjustment&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#urban-compactness-scores-redux&#34;&gt;Urban Compactness Scores Redux&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#significant-changes-in-the-compactness-score&#34;&gt;Significant changes in the compactness score&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34; id=&#34;toc-introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#extent-shape-adjustment&#34; id=&#34;toc-extent-shape-adjustment&#34;&gt;Extent Shape Adjustment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#urban-compactness-scores-redux&#34; id=&#34;toc-urban-compactness-scores-redux&#34;&gt;Urban Compactness Scores Redux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#significant-changes-in-the-compactness-score&#34; id=&#34;toc-significant-changes-in-the-compactness-score&#34;&gt;Significant changes in the compactness score&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusions&#34; id=&#34;toc-conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 
@@ -39,7 +38,7 @@
 &lt;h1&gt;Introduction&lt;/h1&gt;
 &lt;p&gt;&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    &lt;p&gt;An updated method is published in&lt;/p&gt;&lt;/p&gt;
+    &lt;p&gt;An updated method is &lt;a href=&#34;https://nkaza.github.io/publication/kaza-2019-ab&#34;&gt;published&lt;/a&gt; in&lt;/p&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Kaza, N. Landscape shape adjusted compactness index for urban areas. GeoJournal (2020). &lt;a href=&#34;https://doi-org./10.1007/s10708-020-10262-9&#34; class=&#34;uri&#34;&gt;https://doi-org./10.1007/s10708-020-10262-9&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -48,7 +47,7 @@
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;/p&gt;
-&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/2019-04-24-a-new-compactness-index-for-urban-patterns/a-new-compactness-index-for-urban-patterns/&#34;&gt;earlier post&lt;/a&gt;, I demonstrated some of the problems associated with the Index of Moment of Inertia to characterise the compactness of urban form. One of the chief problems is related to the shape of the unit of analysis. In our case, it is the County. If the shape of the county is elongated, urban areas within these counties have conform to this shape. Because moment of inertia is calculated with respect to the circle, these areas are `unfairly’ penalised.&lt;/p&gt;
+&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/a-new-compactness-index-for-urban-patterns/&#34;&gt;earlier post&lt;/a&gt;, I demonstrated some of the problems associated with the Index of Moment of Inertia to characterise the compactness of urban form. One of the chief problems is related to the shape of the unit of analysis. In our case, it is the County. If the shape of the county is elongated, urban areas within these counties have conform to this shape. Because moment of inertia is calculated with respect to the circle, these areas are `unfairly’ penalised.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
 &lt;img src=&#34;img/threecounties.png&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Illustration of the effect of landscape shape on IMI. County boundaries are in red, while black represents urban areas&lt;/p&gt;

@@ -1027,11 +1027,12 @@
 <h2 id="requirements">Requirements</h2>
 <p>This requires <a href="http://r-project.org" target="_blank" rel="noopener">R</a>, and many libraries including <a href="https://cran.r-project.org/web/packages/igraph/" target="_blank" rel="noopener">igraph</a>,<a href="https://cran.r-project.org/web/packages/spdep/" target="_blank" rel="noopener">spdep</a>, <a href="https://cran.r-project.org/web/packages/rgdal" target="_blank" rel="noopener">rgdal</a>, <a href="https://cran.r-project.org/package=tigris" target="_blank" rel="noopener">tigris</a> <a href="https://cran.r-project.org/package=locfit" target="_blank" rel="noopener">locfit</a> and <a href="https://cran.r-project.org/package=leaflet" target="_blank" rel="noopener">leaflet</a>. You should install them, as necessary, with <code>install.packages()</code> command.</p>
 <p>Most of the methods and results are discussed in <a href="https://nkaza.github.io/publication/kazaedq/" target="_blank" rel="noopener">Hartley, Kaza &amp; Lester (2016)</a> and <a href="https://nkaza.github.io/publication/lesterkazamcadam2018" target="_blank" rel="noopener">Lester, Kaza &amp; McAdam (in review)</a>. Please refer to those articles.</p>
-<h1 id="additional-resources">Additional resources</h1>
+<h2 id="additional-resources">Additional resources</h2>
 <p>I strongly recommend that you read through some of the tutorials on using <a href="http://www.nickeubank.com/gis-in-r/" target="_blank" rel="noopener">R for GIS</a>. You should have <a href="http://www.asdar-book.org/" target="_blank" rel="noopener">Applied Spatial Data Analysis in R</a> by Bivand et.al in your library.</p>
 <h2 id="acquire-data">Acquire data</h2>
 <p>The data I will use in this exercise will be downloaded directly from Census. For this work, we will use the Work Area Characteristics files from Local Origin Destination Employment Statistics (LODES). <a href="https://lehd.ces.census.gov/data/lodes/LODES7/LODESTechDoc7.3.pdf" target="_blank" rel="noopener">LODES</a> is a synthetic data set that provides, if not spatially accurate, distributionally consistent annual employment information as well as commuting information. We will restrict our attention to the Kentucky. Let’s download and set up the data.</p>
-<pre><code class="language-r">library(data.table)
+<pre><code class="language-r">
+library(data.table)
 library(rgdal)
 library(spdep)
 library(rgeos)
@@ -1039,6 +1040,7 @@ library(igraph)
 library(ggplot2)
 library(tigris)
 library(tidyverse)
+library(sf)
 
 state &lt;- &quot;ky&quot;
 baseurl &lt;- 'http://lehd.ces.census.gov/data/lodes/LODES7/'
@@ -1083,7 +1085,8 @@ summary(wac_file_tr$C000)
 <img src="https://nkaza.github.io/post/identifying-employment-centers/index_files/figure-html/unnamed-chunk-3-1.png" width="768" />
 The bottom 50% of the tracts only contribute to less than 10% of the total employment, while the top 10% of the tracts contribute to more than 45% of employment. About 11% of tracts have less than 100 jobs. This shows that jobs are pretty well concentrated in particular centers.
 <p>We can visualise the spatial distribution of jobs. We already used <code>tigris</code> to download and load the polygons, and <code>leaflet</code> to visualise the information. Tigris is a convenience package that automatically downloads TIGER files from Census for particular geography. Visualising complicated geography is problematic, so we will use a polygon simplifier <a href="https://bost.ocks.org/mike/simplify/" target="_blank" rel="noopener">Visvasalingam algorithm</a> to simplify the boundaries. As long as the topology is preserved, we don’t loose much for this analysis.</p>
-<pre><code class="language-r">##Simplify shape for display and analysis. As long as the topology is preserved, complicated boundaries are not necessary for this purpose.
+<pre><code class="language-r">
+##Simplify shape for display and analysis. As long as the topology is preserved, complicated boundaries are not necessary for this purpose.
 library(rmapshaper)
 ky_tr_simple &lt;- rmapshaper::ms_simplify(ky_tr)
 c(object.size(ky_tr), object.size(ky_tr_simple))
@@ -1104,6 +1107,8 @@ ky_tr_simple$empdens &lt;- ky_tr_simple$C000/(ky_tr_simple$ALAND10) * 10^4 #Jobs
   </div>
 </div>
 <pre><code class="language-r">library(leaflet)
+
+ky_tr_simple &lt;- ky_tr_simple %&gt;% sf::st_transform(4326)
 
 m &lt;-  leaflet(ky_tr_simple) %&gt;%
   addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;,
@@ -1139,7 +1144,7 @@ m2 &lt;- m %&gt;%
    addLegend(&quot;topleft&quot;, pal = Qpal, values = ~C000,
              labFormat = function(type, cuts, p) {
                n = length(cuts) 
-             paste0(prettyNum(cuts[-n], digits=0, big.mark = &quot;,&quot;, scientific=F), &quot; - &quot;, prettyNum(cuts[-1], digits=0, big.mark=&quot;,&quot;, scientific=F))
+             paste0(prettyNum(cuts[-n], digits=1, big.mark = &quot;,&quot;, scientific=F), &quot; - &quot;, prettyNum(cuts[-1], digits=1, big.mark=&quot;,&quot;, scientific=F))
              },
              title = &quot;Number of Jobs&quot;,
              opacity = 1
@@ -1155,7 +1160,8 @@ frameWidget(m2)
 <div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
 <script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <p>The problem with choropleth maps is that large spatial areas visually draw attention and skew the perception of the map. See for example, the small tracts in Louisville compared to rural tracts around Bradstown. One way to deal with this issue, is to intensify the color of smaller tracts by normalising employment with some variable (area or per capita) to visualise the spatial distribution better. Sometimes, it is also better to ignore the boundaries. It does not get solve the problem completely.</p>
-<pre><code class="language-r">Qpal &lt;- colorQuantile(
+<pre><code class="language-r">
+Qpal &lt;- colorQuantile(
   palette = &quot;BuPu&quot;, n = 5,
   domain = ky_tr_simple$empdens
 )
@@ -1275,11 +1281,11 @@ ky_tr_simple$empcenter &lt;- temp$subobs
 <pre><code class="language-r">ky_empc_tr &lt;- ky_tr_simple[ky_tr_simple$empcenter==1,]
 
 g &lt;- ky_empc_tr %&gt;% as(&quot;Spatial&quot;) %&gt;%
-  poly2nb(queen=T, row.names=ky_empc_tr$GEOID10) %&gt;%
-  nb2mat(zero.policy=TRUE, style=&quot;B&quot;) %&gt;%
-  graph.adjacency(mode='undirected', add.rownames=&quot;NULL&quot;)
+  spdep::poly2nb(queen=T, row.names=ky_empc_tr$GEOID10) %&gt;%
+  spdep::nb2mat(zero.policy=TRUE, style=&quot;B&quot;) %&gt;%
+  igraph::graph_from_adjacency_matrix(mode='undirected', add.rownames=&quot;NULL&quot;)
 
-ky_empc_tr$clustermember &lt;- paste0(&quot;C&quot;,clusters(g)$membership)
+ky_empc_tr$clustermember &lt;- paste0(&quot;C&quot;,igraph::components(g)$membership)
 </code></pre>
 <p>Dissolving polygons is a breeze due to <code>sf</code>.</p>
 <pre><code class="language-r">ky_empc_pt &lt;- 
@@ -1349,9 +1355,7 @@ frameWidget(m4)
         <nav id="TableOfContents">
   <ul>
     <li><a href="#requirements">Requirements</a></li>
-  </ul>
-
-  <ul>
+    <li><a href="#additional-resources">Additional resources</a></li>
     <li><a href="#acquire-data">Acquire data</a></li>
     <li><a href="#data-preparation--exploration">Data preparation &amp; exploration</a></li>
     <li><a href="#visualising-spatial-data">Visualising spatial data</a></li>
@@ -1629,9 +1633,9 @@ frameWidget(m4)
       
       <li><a href="/post/analysing-urban-neworks/">Analysing Urban Neworks</a></li>
       
-      <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
       
-      <li><a href="/post/exploratory-data-analysis-and-visualisation/">Exploratory Data Analysis and Visualisation</a></li>
+      <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
       
     </ul>
   </div>

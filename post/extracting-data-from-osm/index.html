@@ -996,9 +996,9 @@
 <p>OSM data is free to download. Overpass can be used free of cost to download small amount of data. For large datasets, use <a href = "https://download.geofabrik.de/">Geofabrik</a>. Google requires users to pay based on volume of data served after a limited daily quota. Policies of Google change frequently, so note that your code will eventually and frequently break.</p>
 <h2 id="downloading-data">Downloading data</h2>
 <p>OSM serves two APIs, namely Main API for editing OSM, and Overpass API for providing OSM data. We will use Overpass API to gather data in this tutorial just like in the <a href="/post/intersection-density-from-osm-using-qgis-r/">tutorial about OSM and QGIS</a></p>
-<p>Data can be queried for download using a combination of search criteria lke location and type of objects. It helps to understand how OSM data is structured. OSM data is stored as a list of attributes tagged in key - value pairs of geospatial objects (points, lines or polygons). For example, for an architect’s office, the key is “office,” and the value is “architect.” For the name of the office, key is “name” and value is “ABC Design Studio.” Access an extensive list of key-value pairs through <a href="https://wiki.openstreetmap.org/wiki/Map_Features%22%3EMap%20features" target="_blank" rel="noopener">OSM Wiki</a></p>
-<h3 id="obtaining-point-locations-of-restaurants-in-durham-from-osm">Obtaining point locations of restaurants in Durham from OSM</h3>
-<p>restaurants are tagged under amenities. Amenities, according to OSM Wiki are facilities used by visitors and residents. Here, ‘key’ is “amenity” and ‘value’ is “restaurant.” Do not forget to look for related amenities such as “pub,” “food court,” “cafe,” “fast food,” etc. Other amenities include: “university,” “music school,” “kindergarten” and the likes in education, “bus station,” “fuel,” “parking” and others in transportation, and much more.</p>
+<p>Data can be queried for download using a combination of search criteria lke location and type of objects. It helps to understand how OSM data is structured. OSM data is stored as a list of attributes tagged in key - value pairs of geospatial objects (points, lines or polygons). For example, for an architect’s office, the key is “office”, and the value is “architect.” For the name of the office, key is “name” and value is “ABC Design Studio.” Access an extensive list of key-value pairs through <a href="https://wiki.openstreetmap.org/wiki/Map_Features" target="_blank" rel="noopener">OSM Wiki</a> Map features.</p>
+<h2 id="obtaining-point-locations-of-restaurants-in-durham-from-osm">Obtaining point locations of restaurants in Durham from OSM</h2>
+<p>Restaurants are tagged under amenities. Amenities, according to OSM Wiki are facilities used by visitors and residents. Here, ‘key’ is “amenity” and ‘value’ is “restaurant.” Do not forget to look for related amenities such as “pub”, “food court”, “cafe”, “fast food”, etc. Other amenities include: “university”, “music school”, “kindergarten” and the likes in education, “bus station”, “fuel”, “parking” and others in transportation, and much more.</p>
 <pre><code class="language-r">library(osmdata)
 library(sf)
 library(tidyverse)
@@ -1023,8 +1023,8 @@ frameWidget(m1)
 </code></pre>
 <div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
 <script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-1.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
-<p>It is helpful to learn about the distinctions between different tags (key-value pairs). For example, the key “landuse” is used to describe the purpose for which an area is being used. Examples of values for the key “landuse” are “commercial,” “retail,” “vineyard,” “cemetery,” “religious,” etc. Landuse tags are more generic than amenities and are only used for area objects while amenities can also be used for point objects. In case of any confusion, refer to <a href = " https://wiki.openstreetmap.org/wiki/Map_Features">Map features</a>.</p>
-<p>Various amenities, land-use, roads (e.g. key=“highway,” value = “primary,” “service,” “footway”), natural land features (key=“natural,” value = “grassland”), settlements (key = “place,” value = “suburb”), power (key=“power,” value=“line,” “pole,” “transformer”), etc. may be useful in planning applications.
+<p>It is helpful to learn about the distinctions between different tags (key-value pairs). For example, the key “landuse” is used to describe the purpose for which an area is being used. Examples of values for the key “landuse” are “commercial”, “retail”, “vineyard”, “cemetery”, “religious”, etc. Landuse tags are more generic than amenities and are only used for area objects while amenities can also be used for point objects. In case of any confusion, refer to <a href = " https://wiki.openstreetmap.org/wiki/Map_Features">Map features</a>.</p>
+<p>Various amenities, land-use, roads (e.g. key=“highway”, value = “primary”, “service”, “footway”), natural land features (key=“natural”, value = “grassland”), settlements (key = “place”, value = “suburb”), power (key=“power”, value=“line”, “pole”, “transformer”), etc. may be useful in planning applications.
 <br /></p>
 <h2 id="comparing-with-google-places">Comparing with Google Places</h2>
 <p>It is useful to compare the output of OSM to Google Places. I am going to use <code>googleway</code> package for this analysis.</p>
@@ -1044,177 +1044,177 @@ str(res)
 </code></pre>
 <pre><code>## List of 4
 ##  $ html_attributions: list()
-##  $ next_page_token  : chr &quot;Aap_uEDz7qvtl081hZODaq6CLvwxXBcWwRyFYT9kOd1wWdfljRo08jW5CEgBVUa2jKQ6Y9AV_oDXpqNk3q2O5wXqxKo3pIagXycsj0LrAwjuhW0&quot;| __truncated__
+##  $ next_page_token  : chr &quot;AfLeUgMGT-mwxcivbE0RqYwAt129UKfk0t72RjKr4882rjVi4LsM5k4ApcVC0veEtDM2AaDtIXm_AwTDvhyNuR7dMA80Cjxs9j18FFjUQOLfgBz&quot;| __truncated__
 ##  $ results          :'data.frame':   20 obs. of  16 variables:
 ##   ..$ business_status      : chr [1:20] &quot;OPERATIONAL&quot; &quot;OPERATIONAL&quot; &quot;OPERATIONAL&quot; &quot;OPERATIONAL&quot; ...
-##   ..$ formatted_address    : chr [1:20] &quot;1200 W Chapel Hill St, Durham, NC 27701, United States&quot; &quot;8128 Renaissance Pkwy #114, Durham, NC 27713, United States&quot; &quot;737 9th St #210, Durham, NC 27705, United States&quot; &quot;2726 Durham-Chapel Hill Blvd, Durham, NC 27707, United States&quot; ...
+##   ..$ formatted_address    : chr [1:20] &quot;737 9th St #210, Durham, NC 27705, United States&quot; &quot;8128 Renaissance Pkwy #114, Durham, NC 27713, United States&quot; &quot;315 E Chapel Hill St, Durham, NC 27701, United States&quot; &quot;1200 W Chapel Hill St, Durham, NC 27701, United States&quot; ...
 ##   ..$ geometry             :'data.frame':    20 obs. of  2 variables:
 ##   .. ..$ location:'data.frame':  20 obs. of  2 variables:
-##   .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
-##   .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
+##   .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
 ##   .. ..$ viewport:'data.frame':  20 obs. of  2 variables:
 ##   .. .. ..$ northeast:'data.frame':  20 obs. of  2 variables:
-##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
-##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
+##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
 ##   .. .. ..$ southwest:'data.frame':  20 obs. of  2 variables:
-##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
-##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
+##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
 ##   ..$ icon                 : chr [1:20] &quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&quot; ...
 ##   ..$ icon_background_color: chr [1:20] &quot;#FF9E67&quot; &quot;#FF9E67&quot; &quot;#FF9E67&quot; &quot;#FF9E67&quot; ...
 ##   ..$ icon_mask_base_uri   : chr [1:20] &quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&quot; &quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&quot; ...
-##   ..$ name                 : chr [1:20] &quot;GRUB Durham&quot; &quot;Harvest 18 Restaurant&quot; &quot;Juju Durham&quot; &quot;The Refectory Cafe&quot; ...
+##   ..$ name                 : chr [1:20] &quot;Juju Durham&quot; &quot;Harvest 18 Restaurant&quot; &quot;The Restaurant at The Durham&quot; &quot;GRUB Durham&quot; ...
 ##   ..$ opening_hours        :'data.frame':    20 obs. of  1 variable:
-##   .. ..$ open_now: logi [1:20] TRUE TRUE TRUE TRUE TRUE TRUE ...
+##   .. ..$ open_now: logi [1:20] FALSE FALSE FALSE TRUE FALSE FALSE ...
 ##   ..$ photos               :List of 20
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 2268
+##   .. .. ..$ height           : int 1365
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/116038233183567696806\&quot;&gt;Brian Jordan&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uECP5UX9KQ7WeVocbhSWlQslnEf0uROrJE4Dng0KyGb2exx2__uVvEUGsKirBOsbXScQvJuy5CsqMZ98Hami7shazfLc84zec4CeIA1kjW-&quot;| __truncated__
-##   .. .. ..$ width            : int 4032
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/101715461096256363950\&quot;&gt;Juju Asian Tapas + Bar&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgNgzxuFSzGqNULuskoX1J1eSYN1MoW3YEQ9c7PkXcg4qWXatHFQ4Rb5cwIQr7l-ga-4lijhr69kK6U63LVpoR7ba-XZ9zzumHPUSoZkE4V&quot;| __truncated__
+##   .. .. ..$ width            : int 2048
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 2340
 ##   .. .. ..$ html_attributions:List of 1
 ##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/114770559454901883104\&quot;&gt;Mike Little&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uECKt-0GQaxOb0rpHD0nS8RKfd5VbODehsr7W8N2dz2aWPAgII1OkvXNCgC8CWdVG-g-_ti5TsLcKWx3j9QwY_MyVLsKPr6p1GSHwVCkwo8&quot;| __truncated__
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgPPIA99W25syCwvvcQYxFUrut0bFaPBZl5jprnhTIRyGdcr0QDfzDOikz4Hp1Cjhg7k7E4iYQCGFWk2-uZgbns_csK-P3xcrxnZebT2q70&quot;| __truncated__
 ##   .. .. ..$ width            : int 4160
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1365
+##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/101715461096256363950\&quot;&gt;Juju Durham&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEAYdiayaQSGfOM58qXm1dIXv7m3cOQCG2S8g3ZsjFwQdZRMqQT0W94ayBBy8afJ8dVz_IUCWNph8ppyRf8Xf3KTrwR3J-sB1nawF3_zZ0r&quot;| __truncated__
-##   .. .. ..$ width            : int 2048
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1960
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/115200244530553280646\&quot;&gt;Jesse Locklear&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEB-wKDoxQW-RyDVTQSdopDIk344z0o5sgIbtZBucTYM3BKM2ryRtgblSFWlL_0II01PC2tFeTgKdyIYGxhU7ZFJ7DFwECywiyUVrrPViKk&quot;| __truncated__
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/103711833847435042805\&quot;&gt;Erik Newby&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgMcxBgjOJDODXoQaFqHrMF-yY6eEKkRn-LhM076R41KFhumuBtiv8zjuw6yXHBfaAL_APZqjefYigLmDkpicqiayu7HvtmYc7Be8rFFYY3&quot;| __truncated__
 ##   .. .. ..$ width            : int 4032
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3840
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/110406871396037806571\&quot;&gt;Chris Florio&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEAySlpbP3OV-3gRjPByIfelIdEepFXEyLMbxO2LdUHKD8XrDhjmlY3eqZnH_5wHIWb5NM1Rs--hnd3X37XVT8pQ-gNHmXhBP39vCRu4-23&quot;| __truncated__
-##   .. .. ..$ width            : int 5760
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 759
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/112182744125527300635\&quot;&gt;A Google User&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEALryxfVAI0q2U0Q9ikNLSVsZSYvLn_xyGRGXj_KIN-mAI9_cDiEM0SyqYgb6u6VmwVPaYlLE1E2gBczk8UCk41n7ggk9R9PQGRPRnPzGj&quot;| __truncated__
-##   .. .. ..$ width            : int 1140
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/113029887293590173135\&quot;&gt;Kevin Primus&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEAeKSKeiM23rD8lzKS5Xhll9qcb0ErySI4rTepVuHnGGXT5ahp_5sMDMwvBobZj7TFl0dtkkLHkWh-XwHIOAkUsF_324kXtSRi07IzjeKg&quot;| __truncated__
-##   .. .. ..$ width            : int 3024
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/114870547795315215397\&quot;&gt;James Goerke&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgPMD9yIH36j5iqlrH_muls2Z3d76MRXuGriZKTcRB45kzgYghXWPiiOqgiss4XovnhvEzrA1SsrkGaL2AmkuYgu5d3wlmKaXTY3p5ZF2pF&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3072
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/106155315629813478210\&quot;&gt;John Vinueza&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgPxyiChtj0yxR6NMCSAyHyP1C0v-aw7ROgHBa4XqABXYj2euzeR9vsXSNckahZHOuk42N6U47k5-8NDCzRTqF_14y_jR1Xr8zCnfHDskpe&quot;| __truncated__
+##   .. .. ..$ width            : int 4080
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1280
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/108889804668316321834\&quot;&gt;Local 22 Kitchen And Bar&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgPZqAgMiH1Cj_5Ml-pqlh2Bpa7eRf7hWYaC-sjNAW-qyMHYP7KBHOvmHEcOuHALI8EM5zteRzzzbD_2HuVK4rbkhJuPdPEjxhS1aJlw55w&quot;| __truncated__
+##   .. .. ..$ width            : int 1920
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2268
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/116309041934196405059\&quot;&gt;Vishwanath Math&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgNDxdslnjs0TSAfW8xZ2G6yKznysWRwifnJ_M1O-fFl1wO-dxca1PJE50xJkk5Z9oZt42GWr5zmEuSdC218K6_TWf9RkPjQSj6YCzH6tsm&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/114073771529466701161\&quot;&gt;Charles Jolley&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uECJhHC0LI7Hzo-JqBGvRfBCIHsz1dptvFqGgLEm-mW0FFxYq9rFWWAGkeR7hrnt0Bni2pU0A7PzJBHschKbyYew8_A2qSPzAivmioPIWlh&quot;| __truncated__
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/108963259167865212631\&quot;&gt;BRIAN MASSENGILL&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgMRLSDmOeN5XmRRLtenMPy7mdfSlyxTX0wgvoI0cshqMcaYS0M3_kNYu5dL_5TIAb7zvhVmgnX27K-u2NdncbLJG5flZFm181NU0a3ZI8p&quot;| __truncated__
 ##   .. .. ..$ width            : int 4032
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3465
+##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/114657080188950072058\&quot;&gt;Firebirds Wood Fired Grill&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uECRp0ZTIgg97N_k52LNL0aoAXAXBIw7tdrr3AsMRO1hcAhiVFOW8sGYgE-HwWAEyXJ4KZXX_dVboVOWTO-H9hHoOAMzoGx-jzymPmam31u&quot;| __truncated__
-##   .. .. ..$ width            : int 5202
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/117366860799003538591\&quot;&gt;A Google User&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgP_hRNFFXZGdI75PiKIxqXFXTlY8__rykRZ2aKHSlWuA_DchjC8tU63cdRXxX5ips1oiVWQCriruFHmM-E4tPxiqAPkbrQDce_fTmnqzIe&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/109300032866188423940\&quot;&gt;Zach Brown&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgOICZG0j3Pyh1V3uJ5kUgcFhu46mfHDQMIf-L5r4Ytv-SAm1qGlBt447IByIr57j6szD56-G-nOrs5ZDEsOjHoFdDRfZF6eRcJXtF5-XKk&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1067
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/118359313798311826267\&quot;&gt;A Google User&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgPASPTIaPmGSxahYbOEgFAaqXrAQHPgGzIX7KIkDKv-SfOwbY4bfoRTtQtWoNnnSLiVZa8Qr3Yy31h3Sx3OYBmjpP-HVfHJ24ZPcZS3WYI&quot;| __truncated__
+##   .. .. ..$ width            : int 1600
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3072
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/114917363150643087487\&quot;&gt;David Foresman&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgOX4w-TgQ7Gg5xc8iDY4haqOyxq1zvU5b9o2NifriF-Op-xL6HJC9exho2T8vHFG7gUnEWwxOjxfDS5NRqlOlX-rY9VbYsKdbfqojsZL2e&quot;| __truncated__
+##   .. .. ..$ width            : int 4080
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/102066483967244766103\&quot;&gt;Marv Baker&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgMEL1DvyfjMEr3FDGmvbs2tG1txo65kjR2e6GSxoTLzHwpJfdB0wzi0kO_5MDOdc2QAF7y7CGppjXZZoshDMiUv0tK3lg8pmaGDKNUcKRG&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
 ##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/115591303687864814152\&quot;&gt;warada shafi&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEDMfPwEX43OuAigWC7kBbdtXW0WgEIXr9e6mzChxXdRIMwb4j_X87ubRLQnp4H0ASOm9MMoGNFVq6QR71rUNNqb3t9I3lLF4ltyskIi7sM&quot;| __truncated__
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgPEm3Ny2re6YXG2yFmGZ9-VZtedKU6Pdja1s4WeeTeVYhooI5jOBgqwHbSwXA5HzHNSZ-3jpdt316T1UV3AP0WQItKaRCznhzFSW07u4Nz&quot;| __truncated__
 ##   .. .. ..$ width            : int 4032
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3072
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/117939330467348488790\&quot;&gt;protonoid&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgM-f9F0veS1XgpyjuG-sk9lHguYnn-JzHApG7mHDoUKLIGv-rPaExIxvP9ngcWfdRhpcF1f4CbgqAWhDON_eojLkkMfrn__jsM3Iqm3xgU&quot;| __truncated__
+##   .. .. ..$ width            : int 4080
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1512
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/116117583444734059617\&quot;&gt;Mothers &amp;amp; Sons Trattoria&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgNGmqVkzlzONPHWuqhkBpc9GQRuedQTY7w8lRBBcNrhkK6wjySsTUe4trkk3KPboWvwUpRGdV0KYc3biGRmuUU5TSIz5X9TREJr0Scail5&quot;| __truncated__
+##   .. .. ..$ width            : int 2016
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2721
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/108832116470362120552\&quot;&gt;Kimberly Slentz-Kesler&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgPi22ZdFw8D5q7HgP-evVd5fvUuh_ry12PsACZ5J_7-qLHNEiLeUCuHQpAsM-Vqz1vtSjdpHnOOX0L9bxG9iMZROZGtD6LQK2Q9Sdd6-lE&quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :'data.frame':  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 4032
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/100123088912788695638\&quot;&gt;Chris Schwarz&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgNQN_h2cGNl6t3S6GBSgmI7d2CBOBHD8kRDRhBs_iJ8eSNQtf9J1nhGzr33VJhXDMCowe-xhy4-INZqzAQAnBkGiTAo31nQqmb0nnSJeph&quot;| __truncated__
+##   .. .. ..$ width            : int 3024
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3264
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/110287574629885866131\&quot;&gt;ggle screwedup&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEAX28RS26E44Q27nb9-xRteL5a7BCe5nx8Fc2spEj6f2qXMysh2bcJUwsIOfrwRXKm6DRg_SUxg87Yjr4nStJauifLJo-abrnPlGtkmbUt&quot;| __truncated__
-##   .. .. ..$ width            : int 4928
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/115121000442582864884\&quot;&gt;Rachael Lord&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgP6NoILAb1ve9q3phRmvXuygx6Lno87WupJQq63RxjGl2QvzKWygM-IiyM3_ve-KCx6Bt6RaRSLCcn_iJNa5HvCbPNoUjQaHwpFlIkJytG&quot;| __truncated__
+##   .. .. ..$ width            : int 2448
 ##   .. ..$ :'data.frame':  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/102661117264282773668\&quot;&gt;Marianne Germann&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEDoSL8nJXaelIfGwhicCJz2KXn737YE8OROc0x9b0eXi_fu9NyH4UTsyt7xlsM4ZT80V-BOH7FCDXdNzrKGDKd8jJuE73mqRSKUR4uRAFN&quot;| __truncated__
+##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/114464732617145277475\&quot;&gt;Mauro Jeronimo Mendoza&lt;/a&gt;&quot;
+##   .. .. ..$ photo_reference  : chr &quot;AfLeUgMGjK4hHrxBdRwAT6gKHVWZ7wpuFh0TV2hJ80R0JJMBx3ZmkkM6fOHze0Ry7f1tjgxkKzuFufnxrSO9UqgOT0VPmpu6FLAprlIKn4H8fCT&quot;| __truncated__
 ##   .. .. ..$ width            : int 4032
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/101822245344530912517\&quot;&gt;A Google User&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEDkXqjRlNKK81MifgMHVi0o1Ox-473hjjsN2WkOyOH2NR3av3CpNG47Sf9phd-3MkiWRgiCbahz6tPIRkZDSucNcZvXXVrwRjY8Lpw2DXn&quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/118299821446006535378\&quot;&gt;Jonathan Herbin&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEAxqP65t4QWw1dRaxqXI5birKrgwQ7gTLRaQ8f9Fgc_32JrUUHGW7ZeS10UG_GtC67NNRoGVfULLaFm8L1Sq3FFjQILCKRau9TNGZzeX0b&quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/115630244379686871545\&quot;&gt;David Martinak&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEDLnIMNjBlFMZk9WGAUvqJ5sESpaLuW5d-Yf4tojNBkPF4rZuDSxvGxvtef354X6lZMn9jf3p1bFK9p6FBH2p72g2g3lIaai-Pip-UajfL&quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 4032
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/112811475890442238108\&quot;&gt;Al Betts&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uECFyvefFwkTzGccf4SUssGNF28MqawJT9S18vXN5Fxj0Thkdjbu7qfISyWrLDMN777mo_qIEncxvhq28hppBb9kibRDpeKe4Ag0Ldpt83b&quot;| __truncated__
-##   .. .. ..$ width            : int 3024
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/115712679935541822299\&quot;&gt;Melody Kuroda&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEAN3HSkKRyn55cm8NZxoa8uFe8RUOrtd1dCLxJHiBT7H0xGvjrkTIVoq_eHtTa5GOvR4U8foc3DCvbvXKOCGqxxfBhaeVaKweRhiOH4iun&quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1440
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/107563912532869932686\&quot;&gt;Bethany Elai.&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEABMhL-3pxp1wQerpvvCdkmo_IH6zfotxUeltqEm5694SfVtjvdJb-GfxVfzNF3NrDZgcmdx6rjptGbNG5wVg0DCV8nEZhpvehaNrQ4Lj6&quot;| __truncated__
-##   .. .. ..$ width            : int 2560
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1659
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/115728368975913921650\&quot;&gt;Natasha Johnson&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uEBJh3NVA3ztYj1tZmcWO_M5gd6c0kfwOCwZZWZJVNmmJjaItvGML5ZI7xECuA_D9i_POJ6lHS_C8AOlo1a09h5LmgR2ScvgFwkhsa7t_AH&quot;| __truncated__
-##   .. .. ..$ width            : int 2500
-##   .. ..$ :'data.frame':  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 4032
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &quot;&lt;a href=\&quot;https://maps.google.com/maps/contrib/105297074549593408929\&quot;&gt;Toast&lt;/a&gt;&quot;
-##   .. .. ..$ photo_reference  : chr &quot;Aap_uED9Cfgb3MaAEs8Lf-gLhbdwDs8u5_NqAx10z__4WxwaUNHx5yypjHegHD470dGvWnJo_E7WZECgioqBtSrdNKq2K9Eb8uANh7DoWQmeWYY&quot;| __truncated__
-##   .. .. ..$ width            : int 3024
-##   ..$ place_id             : chr [1:20] &quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&quot; &quot;ChIJj6foxurorIkRhlH7GB_PMo0&quot; &quot;ChIJ608CRgfkrIkRzaPpHby3GS4&quot; &quot;ChIJHVocmIPmrIkRsVAlSGbptok&quot; ...
+##   ..$ place_id             : chr [1:20] &quot;ChIJ608CRgfkrIkRzaPpHby3GS4&quot; &quot;ChIJj6foxurorIkRhlH7GB_PMo0&quot; &quot;ChIJNR4KG3LkrIkR2G7VfaFtyWw&quot; &quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&quot; ...
 ##   ..$ plus_code            :'data.frame':    20 obs. of  2 variables:
-##   .. ..$ compound_code: chr [1:20] &quot;X3WJ+QW Durham, North Carolina&quot; &quot;W23W+8Q Durham, North Carolina&quot; &quot;235H+W2 Durham, North Carolina&quot; &quot;X3F8+QQ Durham, North Carolina&quot; ...
-##   .. ..$ global_code  : chr [1:20] &quot;8773X3WJ+QW&quot; &quot;8773W23W+8Q&quot; &quot;8783235H+W2&quot; &quot;8773X3F8+QQ&quot; ...
-##   ..$ price_level          : int [1:20] 2 2 3 2 2 2 2 2 2 2 ...
-##   ..$ rating               : num [1:20] 4.5 4.4 4.5 4.4 4.4 4.2 4.5 4.4 4.3 4.3 ...
-##   ..$ reference            : chr [1:20] &quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&quot; &quot;ChIJj6foxurorIkRhlH7GB_PMo0&quot; &quot;ChIJ608CRgfkrIkRzaPpHby3GS4&quot; &quot;ChIJHVocmIPmrIkRsVAlSGbptok&quot; ...
+##   .. ..$ compound_code: chr [1:20] &quot;235H+W2 Durham, North Carolina&quot; &quot;W23W+8Q Durham, North Carolina&quot; &quot;X3WX+VJ Durham, North Carolina&quot; &quot;X3WJ+QW Durham, North Carolina&quot; ...
+##   .. ..$ global_code  : chr [1:20] &quot;8783235H+W2&quot; &quot;8773W23W+8Q&quot; &quot;8773X3WX+VJ&quot; &quot;8773X3WJ+QW&quot; ...
+##   ..$ price_level          : int [1:20] 3 2 2 2 NA 2 2 3 2 2 ...
+##   ..$ rating               : num [1:20] 4.5 4.3 4.3 4.4 4.7 4.5 4.4 4.5 4.4 4.6 ...
+##   ..$ reference            : chr [1:20] &quot;ChIJ608CRgfkrIkRzaPpHby3GS4&quot; &quot;ChIJj6foxurorIkRhlH7GB_PMo0&quot; &quot;ChIJNR4KG3LkrIkR2G7VfaFtyWw&quot; &quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&quot; ...
 ##   ..$ types                :List of 20
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
 ##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
 ##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
-##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:5] &quot;restaurant&quot; &quot;bar&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
 ##   .. ..$ : chr [1:6] &quot;restaurant&quot; &quot;cafe&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
-##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
-##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
-##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
-##   .. ..$ : chr [1:7] &quot;bakery&quot; &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; ...
-##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
 ##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
 ##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
 ##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
 ##   .. ..$ : chr [1:5] &quot;restaurant&quot; &quot;bar&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
-##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
-##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
 ##   .. ..$ : chr [1:5] &quot;bar&quot; &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; ...
 ##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
 ##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
 ##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
 ##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
-##   ..$ user_ratings_total   : int [1:20] 1550 966 774 891 1566 901 1062 1608 1388 1684 ...
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   .. ..$ : chr [1:4] &quot;restaurant&quot; &quot;food&quot; &quot;point_of_interest&quot; &quot;establishment&quot;
+##   ..$ user_ratings_total   : int [1:20] 941 1053 116 1748 179 797 1095 505 607 240 ...
 ##  $ status           : chr &quot;OK&quot;
 </code></pre>
 <pre><code class="language-r"># Notice that the result has Status code and next page token. We are going to use them to extract the restaurants.
@@ -1285,7 +1285,7 @@ frameWidget(m1)
 </code></pre>
 <div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
 <script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
-<p>Note that OSM report 958 entries while Google reports 20 restaurants.</p>
+<p>Note that OSM report 894 entries while Google reports 20 restaurants.</p>
 <hr>
 <p><strong>Exercise</strong></p>
 <ul>
@@ -1294,9 +1294,9 @@ frameWidget(m1)
 <li>Notice that repeated application of the same query produce different results in in the same system. Why? What implication does this have for reproducibility?</li>
 </ul>
 <hr>
-<h1 id="conclusion">Conclusion</h1>
-<p>The povenance of the data and the continual update of data on servers have serious implications for reproducibility. On the other hand, the updates allow for timeliness of analysis. It is important to recognise the limitations and potential.</p>
-<h1 id="acknowledgements">Acknowledgements</h1>
+<h2 id="conclusion">Conclusion</h2>
+<p>The provenance of the data and the continual update of data on servers have serious implications for reproducibility. On the other hand, the updates allow for timeliness of analysis. It is important to recognise these limitations and potential.</p>
+<h2 id="acknowledgements">Acknowledgements</h2>
 <p>Much of the post is written by <a href="https://planning.unc.edu/student/kshitiz-khanal-2/" target="_blank" rel="noopener">Kshitiz Khanal</a>.</p>
 
       </div>
@@ -1312,12 +1312,11 @@ frameWidget(m1)
   <ul>
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#comparison-between-osm-and-google">Comparison between OSM and Google</a></li>
-    <li><a href="#downloading-data">Downloading data</a>
-      <ul>
-        <li><a href="#obtaining-point-locations-of-restaurants-in-durham-from-osm">Obtaining point locations of restaurants in Durham from OSM</a></li>
-      </ul>
-    </li>
+    <li><a href="#downloading-data">Downloading data</a></li>
+    <li><a href="#obtaining-point-locations-of-restaurants-in-durham-from-osm">Obtaining point locations of restaurants in Durham from OSM</a></li>
     <li><a href="#comparing-with-google-places">Comparing with Google Places</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ul>
 </nav>
       </div>
@@ -1467,6 +1466,8 @@ frameWidget(m1)
     <h3>Related</h3>
     <ul>
       
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
+      
       <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
       
       <li><a href="/post/exploratory-data-analysis-and-visualisation/">Exploratory Data Analysis and Visualisation</a></li>
@@ -1474,8 +1475,6 @@ frameWidget(m1)
       <li><a href="/post/intersection-density-from-osm-using-qgis-r/">Intersection Density From OSM using QGIS &amp; R</a></li>
       
       <li><a href="/post/analysing-free-form-text/">Analysing Free Form Text</a></li>
-      
-      <li><a href="/post/matching-messy-texts/">Matching Messy Texts</a></li>
       
     </ul>
   </div>

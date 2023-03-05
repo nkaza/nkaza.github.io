@@ -992,11 +992,8 @@
 <h2 id="reading-in-gtfs-files">Reading in GTFS files</h2>
 <p>Because GTFS are regularly updated (usually semi-annually) and published on transit agency’s website, it is a good idea to get the latest schedule. Fortunately, <a href="https://database.mobilitydata.org/" target="_blank" rel="noopener">Mobility Database</a> has a catalogue of various GTFS feeds and their source locations. In this tutorial, I am going to use Metro St. Louis GTFS feed.</p>
 <p>In addition, I am going to use <code>tidytransit</code> and <code>gtfsrouter</code> packages. <code>extract_gtfs</code> is a function in the <code>gtfsrouter</code> package that reads the zipfile and converts it into bunch of data tables. Similarly <code>read_gtfs</code> from <code>tidytransit</code> could also be used.</p>
-<pre><code class="language-r">library(widgetframe)
-library(tidytransit)
-library(tidyverse)
-library(sf)
-library(units)
+<p>In the following code, I am showing how to download the latest GTFS files. However, I am going to use an <a href="https://www.dropbox.com/s/v0lgu35uxmva00r/google_transit.zip?dl=0" target="_blank" rel="noopener">archived GTFS files</a> for consistency.</p>
+<pre><code class="language-r">
 
 gtfs_feeds &lt;- read_csv(&quot;https://bit.ly/catalogs-csv&quot;) %&gt;%
                filter(provider == &quot;Metro St. Louis&quot;) %&gt;%
@@ -1004,7 +1001,6 @@ gtfs_feeds &lt;- read_csv(&quot;https://bit.ly/catalogs-csv&quot;) %&gt;%
                pull('urls.direct_download')
 
 gtfs_feeds
-# [1] &quot;http://metrostlouis.org/Transit/google_transit.zip&quot;
 
 
 ## function to download and read the gtfs feeds. Particularly helpful, if there are multiple feeds and/or multiple transit agencies in the area.
@@ -1017,6 +1013,17 @@ download_read_gtfs &lt;- function(feed_url){
 }
 
 stlouis_gtfs &lt;- gtfs_feeds %&gt;% download_read_gtfs()
+
+summary(stlouis_gtfs)
+</code></pre>
+<pre><code class="language-r">library(widgetframe)
+library(tidytransit)
+library(tidyverse)
+library(sf)
+library(units)
+library(here)
+
+stlouis_gtfs &lt;- here(&quot;tutorials_datasets/gtfs/google_transit.zip&quot;) %&gt;%tidytransit::read_gtfs()
 
 summary(stlouis_gtfs)
 # tidygtfs object
@@ -1191,7 +1198,7 @@ library(widgetframe)
 frameWidget(tmap_leaflet(m1))
 </code></pre>
 <div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-2.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-3.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <h2 id="analysing-service-patterns">Analysing Service Patterns</h2>
 <p>The GTFS reference specifies that a “service_id contains an ID that uniquely identifies a set of dates when service is available for one or more routes”. A service could run on every weekday or only on Saturdays for example. However, feeds are not required to indicate anything with service_ids and some feeds even use a unique service_id for each trip and day. Service patterns can be used to find a typical day for further analysis like routing or trip frequencies for different days.</p>
 <pre><code class="language-r">
@@ -1224,7 +1231,7 @@ stlouis_gtfs$.$dates_servicepatterns %&gt;%
   geom_point(aes(x = date, y = servicepattern_id, color = weekday), size = 1) + 
   scale_x_date(breaks = scales::date_breaks(&quot;1 month&quot;)) + theme(legend.position = &quot;bottom&quot;)
 </code></pre>
-<img src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<img src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/unnamed-chunk-5-1.png" width="672" />
 <p>The above figure shows that s_3204bc1 service pattern is a Saturday service from Dec 2022, while s_597ac4c is mostly a Saturday service with occasional Thursday before Dec 2022. s_5a57195 and s_f4dfeef seem to be weekday service patterns. We use those service patterns to calculate the frequencies for the rest of the tutorial.</p>
 <pre><code class="language-r">service_ids &lt;- stlouis_gtfs$.$servicepattern %&gt;% 
   filter(servicepattern_id %in%  c('s_5a57195', 's_f4dfeef' )) %&gt;% 
@@ -1249,7 +1256,7 @@ get_route_geometry(stlouis_gtfs, service_ids = service_ids) %&gt;%
 frameWidget(tmap_leaflet(m1))
 </code></pre>
 <div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-7.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <p>While it is fine to know which routes are more frequent than others, it is also useful to know which stops have smaller headways and more frequent departures.</p>
 <pre><code class="language-r">
 midday_stops &lt;-
@@ -1301,7 +1308,7 @@ stlouis_gtfs$stops %&gt;%
 frameWidget(tmap_leaflet(m1))
 </code></pre>
 <div id="htmlwidget-3" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-8.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-9.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <p>Notice how some stops have more frequent departures and some have long wait times. There are some spatial patterns. The classic hub and spoke transit system means that the downtown (hub) have a lot of stops that have high quality transit. However, there are also some transit centers at the outskirts that also have large number of departures. These serve as transfer stations or terminus.</p>
 <hr>
 <p><strong>Exercise</strong></p>
@@ -1320,7 +1327,7 @@ frameWidget(tmap_leaflet(m1))
 <h2 id="accessibility-as-cumulative-opportunity">Accessibility as Cumulative Opportunity</h2>
 <p>While it is useful to think of accessibility as frequency of transit at a particular location, that indicator does not tell us much about the system level accessibility. While a specific bus station might have frequent departures, it may be on a line that is broadly disconnected from the rest of the transit system (e.g. connected to other lines that have significant wait times). It is thus useful to measure accessibility as opportunities that can be accessed within a travel budget (say 45 minutes). To do compute these, it is useful to figure out how much area can be covered within 45 min of travel time.</p>
 <p>It is reasonably straightforward to figure out how much area can be <a href="/post/isochrones-from-routing-engines-osrm/">covered by foot using routing engines such as OSRM</a>. The tricky bit is to figure out how much time is spent waiting at transit stations before boarding the buses/trains and during transfers.</p>
-<p>Typically, accessibility is measured for centeroids of population centers (block groups e.g.). However, any origin set should be fine. I select the the three counties for the analysis (St. Clair in IL and St. Louis City, St. Louis County in MO)</p>
+<p>Typically, accessibility is measured for centroids of population centers (block groups e.g.). However, any origin set should be fine. I select the the three counties for the analysis (St. Clair in IL and St. Louis City, St. Louis County in MO)</p>
 <pre><code class="language-r">
 transitstops &lt;- stlouis_gtfs$stops
 
@@ -1373,7 +1380,7 @@ blkgrp_iso &lt;- map(1:nrow(blkgrps), possibly(function(x){osrmIsochrone(loc=blk
 </code></pre>
 <p>I precomputed these and saved them in <a href="https://www.dropbox.com/s/66fwvifw1jcg3en/ttmatrix.RData?dl=0" target="_blank" rel="noopener">an RData file</a>. The RData file has three main objects. stop_iso is list of isochrones for each stop. blkgrp_iso is the list of isochrones for each blkgrp. ttmatrix is large list where the element duration is a travel time matrix from blkgrps to transit stops.</p>
 <p>Some clean up is necessary, like adding names to easily filter and identify.</p>
-<pre><code class="language-r">load(&quot;ttmatrix.RData&quot;)
+<pre><code class="language-r">load(here::here(&quot;tutorials_datasets/gtfs/ttmatrix.RData&quot;))
 
 str(blkgrp_iso[[1]])
 # Classes 'sf' and 'data.frame':    42 obs. of  4 variables:
@@ -1422,7 +1429,7 @@ row.names(ttmatrix$durations) &lt;-  blkgrps$GEOID
 
 plot(blkgrp_iso[[4]][5,&quot;id&quot;])
 </code></pre>
-<img src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+<img src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/unnamed-chunk-12-1.png" width="672" />
 <p>Based on the above, it looks likes each element of the isochrone list corresponds to either origin or destination. Each of that element is a tibble with isomin and isomax times (e.g. can be reached between 10 and 11 min). But we need the cumulative isochrone (e.g. reached within 11 min) for stops and only 45 min isochrone from block groups.</p>
 <pre><code class="language-r">sf_use_s2(FALSE)
 
@@ -1460,6 +1467,7 @@ geo_temp_sf2 &lt;- blkgrp_iso_cumulative[[blkgrp_id]]
 
 
 # The following computes how much time it takes to reach different transit stations from the block group centeroid and how much time is leftover in the travel budget that can be used for waiting/transit travel.
+
 travel_to_stations &lt;-
         tibble(tt = ttmatrix$durations[blkgrp_id,],
                stop_id = stlouis_gtfs$stops$stop_id) %&gt;%
@@ -1521,7 +1529,7 @@ m1 &lt;-
 frameWidget(tmap_leaflet(m1))
 </code></pre>
 <div id="htmlwidget-4" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-14.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-4">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-15.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <hr>
 <p><strong>Exercise</strong></p>
 <ul>

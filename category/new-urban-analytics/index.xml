@@ -13,11 +13,365 @@
     </image>
     
     <item>
-      <title>Cleaning &amp; Using Spatial Networks</title>
+      <title>Cleaning Spatial Networks</title>
       <link>https://nkaza.github.io/post/cleaning-using-spatial-networks/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/cleaning-using-spatial-networks/</guid>
-      <description></description>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Some transportation networks are intuitive to understand as networks. We can easily visualize intersections as nodes and roadways as edges in a road network. A network analysis approach helps in understanding complex behaviour of systems such as transportation networks that would not be possible with other types of analyses that look at individual components as separate entities. Understanding the relationships between various components such as different types of roadways (highways, side walks, residential roads) and how they induce events likes traffic jams requires a relational systemic perspective that is not fully provided with statistical or spatial analysis on their own. Spatial networks preserves the spatial properties while allowing exploration of relations between entities represented as points, lines and polygons.&lt;/p&gt;
+&lt;p&gt;While it is fairly easy to extract road networks from geospatial databases such as OpenStreetMap, using such data for network analysis isn’t so straightforward. Road network information are inherently messy because of complexities in roads and information associated with roads and transportation. In this tutorial, we will learn how to clean spatial networks in R. We take an example of a network of walkable streets in Downtown Carrboro in North Carolina.&lt;/p&gt;
+&lt;p&gt;We will use &lt;code&gt;sfnetworks&lt;/code&gt; package. The package bridges network analysis functionalities of the &lt;code&gt;tidygraph&lt;/code&gt; package with the spatial analysis functionalities of the &lt;code&gt;sf&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;As of writing this tutorial, &lt;code&gt;sfnetworks&lt;/code&gt; has recently been removed from CRAN, the peer-reviewed repository for R packages. We can use &lt;code&gt;remotes&lt;/code&gt; packages to install the package from Github.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(&amp;quot;remotes&amp;quot;)
+remotes::install_github(&amp;quot;luukvdmeer/sfnetworks&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osmdata)
+library(tidyverse)
+library(sf)
+library(igraph)
+library(tidygraph)
+library(sfnetworks)
+library(tmap)
+library(dbscan)
+library(widgetframe)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;downloading-data--sanity-checks&#34;&gt;Downloading Data &amp;amp; Sanity Checks&lt;/h2&gt;
+&lt;p&gt;Previously we have used “osmdata” package to download restaurants from OpenStreetMap using Overpass Query. Let’s use the same package to download all walkable ways in Downtown Carrboro. The key-value pairs used are not exhaustive. There maybe others that are relevant.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;we_foot &amp;lt;- opq(&amp;quot;Downtown Carrboro, North Carolina&amp;quot;) %&amp;gt;% 
+  add_osm_feature(key = &amp;quot;highway&amp;quot;, value = c(&amp;quot;bridleway&amp;quot;,&amp;quot;corridor&amp;quot;, &amp;quot;elevator&amp;quot;, &amp;quot;footway&amp;quot;, &amp;quot;living_street&amp;quot;, &amp;quot;path&amp;quot;, &amp;quot;pedestrian&amp;quot;, &amp;quot;primary&amp;quot;, &amp;quot;primary_link&amp;quot;, &amp;quot;residential&amp;quot;, &amp;quot;secondary&amp;quot;, &amp;quot;secondary_link&amp;quot;, &amp;quot;service&amp;quot;, &amp;quot;steps&amp;quot;, &amp;quot;tertiary&amp;quot;, &amp;quot;tertiary_link&amp;quot;, &amp;quot;track&amp;quot;, &amp;quot;unclassified&amp;quot;))%&amp;gt;% 
+  osmdata_sf() #convert to sf
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We will look at the columns, and a summary of the components of the spatial object&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;names(we_foot)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;bbox&amp;quot;              &amp;quot;overpass_call&amp;quot;     &amp;quot;meta&amp;quot;             
+## [4] &amp;quot;osm_points&amp;quot;        &amp;quot;osm_lines&amp;quot;         &amp;quot;osm_polygons&amp;quot;     
+## [7] &amp;quot;osm_multilines&amp;quot;    &amp;quot;osm_multipolygons&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;we_foot
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Object of class &#39;osmdata&#39; with:
+##                  $bbox : 35.8899859,-79.0952611,35.9299859,-79.0552611
+##         $overpass_call : The call submitted to the overpass API
+##                  $meta : metadata including timestamp and version numbers
+##            $osm_points : &#39;sf&#39; Simple Features Collection with 17707 points
+##             $osm_lines : &#39;sf&#39; Simple Features Collection with 2793 linestrings
+##          $osm_polygons : &#39;sf&#39; Simple Features Collection with 44 polygons
+##        $osm_multilines : NULL
+##     $osm_multipolygons : NULL
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see that there are points, lines and polygons but no multi-lines and multipolygons. First we need to change polygons to lines. We do not need to worry about the points. The points are the points that make up the lines and polygons.&lt;/p&gt;
+&lt;p&gt;We can look at the location of those polygons.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;we_foot$osm_polygons %&amp;gt;% 
+  st_geometry() %&amp;gt;% 
+  plot()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;We are only considering points and lines for this spatial network analysis. We can cast the polygons to lines.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# cast polygons to lines
+poly_to_lines &amp;lt;- st_cast(we_foot$osm_polygons, &amp;quot;LINESTRING&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in st_cast.sf(we_foot$osm_polygons, &amp;quot;LINESTRING&amp;quot;): repeating attributes
+## for all sub-geometries for which they may not be constant
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# bind all lines together
+we_foot_lines &amp;lt;- bind_rows(we_foot$osm_lines, poly_to_lines)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# plot it
+we_foot_lines %&amp;gt;% 
+  st_geometry() %&amp;gt;% 
+  plot()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;h2 id=&#34;cleaning-the-network&#34;&gt;Cleaning the Network&lt;/h2&gt;
+&lt;p&gt;Mathematically a network/graph is a collection of links and nodes. For many applications, what really matters is the connections and relationships among these links and nodes, but not the spatial attributes these links and nodes. In other words, topological relationships are more important than spatial relationships. See for example, the Input Output matrix of various industries, or social network of different individuals or networks of neurons in brain.&lt;/p&gt;
+&lt;p&gt;However, in spatial networks, the location of the roads and street intersection matter. Furthermore, the representation of streets as lines (straight, or multilines, curved roads), their directionality (one-way, two-way), the precision (e.g. dangling, snaps), crossings (at grade, overpass etc.), road type (limited access, pedestrian etc.) all matter for how we construct what are links and which nodes (intersections) are relevant.&lt;/p&gt;
+&lt;p&gt;Much of the analysis is trying to figure out appropriate ways to clean the street network data so that only relevant nodes and links are kept in the graph. Because the road networks are different in different parts of the world, it is hard to come up with a consistent set of rules that will work everywhere.&lt;/p&gt;
+&lt;p&gt;Some of the key cleaning steps are demonstrated in the &lt;a href=&#34;https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;sfnetwork vigenttes&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Here are some common issues and rules we often use with street/road networks. As with everything, these are not exhaustive.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Curved Roads or road with multiple segments (e.g. change in directions) that have the same ID are not considered intersecting.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;End nodes (e.g. cul-de-sacs) do not contribute to walkability and should be ignored in street intersection density calculations. Because these nodes have degree 1 (only one edge is incident on them), we can filter them relatively easily after the fact.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;When a network is constructed, nodes are constructed from shared endpoints. However, sometimes, road may overlap and share some interior points resulting in a missing node. Often this is because they are overpasses or underpasses, but sometimes they are mapping errors. To rectify these mapping errors we can use to_spatial_subdivision().&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Roads that continue in the same direction but have different IDs (or names) will often be coded as different roads. However, the intersection of these two roads should be considered a false node. We can eliminate them in two different ways.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;They have degree 2. So we can try and filter them out after the fact. However, there might be instances where degree 2 nodes might be true intersections, such as the intersection at te lower triangle in the example (why?). Exercise caution.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We can apply to_spatial_smooth to remove these pseudonodes. This function iteratively smooths pseudo nodes, and after each removal concatenates the linestring geometries of the two affected edges together into a new, single linestring geometry.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Often we want to simplify the topology of the network, by reducing the complex intersection structures into a single node you might want to reduce such complex intersection structures into a single node, but still maintaining the connectivity of the network.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Some of the key cleaning steps in networks are demonstrated in the &lt;a href=&#34;https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;sfnetwork vigenttes&lt;/a&gt;.
+The following figure illustrates some common issues encountered in the spatial datasets that need to be accounted for.&lt;/p&gt;
+&lt;img src=&#34;img/cleaning_networks.jpg&#34; width=&#34;862&#34; /&gt;
+&lt;h3 id=&#34;conversion-of-spatial-data-to-spatial-network&#34;&gt;Conversion of spatial data to spatial network&lt;/h3&gt;
+&lt;p&gt;We can convert the spatial object to spatial network using &lt;code&gt;as_sfnetwork&lt;/code&gt; function&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_net &amp;lt;- as_sfnetwork(we_foot_lines, directed = FALSE)
+plot(foot_net)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;We can make the nodes less prominent from default settings while visualizing.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(st_geometry(foot_net, &amp;quot;edges&amp;quot;), lwd = 1)
+plot(st_geometry(foot_net, &amp;quot;nodes&amp;quot;), pch = 5, cex = .2, add = TRUE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;768&#34; /&gt;
+Often it is useful to have an interactive map to zoom and pan into the data to understand the different cleaning operations that may be required.
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmap_mode(&amp;quot;view&amp;quot;) # set to interactive mode
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## tmap mode set to interactive viewing
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;m1 &amp;lt;- 
+tm_tiles(&amp;quot;CartoDB.Positron&amp;quot;) +
+  tm_shape(st_as_sf(foot_net, &amp;quot;edges&amp;quot;)) +
+  tm_lines(col = &amp;quot;highway&amp;quot;, palette = &amp;quot;Accent&amp;quot;, colorNA = &amp;quot;red&amp;quot;) +
+  tm_shape(st_as_sf(foot_net, &amp;quot;nodes&amp;quot;)) +
+  tm_dots() +
+  tm_view(set.zoom.limits = c(15,18))
+
+frameWidget(tmap_leaflet(m1))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-11.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h3 id=&#34;removing-multiple-edges-and-loops&#34;&gt;Removing multiple edges and loops&lt;/h3&gt;
+&lt;p&gt;Multiple edges are more than one edges that connect the same two nodes. Loops are edges that connect a point to itself. We can filter them out using off-the-shelf functions. Use caution, this may or may not be desirable.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_simple = foot_net %&amp;gt;%
+  activate(&amp;quot;edges&amp;quot;) %&amp;gt;%
+  arrange(edge_length()) %&amp;gt;%
+  filter(!edge_is_multiple()) %&amp;gt;%
+  filter(!edge_is_loop())
+
+removed_edges &amp;lt;-st_as_sf(foot_net, &amp;quot;edges&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
+  setdiff(st_as_sf(foot_simple, &amp;quot;edges&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
+  st_as_sf()
+
+plot(st_geometry(foot_simple, &amp;quot;edges&amp;quot;), lwd = 1)
+plot(st_geometry(foot_simple, &amp;quot;nodes&amp;quot;), pch = 5, cex = .2, add = TRUE)
+plot(st_geometry(removed_edges), lwd = 1, col =&#39;red&#39;, add =T)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;h3 id=&#34;subdivision--smoothing&#34;&gt;Subdivision &amp;amp; Smoothing&lt;/h3&gt;
+&lt;p&gt;Some edges have interior nodes that are connected to other edges. We need to divide such edges. “to_spatial_subdivision” is the function we use.&lt;/p&gt;
+&lt;p&gt;On the other hand, there will be nodes that only connect two edges. Those nodes are not critical and can be removed. For that we use, “to_spatial smooth.”&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;vcount(foot_simple) # Vertex/Node Count
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 4092
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ecount(foot_simple) # Edge Count
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 2778
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_simple_subdivision &amp;lt;- convert(foot_simple, to_spatial_subdivision)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: to_spatial_subdivision assumes attributes are constant over geometries
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;vcount(foot_simple_subdivision)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 4808
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ecount(foot_simple_subdivision)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 6175
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_simple_smooth &amp;lt;- convert(foot_simple_subdivision, to_spatial_smooth)
+vcount(foot_simple_smooth)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 4171
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ecount(foot_simple_smooth)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 5538
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can see the changes in the number of nodes and edges each cleaning (spatial morphing) operation did. Visualise the removed nodes in the following way.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# We only care about the geometry so we ignore other attributes.
+removed_nodes &amp;lt;-
+  st_as_sf(foot_simple, &amp;quot;nodes&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
+  setdiff(st_as_sf(foot_simple_smooth, &amp;quot;nodes&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
+  st_as_sf()
+
+added_nodes &amp;lt;-  st_as_sf(foot_simple_subdivision, &amp;quot;nodes&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
+  setdiff(st_as_sf(foot_simple, &amp;quot;nodes&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
+  st_as_sf()
+
+
+
+m1 &amp;lt;-
+tm_tiles(&amp;quot;CartoDB.Positron&amp;quot;) +
+  tm_shape(st_as_sf(foot_simple_smooth, &amp;quot;nodes&amp;quot;)) +
+  tm_dots(size = .01)+
+  tm_shape(st_as_sf(foot_simple_smooth, &amp;quot;edges&amp;quot;)) +
+  tm_lines()+
+  tm_shape(removed_nodes)+
+  tm_dots(col = &#39;red&#39;, size = .03, legend.show = T) +
+  tm_shape(added_nodes) +
+  tm_dots(col = &#39;green&#39;, size = .03, legend.show = T) +
+  tm_view(set.zoom.limits = c(15,18))
+
+frameWidget(tmap_leaflet(m1))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-14.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;The examples above present only simple cleaning operations. There will undoubtedly be others. We should look closely for what cleaning operations are required.&lt;/p&gt;
+&lt;h3 id=&#34;disconnected-components&#34;&gt;Disconnected components&lt;/h3&gt;
+&lt;p&gt;One of the problem we can see are isolated sets of nodes and edges that are disconnected from the main network. These are largely because of&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;mapping errors,&lt;/li&gt;
+&lt;li&gt;issues around precision of the coordinates&lt;/li&gt;
+&lt;li&gt;Nodes belonging to roads/links that are not selected in the query (motorways e.g.)&lt;/li&gt;
+&lt;li&gt;other anomalies&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;components(foot_simple_smooth)$no
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 50
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;components(foot_simple_smooth)$csize
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] 4035    4    2    5    2    8    2    2    4    4    2    2    2    2    2
+## [16]    2    2    2    2    2    2    2    2    6    2    2    2    2    2    2
+## [31]    2    4    2    2   11    2    2    2    2    2    2    2    2   10    2
+## [46]    2    2    2    2    2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this network, there are 50 components and first component has most of the nodes (4035). Let’s visualise these disconnected components.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;disconnected_components &amp;lt;- foot_simple_smooth %&amp;gt;%
+  activate(&#39;nodes&#39;)%&amp;gt;%
+  filter(components(foot_simple_smooth)$membership &amp;gt; 1)
+  
+
+m1 &amp;lt;-
+tm_tiles(&amp;quot;CartoDB.Positron&amp;quot;) +
+  tm_shape(st_as_sf(foot_simple_smooth, &#39;edges&#39;)) +
+  tm_lines()+
+  tm_shape(st_as_sf(disconnected_components, &amp;quot;nodes&amp;quot;)) +
+  tm_dots(col = &#39;red&#39;)+
+  tm_shape(st_as_sf(disconnected_components, &amp;quot;edges&amp;quot;)) +
+  tm_lines(col = &#39;red&#39;) +
+  tm_view(set.zoom.limits = c(15,18))
+
+frameWidget(tmap_leaflet(m1))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-16.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;In this particular instance, they are mostly minor and often can be ignored. In other instances, ignoring them would cause analytical difficulties.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_smooth_connected &amp;lt;- foot_simple_smooth %&amp;gt;%
+  activate(&#39;nodes&#39;)%&amp;gt;%
+  filter(components(foot_simple_smooth)$membership == 1)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Instead of ignoring the disconnected components, you can try and snap some of the nodes of the disconnected components to the main network. This might involve finding the closest node/s of the disconnected component to an edge in the main network. You might have to give explicit instructions about which of the nodes are candidates for snapping. (Hint: &lt;a href=&#34;https://stackoverflow.com/questions/51292952/snap-a-point-to-the-closest-point-on-a-line-segment-using-sf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;This post&lt;/a&gt; may be useful.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;simplifying-intersections-by-contracting-nodes&#34;&gt;Simplifying intersections by contracting nodes&lt;/h3&gt;
+&lt;p&gt;Intersections in OpenStreetMap are often represented by a collection of several nodes. For the purposes of a network analysis, treating an intersection as one node is usually sufficient. We do that by contracting nearby nodes that are connected into one node.&lt;/p&gt;
+&lt;p&gt;First, we cluster nearby nodes using the DBSCAN algorithm. We have to choose the right epsilon value that represents the nearness required for nodes to belong to a single cluster. We contracted the nodes that belong to a single cluster using “to_spatial_contracted” function. It is important the the nodes are not only sufficiently near but also connected, checked using tidygraph’s “group_components” function by creating an additional variable.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;node_coords = foot_smooth_connected %&amp;gt;%
+  activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
+  st_coordinates()
+
+#0.004
+clusters = dbscan(node_coords, eps = 0.0001, minPts = 1)$cluster
+
+unique(clusters) %&amp;gt;% 
+  head()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1 2 3 4 5 6
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;clustered = foot_smooth_connected %&amp;gt;%
+  activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
+  mutate(cls = clusters)
+
+clustered = clustered %&amp;gt;%
+  mutate(cmp = group_components())
+
+foot_connected_contracted = convert(
+  clustered,
+  to_spatial_contracted,
+  cls, cmp,
+  simplify = TRUE
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The number of edges and nodes provides a simple sanity check. We do not want the number of nodes to have reduced by a lot unless we have a large number of intersections with redundant nodes.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ecount(foot_connected_contracted)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 3809
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;vcount(foot_connected_contracted)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 2949
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;removed_nodes &amp;lt;-
+  st_as_sf(foot_smooth_connected, &amp;quot;nodes&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
+  setdiff(st_as_sf(foot_connected_contracted, &amp;quot;nodes&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
+  st_as_sf()
+
+added_nodes &amp;lt;- st_as_sf(foot_connected_contracted, &amp;quot;nodes&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
+  setdiff(st_as_sf(foot_smooth_connected, &amp;quot;nodes&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
+  st_as_sf()
+
+m1 &amp;lt;- 
+tm_tiles(&amp;quot;CartoDB.Positron&amp;quot;) +
+  tm_shape(st_as_sf(foot_connected_contracted, &amp;quot;nodes&amp;quot;)) +
+  tm_dots()+
+  tm_shape(st_as_sf(foot_connected_contracted, &amp;quot;edges&amp;quot;)) +
+  tm_lines()+
+  tm_shape(removed_nodes)+
+  tm_dots(col = &#39;red&#39;, size = .01) +
+  tm_shape(added_nodes)+
+  tm_dots(col=&#39;green&#39;, size = .02) +
+  tm_view(set.zoom.limits = c(15,18))
+
+frameWidget(tmap_leaflet(m1))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-19.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Explore the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What does the epsilon value mean? How is it used in the DBSCAN algorithm?&lt;/li&gt;
+&lt;li&gt;Try different epsilon values and see the impact of changes on the network.&lt;/li&gt;
+&lt;li&gt;Identify other potential issues related to cleaning the network by looking closer at different areas in the map and explore how you can address them.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As you may surmised much of this cleaning is an art rather than a precise steps you can follow. As with anything, the analytical choices dictate the final network you will end up with. These choices matter for the analysis of the network, sometimes in small ways and some other times in large ways.&lt;/p&gt;
+&lt;h2 id=&#34;other-resources&#34;&gt;Other Resources&lt;/h2&gt;
+&lt;p&gt;This tutorial borrows heavily from the following resources. You can refer them for more detailed coverage in specific issues discussed here.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://geospatial-community.netlify.app/post/2022-03-31-spatial-networks/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Introduction to tidy spatial networks&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://nkaza.github.io/post/intersection-density-from-osm-using-qgis-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Intersection Density From OSM using QGIS &amp;amp; R&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Network pre-processing and cleaning&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
     </item>
     
     <item>
@@ -28,10 +382,10 @@
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;In other posts, I have shown how to use external servers (google, craigslist etc.) to access information.  You can also query a local (on your computer) server and your R session acts like a client (e.g. browser).&lt;/p&gt;
 &lt;p&gt;We can demonstrate this using (Open Source Routing Machine) OSRM server and constructing Isocrhrones. &lt;a href=&#34;https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Isochrones&lt;/a&gt; are area you can reach from a point within a specified time. Often isochrones are used to identify gaps in the service area boundaries (e.g. 15 min distance from fire stations).&lt;/p&gt;
-&lt;p&gt;We can plot isochornes of every 2 min biking, around some random points in Orange County, NC For this we use the Open Source Routing Library (OSRM), though any other API works as well (e.g. Google, Mapbox etc. &lt;a href=&#34;https://mrakow.wordpress.com/2015/11/30/isochrone-generation-with-the-google-maps-api-using-a-quadtree/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;see this blog&lt;/a&gt; for example.) .&lt;/p&gt;
+&lt;p&gt;We can plot isochornes of every 2 min biking, around some random points in Orange County, NC. While we use OSRM, though any other API works as well (e.g. Google, Mapbox etc. &lt;a href=&#34;https://mrakow.wordpress.com/2015/11/30/isochrone-generation-with-the-google-maps-api-using-a-quadtree/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;see this blog&lt;/a&gt; for example.) . If you want to set other types of local routing engine, &lt;a href=&#34;https://github.com/valhalla/valhalla&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Valhalla&lt;/a&gt; and associated R packages  might be a good option. Use whichever one suits your needs.&lt;/p&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    I am using a OSRM server. There are other option available such as &lt;a href=&#34;https://github.com/valhalla/valhalla&#34;&gt;Valhalla&lt;/a&gt; routing engine and associated R packages. Use whichever one suits your needs.
+    I am using a OSRM server. T
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 id=&#34;setting-up-a-osrm-server&#34;&gt;Setting up a OSRM server&lt;/h2&gt;
@@ -1830,9 +2184,9 @@ for (i in 1:dim(compnames)[1]){
 &lt;p&gt;OSM data is free to download. Overpass can be used free of cost to download small amount of data. For large datasets, use &lt;a href = &#34;https://download.geofabrik.de/&#34;&gt;Geofabrik&lt;/a&gt;. Google requires users to pay based on volume of data served after a limited daily quota. Policies of Google change frequently, so note that your code will eventually and frequently break.&lt;/p&gt;
 &lt;h2 id=&#34;downloading-data&#34;&gt;Downloading data&lt;/h2&gt;
 &lt;p&gt;OSM serves two APIs, namely Main API for editing OSM, and Overpass API for providing OSM data. We will use Overpass API to gather data in this tutorial just like in the &lt;a href=&#34;https://nkaza.github.io/post/intersection-density-from-osm-using-qgis-r/&#34;&gt;tutorial about OSM and QGIS&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Data can be queried for download using a combination of search criteria lke location and type of objects. It helps to understand how OSM data is structured. OSM data is stored as a list of attributes tagged in key - value pairs of geospatial objects (points, lines or polygons). For example, for an architect’s office, the key is “office,” and the value is “architect.” For the name of the office, key is “name” and value is “ABC Design Studio.” Access an extensive list of key-value pairs through &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Map_Features%22%3EMap%20features&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;OSM Wiki&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&#34;obtaining-point-locations-of-restaurants-in-durham-from-osm&#34;&gt;Obtaining point locations of restaurants in Durham from OSM&lt;/h3&gt;
-&lt;p&gt;restaurants are tagged under amenities. Amenities, according to OSM Wiki are facilities used by visitors and residents. Here, ‘key’ is “amenity” and ‘value’ is “restaurant.” Do not forget to look for related amenities such as “pub,” “food court,” “cafe,” “fast food,” etc. Other amenities include: “university,” “music school,” “kindergarten” and the likes in education, “bus station,” “fuel,” “parking” and others in transportation, and much more.&lt;/p&gt;
+&lt;p&gt;Data can be queried for download using a combination of search criteria lke location and type of objects. It helps to understand how OSM data is structured. OSM data is stored as a list of attributes tagged in key - value pairs of geospatial objects (points, lines or polygons). For example, for an architect’s office, the key is “office”, and the value is “architect.” For the name of the office, key is “name” and value is “ABC Design Studio.” Access an extensive list of key-value pairs through &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Map_Features&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;OSM Wiki&lt;/a&gt; Map features.&lt;/p&gt;
+&lt;h2 id=&#34;obtaining-point-locations-of-restaurants-in-durham-from-osm&#34;&gt;Obtaining point locations of restaurants in Durham from OSM&lt;/h2&gt;
+&lt;p&gt;Restaurants are tagged under amenities. Amenities, according to OSM Wiki are facilities used by visitors and residents. Here, ‘key’ is “amenity” and ‘value’ is “restaurant.” Do not forget to look for related amenities such as “pub”, “food court”, “cafe”, “fast food”, etc. Other amenities include: “university”, “music school”, “kindergarten” and the likes in education, “bus station”, “fuel”, “parking” and others in transportation, and much more.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osmdata)
 library(sf)
 library(tidyverse)
@@ -1857,8 +2211,8 @@ frameWidget(m1)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-1.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;It is helpful to learn about the distinctions between different tags (key-value pairs). For example, the key “landuse” is used to describe the purpose for which an area is being used. Examples of values for the key “landuse” are “commercial,” “retail,” “vineyard,” “cemetery,” “religious,” etc. Landuse tags are more generic than amenities and are only used for area objects while amenities can also be used for point objects. In case of any confusion, refer to &lt;a href = &#34; https://wiki.openstreetmap.org/wiki/Map_Features&#34;&gt;Map features&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Various amenities, land-use, roads (e.g. key=“highway,” value = “primary,” “service,” “footway”), natural land features (key=“natural,” value = “grassland”), settlements (key = “place,” value = “suburb”), power (key=“power,” value=“line,” “pole,” “transformer”), etc. may be useful in planning applications.
+&lt;p&gt;It is helpful to learn about the distinctions between different tags (key-value pairs). For example, the key “landuse” is used to describe the purpose for which an area is being used. Examples of values for the key “landuse” are “commercial”, “retail”, “vineyard”, “cemetery”, “religious”, etc. Landuse tags are more generic than amenities and are only used for area objects while amenities can also be used for point objects. In case of any confusion, refer to &lt;a href = &#34; https://wiki.openstreetmap.org/wiki/Map_Features&#34;&gt;Map features&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Various amenities, land-use, roads (e.g. key=“highway”, value = “primary”, “service”, “footway”), natural land features (key=“natural”, value = “grassland”), settlements (key = “place”, value = “suburb”), power (key=“power”, value=“line”, “pole”, “transformer”), etc. may be useful in planning applications.
 &lt;br /&gt;&lt;/p&gt;
 &lt;h2 id=&#34;comparing-with-google-places&#34;&gt;Comparing with Google Places&lt;/h2&gt;
 &lt;p&gt;It is useful to compare the output of OSM to Google Places. I am going to use &lt;code&gt;googleway&lt;/code&gt; package for this analysis.&lt;/p&gt;
@@ -1878,177 +2232,177 @@ str(res)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## List of 4
 ##  $ html_attributions: list()
-##  $ next_page_token  : chr &amp;quot;Aap_uEDz7qvtl081hZODaq6CLvwxXBcWwRyFYT9kOd1wWdfljRo08jW5CEgBVUa2jKQ6Y9AV_oDXpqNk3q2O5wXqxKo3pIagXycsj0LrAwjuhW0&amp;quot;| __truncated__
+##  $ next_page_token  : chr &amp;quot;AfLeUgMGT-mwxcivbE0RqYwAt129UKfk0t72RjKr4882rjVi4LsM5k4ApcVC0veEtDM2AaDtIXm_AwTDvhyNuR7dMA80Cjxs9j18FFjUQOLfgBz&amp;quot;| __truncated__
 ##  $ results          :&#39;data.frame&#39;:   20 obs. of  16 variables:
 ##   ..$ business_status      : chr [1:20] &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; ...
-##   ..$ formatted_address    : chr [1:20] &amp;quot;1200 W Chapel Hill St, Durham, NC 27701, United States&amp;quot; &amp;quot;8128 Renaissance Pkwy #114, Durham, NC 27713, United States&amp;quot; &amp;quot;737 9th St #210, Durham, NC 27705, United States&amp;quot; &amp;quot;2726 Durham-Chapel Hill Blvd, Durham, NC 27707, United States&amp;quot; ...
+##   ..$ formatted_address    : chr [1:20] &amp;quot;737 9th St #210, Durham, NC 27705, United States&amp;quot; &amp;quot;8128 Renaissance Pkwy #114, Durham, NC 27713, United States&amp;quot; &amp;quot;315 E Chapel Hill St, Durham, NC 27701, United States&amp;quot; &amp;quot;1200 W Chapel Hill St, Durham, NC 27701, United States&amp;quot; ...
 ##   ..$ geometry             :&#39;data.frame&#39;:    20 obs. of  2 variables:
 ##   .. ..$ location:&#39;data.frame&#39;:  20 obs. of  2 variables:
-##   .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
-##   .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
+##   .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
 ##   .. ..$ viewport:&#39;data.frame&#39;:  20 obs. of  2 variables:
 ##   .. .. ..$ northeast:&#39;data.frame&#39;:  20 obs. of  2 variables:
-##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
-##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
+##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
 ##   .. .. ..$ southwest:&#39;data.frame&#39;:  20 obs. of  2 variables:
-##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 35.9 ...
-##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.8 ...
+##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
+##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
 ##   ..$ icon                 : chr [1:20] &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; ...
 ##   ..$ icon_background_color: chr [1:20] &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; ...
 ##   ..$ icon_mask_base_uri   : chr [1:20] &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; ...
-##   ..$ name                 : chr [1:20] &amp;quot;GRUB Durham&amp;quot; &amp;quot;Harvest 18 Restaurant&amp;quot; &amp;quot;Juju Durham&amp;quot; &amp;quot;The Refectory Cafe&amp;quot; ...
+##   ..$ name                 : chr [1:20] &amp;quot;Juju Durham&amp;quot; &amp;quot;Harvest 18 Restaurant&amp;quot; &amp;quot;The Restaurant at The Durham&amp;quot; &amp;quot;GRUB Durham&amp;quot; ...
 ##   ..$ opening_hours        :&#39;data.frame&#39;:    20 obs. of  1 variable:
-##   .. ..$ open_now: logi [1:20] TRUE TRUE TRUE TRUE TRUE TRUE ...
+##   .. ..$ open_now: logi [1:20] FALSE FALSE FALSE TRUE FALSE FALSE ...
 ##   ..$ photos               :List of 20
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 2268
+##   .. .. ..$ height           : int 1365
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/116038233183567696806\&amp;quot;&amp;gt;Brian Jordan&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECP5UX9KQ7WeVocbhSWlQslnEf0uROrJE4Dng0KyGb2exx2__uVvEUGsKirBOsbXScQvJuy5CsqMZ98Hami7shazfLc84zec4CeIA1kjW-&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/101715461096256363950\&amp;quot;&amp;gt;Juju Asian Tapas + Bar&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgNgzxuFSzGqNULuskoX1J1eSYN1MoW3YEQ9c7PkXcg4qWXatHFQ4Rb5cwIQr7l-ga-4lijhr69kK6U63LVpoR7ba-XZ9zzumHPUSoZkE4V&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 2048
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 2340
 ##   .. .. ..$ html_attributions:List of 1
 ##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114770559454901883104\&amp;quot;&amp;gt;Mike Little&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECKt-0GQaxOb0rpHD0nS8RKfd5VbODehsr7W8N2dz2aWPAgII1OkvXNCgC8CWdVG-g-_ti5TsLcKWx3j9QwY_MyVLsKPr6p1GSHwVCkwo8&amp;quot;| __truncated__
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPPIA99W25syCwvvcQYxFUrut0bFaPBZl5jprnhTIRyGdcr0QDfzDOikz4Hp1Cjhg7k7E4iYQCGFWk2-uZgbns_csK-P3xcrxnZebT2q70&amp;quot;| __truncated__
 ##   .. .. ..$ width            : int 4160
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1365
+##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/101715461096256363950\&amp;quot;&amp;gt;Juju Durham&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAYdiayaQSGfOM58qXm1dIXv7m3cOQCG2S8g3ZsjFwQdZRMqQT0W94ayBBy8afJ8dVz_IUCWNph8ppyRf8Xf3KTrwR3J-sB1nawF3_zZ0r&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 2048
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1960
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115200244530553280646\&amp;quot;&amp;gt;Jesse Locklear&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEB-wKDoxQW-RyDVTQSdopDIk344z0o5sgIbtZBucTYM3BKM2ryRtgblSFWlL_0II01PC2tFeTgKdyIYGxhU7ZFJ7DFwECywiyUVrrPViKk&amp;quot;| __truncated__
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/103711833847435042805\&amp;quot;&amp;gt;Erik Newby&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgMcxBgjOJDODXoQaFqHrMF-yY6eEKkRn-LhM076R41KFhumuBtiv8zjuw6yXHBfaAL_APZqjefYigLmDkpicqiayu7HvtmYc7Be8rFFYY3&amp;quot;| __truncated__
 ##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3840
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/110406871396037806571\&amp;quot;&amp;gt;Chris Florio&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAySlpbP3OV-3gRjPByIfelIdEepFXEyLMbxO2LdUHKD8XrDhjmlY3eqZnH_5wHIWb5NM1Rs--hnd3X37XVT8pQ-gNHmXhBP39vCRu4-23&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 5760
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 759
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/112182744125527300635\&amp;quot;&amp;gt;A Google User&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEALryxfVAI0q2U0Q9ikNLSVsZSYvLn_xyGRGXj_KIN-mAI9_cDiEM0SyqYgb6u6VmwVPaYlLE1E2gBczk8UCk41n7ggk9R9PQGRPRnPzGj&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 1140
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/113029887293590173135\&amp;quot;&amp;gt;Kevin Primus&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAeKSKeiM23rD8lzKS5Xhll9qcb0ErySI4rTepVuHnGGXT5ahp_5sMDMwvBobZj7TFl0dtkkLHkWh-XwHIOAkUsF_324kXtSRi07IzjeKg&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 3024
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114870547795315215397\&amp;quot;&amp;gt;James Goerke&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPMD9yIH36j5iqlrH_muls2Z3d76MRXuGriZKTcRB45kzgYghXWPiiOqgiss4XovnhvEzrA1SsrkGaL2AmkuYgu5d3wlmKaXTY3p5ZF2pF&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3072
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/106155315629813478210\&amp;quot;&amp;gt;John Vinueza&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPxyiChtj0yxR6NMCSAyHyP1C0v-aw7ROgHBa4XqABXYj2euzeR9vsXSNckahZHOuk42N6U47k5-8NDCzRTqF_14y_jR1Xr8zCnfHDskpe&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4080
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1280
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/108889804668316321834\&amp;quot;&amp;gt;Local 22 Kitchen And Bar&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPZqAgMiH1Cj_5Ml-pqlh2Bpa7eRf7hWYaC-sjNAW-qyMHYP7KBHOvmHEcOuHALI8EM5zteRzzzbD_2HuVK4rbkhJuPdPEjxhS1aJlw55w&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 1920
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2268
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/116309041934196405059\&amp;quot;&amp;gt;Vishwanath Math&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgNDxdslnjs0TSAfW8xZ2G6yKznysWRwifnJ_M1O-fFl1wO-dxca1PJE50xJkk5Z9oZt42GWr5zmEuSdC218K6_TWf9RkPjQSj6YCzH6tsm&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114073771529466701161\&amp;quot;&amp;gt;Charles Jolley&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECJhHC0LI7Hzo-JqBGvRfBCIHsz1dptvFqGgLEm-mW0FFxYq9rFWWAGkeR7hrnt0Bni2pU0A7PzJBHschKbyYew8_A2qSPzAivmioPIWlh&amp;quot;| __truncated__
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/108963259167865212631\&amp;quot;&amp;gt;BRIAN MASSENGILL&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgMRLSDmOeN5XmRRLtenMPy7mdfSlyxTX0wgvoI0cshqMcaYS0M3_kNYu5dL_5TIAb7zvhVmgnX27K-u2NdncbLJG5flZFm181NU0a3ZI8p&amp;quot;| __truncated__
 ##   .. .. ..$ width            : int 4032
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3465
+##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114657080188950072058\&amp;quot;&amp;gt;Firebirds Wood Fired Grill&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECRp0ZTIgg97N_k52LNL0aoAXAXBIw7tdrr3AsMRO1hcAhiVFOW8sGYgE-HwWAEyXJ4KZXX_dVboVOWTO-H9hHoOAMzoGx-jzymPmam31u&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 5202
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/117366860799003538591\&amp;quot;&amp;gt;A Google User&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgP_hRNFFXZGdI75PiKIxqXFXTlY8__rykRZ2aKHSlWuA_DchjC8tU63cdRXxX5ips1oiVWQCriruFHmM-E4tPxiqAPkbrQDce_fTmnqzIe&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/109300032866188423940\&amp;quot;&amp;gt;Zach Brown&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgOICZG0j3Pyh1V3uJ5kUgcFhu46mfHDQMIf-L5r4Ytv-SAm1qGlBt447IByIr57j6szD56-G-nOrs5ZDEsOjHoFdDRfZF6eRcJXtF5-XKk&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1067
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/118359313798311826267\&amp;quot;&amp;gt;A Google User&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPASPTIaPmGSxahYbOEgFAaqXrAQHPgGzIX7KIkDKv-SfOwbY4bfoRTtQtWoNnnSLiVZa8Qr3Yy31h3Sx3OYBmjpP-HVfHJ24ZPcZS3WYI&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 1600
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3072
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114917363150643087487\&amp;quot;&amp;gt;David Foresman&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgOX4w-TgQ7Gg5xc8iDY4haqOyxq1zvU5b9o2NifriF-Op-xL6HJC9exho2T8vHFG7gUnEWwxOjxfDS5NRqlOlX-rY9VbYsKdbfqojsZL2e&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4080
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3024
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/102066483967244766103\&amp;quot;&amp;gt;Marv Baker&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgMEL1DvyfjMEr3FDGmvbs2tG1txo65kjR2e6GSxoTLzHwpJfdB0wzi0kO_5MDOdc2QAF7y7CGppjXZZoshDMiUv0tK3lg8pmaGDKNUcKRG&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
 ##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115591303687864814152\&amp;quot;&amp;gt;warada shafi&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEDMfPwEX43OuAigWC7kBbdtXW0WgEIXr9e6mzChxXdRIMwb4j_X87ubRLQnp4H0ASOm9MMoGNFVq6QR71rUNNqb3t9I3lLF4ltyskIi7sM&amp;quot;| __truncated__
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPEm3Ny2re6YXG2yFmGZ9-VZtedKU6Pdja1s4WeeTeVYhooI5jOBgqwHbSwXA5HzHNSZ-3jpdt316T1UV3AP0WQItKaRCznhzFSW07u4Nz&amp;quot;| __truncated__
 ##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 3072
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/117939330467348488790\&amp;quot;&amp;gt;protonoid&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgM-f9F0veS1XgpyjuG-sk9lHguYnn-JzHApG7mHDoUKLIGv-rPaExIxvP9ngcWfdRhpcF1f4CbgqAWhDON_eojLkkMfrn__jsM3Iqm3xgU&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4080
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 1512
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/116117583444734059617\&amp;quot;&amp;gt;Mothers &amp;amp;amp; Sons Trattoria&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgNGmqVkzlzONPHWuqhkBpc9GQRuedQTY7w8lRBBcNrhkK6wjySsTUe4trkk3KPboWvwUpRGdV0KYc3biGRmuUU5TSIz5X9TREJr0Scail5&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 2016
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 2721
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/108832116470362120552\&amp;quot;&amp;gt;Kimberly Slentz-Kesler&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPi22ZdFw8D5q7HgP-evVd5fvUuh_ry12PsACZ5J_7-qLHNEiLeUCuHQpAsM-Vqz1vtSjdpHnOOX0L9bxG9iMZROZGtD6LQK2Q9Sdd6-lE&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 4032
+##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
+##   .. .. ..$ height           : int 4032
+##   .. .. ..$ html_attributions:List of 1
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/100123088912788695638\&amp;quot;&amp;gt;Chris Schwarz&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgNQN_h2cGNl6t3S6GBSgmI7d2CBOBHD8kRDRhBs_iJ8eSNQtf9J1nhGzr33VJhXDMCowe-xhy4-INZqzAQAnBkGiTAo31nQqmb0nnSJeph&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 3024
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3264
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/110287574629885866131\&amp;quot;&amp;gt;ggle screwedup&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAX28RS26E44Q27nb9-xRteL5a7BCe5nx8Fc2spEj6f2qXMysh2bcJUwsIOfrwRXKm6DRg_SUxg87Yjr4nStJauifLJo-abrnPlGtkmbUt&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4928
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115121000442582864884\&amp;quot;&amp;gt;Rachael Lord&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgP6NoILAb1ve9q3phRmvXuygx6Lno87WupJQq63RxjGl2QvzKWygM-IiyM3_ve-KCx6Bt6RaRSLCcn_iJNa5HvCbPNoUjQaHwpFlIkJytG&amp;quot;| __truncated__
+##   .. .. ..$ width            : int 2448
 ##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
 ##   .. .. ..$ height           : int 3024
 ##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/102661117264282773668\&amp;quot;&amp;gt;Marianne Germann&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEDoSL8nJXaelIfGwhicCJz2KXn737YE8OROc0x9b0eXi_fu9NyH4UTsyt7xlsM4ZT80V-BOH7FCDXdNzrKGDKd8jJuE73mqRSKUR4uRAFN&amp;quot;| __truncated__
+##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114464732617145277475\&amp;quot;&amp;gt;Mauro Jeronimo Mendoza&amp;lt;/a&amp;gt;&amp;quot;
+##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgMGjK4hHrxBdRwAT6gKHVWZ7wpuFh0TV2hJ80R0JJMBx3ZmkkM6fOHze0Ry7f1tjgxkKzuFufnxrSO9UqgOT0VPmpu6FLAprlIKn4H8fCT&amp;quot;| __truncated__
 ##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/101822245344530912517\&amp;quot;&amp;gt;A Google User&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEDkXqjRlNKK81MifgMHVi0o1Ox-473hjjsN2WkOyOH2NR3av3CpNG47Sf9phd-3MkiWRgiCbahz6tPIRkZDSucNcZvXXVrwRjY8Lpw2DXn&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/118299821446006535378\&amp;quot;&amp;gt;Jonathan Herbin&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAxqP65t4QWw1dRaxqXI5birKrgwQ7gTLRaQ8f9Fgc_32JrUUHGW7ZeS10UG_GtC67NNRoGVfULLaFm8L1Sq3FFjQILCKRau9TNGZzeX0b&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115630244379686871545\&amp;quot;&amp;gt;David Martinak&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEDLnIMNjBlFMZk9WGAUvqJ5sESpaLuW5d-Yf4tojNBkPF4rZuDSxvGxvtef354X6lZMn9jf3p1bFK9p6FBH2p72g2g3lIaai-Pip-UajfL&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 4032
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/112811475890442238108\&amp;quot;&amp;gt;Al Betts&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uECFyvefFwkTzGccf4SUssGNF28MqawJT9S18vXN5Fxj0Thkdjbu7qfISyWrLDMN777mo_qIEncxvhq28hppBb9kibRDpeKe4Ag0Ldpt83b&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 3024
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115712679935541822299\&amp;quot;&amp;gt;Melody Kuroda&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEAN3HSkKRyn55cm8NZxoa8uFe8RUOrtd1dCLxJHiBT7H0xGvjrkTIVoq_eHtTa5GOvR4U8foc3DCvbvXKOCGqxxfBhaeVaKweRhiOH4iun&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1440
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/107563912532869932686\&amp;quot;&amp;gt;Bethany Elai.&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEABMhL-3pxp1wQerpvvCdkmo_IH6zfotxUeltqEm5694SfVtjvdJb-GfxVfzNF3NrDZgcmdx6rjptGbNG5wVg0DCV8nEZhpvehaNrQ4Lj6&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 2560
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1659
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115728368975913921650\&amp;quot;&amp;gt;Natasha Johnson&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uEBJh3NVA3ztYj1tZmcWO_M5gd6c0kfwOCwZZWZJVNmmJjaItvGML5ZI7xECuA_D9i_POJ6lHS_C8AOlo1a09h5LmgR2ScvgFwkhsa7t_AH&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 2500
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 4032
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/105297074549593408929\&amp;quot;&amp;gt;Toast&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;Aap_uED9Cfgb3MaAEs8Lf-gLhbdwDs8u5_NqAx10z__4WxwaUNHx5yypjHegHD470dGvWnJo_E7WZECgioqBtSrdNKq2K9Eb8uANh7DoWQmeWYY&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 3024
-##   ..$ place_id             : chr [1:20] &amp;quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&amp;quot; &amp;quot;ChIJj6foxurorIkRhlH7GB_PMo0&amp;quot; &amp;quot;ChIJ608CRgfkrIkRzaPpHby3GS4&amp;quot; &amp;quot;ChIJHVocmIPmrIkRsVAlSGbptok&amp;quot; ...
+##   ..$ place_id             : chr [1:20] &amp;quot;ChIJ608CRgfkrIkRzaPpHby3GS4&amp;quot; &amp;quot;ChIJj6foxurorIkRhlH7GB_PMo0&amp;quot; &amp;quot;ChIJNR4KG3LkrIkR2G7VfaFtyWw&amp;quot; &amp;quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&amp;quot; ...
 ##   ..$ plus_code            :&#39;data.frame&#39;:    20 obs. of  2 variables:
-##   .. ..$ compound_code: chr [1:20] &amp;quot;X3WJ+QW Durham, North Carolina&amp;quot; &amp;quot;W23W+8Q Durham, North Carolina&amp;quot; &amp;quot;235H+W2 Durham, North Carolina&amp;quot; &amp;quot;X3F8+QQ Durham, North Carolina&amp;quot; ...
-##   .. ..$ global_code  : chr [1:20] &amp;quot;8773X3WJ+QW&amp;quot; &amp;quot;8773W23W+8Q&amp;quot; &amp;quot;8783235H+W2&amp;quot; &amp;quot;8773X3F8+QQ&amp;quot; ...
-##   ..$ price_level          : int [1:20] 2 2 3 2 2 2 2 2 2 2 ...
-##   ..$ rating               : num [1:20] 4.5 4.4 4.5 4.4 4.4 4.2 4.5 4.4 4.3 4.3 ...
-##   ..$ reference            : chr [1:20] &amp;quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&amp;quot; &amp;quot;ChIJj6foxurorIkRhlH7GB_PMo0&amp;quot; &amp;quot;ChIJ608CRgfkrIkRzaPpHby3GS4&amp;quot; &amp;quot;ChIJHVocmIPmrIkRsVAlSGbptok&amp;quot; ...
+##   .. ..$ compound_code: chr [1:20] &amp;quot;235H+W2 Durham, North Carolina&amp;quot; &amp;quot;W23W+8Q Durham, North Carolina&amp;quot; &amp;quot;X3WX+VJ Durham, North Carolina&amp;quot; &amp;quot;X3WJ+QW Durham, North Carolina&amp;quot; ...
+##   .. ..$ global_code  : chr [1:20] &amp;quot;8783235H+W2&amp;quot; &amp;quot;8773W23W+8Q&amp;quot; &amp;quot;8773X3WX+VJ&amp;quot; &amp;quot;8773X3WJ+QW&amp;quot; ...
+##   ..$ price_level          : int [1:20] 3 2 2 2 NA 2 2 3 2 2 ...
+##   ..$ rating               : num [1:20] 4.5 4.3 4.3 4.4 4.7 4.5 4.4 4.5 4.4 4.6 ...
+##   ..$ reference            : chr [1:20] &amp;quot;ChIJ608CRgfkrIkRzaPpHby3GS4&amp;quot; &amp;quot;ChIJj6foxurorIkRhlH7GB_PMo0&amp;quot; &amp;quot;ChIJNR4KG3LkrIkR2G7VfaFtyWw&amp;quot; &amp;quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&amp;quot; ...
 ##   ..$ types                :List of 20
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
 ##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
 ##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:5] &amp;quot;restaurant&amp;quot; &amp;quot;bar&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
 ##   .. ..$ : chr [1:6] &amp;quot;restaurant&amp;quot; &amp;quot;cafe&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:7] &amp;quot;bakery&amp;quot; &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; ...
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
 ##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
 ##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
 ##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
 ##   .. ..$ : chr [1:5] &amp;quot;restaurant&amp;quot; &amp;quot;bar&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
 ##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
 ##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
 ##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
 ##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
 ##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   ..$ user_ratings_total   : int [1:20] 1550 966 774 891 1566 901 1062 1608 1388 1684 ...
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
+##   ..$ user_ratings_total   : int [1:20] 941 1053 116 1748 179 797 1095 505 607 240 ...
 ##  $ status           : chr &amp;quot;OK&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Notice that the result has Status code and next page token. We are going to use them to extract the restaurants.
@@ -2119,7 +2473,7 @@ frameWidget(m1)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-2.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;Note that OSM report 958 entries while Google reports 20 restaurants.&lt;/p&gt;
+&lt;p&gt;Note that OSM report 894 entries while Google reports 20 restaurants.&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -2128,9 +2482,9 @@ frameWidget(m1)
 &lt;li&gt;Notice that repeated application of the same query produce different results in in the same system. Why? What implication does this have for reproducibility?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
-&lt;p&gt;The povenance of the data and the continual update of data on servers have serious implications for reproducibility. On the other hand, the updates allow for timeliness of analysis. It is important to recognise the limitations and potential.&lt;/p&gt;
-&lt;h1 id=&#34;acknowledgements&#34;&gt;Acknowledgements&lt;/h1&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;The provenance of the data and the continual update of data on servers have serious implications for reproducibility. On the other hand, the updates allow for timeliness of analysis. It is important to recognise these limitations and potential.&lt;/p&gt;
+&lt;h2 id=&#34;acknowledgements&#34;&gt;Acknowledgements&lt;/h2&gt;
 &lt;p&gt;Much of the post is written by &lt;a href=&#34;https://planning.unc.edu/student/kshitiz-khanal-2/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kshitiz Khanal&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
@@ -2556,7 +2910,6 @@ frameWidget(m1)
       <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/</guid>
       <description>
-&lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
@@ -2565,11 +2918,11 @@ frameWidget(m1)
 
 &lt;div id=&#34;TOC&#34;&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#extent-shape-adjustment&#34;&gt;Extent Shape Adjustment&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#urban-compactness-scores-redux&#34;&gt;Urban Compactness Scores Redux&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#significant-changes-in-the-compactness-score&#34;&gt;Significant changes in the compactness score&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34; id=&#34;toc-introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#extent-shape-adjustment&#34; id=&#34;toc-extent-shape-adjustment&#34;&gt;Extent Shape Adjustment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#urban-compactness-scores-redux&#34; id=&#34;toc-urban-compactness-scores-redux&#34;&gt;Urban Compactness Scores Redux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#significant-changes-in-the-compactness-score&#34; id=&#34;toc-significant-changes-in-the-compactness-score&#34;&gt;Significant changes in the compactness score&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusions&#34; id=&#34;toc-conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 
@@ -2577,7 +2930,7 @@ frameWidget(m1)
 &lt;h1&gt;Introduction&lt;/h1&gt;
 &lt;p&gt;&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    &lt;p&gt;An updated method is published in&lt;/p&gt;&lt;/p&gt;
+    &lt;p&gt;An updated method is &lt;a href=&#34;https://nkaza.github.io/publication/kaza-2019-ab&#34;&gt;published&lt;/a&gt; in&lt;/p&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Kaza, N. Landscape shape adjusted compactness index for urban areas. GeoJournal (2020). &lt;a href=&#34;https://doi-org./10.1007/s10708-020-10262-9&#34; class=&#34;uri&#34;&gt;https://doi-org./10.1007/s10708-020-10262-9&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -2586,7 +2939,7 @@ frameWidget(m1)
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;/p&gt;
-&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/2019-04-24-a-new-compactness-index-for-urban-patterns/a-new-compactness-index-for-urban-patterns/&#34;&gt;earlier post&lt;/a&gt;, I demonstrated some of the problems associated with the Index of Moment of Inertia to characterise the compactness of urban form. One of the chief problems is related to the shape of the unit of analysis. In our case, it is the County. If the shape of the county is elongated, urban areas within these counties have conform to this shape. Because moment of inertia is calculated with respect to the circle, these areas are `unfairly’ penalised.&lt;/p&gt;
+&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/a-new-compactness-index-for-urban-patterns/&#34;&gt;earlier post&lt;/a&gt;, I demonstrated some of the problems associated with the Index of Moment of Inertia to characterise the compactness of urban form. One of the chief problems is related to the shape of the unit of analysis. In our case, it is the County. If the shape of the county is elongated, urban areas within these counties have conform to this shape. Because moment of inertia is calculated with respect to the circle, these areas are `unfairly’ penalised.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;
 &lt;img src=&#34;img/threecounties.png&#34; alt=&#34;&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;Illustration of the effect of landscape shape on IMI. County boundaries are in red, while black represents urban areas&lt;/p&gt;
@@ -5315,11 +5668,12 @@ grid.arrange(g1,g2, ncol=2)
 &lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
 &lt;p&gt;This requires &lt;a href=&#34;http://r-project.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt;, and many libraries including &lt;a href=&#34;https://cran.r-project.org/web/packages/igraph/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;igraph&lt;/a&gt;,&lt;a href=&#34;https://cran.r-project.org/web/packages/spdep/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;spdep&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/web/packages/rgdal&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;rgdal&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/package=tigris&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tigris&lt;/a&gt; &lt;a href=&#34;https://cran.r-project.org/package=locfit&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;locfit&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/package=leaflet&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;leaflet&lt;/a&gt;. You should install them, as necessary, with &lt;code&gt;install.packages()&lt;/code&gt; command.&lt;/p&gt;
 &lt;p&gt;Most of the methods and results are discussed in &lt;a href=&#34;https://nkaza.github.io/publication/kazaedq/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Hartley, Kaza &amp;amp; Lester (2016)&lt;/a&gt; and &lt;a href=&#34;https://nkaza.github.io/publication/lesterkazamcadam2018&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Lester, Kaza &amp;amp; McAdam (in review)&lt;/a&gt;. Please refer to those articles.&lt;/p&gt;
-&lt;h1 id=&#34;additional-resources&#34;&gt;Additional resources&lt;/h1&gt;
+&lt;h2 id=&#34;additional-resources&#34;&gt;Additional resources&lt;/h2&gt;
 &lt;p&gt;I strongly recommend that you read through some of the tutorials on using &lt;a href=&#34;http://www.nickeubank.com/gis-in-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R for GIS&lt;/a&gt;. You should have &lt;a href=&#34;http://www.asdar-book.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Applied Spatial Data Analysis in R&lt;/a&gt; by Bivand et.al in your library.&lt;/p&gt;
 &lt;h2 id=&#34;acquire-data&#34;&gt;Acquire data&lt;/h2&gt;
 &lt;p&gt;The data I will use in this exercise will be downloaded directly from Census. For this work, we will use the Work Area Characteristics files from Local Origin Destination Employment Statistics (LODES). &lt;a href=&#34;https://lehd.ces.census.gov/data/lodes/LODES7/LODESTechDoc7.3.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;LODES&lt;/a&gt; is a synthetic data set that provides, if not spatially accurate, distributionally consistent annual employment information as well as commuting information. We will restrict our attention to the Kentucky. Let’s download and set up the data.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(data.table)
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+library(data.table)
 library(rgdal)
 library(spdep)
 library(rgeos)
@@ -5327,6 +5681,7 @@ library(igraph)
 library(ggplot2)
 library(tigris)
 library(tidyverse)
+library(sf)
 
 state &amp;lt;- &amp;quot;ky&amp;quot;
 baseurl &amp;lt;- &#39;http://lehd.ces.census.gov/data/lodes/LODES7/&#39;
@@ -5371,7 +5726,8 @@ summary(wac_file_tr$C000)
 &lt;img src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;
 The bottom 50% of the tracts only contribute to less than 10% of the total employment, while the top 10% of the tracts contribute to more than 45% of employment. About 11% of tracts have less than 100 jobs. This shows that jobs are pretty well concentrated in particular centers.
 &lt;p&gt;We can visualise the spatial distribution of jobs. We already used &lt;code&gt;tigris&lt;/code&gt; to download and load the polygons, and &lt;code&gt;leaflet&lt;/code&gt; to visualise the information. Tigris is a convenience package that automatically downloads TIGER files from Census for particular geography. Visualising complicated geography is problematic, so we will use a polygon simplifier &lt;a href=&#34;https://bost.ocks.org/mike/simplify/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Visvasalingam algorithm&lt;/a&gt; to simplify the boundaries. As long as the topology is preserved, we don’t loose much for this analysis.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;##Simplify shape for display and analysis. As long as the topology is preserved, complicated boundaries are not necessary for this purpose.
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+##Simplify shape for display and analysis. As long as the topology is preserved, complicated boundaries are not necessary for this purpose.
 library(rmapshaper)
 ky_tr_simple &amp;lt;- rmapshaper::ms_simplify(ky_tr)
 c(object.size(ky_tr), object.size(ky_tr_simple))
@@ -5392,6 +5748,8 @@ ky_tr_simple$empdens &amp;lt;- ky_tr_simple$C000/(ky_tr_simple$ALAND10) * 10^4 #
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(leaflet)
+
+ky_tr_simple &amp;lt;- ky_tr_simple %&amp;gt;% sf::st_transform(4326)
 
 m &amp;lt;-  leaflet(ky_tr_simple) %&amp;gt;%
   addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;,
@@ -5427,7 +5785,7 @@ m2 &amp;lt;- m %&amp;gt;%
    addLegend(&amp;quot;topleft&amp;quot;, pal = Qpal, values = ~C000,
              labFormat = function(type, cuts, p) {
                n = length(cuts) 
-             paste0(prettyNum(cuts[-n], digits=0, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=0, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+             paste0(prettyNum(cuts[-n], digits=1, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=1, big.mark=&amp;quot;,&amp;quot;, scientific=F))
              },
              title = &amp;quot;Number of Jobs&amp;quot;,
              opacity = 1
@@ -5443,7 +5801,8 @@ frameWidget(m2)
 &lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-6.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;p&gt;The problem with choropleth maps is that large spatial areas visually draw attention and skew the perception of the map. See for example, the small tracts in Louisville compared to rural tracts around Bradstown. One way to deal with this issue, is to intensify the color of smaller tracts by normalising employment with some variable (area or per capita) to visualise the spatial distribution better. Sometimes, it is also better to ignore the boundaries. It does not get solve the problem completely.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;Qpal &amp;lt;- colorQuantile(
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+Qpal &amp;lt;- colorQuantile(
   palette = &amp;quot;BuPu&amp;quot;, n = 5,
   domain = ky_tr_simple$empdens
 )
@@ -5563,11 +5922,11 @@ ky_tr_simple$empcenter &amp;lt;- temp$subobs
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_empc_tr &amp;lt;- ky_tr_simple[ky_tr_simple$empcenter==1,]
 
 g &amp;lt;- ky_empc_tr %&amp;gt;% as(&amp;quot;Spatial&amp;quot;) %&amp;gt;%
-  poly2nb(queen=T, row.names=ky_empc_tr$GEOID10) %&amp;gt;%
-  nb2mat(zero.policy=TRUE, style=&amp;quot;B&amp;quot;) %&amp;gt;%
-  graph.adjacency(mode=&#39;undirected&#39;, add.rownames=&amp;quot;NULL&amp;quot;)
+  spdep::poly2nb(queen=T, row.names=ky_empc_tr$GEOID10) %&amp;gt;%
+  spdep::nb2mat(zero.policy=TRUE, style=&amp;quot;B&amp;quot;) %&amp;gt;%
+  igraph::graph_from_adjacency_matrix(mode=&#39;undirected&#39;, add.rownames=&amp;quot;NULL&amp;quot;)
 
-ky_empc_tr$clustermember &amp;lt;- paste0(&amp;quot;C&amp;quot;,clusters(g)$membership)
+ky_empc_tr$clustermember &amp;lt;- paste0(&amp;quot;C&amp;quot;,igraph::components(g)$membership)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Dissolving polygons is a breeze due to &lt;code&gt;sf&lt;/code&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_empc_pt &amp;lt;- 
