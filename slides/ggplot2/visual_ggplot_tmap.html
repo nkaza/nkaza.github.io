@@ -384,6 +384,18 @@
       margin-right: 0; 
     }
   </style>
+  <script src="visual_ggplot_tmap_files/libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+  <script src="visual_ggplot_tmap_files/libs/jquery-1.12.4/jquery.min.js"></script>
+  <link href="visual_ggplot_tmap_files/libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+  <script src="visual_ggplot_tmap_files/libs/leaflet-1.3.1/leaflet.js"></script>
+  <link href="visual_ggplot_tmap_files/libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+  <script src="visual_ggplot_tmap_files/libs/proj4-2.6.2/proj4.min.js"></script>
+  <script src="visual_ggplot_tmap_files/libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+  <link href="visual_ggplot_tmap_files/libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+  <script src="visual_ggplot_tmap_files/libs/leaflet-binding-2.1.2/leaflet.js"></script>
+  <script src="visual_ggplot_tmap_files/libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+  <script src="visual_ggplot_tmap_files/libs/leaflet-providers-plugin-2.1.2/leaflet-providers-plugin.js"></script>
+  <script src="visual_ggplot_tmap_files/libs/Leaflet.Sync-0.0.5/L.Map.Sync.js"></script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -415,10 +427,149 @@ Nihil Kaza
 </section>
 <section id="todays-plan" class="slide level2">
 <h2>Today’s plan</h2>
+<ul>
+<li>Visualisation principles</li>
+<li>Grammar of graphics</li>
+<li>Visualisation with ggplot</li>
+<li>Advanced techniques</li>
+</ul>
 </section>
-<section class="slide level2">
+<section>
+<section id="visualisation-principles" class="title-slide slide level1 center">
+<h1>Visualisation Principles</h1>
 
 </section>
+<section id="focus-attention-by-highlighting" class="slide level2">
+<h2>Focus attention by highlighting</h2>
+
+<img data-src="imgs/highlight.png" class="r-stretch quarto-figure-center"></section>
+<section id="focus-attention-by-stripping" class="slide level2">
+<h2>Focus attention by stripping</h2>
+
+<img data-src="imgs/energy_demand_forecast_1.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>Source: Zan Armstrong (2021) @ Observable</p>
+</div>
+</section>
+<section id="order-matters" class="slide level2">
+<h2>Order matters</h2>
+
+<img data-src="imgs/ordermatters.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>Source: Zan Armstrong (2021) @ Observable</p>
+</div>
+</section>
+<section id="avoid-legends" class="slide level2">
+<h2>Avoid legends</h2>
+<p>Legends rely on visual association, which is hard.</p>
+
+<img data-src="imgs/line_nolegend.png" width="363" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>Source: https://headwaterseconomics.org/dataviz/west-wide-atlas/</p>
+</div>
+</section>
+<section id="channels---data" class="slide level2">
+<h2>Channels - Data</h2>
+
+<img data-src="imgs/channels_rankings.jpg" width="800" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>Source: Munzer (2014)</p>
+</div>
+</section>
+<section id="small-multiples" class="slide level2">
+<h2>Small multiples</h2>
+
+<img data-src="imgs/small_multiples_1.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>Source: Wilke (2019)</p>
+</div>
+</section>
+<section id="compound-figures" class="slide level2">
+<h2>Compound figures</h2>
+
+<img data-src="imgs/onda_1.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>Source: Onda et. al (2020)</p>
+</div>
+</section>
+<section id="spatial-is-not-special" class="slide level2">
+<h2>Spatial is not special</h2>
+
+<img data-src="imgs/us_hexbin.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>This map shows approximately 3,000 locations of Walmart stores. The hexagon area represents the number of stores in the vicinity, while the color represents the median age of these stores. Older stores are red, and newer stores are blue <br> Source: Mike Bostock @ Observable https://observablehq.com/<span class="citation" data-cites="d3/hexbin-map">@d3/hexbin-map</span></p>
+</div>
+</section>
+<section id="accuracy-is-overrated" class="slide level2">
+<h2>Accuracy is overrated</h2>
+
+<img data-src="imgs/projections.png" width="435" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>Source: Deetz and Adams (1921)</p>
+</div>
+</section>
+<section id="precision-even-more-so" class="slide level2">
+<h2>Precision even more so!</h2>
+
+<img data-src="imgs/graph-with-columns-4.png" width="263" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
+<p>Source: Few (2017) https://www.perceptualedge.com/blog/?p=2596</p>
+</div>
+</section>
+<section id="resources" class="slide level2">
+<h2>Resources</h2>
+<div class="quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 48.9%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/wilke_cover.png" width="431"></p>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 51.1%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/healey_dv-cover-pupress.jpg" width="451"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="resources-1" class="slide level2">
+<h2>Resources</h2>
+<div class="quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 49.3%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/SMTN_2nd_ed_Cover.jpg" width="436"></p>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.7%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/tufte.png" width="448"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="resources-2" class="slide level2">
+<h2>Resources</h2>
+<div class="quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 53.4%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/brewer_Cover.jpg" width="427"></p>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 46.6%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="imgs/liewithmaps.jpg" width="373"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section></section>
 <section>
 <section id="grammar-of-graphics" class="title-slide slide level1 center">
 <h1>Grammar of Graphics</h1>
@@ -454,78 +605,8 @@ Nihil Kaza
 <li>shape</li>
 <li>area</li>
 <li>angle</li>
-<li>color</li>
+<li>colour</li>
 </ul>
-</section></section>
-<section>
-<section id="visualisation-principles" class="title-slide slide level1 center">
-<h1>Visualisation Principles</h1>
-
-</section>
-<section id="focus-attention-by-highlighting" class="slide level2">
-<h2>Focus attention by highlighting</h2>
-
-<img data-src="imgs/highlight.png" class="r-stretch quarto-figure-center"></section>
-<section id="focus-attention-by-stripping" class="slide level2">
-<h2>Focus attention by stripping</h2>
-
-<img data-src="imgs/energy_demand_forecast_1.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
-<p>Source: Zan Armstrong (2021) @ Observable</p>
-</div>
-</section>
-<section id="order-matters" class="slide level2">
-<h2>Order matters</h2>
-
-<img data-src="imgs/ordermatters.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
-<p>Source: Zan Armstrong (2021) @ Observable</p>
-</div>
-</section>
-<section id="avoid-legends" class="slide level2">
-<h2>Avoid legends</h2>
-<p>Legends rely on visual association, which is hard.</p>
-
-<img data-src="imgs/line_nolegend.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
-<p>Source: https://headwaterseconomics.org/dataviz/west-wide-atlas/</p>
-</div>
-</section>
-<section id="channels---data" class="slide level2">
-<h2>Channels - Data</h2>
-
-<img data-src="imgs/channels_rankings.jpg" width="800" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
-<p>Source: Munzer (2014)</p>
-</div>
-</section>
-<section id="small-multiples" class="slide level2">
-<h2>Small multiples</h2>
-<p><img data-src="imgs/small_multiples_1.png" data-fig-align="center"> ::: {style=“font-size: 0.4em”} Source: Wilke (2019) :::</p>
-</section>
-<section id="compound-figures" class="slide level2">
-<h2>Compound figures</h2>
-
-<img data-src="imgs/onda_1.png" class="r-stretch quarto-figure-center"><div style="font-size: 0.4em">
-<p>Source: Onda et. al (2020)</p>
-</div>
-</section>
-<section id="resources" class="slide level2">
-<h2>Resources</h2>
-<div class="quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="imgs/wilke_cover.png"></p>
-</figure>
-</div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="imgs/healey_dv-cover-pupress.jpg" width="608"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
 </section></section>
 <section>
 <section id="visualisation-with-ggplot-in-r" class="title-slide slide level1 center">
@@ -539,33 +620,35 @@ Nihil Kaza
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(here)</span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a>AQI_tbl <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"raw"</span>, <span class="st">"AQI.csv"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-5"><a href="#cb1-5"></a>    <span class="fu">read_csv</span>(<span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"GBK"</span>))</span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a>AQI_tbl <span class="ot">&lt;-</span> AQI_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb1-8"><a href="#cb1-8"></a>  <span class="fu">mutate</span>(<span class="at">TIME =</span> <span class="fu">ymd_hm</span>(TIME)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a>  <span class="fu">mutate</span>(<span class="at">month_of_obs =</span> <span class="fu">month</span>(TIME, <span class="at">label =</span>T)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a>  <span class="fu">mutate</span>(<span class="at">season =</span> <span class="fu">case_when</span>(</span>
-<span id="cb1-11"><a href="#cb1-11"></a>       month_of_obs <span class="sc">&gt;=</span> <span class="dv">3</span> <span class="sc">&amp;</span> month_of_obs <span class="sc">&lt;</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Spring"</span>,</span>
-<span id="cb1-12"><a href="#cb1-12"></a>       month_of_obs <span class="sc">&gt;=</span><span class="dv">6</span> <span class="sc">&amp;</span> month_of_obs <span class="sc">&lt;</span> <span class="dv">9</span> <span class="sc">~</span> <span class="st">"Summer"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13"></a>       month_of_obs <span class="sc">&gt;=</span><span class="dv">9</span> <span class="sc">&amp;</span> month_of_obs <span class="sc">&lt;</span> <span class="dv">12</span> <span class="sc">~</span> <span class="st">"Autumn"</span>,</span>
-<span id="cb1-14"><a href="#cb1-14"></a>       <span class="at">month_of_obs =</span> <span class="dv">12</span> <span class="sc">|</span> month_of_obs <span class="sc">&lt;</span><span class="dv">3</span> <span class="sc">~</span> <span class="st">"Winter"</span>,</span>
-<span id="cb1-15"><a href="#cb1-15"></a>       <span class="at">.default =</span> <span class="st">"NA"</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a>        )</span>
-<span id="cb1-17"><a href="#cb1-17"></a>         ) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-18"><a href="#cb1-18"></a>    <span class="fu">mutate</span>(<span class="at">time_of_obs =</span> <span class="fu">hour</span>(TIME)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-19"><a href="#cb1-19"></a>      <span class="fu">mutate</span>(<span class="at">time_of_day =</span> <span class="fu">case_when</span>(</span>
-<span id="cb1-20"><a href="#cb1-20"></a>       time_of_obs <span class="sc">&gt;=</span> <span class="dv">6</span> <span class="sc">&amp;</span> time_of_obs <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">"Morning Peak"</span>,</span>
-<span id="cb1-21"><a href="#cb1-21"></a>       time_of_obs <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">&amp;</span> time_of_obs <span class="sc">&lt;</span> <span class="dv">16</span> <span class="sc">~</span> <span class="st">"Off Peak (Day)"</span>,</span>
-<span id="cb1-22"><a href="#cb1-22"></a>       time_of_obs <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> time_of_obs <span class="sc">&lt;</span> <span class="dv">19</span> <span class="sc">~</span> <span class="st">"Evening Peak"</span>,</span>
-<span id="cb1-23"><a href="#cb1-23"></a>       time_of_obs <span class="sc">&gt;=</span> <span class="dv">19</span> <span class="sc">|</span> time_of_obs <span class="sc">&lt;</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Night"</span>,</span>
-<span id="cb1-24"><a href="#cb1-24"></a>       <span class="at">.default =</span> <span class="st">"NA"</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a>        )</span>
-<span id="cb1-26"><a href="#cb1-26"></a>         )<span class="sc">%&gt;%</span></span>
-<span id="cb1-27"><a href="#cb1-27"></a>    <span class="fu">mutate</span>(<span class="at">AQI =</span> <span class="fu">as.numeric</span>(AQI)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-28"><a href="#cb1-28"></a>    <span class="fu">mutate</span>(<span class="at">SITEID =</span> <span class="fu">as.character</span>(SITEID)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-29"><a href="#cb1-29"></a>    <span class="fu">mutate</span>(<span class="at">AIRQUALITY =</span> <span class="fu">factor</span>(AIRQUALITY))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># Sys.setlocale("LC_TIME", "en_US.UTF-8") </span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co"># Uncomment above line, if computer's locale is not in US.</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a></span>
+<span id="cb1-6"><a href="#cb1-6"></a>AQI_tbl <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"raw"</span>, <span class="st">"AQI.csv"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-7"><a href="#cb1-7"></a>    <span class="fu">read_csv</span>(<span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"GBK"</span>))</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a>AQI_tbl <span class="ot">&lt;-</span> AQI_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb1-10"><a href="#cb1-10"></a>  <span class="fu">mutate</span>(<span class="at">TIME =</span> <span class="fu">ymd_hm</span>(TIME)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>  <span class="fu">mutate</span>(<span class="at">month_of_obs =</span> <span class="fu">month</span>(TIME, <span class="at">label =</span>T)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>  <span class="fu">mutate</span>(<span class="at">season =</span> <span class="fu">case_when</span>(</span>
+<span id="cb1-13"><a href="#cb1-13"></a>       month_of_obs <span class="sc">&gt;=</span> <span class="dv">3</span> <span class="sc">&amp;</span> month_of_obs <span class="sc">&lt;</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Spring"</span>,</span>
+<span id="cb1-14"><a href="#cb1-14"></a>       month_of_obs <span class="sc">&gt;=</span><span class="dv">6</span> <span class="sc">&amp;</span> month_of_obs <span class="sc">&lt;</span> <span class="dv">9</span> <span class="sc">~</span> <span class="st">"Summer"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15"></a>       month_of_obs <span class="sc">&gt;=</span><span class="dv">9</span> <span class="sc">&amp;</span> month_of_obs <span class="sc">&lt;</span> <span class="dv">12</span> <span class="sc">~</span> <span class="st">"Autumn"</span>,</span>
+<span id="cb1-16"><a href="#cb1-16"></a>       <span class="at">month_of_obs =</span> <span class="dv">12</span> <span class="sc">|</span> month_of_obs <span class="sc">&lt;</span><span class="dv">3</span> <span class="sc">~</span> <span class="st">"Winter"</span>,</span>
+<span id="cb1-17"><a href="#cb1-17"></a>       <span class="at">.default =</span> <span class="st">"NA"</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a>        )</span>
+<span id="cb1-19"><a href="#cb1-19"></a>         ) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-20"><a href="#cb1-20"></a>    <span class="fu">mutate</span>(<span class="at">time_of_obs =</span> <span class="fu">hour</span>(TIME)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>      <span class="fu">mutate</span>(<span class="at">time_of_day =</span> <span class="fu">case_when</span>(</span>
+<span id="cb1-22"><a href="#cb1-22"></a>       time_of_obs <span class="sc">&gt;=</span> <span class="dv">6</span> <span class="sc">&amp;</span> time_of_obs <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">"Morning Peak"</span>,</span>
+<span id="cb1-23"><a href="#cb1-23"></a>       time_of_obs <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">&amp;</span> time_of_obs <span class="sc">&lt;</span> <span class="dv">16</span> <span class="sc">~</span> <span class="st">"Off Peak (Day)"</span>,</span>
+<span id="cb1-24"><a href="#cb1-24"></a>       time_of_obs <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> time_of_obs <span class="sc">&lt;</span> <span class="dv">19</span> <span class="sc">~</span> <span class="st">"Evening Peak"</span>,</span>
+<span id="cb1-25"><a href="#cb1-25"></a>       time_of_obs <span class="sc">&gt;=</span> <span class="dv">19</span> <span class="sc">|</span> time_of_obs <span class="sc">&lt;</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Night"</span>,</span>
+<span id="cb1-26"><a href="#cb1-26"></a>       <span class="at">.default =</span> <span class="st">"NA"</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a>        )</span>
+<span id="cb1-28"><a href="#cb1-28"></a>         )<span class="sc">%&gt;%</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a>    <span class="fu">mutate</span>(<span class="at">AQI =</span> <span class="fu">as.numeric</span>(AQI)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a>    <span class="fu">mutate</span>(<span class="at">SITEID =</span> <span class="fu">as.character</span>(SITEID)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-31"><a href="#cb1-31"></a>    <span class="fu">mutate</span>(<span class="at">AIRQUALITY =</span> <span class="fu">factor</span>(AIRQUALITY))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -574,10 +657,8 @@ Nihil Kaza
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2" data-code-line-numbers="4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>    <span class="fu">ggplot</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2" data-code-line-numbers="2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>    <span class="fu">ggplot</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
@@ -592,11 +673,9 @@ Nihil Kaza
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3" data-code-line-numbers="3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-3-1.png" width="960"></p>
@@ -607,8 +686,8 @@ Nihil Kaza
 <ul>
 <li>Map TIME to x scale (position), AQI to y scale (position), SITEID to colour scale (hue).</li>
 <li>The default <code>statistic</code> is identity.</li>
-<li>We use the these to map on to point geometry</li>
-<li>All other aspect of the visualisation have sensible defaults (such as cartesian coordinates)</li>
+<li>We use these statistics and scales to map on to point geometry</li>
+<li>All other aspects of the visualisation have sensible defaults (such as Cartesian coordinates)</li>
 </ul>
 </div>
 </div>
@@ -621,14 +700,12 @@ Nihil Kaza
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4" data-code-line-numbers="6,7,8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb4-2"><a href="#cb4-2"></a></span>
-<span id="cb4-3"><a href="#cb4-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID)) <span class="sc">+</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Set3"</span>) <span class="sc">+</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a>    <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>) <span class="co"># %b is abbreviated month, %y is 2 digit year</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4" data-code-line-numbers="4-6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID)) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Set3"</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>) <span class="co"># %b is abbreviated month, %y is 2 digit year</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
@@ -735,140 +812,100 @@ Nihil Kaza
 </section>
 <section id="build-it-by-layer-3" class="slide level2">
 <h2>Build it by layer</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5" data-code-line-numbers="7,8,9,10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb5-2"><a href="#cb5-2"></a></span>
-<span id="cb5-3"><a href="#cb5-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID)) <span class="sc">+</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">150</span>) <span class="sc">+</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">300</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5" data-code-line-numbers="5-8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID)) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">150</span>) <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">300</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
+
 </div>
-</div>
-</div>
-</div>
-</section>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
 <section id="build-it-by-layer-4" class="slide level2">
 <h2>Build it by layer</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6" data-code-line-numbers="11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb6-2"><a href="#cb6-2"></a></span>
-<span id="cb6-3"><a href="#cb6-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI)) <span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">150</span>) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">300</span>) <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>SITEID, <span class="at">nrow =</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6" data-code-line-numbers="9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI)) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">150</span>) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">300</span>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>SITEID, <span class="at">nrow =</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
+
 </div>
-</div>
-</div>
-</div>
-</section>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
 <section id="build-it-by-layer-5" class="slide level2">
 <h2>Build it by layer</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7" data-code-line-numbers="12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb7-2"><a href="#cb7-2"></a></span>
-<span id="cb7-3"><a href="#cb7-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb7-4"><a href="#cb7-4"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI)) <span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
-<span id="cb7-7"><a href="#cb7-7"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
-<span id="cb7-8"><a href="#cb7-8"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">150</span>) <span class="sc">+</span></span>
-<span id="cb7-9"><a href="#cb7-9"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
-<span id="cb7-10"><a href="#cb7-10"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">300</span>) <span class="sc">+</span></span>
-<span id="cb7-11"><a href="#cb7-11"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>SITEID) <span class="sc">+</span></span>
-<span id="cb7-12"><a href="#cb7-12"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"AQI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7" data-code-line-numbers="10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI)) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">150</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">300</span>) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>SITEID) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"AQI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
+
 </div>
-</div>
-</div>
-</div>
-</section>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
 <section id="experiment-with-different-geoms" class="slide level2">
 <h2>Experiment with different geoms</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb8-2"><a href="#cb8-2"></a></span>
-<span id="cb8-3"><a href="#cb8-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI), <span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">150</span>) <span class="sc">+</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">300</span>) <span class="sc">+</span></span>
-<span id="cb8-11"><a href="#cb8-11"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>SITEID, <span class="at">nrow =</span><span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb8-12"><a href="#cb8-12"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"AQI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8" data-code-line-numbers="3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI), <span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">150</span>) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">200</span>) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>     <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">300</span>) <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>SITEID, <span class="at">nrow =</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"AQI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
+
 </div>
-</div>
-</div>
-</div>
-</section>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-9-1.png" width="960" class="r-stretch"></section>
 <section id="experiment-with-different-geoms-1" class="slide level2">
 <h2>Experiment with different geoms</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb9-2"><a href="#cb9-2"></a></span>
-<span id="cb9-3"><a href="#cb9-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a>    <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID), <span class="at">method =</span> loess, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"AQI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9" data-code-line-numbers="3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>    <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID), <span class="at">method =</span> loess, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"AQI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
+
 </div>
-</div>
-</div>
-</div>
-<ul>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"><ul>
 <li>Should the focus be on the average trend?</li>
 </ul>
 </section>
 <section id="or-should-it-be-on-the-outliers" class="slide level2">
 <h2>Or should it be on the outliers?</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb10" data-code-line-numbers="4, 9-10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
 <span id="cb10-2"><a href="#cb10-2"></a>    <span class="fu">mutate</span>(<span class="at">week_date =</span> <span class="fu">week</span>(TIME)) <span class="sc">%&gt;%</span></span>
 <span id="cb10-3"><a href="#cb10-3"></a>    <span class="fu">group_by</span>(SITEID, week_date) <span class="sc">%&gt;%</span></span>
 <span id="cb10-4"><a href="#cb10-4"></a>    <span class="fu">mutate</span>(<span class="at">outlier_yn =</span> rstatix<span class="sc">::</span><span class="fu">is_outlier</span>(AQI))<span class="sc">%&gt;%</span></span>
@@ -880,122 +917,464 @@ Nihil Kaza
 <span id="cb10-10"><a href="#cb10-10"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">'gray'</span>, <span class="st">'red'</span>), <span class="at">guide =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb10-11"><a href="#cb10-11"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"SiteID 203"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-11-1.png" width="960"></p>
+
 </div>
-</div>
-</div>
-</div>
-</section>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
 <section id="experiment-with-different-mappings" class="slide level2">
 <h2>Experiment with different mappings</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11" data-code-line-numbers="4,6,7,9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb11-2"><a href="#cb11-2"></a></span>
-<span id="cb11-3"><a href="#cb11-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">fill=</span>GRADE), </span>
-<span id="cb11-7"><a href="#cb11-7"></a>             <span class="at">stat =</span> <span class="st">"count"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>)<span class="sc">+</span></span>
-<span id="cb11-9"><a href="#cb11-9"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11" data-code-line-numbers="4-7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">fill=</span>GRADE), </span>
+<span id="cb11-5"><a href="#cb11-5"></a>             <span class="at">stat =</span> <span class="st">"count"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a>    <span class="fu">scale_fill_viridis_d</span>()<span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-12-1.png" width="960"></p>
+
 </div>
-</div>
-</div>
-</div>
-</section>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
 <section id="experiment-with-position" class="slide level2">
 <h2>Experiment with position</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12" data-code-line-numbers="4,6,7,9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb12-2"><a href="#cb12-2"></a></span>
-<span id="cb12-3"><a href="#cb12-3"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-5"><a href="#cb12-5"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb12-6"><a href="#cb12-6"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">fill=</span>GRADE), </span>
-<span id="cb12-7"><a href="#cb12-7"></a>             <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">stat =</span> <span class="st">"count"</span>) <span class="sc">+</span></span>
-<span id="cb12-8"><a href="#cb12-8"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>)<span class="sc">+</span></span>
-<span id="cb12-9"><a href="#cb12-9"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">fill=</span>GRADE), </span>
+<span id="cb12-5"><a href="#cb12-5"></a>             <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">stat =</span> <span class="st">"count"</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>)<span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
+
 </div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
+<section id="experiment-with-different-mappings-1" class="slide level2">
+<h2>Experiment with different mappings</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13" data-code-line-numbers="4,5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">shape=</span>GRADE), </span>
+<span id="cb13-5"><a href="#cb13-5"></a>             <span class="at">stat =</span> <span class="st">"count"</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
 </div>
-</div>
-</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"><p>Why is this a bad visualisation? (Hint: Gestalt principles)</p>
 </section>
+<section id="gestalt-principles-a-digression" class="slide level2">
+<h2>Gestalt Principles (A digression)</h2>
+
+<img data-src="imgs/8GestaltPrinciplesofVisualPerception.png" class="r-stretch"><p>::: {style=“font-size: .5em} Source: https://dataspire.org/blog/leveraging-perception-science-to-our-advantage :::</p>
+</section>
+<section id="make-it-easy-for-the-viewer" class="slide level2">
+<h2>Make it easy for the viewer</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14" data-code-line-numbers="4,6-11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>p <span class="ot">&lt;-</span> AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a>    <span class="fu">group_by</span>(month_of_obs, GRADE) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a>    <span class="fu">summarize</span>(<span class="at">num_obs =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb14-7"><a href="#cb14-7"></a>                  <span class="at">y=</span>num_obs,</span>
+<span id="cb14-8"><a href="#cb14-8"></a>                  <span class="at">shape =</span> GRADE))<span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb14-10"><a href="#cb14-10"></a>                  <span class="at">y=</span>num_obs, </span>
+<span id="cb14-11"><a href="#cb14-11"></a>                  <span class="at">group=</span>GRADE))<span class="sc">+</span></span>
+<span id="cb14-12"><a href="#cb14-12"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span>
+<span id="cb14-13"><a href="#cb14-13"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
+<section id="i-hate-legends" class="slide level2">
+<h2>I hate legends</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15" data-code-line-numbers="2-4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>p <span class="sc">+</span> </span>
+<span id="cb15-2"><a href="#cb15-2"></a> <span class="fu">annotate</span>(<span class="st">'text'</span>, <span class="at">x =</span> <span class="st">"Nov"</span>, <span class="at">y =</span> <span class="dv">400</span>, <span class="at">label =</span> <span class="st">'Grade 2'</span>, <span class="at">fontface =</span> <span class="st">'bold'</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a> <span class="fu">annotate</span>(<span class="st">'text'</span>, <span class="at">x =</span> <span class="st">"Sep"</span>, <span class="at">y =</span> <span class="dv">100</span>, <span class="at">label =</span> <span class="st">'Grade 3'</span>, <span class="at">fontface =</span> <span class="st">'bold'</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a> <span class="fu">scale_shape</span>(<span class="at">guide =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
+<section id="take-advantage-of-background-and-foreground" class="slide level2">
+<h2>Take advantage of background and foreground</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16" data-code-line-numbers="14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a>    <span class="fu">group_by</span>(month_of_obs, GRADE) <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>    <span class="fu">summarize</span>(<span class="at">num_obs =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb16-7"><a href="#cb16-7"></a>                  <span class="at">y=</span>num_obs,</span>
+<span id="cb16-8"><a href="#cb16-8"></a>                  <span class="at">shape =</span> GRADE,</span>
+<span id="cb16-9"><a href="#cb16-9"></a>                  <span class="at">alpha =</span> GRADE))<span class="sc">+</span></span>
+<span id="cb16-10"><a href="#cb16-10"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb16-11"><a href="#cb16-11"></a>                  <span class="at">y=</span>num_obs, </span>
+<span id="cb16-12"><a href="#cb16-12"></a>                  <span class="at">group=</span>GRADE,</span>
+<span id="cb16-13"><a href="#cb16-13"></a>                  <span class="at">alpha=</span>GRADE))<span class="sc">+</span></span>
+<span id="cb16-14"><a href="#cb16-14"></a>    <span class="fu">scale_alpha_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(.<span class="dv">2</span>,.<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">1</span>,.<span class="dv">2</span>,.<span class="dv">2</span>,.<span class="dv">2</span>), <span class="at">guide =</span> <span class="st">"none"</span>)<span class="sc">+</span></span>
+<span id="cb16-15"><a href="#cb16-15"></a>    <span class="fu">scale_shape</span>(<span class="at">guide =</span> <span class="st">"none"</span>)<span class="sc">+</span></span>
+<span id="cb16-16"><a href="#cb16-16"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb16-17"><a href="#cb16-17"></a>     <span class="fu">annotate</span>(<span class="st">'text'</span>, <span class="at">x =</span> <span class="st">"Nov"</span>, <span class="at">y =</span> <span class="dv">400</span>, <span class="at">label =</span> <span class="st">'Grade 2'</span>, <span class="at">fontface =</span> <span class="st">'bold'</span>) <span class="sc">+</span></span>
+<span id="cb16-18"><a href="#cb16-18"></a>    <span class="fu">annotate</span>(<span class="st">'text'</span>, <span class="at">x =</span> <span class="st">"Sep"</span>, <span class="at">y =</span> <span class="dv">100</span>, <span class="at">label =</span> <span class="st">'Grade 3'</span>, <span class="at">fontface =</span> <span class="st">'bold'</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="advanced-techniques" class="title-slide slide level1 center">
+<h1>Advanced techniques</h1>
+
+</section>
+<section id="mix-facets-and-filters" class="slide level2">
+<h2>Mix facets and filters</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17" data-code-line-numbers="2, 12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>    <span class="fu">filter</span>(GRADE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2"</span>, <span class="st">"3"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3"></a>    <span class="fu">group_by</span>(SITEID,month_of_obs, GRADE) <span class="sc">%&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a>    <span class="fu">summarize</span>(<span class="at">num_obs =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb17-5"><a href="#cb17-5"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb17-6"><a href="#cb17-6"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb17-7"><a href="#cb17-7"></a>                  <span class="at">y=</span>num_obs,</span>
+<span id="cb17-8"><a href="#cb17-8"></a>                  <span class="at">shape =</span> GRADE))<span class="sc">+</span></span>
+<span id="cb17-9"><a href="#cb17-9"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb17-10"><a href="#cb17-10"></a>                  <span class="at">y=</span>num_obs, </span>
+<span id="cb17-11"><a href="#cb17-11"></a>                  <span class="at">group=</span>GRADE))<span class="sc">+</span></span>
+<span id="cb17-12"><a href="#cb17-12"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>SITEID)<span class="sc">+</span></span>
+<span id="cb17-13"><a href="#cb17-13"></a>    <span class="fu">scale_shape</span>(<span class="at">guide =</span> <span class="st">"none"</span>)<span class="sc">+</span></span>
+<span id="cb17-14"><a href="#cb17-14"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
+<section id="collapse-factors-a-better-option" class="slide level2">
+<h2>Collapse factors (A better option)</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18" data-code-line-numbers="3-7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>    <span class="fu">filter</span>(GRADE <span class="sc">!=</span> <span class="st">"/"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb18-4"><a href="#cb18-4"></a>        <span class="at">GRADE_gen =</span> <span class="fu">fct_collapse</span>(GRADE,</span>
+<span id="cb18-5"><a href="#cb18-5"></a>        <span class="st">"OK"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>),</span>
+<span id="cb18-6"><a href="#cb18-6"></a>        <span class="st">"Bad"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7"></a>    ))<span class="sc">%&gt;%</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a>    <span class="fu">group_by</span>(SITEID,month_of_obs, GRADE_gen) <span class="sc">%&gt;%</span></span>
+<span id="cb18-9"><a href="#cb18-9"></a>    <span class="fu">summarize</span>(<span class="at">num_obs =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb18-10"><a href="#cb18-10"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb18-12"><a href="#cb18-12"></a>                  <span class="at">y=</span>num_obs,</span>
+<span id="cb18-13"><a href="#cb18-13"></a>                  <span class="at">shape =</span> GRADE_gen))<span class="sc">+</span></span>
+<span id="cb18-14"><a href="#cb18-14"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb18-15"><a href="#cb18-15"></a>                  <span class="at">y=</span>num_obs, </span>
+<span id="cb18-16"><a href="#cb18-16"></a>                  <span class="at">group=</span>GRADE_gen))<span class="sc">+</span></span>
+<span id="cb18-17"><a href="#cb18-17"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>SITEID)<span class="sc">+</span></span>
+<span id="cb18-18"><a href="#cb18-18"></a>    <span class="fu">scale_shape</span>(<span class="at">name =</span> <span class="st">"# obvs. with air quality"</span>)<span class="sc">+</span></span>
+<span id="cb18-19"><a href="#cb18-19"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)<span class="sc">+</span></span>
+<span id="cb18-20"><a href="#cb18-20"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<section id="more-groupings-are-not-always-better" class="slide level2">
+<h2>More groupings are not always better</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19" data-code-line-numbers="8-9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a>    <span class="fu">filter</span>(GRADE <span class="sc">!=</span> <span class="st">"/"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb19-4"><a href="#cb19-4"></a>        <span class="at">GRADE_gen =</span> <span class="fu">fct_collapse</span>(GRADE,</span>
+<span id="cb19-5"><a href="#cb19-5"></a>        <span class="st">"OK"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>),</span>
+<span id="cb19-6"><a href="#cb19-6"></a>        <span class="st">"Bad"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7"></a>    ))<span class="sc">%&gt;%</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a>    <span class="fu">group_by</span>(SITEID,time_of_day, month_of_obs, GRADE_gen) <span class="sc">%&gt;%</span></span>
+<span id="cb19-9"><a href="#cb19-9"></a>    <span class="fu">summarize</span>(<span class="at">num_obs =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb19-10"><a href="#cb19-10"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb19-12"><a href="#cb19-12"></a>                  <span class="at">y=</span>num_obs,</span>
+<span id="cb19-13"><a href="#cb19-13"></a>                  <span class="at">shape =</span> GRADE_gen))<span class="sc">+</span></span>
+<span id="cb19-14"><a href="#cb19-14"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, </span>
+<span id="cb19-15"><a href="#cb19-15"></a>                  <span class="at">y=</span>num_obs, </span>
+<span id="cb19-16"><a href="#cb19-16"></a>                  <span class="at">group=</span>GRADE_gen))<span class="sc">+</span></span>
+<span id="cb19-17"><a href="#cb19-17"></a>    <span class="fu">facet_grid</span>(time_of_day<span class="sc">~</span>SITEID)<span class="sc">+</span></span>
+<span id="cb19-18"><a href="#cb19-18"></a>    <span class="fu">scale_shape</span>(<span class="at">name =</span> <span class="st">"# obvs. with air quality"</span>)<span class="sc">+</span></span>
+<span id="cb19-19"><a href="#cb19-19"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)<span class="sc">+</span></span>
+<span id="cb19-20"><a href="#cb19-20"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
 <section id="better-font-support-with-showtext" class="slide level2">
 <h2>Better font support with showtext</h2>
-<div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13" data-code-line-numbers="1,2,7,8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(showtext)</span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="fu">showtext_auto</span>()</span>
-<span id="cb13-3"><a href="#cb13-3"></a></span>
-<span id="cb13-4"><a href="#cb13-4"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb13-5"><a href="#cb13-5"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb13-6"><a href="#cb13-6"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb13-7"><a href="#cb13-7"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">fill=</span>AIRQUALITY), </span>
-<span id="cb13-8"><a href="#cb13-8"></a>             <span class="at">stat =</span> <span class="st">"count"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
-<span id="cb13-9"><a href="#cb13-9"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>)<span class="sc">+</span></span>
-<span id="cb13-10"><a href="#cb13-10"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"# of days"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20" data-code-line-numbers="1,2,7,8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">library</span>(showtext)</span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="fu">showtext_auto</span>()</span>
+<span id="cb20-3"><a href="#cb20-3"></a></span>
+<span id="cb20-4"><a href="#cb20-4"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a>    <span class="fu">filter</span>(SITEID <span class="sc">==</span> <span class="st">"203"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-6"><a href="#cb20-6"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">fill=</span>AIRQUALITY), </span>
+<span id="cb20-8"><a href="#cb20-8"></a>             <span class="at">stat =</span> <span class="st">"count"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>)<span class="sc">+</span></span>
+<span id="cb20-10"><a href="#cb20-10"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"# of obvs."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 100.0%;justify-content: center;">
-<p><img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
+
 </div>
-</div>
-</div>
-</div>
-</section>
-<section id="what-story-do-you-want-to-tell" class="slide level2">
-<h2>What story do you want to tell?</h2>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-21-1.png" width="960" class="r-stretch"></section>
+<section id="do-individual-observations-matter" class="slide level2">
+<h2>Do individual observations matter?</h2>
+<p>Maybe focus on worst observation per day.</p>
 <div class="cell">
 <details>
 <summary>Data processing code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>AQI_tbl_summary <span class="ot">&lt;-</span> AQI_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb14-2"><a href="#cb14-2"></a>  <span class="fu">mutate</span>(<span class="at">time_date =</span> <span class="fu">date</span>(TIME))<span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3"></a>  <span class="fu">group_by</span>(SITEID, time_date, month_of_obs, season) <span class="sc">%&gt;%</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a>  <span class="fu">summarise</span>(<span class="at">max_AQI_day =</span> <span class="fu">max</span>(AQI, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-5"><a href="#cb14-5"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb14-6"><a href="#cb14-6"></a>  <span class="fu">mutate</span>(<span class="at">bad_airq_day =</span> <span class="fu">ifelse</span>(max_AQI_day<span class="sc">&gt;</span><span class="dv">100</span>, <span class="dv">1</span>, <span class="cn">NA</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-7"><a href="#cb14-7"></a>  <span class="fu">group_by</span>(SITEID, season) <span class="sc">%&gt;%</span></span>
-<span id="cb14-8"><a href="#cb14-8"></a>  <span class="fu">summarise</span>(<span class="at">num_bad_airq_days =</span> <span class="fu">sum</span>(bad_airq_day, <span class="at">na.rm=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>AQI_tbl_summary <span class="ot">&lt;-</span> AQI_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb21-2"><a href="#cb21-2"></a>  <span class="fu">mutate</span>(<span class="at">time_date =</span> <span class="fu">date</span>(TIME))<span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3"></a>  <span class="fu">group_by</span>(SITEID, time_date, month_of_obs, season) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a>  <span class="fu">summarise</span>(<span class="at">max_AQI_day =</span> <span class="fu">max</span>(AQI, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6"></a>  <span class="fu">mutate</span>(<span class="at">bad_airq_day =</span> <span class="fu">ifelse</span>(max_AQI_day<span class="sc">&gt;</span><span class="dv">100</span>, <span class="dv">1</span>, <span class="cn">NA</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a>  <span class="fu">group_by</span>(SITEID, season) <span class="sc">%&gt;%</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a>  <span class="fu">summarise</span>(<span class="at">num_bad_airq_days =</span> <span class="fu">sum</span>(bad_airq_day, <span class="at">na.rm=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details>
 <summary>ggplot code</summary>
-<div class="sourceCode cell-code" id="cb15" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb15-2"><a href="#cb15-2"></a></span>
-<span id="cb15-3"><a href="#cb15-3"></a>AQI_tbl_summary <span class="sc">%&gt;%</span></span>
-<span id="cb15-4"><a href="#cb15-4"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb15-5"><a href="#cb15-5"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(SITEID, <span class="fu">desc</span>(num_bad_airq_days)), </span>
-<span id="cb15-6"><a href="#cb15-6"></a>                 <span class="at">y=</span>num_bad_airq_days), </span>
-<span id="cb15-7"><a href="#cb15-7"></a>             <span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">na.rm=</span>T) <span class="sc">+</span></span>
-<span id="cb15-8"><a href="#cb15-8"></a>    <span class="fu">xlab</span>(<span class="st">"SITEID"</span>) <span class="sc">+</span> </span>
-<span id="cb15-9"><a href="#cb15-9"></a>    <span class="fu">ylab</span>(<span class="st">"# Bad Air Quality Days"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22" data-code-line-numbers="3-5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a>AQI_tbl_summary <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3"></a>    <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(SITEID, <span class="fu">desc</span>(num_bad_airq_days)), </span>
+<span id="cb22-4"><a href="#cb22-4"></a>                 <span class="at">y=</span>num_bad_airq_days), </span>
+<span id="cb22-5"><a href="#cb22-5"></a>             <span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">na.rm=</span>T) <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6"></a>    <span class="fu">xlab</span>(<span class="st">"SITEID"</span>) <span class="sc">+</span> </span>
+<span id="cb22-7"><a href="#cb22-7"></a>    <span class="fu">ylab</span>(<span class="st">"# Bad Air Quality Days"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
-<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"><div class="footer footer-default">
-<p><a href="https://nkaza.github.io">nkaza.github.io</a>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/meghall06/neair">Slides derived from Meghan Hall’spresentation</a></p>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section>
+<section id="focus-on-distributions" class="slide level2">
+<h2>Focus on distributions</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23" data-code-line-numbers="3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>    <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">y=</span>AQI)) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> SITEID)<span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
 </div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section>
+<section id="focus-on-what-is-really-important" class="slide level2">
+<h2>Focus on what is really important!</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24" data-code-line-numbers="9-11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>median_IQR <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb24-2"><a href="#cb24-2"></a>  <span class="fu">data.frame</span>(<span class="at">y =</span> <span class="fu">median</span>(x), <span class="co"># Median</span></span>
+<span id="cb24-3"><a href="#cb24-3"></a>             <span class="at">ymin =</span> <span class="fu">quantile</span>(x)[<span class="dv">2</span>], <span class="co"># 1st quartile</span></span>
+<span id="cb24-4"><a href="#cb24-4"></a>             <span class="at">ymax =</span> <span class="fu">quantile</span>(x)[<span class="dv">4</span>])  <span class="co"># 3rd quartile</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a>}</span>
+<span id="cb24-6"><a href="#cb24-6"></a></span>
+<span id="cb24-7"><a href="#cb24-7"></a> AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb24-8"><a href="#cb24-8"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb24-9"><a href="#cb24-9"></a>    <span class="fu">stat_summary</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">y=</span>AQI), </span>
+<span id="cb24-10"><a href="#cb24-10"></a>                 <span class="at">fun.data =</span> median_IQR,</span>
+<span id="cb24-11"><a href="#cb24-11"></a>                 <span class="at">geom =</span> <span class="st">"linerange"</span>) <span class="sc">+</span></span>
+<span id="cb24-12"><a href="#cb24-12"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> SITEID)<span class="sc">+</span></span>
+<span id="cb24-13"><a href="#cb24-13"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section>
+<section id="is-the-theme-getting-in-the-way" class="slide level2">
+<h2>Is the theme getting in the way?</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25" data-code-line-numbers="1, 7-9, 13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">library</span>(ggthemes)</span>
+<span id="cb25-2"><a href="#cb25-2"></a> AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">y=</span>AQI)) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4"></a>    <span class="fu">stat_summary</span>(<span class="at">fun.data =</span> <span class="st">"median_IQR"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5"></a>                 <span class="at">geom =</span> <span class="st">"linerange"</span></span>
+<span id="cb25-6"><a href="#cb25-6"></a>                 ) <span class="sc">+</span></span>
+<span id="cb25-7"><a href="#cb25-7"></a>         <span class="fu">stat_summary</span>(<span class="at">fun.y =</span> <span class="st">"median"</span>,</span>
+<span id="cb25-8"><a href="#cb25-8"></a>                 <span class="at">geom =</span> <span class="st">"point"</span>,</span>
+<span id="cb25-9"><a href="#cb25-9"></a>                 <span class="at">color =</span> <span class="st">'red'</span></span>
+<span id="cb25-10"><a href="#cb25-10"></a>                 ) <span class="sc">+</span></span>
+<span id="cb25-11"><a href="#cb25-11"></a>     <span class="fu">facet_wrap</span>(<span class="sc">~</span> SITEID)<span class="sc">+</span></span>
+<span id="cb25-12"><a href="#cb25-12"></a>     <span class="fu">xlab</span>(<span class="st">""</span>)<span class="sc">+</span></span>
+<span id="cb25-13"><a href="#cb25-13"></a>    <span class="fu">theme_tufte</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
+<section id="more-facets-are-not-awalys-better" class="slide level2">
+<h2>More facets are not awalys better</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26" data-code-line-numbers="11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">library</span>(ggthemes)</span>
+<span id="cb26-2"><a href="#cb26-2"></a> AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="#cb26-3"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>month_of_obs, <span class="at">y=</span>AQI)) <span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4"></a>    <span class="fu">stat_summary</span>(<span class="at">fun.data =</span> <span class="st">"median_IQR"</span>,</span>
+<span id="cb26-5"><a href="#cb26-5"></a>                 <span class="at">geom =</span> <span class="st">"linerange"</span></span>
+<span id="cb26-6"><a href="#cb26-6"></a>                 ) <span class="sc">+</span></span>
+<span id="cb26-7"><a href="#cb26-7"></a>         <span class="fu">stat_summary</span>(<span class="at">fun =</span> <span class="st">"median"</span>,</span>
+<span id="cb26-8"><a href="#cb26-8"></a>                 <span class="at">geom =</span> <span class="st">"point"</span>,</span>
+<span id="cb26-9"><a href="#cb26-9"></a>                 <span class="at">color =</span> <span class="st">'red'</span></span>
+<span id="cb26-10"><a href="#cb26-10"></a>                 ) <span class="sc">+</span></span>
+<span id="cb26-11"><a href="#cb26-11"></a>     <span class="fu">facet_grid</span>(time_of_day <span class="sc">~</span> . )<span class="sc">+</span></span>
+<span id="cb26-12"><a href="#cb26-12"></a>     <span class="fu">xlab</span>(<span class="st">""</span>)<span class="sc">+</span></span>
+<span id="cb26-13"><a href="#cb26-13"></a>    <span class="fu">theme_tufte</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-27-1.png" width="960" class="r-stretch"></section>
+<section id="what-about-a-spatial-visualisation" class="slide level2">
+<h2>What about a spatial visualisation?</h2>
+<div class="cell">
+<details>
+<summary>Data processing code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>stations_tbl <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"raw"</span>, <span class="st">"Station.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="#cb27-2"></a>            <span class="fu">read_csv</span>(<span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"GBK"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3"></a>            <span class="fu">mutate</span>(<span class="at">SITEID =</span> <span class="fu">as.character</span>(SITEID))</span>
+<span id="cb27-4"><a href="#cb27-4"></a>    </span>
+<span id="cb27-5"><a href="#cb27-5"></a>             </span>
+<span id="cb27-6"><a href="#cb27-6"></a>             </span>
+<span id="cb27-7"><a href="#cb27-7"></a>AQI_summary_tbl <span class="ot">&lt;-</span> AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb27-8"><a href="#cb27-8"></a>    <span class="fu">group_by</span>(month_of_obs, SITEID,) <span class="sc">%&gt;%</span></span>
+<span id="cb27-9"><a href="#cb27-9"></a>    <span class="fu">summarise</span>(<span class="at">median_AQI =</span> <span class="fu">median</span>(AQI, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-10"><a href="#cb27-10"></a>    <span class="fu">right_join</span>(stations_tbl, <span class="at">by=</span><span class="st">"SITEID"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Visualisation code</summary>
+<div class="sourceCode cell-code" id="cb28" data-code-line-numbers="3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>AQI_summary_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a>    <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>LON, <span class="at">y=</span>LAT, <span class="at">size =</span> median_AQI))<span class="sc">+</span></span>
+<span id="cb28-4"><a href="#cb28-4"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>month_of_obs)<span class="sc">+</span></span>
+<span id="cb28-5"><a href="#cb28-5"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> .<span class="dv">2</span>))<span class="sc">+</span></span>
+<span id="cb28-6"><a href="#cb28-6"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> .<span class="dv">2</span>))<span class="sc">+</span></span>
+<span id="cb28-7"><a href="#cb28-7"></a>    <span class="fu">scale_size</span>(<span class="at">name =</span> <span class="st">"Median AQI"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-29-1.png" width="960" class="r-stretch"></section>
+<section id="context-matters" class="slide level2">
+<h2>Context matters</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29" data-code-line-numbers="12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb29-2"><a href="#cb29-2"></a><span class="fu">library</span>(tmap)</span>
+<span id="cb29-3"><a href="#cb29-3"></a></span>
+<span id="cb29-4"><a href="#cb29-4"></a><span class="fu">tmap_mode</span>(<span class="st">"view"</span>)</span>
+<span id="cb29-5"><a href="#cb29-5"></a></span>
+<span id="cb29-6"><a href="#cb29-6"></a>AQI_summary_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb29-7"><a href="#cb29-7"></a>    <span class="fu">filter</span>(month_of_obs <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'Jul'</span>, <span class="st">'Jan'</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-8"><a href="#cb29-8"></a>    sf<span class="sc">::</span><span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"LON"</span>, <span class="st">"LAT"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-9"><a href="#cb29-9"></a>    <span class="fu">tm_shape</span>() <span class="sc">+</span></span>
+<span id="cb29-10"><a href="#cb29-10"></a>    <span class="fu">tm_dots</span>(<span class="at">size =</span> <span class="st">"median_AQI"</span>) <span class="sc">+</span></span>
+<span id="cb29-11"><a href="#cb29-11"></a>    <span class="fu">tm_facets</span>(<span class="at">by =</span> <span class="st">"month_of_obs"</span>, <span class="at">ncol=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb29-12"><a href="#cb29-12"></a>    <span class="fu">tm_basemap</span>(<span class="st">"OpenStreetMap.Mapnik"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+
+<div style="display:inline;width:49%;float:left;border-style:solid;border-color:#BEBEBE;border-width:1px 1px 1px 1px;">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-1815" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-1815">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"createMapPane","args":["tmap401",401]},{"method":"addProviderTiles","args":["OpenStreetMap.Mapnik",null,"OpenStreetMap.Mapnik",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"pane":"tilePane"}]},{"method":"addCircleMarkers","args":[[31.089692,31.236417,31.161486,31.224199,31.298781,31.204286,31.201593,31.226424,31.264346,31.188478],[120.98196,121.406039,121.416532,121.429884,121.471826,121.481838,121.582075,121.538658,121.538132,121.707211],[14.142135623731,13.1848269782829,13.1848269782829,13.0561914439509,12.9913960492326,12.8608259408895,12.6624465543834,12.6624465543834,12.46090934095,12.3247204502664],["Jan.5","Jan.4","Jan.6","Jan","Jan.8","Jan.1","Jan.3","Jan.9","Jan.7","Jan.2"],".",{"interactive":true,"className":"","pane":"tmap401","stroke":true,"color":"#666666","weight":0.707106781186548,"opacity":0.5,"fill":true,"fillColor":["#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000"],"fillOpacity":[1,1,1,1,1,1,1,1,1,1]},null,null,["<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>118.5<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>103.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>103.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>101.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>100.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>98.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>95.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>95.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>92.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jan<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>90.0<\/nobr><\/td><\/tr><\/table><\/div>"],null,["Jan","Jan","Jan","Jan","Jan","Jan","Jan","Jan","Jan","Jan"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLayersControl","args":[[],".",{"collapsed":true,"autoZIndex":true,"position":"topleft"}]}],"limits":{"lat":[31.089692,31.298781],"lng":[120.98196,121.707211]},"fitBounds":[31.089692,120.98196,31.298781,121.707211,[]]},"evals":[],"jsHooks":{"render":[{"code":"function(el, x, data) {\n  return (\n\t\t\t\t\tfunction(el, x) {\n\t\t\t\t\t\tvar tldiv = document.getElementsByClassName(\"leaflet-top leaflet-left\")[0];\n\t\t\t\t\t\tvar titlediv = document.createElement('div');\n\t\t\t\t\t\ttitlediv.className = \"info legend leaflet-control\";\n\t\t\t\t\t\ttitlediv.innerHTML = \"<b>Jan<\/b>\";\n\t\t\t\t\t\ttldiv.insertBefore(titlediv, tldiv.childNodes[0]);\n\t\t\t\t\t}).call(this.getMap(), el, x, data);\n}","data":null}]}}</script>
+</div>
+<div style="display:inline;width:49%;float:left;border-style:solid;border-color:#BEBEBE;border-width:1px 1px 1px 1px;">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-9178" style="width:100%;height:400px;"></div>
+<script type="application/json" data-for="htmlwidget-9178">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"createMapPane","args":["tmap401",401]},{"method":"addProviderTiles","args":["OpenStreetMap.Mapnik",null,"OpenStreetMap.Mapnik",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"pane":"tilePane"}]},{"method":"addCircleMarkers","args":[[31.089692,31.264346,31.236417,31.226424,31.224199,31.204286,31.201593,31.161486,31.298781,31.188478],[120.98196,121.538132,121.406039,121.538658,121.429884,121.481838,121.582075,121.416532,121.471826,121.707211],[10.2294354786064,10.1466046783094,9.80828892547368,9.59078319861674,9.54668741010876,9.54668741010876,9.54668741010876,9.54668741010876,9.45787908535782,9.09397723446283],["Jul.5","Jul.7","Jul.4","Jul.9","Jul","Jul.1","Jul.3","Jul.6","Jul.8","Jul.2"],".",{"interactive":true,"className":"","pane":"tmap401","stroke":true,"color":"#666666","weight":0.707106781186548,"opacity":0.5,"fill":true,"fillColor":["#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000"],"fillOpacity":[1,1,1,1,1,1,1,1,1,1]},null,null,["<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>62.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>61.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>57.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>54.5<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>54.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>54.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>54.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>54.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>53.0<\/nobr><\/td><\/tr><\/table><\/div>","<style> div.leaflet-popup-content {width:auto !important;overflow-y:auto; overflow-x:hidden;}<\/style><div style=\"max-height:25em;padding-right:0px;\"><table>\n\t\t\t   <thead><tr><th colspan=\"2\"><b>Jul<\/b><\/th><\/thead><\/tr><tr><td style=\"color: #888888;\"><nobr>median_AQI<\/nobr><\/td><td align=\"right\"><nobr>49.0<\/nobr><\/td><\/tr><\/table><\/div>"],null,["Jul","Jul","Jul","Jul","Jul","Jul","Jul","Jul","Jul","Jul"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLayersControl","args":[[],".",{"collapsed":true,"autoZIndex":true,"position":"topleft"}]}],"limits":{"lat":[31.089692,31.298781],"lng":[120.98196,121.707211]},"fitBounds":[31.089692,120.98196,31.298781,121.707211,[]]},"evals":[],"jsHooks":{"render":[{"code":"function(el, x, data) {\n  return (\n\t\t\t\t\tfunction(el, x) {\n\t\t\t\t\t\tvar tldiv = document.getElementsByClassName(\"leaflet-top leaflet-left\")[1];\n\t\t\t\t\t\tvar titlediv = document.createElement('div');\n\t\t\t\t\t\ttitlediv.className = \"info legend leaflet-control\";\n\t\t\t\t\t\ttitlediv.innerHTML = \"<b>Jul<\/b>\";\n\t\t\t\t\t\ttldiv.insertBefore(titlediv, tldiv.childNodes[0]);\n\t\t\t\t\t}).call(this.getMap(), el, x, data);\n}","data":null}]}}</script>
+</div>
+<script>
+HTMLWidgets.addPostRenderHandler(function() {
+var leaf_widgets = {};
+                Array.prototype.map.call(
+                 document.querySelectorAll(".leaflet"),
+                   function(ldiv){
+                     if (HTMLWidgets.find("#" + ldiv.id) && HTMLWidgets.find("#" + ldiv.id).getMap()) {
+                        leaf_widgets[ldiv.id] = HTMLWidgets.find("#" + ldiv.id).getMap();
+                     }
+                   }
+                );
+               
+
+leaf_widgets['htmlwidget-9178'].sync(leaf_widgets['htmlwidget-1815'],{syncCursor: true, noInitialSync: true});
+leaf_widgets['htmlwidget-1815'].sync(leaf_widgets['htmlwidget-9178'],{syncCursor: true, noInitialSync: true});
+
+});
+</script>
+</div>
+</div>
+</section>
+<section id="patch-em-up" class="slide level2">
+<h2>Patch ’em up!</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb30-2"><a href="#cb30-2"></a><span class="fu">library</span>(ggmap)</span>
+<span id="cb30-3"><a href="#cb30-3"></a></span>
+<span id="cb30-4"><a href="#cb30-4"></a>p1 <span class="ot">&lt;-</span> AQI_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb30-6"><a href="#cb30-6"></a>    <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">x=</span>TIME, <span class="at">y=</span>AQI, <span class="at">color =</span> SITEID), <span class="at">method =</span> loess, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb30-7"><a href="#cb30-7"></a>    <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %y"</span>)<span class="sc">+</span></span>
+<span id="cb30-8"><a href="#cb30-8"></a>    <span class="fu">xlab</span>(<span class="st">""</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"AQI"</span>) <span class="sc">+</span></span>
+<span id="cb30-9"><a href="#cb30-9"></a>    <span class="fu">scale_color_discrete</span>(<span class="at">guide =</span> <span class="st">"none"</span>)</span>
+<span id="cb30-10"><a href="#cb30-10"></a></span>
+<span id="cb30-11"><a href="#cb30-11"></a>bbox <span class="ot">=</span> <span class="fu">c</span>(<span class="at">left =</span> <span class="fu">min</span>(stations_tbl<span class="sc">$</span>LON), <span class="at">bottom =</span> <span class="fu">min</span>(stations_tbl<span class="sc">$</span>LAT), <span class="at">right =</span> <span class="fu">max</span>(stations_tbl<span class="sc">$</span>LON), <span class="at">top =</span> <span class="fu">max</span>(stations_tbl<span class="sc">$</span>LAT))</span>
+<span id="cb30-12"><a href="#cb30-12"></a>p <span class="ot">=</span> <span class="fu">get_map</span>(bbox, <span class="at">zoom=</span><span class="dv">10</span>, <span class="at">source =</span> <span class="st">"stamen"</span>, <span class="at">maptype =</span> <span class="st">"toner-background"</span>)</span>
+<span id="cb30-13"><a href="#cb30-13"></a></span>
+<span id="cb30-14"><a href="#cb30-14"></a></span>
+<span id="cb30-15"><a href="#cb30-15"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggmap</span>(p)<span class="sc">+</span></span>
+<span id="cb30-16"><a href="#cb30-16"></a>      <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>LON, <span class="at">y=</span>LAT), <span class="at">size =</span><span class="dv">2</span>, <span class="at">col =</span> <span class="st">'red'</span>, <span class="at">data =</span> stations_tbl)</span>
+<span id="cb30-17"><a href="#cb30-17"></a>      </span>
+<span id="cb30-18"><a href="#cb30-18"></a></span>
+<span id="cb30-19"><a href="#cb30-19"></a>p1<span class="sc">|</span>p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="visual_ggplot_tmap_files/figure-revealjs/unnamed-chunk-31-1.png" width="960" class="r-stretch"></section>
+<section id="further-work" class="slide level2">
+<h2>Further Work</h2>
+<ul>
+<li>Visualise the changes in AQI based on distance to city centre</li>
+<li>Instead of visualising stations and their readings, spatially extrapolate the readings</li>
+<li>How does changing <code>coord_cartesian</code> to <code>coord_polar</code> affect the visualisations</li>
+<li>Notice that most of the monthly summary visualisations start with Jan.&nbsp;but daily’s start with Jul.&nbsp;Why? Reorder the monthly visuals to start with Jul.</li>
+<li>Experiment with different basemaps in tmap (only works for “view” mode)</li>
+<li>Experiment with different styling for <code>tm_shape</code></li>
+</ul>
 </section></section>
+<section id="thank-you" class="title-slide slide level1 center">
+<h1>Thank you!</h1>
+<div class="footer footer-default">
+<p><a href="https://nkaza.github.io">nkaza.github.io</a>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/meghall06/neair">Theme from Meghan Hall</a></p>
+</div>
+</section>
     </div>
   </div>
 
@@ -1050,7 +1429,7 @@ Nihil Kaza
         progress: true,
 
         // Display the page number of the current slide
-        slideNumber: false,
+        slideNumber: 'c/t',
 
         // 'all', 'print', or 'speaker'
         showSlideNumber: 'all',
