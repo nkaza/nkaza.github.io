@@ -81,8 +81,6 @@ distr_sf <-
 -   Visualising spatial data
 -   Reading & writing external files
 
-
-
 ## A reminder about the data
 
 ```{r}
@@ -207,11 +205,11 @@ group_by(Dist_origin, time_of_day) %>%
 
 ## Today's plan
 
-- Understanding spatial relationships
-- DE-9IM
-- Space as a graph
-- Other geometric operations
-- Further Work
+-   Understanding spatial relationships
+-   DE-9IM
+-   Space as a graph
+-   Other geometric operations
+-   Further Work
 
 ## `filter` again
 
@@ -455,11 +453,18 @@ Source: Michael Mann, Steven Chao, Jordan Graesser, Nina Feldman, https://pygis.
 
 ## Dimensionally Extended 9-Intersection Model (DE-9IM)
 
-
 ::: {layout-nrow="2"}
 ![](imgs/de9im2.jpg){fig-align="center" height="200"} ![](imgs/de9im1.jpg){fig-align="center" height="200"}
-![](imgs/de9im3.jpg)
 :::
+
+::: {style="font-size: 0.3em"}
+Source: Paul Ramsey & Mark Leslie, https://postgis.net/workshops/postgis-intro/de9im.html
+:::
+
+## Dimensionally Extended 9-Intersection Model (DE-9IM)
+
+![](imgs/de9im3.jpg)
+
 
 ::: {style="font-size: 0.3em"}
 Source: Paul Ramsey & Mark Leslie, https://postgis.net/workshops/postgis-intro/de9im.html
@@ -631,7 +636,6 @@ Or combinations such as
 
 ...
 
-
 ## Neighbors
 
 ```{r}
@@ -682,7 +686,7 @@ sm_tbl_3 <- sm_tbl_3 %>%
 
 ```
 
-::: {style="font-size: 0.8em"}
+::: {style="font-size: 0.5em"}
 ```{r}
 #| echo: false
 
@@ -695,12 +699,155 @@ sm_tbl_3 %>%
 ```
 :::
 
+## Boundary precision matters!
+
+```{r}
+#| echo: false
+
+library(ggthemes)
+
+distr_sf_transform$id_val <- paste0("D", 1:nrow(distr_sf_transform))
+distr_sf_centroid <- st_centroid(distr_sf_transform)
+distr_sf_centroid <-
+    distr_sf_centroid %>%
+    mutate(x = sf::st_coordinates(.)[,1],
+           y = sf::st_coordinates(.)[,2])
+
+convertnb2lines <- function(x){
+    diag(x) <- F
+    colnames(x) <- row.names(x) <- distr_sf_centroid$id_val 
+    nb_lines <-
+        as.data.frame.table(x, diag=F, base =distr_sf_centroid$id_val, responseName = "value") %>%
+        filter(value == T) %>%
+        left_join(distr_sf_centroid %>% select(id_val, x,y) %>% st_drop_geometry(), by = c("Var1" = "id_val") ) %>%
+        rename("x1" = "x", "y1" = "y") %>%
+        left_join(distr_sf_centroid %>% select(id_val, x,y) %>% st_drop_geometry(), by = c("Var2" = "id_val") ) 
+    
+  g1 <-  ggplot()+
+        geom_sf(data =distr_sf_transform)+
+        geom_point(aes(x=x, y=y), data = distr_sf_centroid %>% st_drop_geometry() )+
+        geom_segment(aes(x=x1,y=y1,xend=x,yend=y), alpha=.5, data= nb_lines) +
+        labs(x = "", y="") + 
+        theme_map()
+  
+  return(g1)
+    
+}
+
+```
+
+```{r}
+#| eval: false
+
+st_overlaps(distr_sf_transform, distr_sf_transform, sparse = F )
+
+```
+
+```{r}
+#| echo: false
+
+nb_matrix4 <-
+    st_overlaps(distr_sf_transform, distr_sf_transform, sparse = F )
+
+convertnb2lines(nb_matrix4)
+
+```
+
+## Boundary precision matters!
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+
+poly2nb(distr_sf_transform) %>%
+    nb2mat(zero.policy = T, style = "B") %>%
+    as.logical() %>%
+    matrix(nrow = nrow(distr_sf_transform), byrow = T)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+
+library(spdep)
+
+nb_matrix <- poly2nb(distr_sf_transform) %>%
+    nb2mat(zero.policy = T, style = "B") %>%
+    as.logical() %>%
+    matrix(nrow = nrow(distr_sf_transform), byrow = T)
+
+convertnb2lines(nb_matrix)
+
+```
+:::
+:::
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+
+st_relate(distr_sf_transform, 
+          distr_sf_transform,
+          pattern = "F*T*T****", 
+          sparse = F)
+
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+
+nb_matrix2 <-
+st_relate(distr_sf_transform, distr_sf_transform, pattern = "F*T*T****", sparse = F)
+
+convertnb2lines(nb_matrix2)
+
+```
+:::
+:::
+
+## Boundary precision matters!
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+
+
+temp_poly <- st_buffer(distr_sf_transform,.01)
+st_relate(temp_poly, 
+          temp_poly, 
+          pattern = "T*T***T**", 
+          sparse = F)
+
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+
+nb_matrix3 <- 
+    st_relate(st_buffer(distr_sf_transform,.01), st_buffer(distr_sf_transform,.01), pattern = "T*T***T**", sparse = F)
+
+convertnb2lines(nb_matrix3)
+
+```
+:::
+:::
+
+## Boundary precision matters!
+
+![](imgs/Rplot01.png){width="900"}
+
 ## Rethinking joins
 
 ::: {.content-hidden when-format="pdf"}
-
 ![](imgs/left-join_1.gif){width="300"} ![](imgs/right-join.gif){width="300"} ![](imgs/inner-join.gif){width="300"}
-
 :::
 
 ::: {style="font-size: 0.8em"}
@@ -710,7 +857,6 @@ sm_tbl_3 %>%
     -   date/time
     -   **geometry**
 -   Joining is fundamentally filtering and matching together
-
 :::
 
 # Other geometric operations
@@ -731,11 +877,16 @@ Source: Robin Lovelace, Jakub Nowosad, Jannes Muenchow
 
 ## Conclusions: Spatial is `somewhat` special
 
+-   Learn to think about spatial objects without plotting
+-   Topological relationships are not embedded in simple features. They have to be inferred
+-   Pay attention to units, especially for distance/areas
+-   Pay attention to coordinate systems
 
-- Learn to think about spatial objects without plotting
-- Topological relationships are not embedded in simple features. They have to be inferred
-- Pay attention to units, especially for distance/areas
-- Pay attention to coordinate systems
+## Further Work
 
+-  Find the nearest subway station to the air quality monitoring station.
+-  Compute the trips in the neighbourhood of each station by restricting the neighborhood both by space and the transit line. Pay attention that stations might belong to multiple lines.
+- Instead of districts, make a regular grid and assign the number of trip ends to each grid.
+- Practise different choropleth map options using `tmap`.
 
 ## Thank you
