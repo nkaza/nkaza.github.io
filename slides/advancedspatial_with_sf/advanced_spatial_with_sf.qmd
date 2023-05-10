@@ -465,7 +465,6 @@ Source: Paul Ramsey & Mark Leslie, https://postgis.net/workshops/postgis-intro/d
 
 ![](imgs/de9im3.jpg)
 
-
 ::: {style="font-size: 0.3em"}
 Source: Paul Ramsey & Mark Leslie, https://postgis.net/workshops/postgis-intro/de9im.html
 :::
@@ -739,12 +738,16 @@ convertnb2lines <- function(x){
 ```{r}
 #| eval: false
 
-st_overlaps(distr_sf_transform, distr_sf_transform, sparse = F )
+st_overlaps(distr_sf_transform, 
+            distr_sf_transform, 
+            sparse = F )
 
 ```
 
-```{r}
+::: {layout-ncol="2"}
+```{r fig.width=4, fig.height=4}
 #| echo: false
+
 
 nb_matrix4 <-
     st_overlaps(distr_sf_transform, distr_sf_transform, sparse = F )
@@ -752,6 +755,9 @@ nb_matrix4 <-
 convertnb2lines(nb_matrix4)
 
 ```
+
+![](imgs/overlay_overlaps_highlight.png){width="390"}
+:::
 
 ## Boundary precision matters!
 
@@ -768,7 +774,7 @@ poly2nb(distr_sf_transform) %>%
 :::
 
 ::: {.column width="50%"}
-```{r}
+```{r fig.width=3, fig.height=3}
 #| echo: false
 
 library(spdep)
@@ -798,7 +804,7 @@ st_relate(distr_sf_transform,
 :::
 
 ::: {.column width="50%"}
-```{r}
+```{r fig.width=3, fig.height=3}
 #| echo: false
 
 nb_matrix2 <-
@@ -828,7 +834,7 @@ st_relate(temp_poly,
 :::
 
 ::: {.column width="50%"}
-```{r}
+```{r fig.width=3, fig.height=3}
 #| echo: false
 
 nb_matrix3 <- 
@@ -842,7 +848,17 @@ convertnb2lines(nb_matrix3)
 
 ## Boundary precision matters!
 
-![](imgs/Rplot01.png){width="900"}
+
+
+```{r fig.width=4, fig.height=4}
+#| echo: false
+#| layout-ncol: 3
+
+convertnb2lines(nb_matrix) + labs(subtitle = "spdep")
+convertnb2lines(nb_matrix2) + labs(subtitle = "Touches")
+convertnb2lines(nb_matrix3) + labs(subtitle = "Buffer + Intersect")
+```
+
 
 ## Rethinking joins
 
@@ -884,9 +900,9 @@ Source: Robin Lovelace, Jakub Nowosad, Jannes Muenchow
 
 ## Further Work
 
--  Find the nearest subway station to the air quality monitoring station.
--  Compute the trips in the neighbourhood of each station by restricting the neighborhood both by space and the transit line. Pay attention that stations might belong to multiple lines.
-- Instead of districts, make a regular grid and assign the number of trip ends to each grid.
-- Practise different choropleth map options using `tmap`.
+-   Find the nearest subway station to the air quality monitoring station.
+-   Compute the trips in the neighbourhood of each station by restricting the neighborhood both by space and the transit line. Pay attention that stations might belong to multiple lines.
+-   Instead of districts, make a regular grid and assign the number of trip ends to each grid.
+-   Practise different choropleth map options using `tmap`.
 
 ## Thank you
