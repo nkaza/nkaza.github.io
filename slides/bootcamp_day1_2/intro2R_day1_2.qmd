@@ -1,0 +1,767 @@
+---
+title: "Working with Data in R"
+author: "Nihil Kaza"
+date: Aug 17, 2024
+format: 
+ revealjs:
+    footer: "[nkaza.github.io](https://nkaza.github.io)&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Style from Meghan Hall](https://github.com/meghall06/neair)"
+    theme: [moon,../custom.scss]
+    preview-links: auto
+    chalkboard: 
+      boardmarker-width: 5
+from: markdown+emoji
+#prefer-html: true
+execute:
+  echo: true
+  results: true
+---
+
+## Agenda
+
+```{r}
+#| echo: false
+
+library(knitr)
+library(kableExtra)
+library(explore)
+
+opts <- options(knitr.kable.NA = "")
+
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  lines <- options$output.lines
+  if (is.null(lines)) {
+    return(hook_output(x, options))  # pass to default hook
+  }
+  x <- unlist(strsplit(x, "\n"))
+  more <- "..."
+  if (length(lines)==1) {        # first n lines
+    if (length(x) > lines) {
+      # truncate the output, but add ....
+      x <- c(head(x, lines), more)
+    }
+  } else {
+    x <- c(more, x[lines], more)
+  }
+  # paste these lines together
+  x <- paste(c(x, ""), collapse = "\n")
+  hook_output(x, options)
+})
+```
+
+<br/>
+
+::: incremental
+1. Data Types
+
+
+:::
+
+# Data Types
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+## Basic Data types
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+- Numeric data are numbers that contain a decimal. e.g. 2.5, 2.0
+
+- Integers are whole numbers e.g. 2L, 5L
+- Logical : TRUE or FALSE or NA. 
+- Character data are used to represent string values (e.g. "test")
+    -  Factor, with levels and/order (e.g. "Metropolitan", "Micropolitan")
+- Complex (Not Relevant)
+- Raw (Not Relevant)
+
+
+## Basic Data types
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+int <- 2L # Need to include L to specify integer
+class(int)
+num <- 2
+class(num)
+identical(num, int)
+all.equal(num, int)
+char <- "hello"
+class(char)
+logi <- NA
+class(logi)
+my_vec <- c(2, 2L, 3.5, 5)
+class(my_vec)
+
+```
+
+## Basic Data types
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+my_vec[4] <- NA
+my_vec
+class(my_vec)
+
+my_vec <- c(T, T, F, NA)
+class(my_vec)
+
+my_vec <- c("T", "T", "F", "NA")
+class(my_vec)
+```
+
+
+## Complicated Data types - Time & Date
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+date_of_collection <- 2022-08-31
+date_of_collection
+date_of_collection <- "2022-08-31"
+class(date_of_collection)
+time_of_collection <- "2010-12-13 15:30:30"
+```
+
+If you want to use dates use `lubridate` package. More in PLAN 672.
+
+## Complicated Data types - Factors
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+day_of_week <- c("M", "M", "T", "TH", "W", "SA", "SU", "TH")
+
+class(day_of_week)
+
+day_of_week <- factor(day_of_week)
+day_of_week
+
+day_of_week[3] <- NA
+
+day_of_week
+
+day_of_week[5] <- "F"
+
+day_of_week
+```
+## Complicated Data types - Factors
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+If you want to add new levels
+
+```{r}
+levels(day_of_week) <- c(levels(day_of_week), "F")    # add new level
+day_of_week[5] <- 'F'
+day_of_week
+```
+
+Often it is useful to reorder levels to follow convention
+
+```{r}
+day_of_week <- c("M", "M", "T", "TH", "W", "SA", "SU", "TH")
+day_of_week <- factor(day_of_week, levels=c("SU", "M", "T", "W", "TH", "F", "SA"))
+
+str(day_of_week)
+
+# Or if you prefer to start your week on M
+
+day_of_week <- factor(day_of_week, levels=c("M", "T", "W", "TH", "F", "SA", "SU"))
+
+str(day_of_week)
+```
+
+# Data Structures
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+
+## Scalars,Vectors, Matrices & Arrays
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+![](imgs/scal_vec.png){height="350"}![](imgs/mat_array.png){height="350"}
+
+## Scalars, Vectors, Matrices & Arrays
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+a <- c(2, 4, 4)
+dim(a)
+
+my_mat <- matrix(1:16, nrow = 4, byrow = TRUE)
+my_mat
+
+dim(my_mat)
+
+my_array <- array(LETTERS[1:16], dim = c(2, 4, 2))
+my_array
+
+```
+## Lists
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+my_list <- list(c("black", "yellow", "orange"),
+               c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE),
+               matrix(1:6, nrow = 3))
+my_list
+
+names(my_list) <- c("colours", "evaluation", "time") # Often you can change the names of list afterwards
+
+```
+
+## Lists
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+
+To access the list elements use `$` and `[`
+```{r}
+my_list$colours
+
+my_list$evaluation[4:6]
+
+```
+
+## Data Frames are Lists!
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+- Columns *need* to have the same length, unlike regular lists
+
+```{r}
+p.height <- c(180, 155, 160, 167, 181)
+
+p.names <- c("Joanna", "Charlotte", "Helen", "Karen", "Amy")
+dataf <- data.frame(height = p.height, names = p.names)
+dim(dataf)
+dataf
+
+dataf$names
+dataf$height[4]
+dataf[4,1]
+```
+
+## Tibbles are Data Frames!
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+![](imgs/tidy-1.png)
+
+
+# [Exercise 3](https://nkaza.github.io/intro2Rbook/exercise-3-importing-and-manipulating-dataframes-1.html)
+
+
+# Tidyverse
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+
+## Using R with tidyverse
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+::: columns
+::: {.column width="50%"}
+<br> <br> You use R via *packages*
+:::
+
+::: fragment
+<br/> ...which contain *functions*
+:::
+
+::: fragment
+<br> ...which are just *verbs*
+:::
+:::
+
+::: {.column width="50%"}
+::: fragment
+![](imgs/tidyverse.png){.absolute top="70" left="530" width="500"} <br>
+
+
+:::
+:::
+
+. . .
+
+Tidyverse is a collection of R packages designed to work around a [common philosophy](https://cran.r-project.org/web/packages/tidyverse/vignettes/manifesto.html).
+
+## Best way to learn the tidyverse
+
+![](imgs/r4ds_cover.jpg){fig-align="center"}
+
+http://r4ds.had.co.nz/
+
+
+## Tibbles are Data Frames!
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+![](imgs/tidy-1.png)
+
+::: incremental
+-   Put each dataset in a tibble
+-   Put each variable in a column
+-   Each column should be a data type (integer, logical, date, character etc.)
+-   Each row is 'nominally' independent of another row
+-   Each column is 'nominally' independent of another column
+:::
+
+
+## Tibbles are Data Frames!
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+library(tidyverse)
+
+data_tib <- tibble(
+  `alphabet soup` = letters,
+  `nums ints` = 1:26,
+  `sample ints` = sample(100, 26)
+)
+
+data_df <- data.frame(
+  `alphabet soup` = letters,
+  `nums ints` = 1:26,
+  `sample ints` = sample(100, 26)
+)
+
+glimpse(data_tib)
+glimpse(data_df)
+
+```
+
+## Reading in External Data
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+- use `read_csv` function within the tidyverse
+- use `here` package
+- write your code to work on many different computers
+
+First [download](https://github.com/nkaza/intro2Rbook/blob/master/data/NOLA_STR.csv) and put the data into raw_data subdirectory in your project folder
+
+
+## Always here
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+[Jenny Bryan](https://jennybryan.org/) once said
+
+```         
+    If the first line of your R script is
+
+    setwd("C:\Users\jenny\path\that\only\I\have")
+
+    I will come into your office and SET YOUR COMPUTER ON FIRE 🔥.
+    
+    
+
+    If the first line of your R script is
+
+    rm(list = ls())
+
+    I will come into your office and SET YOUR COMPUTER ON FIRE 🔥.
+```
+
+I will happily supply her the matches and fuel
+
+## Always here
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+instead use the `here` function in the here package
+
+```{r}
+#| eval: false
+library(here)
+here("data", "raw_data", "NOLA_STR.csv") 
+```
+
+`here` converts to appropriate file paths
+
+```{r}
+#| echo: false
+library(here)
+here("data", "raw_data", "NOLA_STR.csv") 
+```
+
+-   which allows me to change computers, Operating Systems etc.
+-   don't have to worry about "/" (Linux) or "\\" (Windows)
+
+
+## Reading in External Data
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r eval= FALSE}
+library(tidyverse)
+library(here)
+
+nola_str_tib <- read_csv(here("data", "raw_data", "NOLA_STR.csv" ))
+nol_str_tib
+```
+
+
+::: {style="font-size: 0.3em"}
+```{r}
+#| echo: false
+
+nola_str_tib <- read_csv('data/nola_STR.csv')
+knitr::kable(nola_str_tib %>% head(5)) 
+```
+:::
+
+Contains `r nrow(nola_str_tib )` observations with `r ncol(nola_str_tib)` variables.
+
+
+
+## Better Use Pipes!
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r eval = FALSE}
+# base R pipe
+
+nola_str_tib <- here("data", "raw_data", "NOLA_STR.csv" ) |> 
+                    read_csv()
+
+# or if you prefer magrittr's pipe, as I do,
+
+nola_str_tib <- here("data", "raw_data", "NOLA_STR.csv" ) %>% 
+                    read_csv()
+
+
+```
+
+# Exploratory Data Analysis
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+## Explore the data!
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+str(nola_str_tib)
+```
+
+
+## Explore the data!
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+summary(nola_str_tib)
+```
+
+##  Select
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+- Pick Columns
+
+```{r}
+#| eval: false
+
+nola_str_tib %>%
+  select(c(`Permit Type`, `Residential Subtype`))
+
+```
+
+::: {style="font-size: 0.5em"}
+```{r}
+#| echo: false
+
+nola_str_tib %>%
+  select(c(`Permit Type`, `Residential Subtype`)) %>%
+  head(5) %>%
+  kable() 
+
+```
+:::
+
+- Recall `[` function. Can you achieve similar result with it?
+
+##  Filter
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+- Pick Rows
+
+```{r}
+#| eval: false
+
+nola_str_tib %>%
+  filter(`Permit Type` == "Short Term Rental Residential Owner")
+
+```
+
+::: {style="font-size: 0.5em"}
+```{r}
+#| echo: false
+
+nola_str_tib %>%
+  filter(`Permit Type` == "Short Term Rental Residential Owner") %>%
+  head(3) %>%
+  kable() %>%
+    kable_styling(bootstrap_options = c('condensed')) %>%
+    column_spec(column=3, background = 'yellow')
+
+```
+:::
+
+- Recall `[` function. Can you achieve similar result with it?
+
+
+##  Mutate
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+- Change/Add Columns
+
+```{r}
+#| eval: false
+library(lubridate)
+
+nola_str_tib <-
+    nola_str_tib %>%
+    mutate(`Application Date` = mdy(`Application Date`))
+
+```
+
+::: {style="font-size: 0.5em"}
+```{r}
+#| echo: false
+
+nola_str_tib <-
+    nola_str_tib %>%
+    mutate(`Application Date` = mdy(`Application Date`))  
+
+nola_str_tib %>%
+    select(`Application Date`) %>%
+    head(5) %>%
+    kable() 
+
+```
+:::
+
+- What would be a base R way to do this?
+
+##  Chain Them!
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+#| eval: false
+library(lubridate)
+
+nola_str_tib %>%
+  mutate(Backlogged = if_else(
+    (today() - `Application Date` >= 15) & is.na(Issue_Date),
+    T, F
+  )) %>%
+  filter(Backlogged == T) %>%
+  select(`Address`, `Operator Name`, `License Holder Name`, `Application Date`)
+
+```
+
+::: {style="font-size: 0.5em"}
+```{r}
+#| echo: false
+
+nola_str_tib %>%
+  mutate(Backlogged = if_else(
+    (today() - `Application Date` >= 15) & is.na(Issue_Date),
+    T, F
+  )) %>%
+  filter(Backlogged == T) %>%
+  select(`Address`, `Operator Name`, `License Holder Name`, `Application Date`) %>%
+  head(5) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+
+```
+:::
+
+
+## Some callouts
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+
+- No need to use `$` in tibbles to access columns in tibbles within tidyverse.
+- When there are no spaces in the column names you can omit the ticks \`\`.
+- Be careful about column lengths when doing multiple chaining
+- Use `()` to specify the order of operations
+
+
+## Merge Data - Left 
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+![](imgs/left-join_1.gif){height="300"} ![](imgs/left-join-2.gif){height="300"}
+
+
+## Merge Data - Right 
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+![](imgs/right-join.gif){height="300"}
+
+## Merge Data - Inner 
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+![](imgs/inner-join.gif){height="300"}
+
+
+# [Exercise 4](https://nkaza.github.io/intro2Rbook/exercise-4-manipulating-data-with-tidyverse-1.html)
+
+# Sneak Peak
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5
+:::
+:::
+
+## Data Visualisation
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5
+:::
+:::
+
+![](imgs/ggplot_example.png){fig-align="center"}
+
+# Thank You!
