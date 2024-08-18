@@ -346,7 +346,7 @@
         content="2019-12-31T00:00:00&#43;00:00"
       />
     
-    <meta property="article:modified_time" content="2022-01-22T22:26:23-05:00">
+    <meta property="article:modified_time" content="2024-08-18T00:00:00&#43;00:00">
   
 
   
@@ -379,7 +379,7 @@
   ],
   
   "datePublished": "2019-12-31T00:00:00Z",
-  "dateModified": "2022-01-22T22:26:23-05:00",
+  "dateModified": "2024-08-18T00:00:00Z",
   
   "author": {
     "@type": "Person",
@@ -927,7 +927,7 @@
           Last updated on
       
     
-    Jan 22, 2022
+    Aug 18, 2024
   </span>
   
 
@@ -994,7 +994,8 @@
 <ul>
 <li>Keep track of who wrote what code at the top of the file and its purpose.</li>
 <li>Use comments liberally using &ldquo;#&rdquo;.</li>
-<li>Avoid <code>setwd()</code> and use only relative paths. If you must, use <code>setwd()</code> only at the top of the script.</li>
+<li>Avoid <code>setwd()</code> and use only relative paths.</li>
+<li><a href="https://www.tidyverse.org/blog/2017/12/workflow-vs-script/" target="_blank" rel="noopener">Always use R projects</a></li>
 <li>Distinct components of the code should ideally be separate and be accessed using <code>source()</code>. This improves legibility.</li>
 <li>Use a consistent style within your code. For example, name all data frames to something ending in _df.</li>
 <li>Keep all of your source files for a project in the same directory, then use relative paths as necessary to access them.</li>
@@ -1014,29 +1015,32 @@ a &lt;- 2:5  #Assign vector 2:5 to a variable a
 a      #print a to console
 # [1] 2 3 4 5
 runif(5)   #Generate 5 random numbers
-# [1] 0.96863004 0.30872470 0.26212556 0.02766248 0.30882430
+# [1] 0.480833471 0.640728937 0.832722763 0.591352949 0.004963614
 sessionInfo()     #What is my computer environment? (Mac, Windows, packages etc.)
-# R version 4.0.3 (2020-10-10)
-# Platform: x86_64-apple-darwin17.0 (64-bit)
-# Running under: macOS Big Sur 10.16
+# R version 4.4.1 (2024-06-14)
+# Platform: aarch64-apple-darwin20
+# Running under: macOS Sonoma 14.5
 # 
 # Matrix products: default
-# BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-# LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+# BLAS:   /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRblas.0.dylib 
+# LAPACK: /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
 # 
 # locale:
 # [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+# 
+# time zone: America/New_York
+# tzcode source: internal
 # 
 # attached base packages:
 # [1] stats     graphics  grDevices utils     datasets  methods   base     
 # 
 # loaded via a namespace (and not attached):
-#  [1] bookdown_0.24   digest_0.6.29   R6_2.5.1        jsonlite_1.7.3 
-#  [5] magrittr_2.0.2  evaluate_0.14   blogdown_1.7.3  stringi_1.7.6  
-#  [9] rlang_1.0.0     cli_3.1.1       rstudioapi_0.13 jquerylib_0.1.4
-# [13] bslib_0.3.1     rmarkdown_2.11  tools_4.0.3     stringr_1.4.0  
-# [17] xfun_0.29       yaml_2.2.2      fastmap_1.1.0   compiler_4.0.3 
-# [21] htmltools_0.5.2 knitr_1.37      sass_0.4.0
+#  [1] digest_0.6.36     R6_2.5.1          bookdown_0.40     fastmap_1.2.0    
+#  [5] xfun_0.46         blogdown_1.19     cachem_1.1.0      knitr_1.48       
+#  [9] htmltools_0.5.8.1 rmarkdown_2.27    lifecycle_1.0.4   cli_3.6.3        
+# [13] sass_0.4.9        jquerylib_0.1.4   compiler_4.4.1    rstudioapi_0.16.0
+# [17] tools_4.4.1       evaluate_0.24.0   bslib_0.8.0       yaml_2.3.10      
+# [21] jsonlite_1.8.8    rlang_1.1.4
 </code></pre>
 <p>The output of the last two commands will be different on your computer than what is being shown.</p>
 <hr>
@@ -1158,15 +1162,18 @@ include_graphics(&quot;./img/anaconda.png&quot;) # Change the file path suitably
 </code></pre>
 <div class="figure">
 <img src="./img/anaconda.png" alt="An external image" width="50%" />
-<p class="caption">Figure 1: An external image</p>
+<p class="caption"><span id="fig:anaconda"></span>Figure 1: An external image</p>
 </div>
 <h3 id="reading-real-data-into-r">Reading real data into R</h3>
 <p>In this course, we are going to follow the tidyverse style of programming and its associated packages. To read a comma separated file (*.csv) we are going to use <code>read_csv</code> command from <code>tidyverse</code> package.</p>
 <p>Download the latest building violations data from <a href="https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr" target="_blank" rel="noopener">building violations data</a> from the Chicago Open Data Portal. For convenience, <a href="https://www.dropbox.com/s/406dh96rgkgvjf4/Building_Violations.csv?dl=0" target="_blank" rel="noopener">a local copy downloaded in 2019 is stored here</a>.</p>
 <pre><code class="language-r">library(tidyverse)
-chicago_df &lt;- read_csv(&quot;../../../tutorials_datasets/buildingviolations/Building_violations.csv&quot;)
 
-summary(chicago_df)
+
+chicago_df &lt;- read_csv(here('data', 'raw_data', 'Building_violations.csv'))
+
+</code></pre>
+<pre><code class="language-r">summary(chicago_df)
 #        ID          VIOLATION LAST MODIFIED DATE VIOLATION DATE    
 #  Min.   : 219970   Length:1682199               Length:1682199    
 #  1st Qu.:2846372   Class :character             Class :character  
@@ -1236,7 +1243,7 @@ nrow(chicago_df)
 # [1] 1682199
 
 str(chicago_df)
-# spec_tbl_df [1,682,199 × 26] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+# spc_tbl_ [1,682,199 × 26] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
 #  $ ID                          : num [1:1682199] 3282077 1721274 1551698 1551137 1551226 ...
 #  $ VIOLATION LAST MODIFIED DATE: chr [1:1682199] &quot;10/14/2009&quot; &quot;10/24/2006&quot; &quot;05/14/2008&quot; &quot;08/11/2006&quot; ...
 #  $ VIOLATION DATE              : chr [1:1682199] &quot;10/07/2009&quot; &quot;10/10/2006&quot; &quot;08/07/2006&quot; &quot;08/07/2006&quot; ...
@@ -1294,14 +1301,19 @@ str(chicago_df)
 #   .. )
 #  - attr(*, &quot;problems&quot;)=&lt;externalptr&gt;
 </code></pre>
+<p>Noticing that VIOLATION_DATE is stored as a character instead of a date, we fix it using <code>mdy</code> function from <code>lubridate</code>. This function is appropriate compared to another one such as <code>ymd</code> because the dates <strong>appear</strong> to be in month, day, year format.</p>
+<pre><code class="language-r">library(lubridate)
+chicago_df$`VIOLATION DATE` &lt;- mdy(chicago_df$`VIOLATION DATE`)
+</code></pre>
 <p>Looking at the data gives you a lot information about how the data is read and stored. You will find that quirks of data types and storage produce many unexpected results. Pay close attention to this step to avoid countless hours of debugging. For example, why is Latitude and Longitude represented as T/F rather than a number?</p>
 <hr>
 <p><strong>Exercise</strong></p>
 <p>It is useful to develop specific naming conventions for variables and datasets, so that your code will be legible to you later on.</p>
 <ul>
 <li>Notice that column names have spaces in them. Rename the columns replacing the space with an underscore, using <code>rename</code> command from tidyverse package</li>
-<li>Notice that VIOLATION DATE column is read in as a character but should really be a date. Using <code>mdy</code> command from lubridate package and <code>mutate</code> command from tidyverse, convert this column to date variable type and save it.</li>
-<li>Notice that parsing the file resulted in a lot of errors that read_csv gracefully skipped over. Examine the data file to understand what these errors are. Can you read the file correctly, by explictly specifying the <code>col_types</code> in read_csv command. See help for read_csv.</li>
+<li>Notice that VIOLATION DATE column is read in as a character but should really be a date. We used the base R way to convert it into a date. However, if we were to follow a tidyverse way of doing it, how would you do it using <code>mutate</code> and <code>mdy</code>?</li>
+<li>Notice that parsing the file resulted in a lot of errors that read_csv gracefully skipped over. Examine the data file to understand what these errors are. Can you read the file correctly, by explicitly specifying the <code>col_types</code> in read_csv command. See help for read_csv.
+How would you access the help file?</li>
 </ul>
 <hr>
 <h3 id="basic-data-manipulation">Basic Data Manipulation</h3>
@@ -1326,7 +1338,7 @@ chicago_cont_table_df
 #   VENTILATION                   18439        0  13847
 #   WATER                           275        0    513
 </code></pre>
-<p><code>$</code> is  special function that allows us access to the columns in a dataset. We use `` to access columns whose names have spaces or other special characters. Note that R is sensitive to capitalistation.</p>
+<p><code>$</code> is  special function that allows us access to the columns in a dataset. We use `` to access columns whose names have spaces or other special characters. Note that R is sensitive to capitalisation.</p>
 <p>Notice that &ldquo;No Entry&rdquo; category is not relevant for most categories, so we ignore those records and create a barplot of this table.</p>
 <pre><code class="language-r">chicago_df2 &lt;- chicago_df[chicago_df$`VIOLATION STATUS` != &quot;NO ENTRY&quot;,] #!=  is logical operator meaning not equal to.
 chicago_cont_table_df2 &lt;- table(chicago_df2$`VIOLATION STATUS`, chicago_df2$`DEPARTMENT BUREAU`) # Notice the flip from before. This is done to make the barplot work.
@@ -1336,7 +1348,7 @@ colrs &lt;- c(&quot;Green&quot;,&quot;Red&quot;)
 barplot(as.matrix(chicago_cont_table_df2 ), main=&quot;Bar Chart&quot;, ylab = &quot;Count&quot;, cex.lab = 1.1, cex.main = 1.4, beside=TRUE, col= colrs)
 legend(&quot;topright&quot;, c(&quot;Complied&quot;, &quot;Open&quot;), cex=1.3, bty=&quot;n&quot;, fill=colrs)
 </code></pre>
-<img src="https://nkaza.github.io/post/introduction-to-r-rmarkdown/index.en_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<img src="https://nkaza.github.io/post/introduction-to-r-rmarkdown/index.en_files/figure-html/unnamed-chunk-8-1.png" width="672" />
 <hr>
 <p><strong>Exercise</strong></p>
 <p>The above is a terrible graphic and is used for demonstration purposes only. What is wrong with this graphic?</p>
@@ -1351,7 +1363,7 @@ chicago_df %&gt;%
 <p>Notice few things that are important.</p>
 <ul>
 <li>
-<p><code>%&gt;%</code> is called a pipe operator. A combination function <code>\(f(g(x))\)</code> where <code>\(f\)</code> and <code>\(g\)</code> are functions and <code>\(x\)</code> is the argument can be written as <code>x %&gt;% f() %&gt;% g()</code>. You will do well to get comfortable with this pipe operator as it makes the code cleaner. It is  part of <code>magittr</code> package, which is loaded when you call <code>library(tidyverse)</code> in the earlier section of the code. See <a href="https://www.datacamp.com/community/tutorials/pipe-r-tutorial" target="_blank" rel="noopener">this tutorial</a> for details.</p>
+<p><code>%&gt;%</code> is called a pipe operator. A combination function \(f(g(x))\) where \(f\) and \(g\) are functions and \(x\) is the argument can be written as <code>x %&gt;% f() %&gt;% g()</code>. You will do well to get comfortable with this pipe operator as it makes the code cleaner. It is  part of <code>magittr</code> package, which is loaded when you call <code>library(tidyverse)</code> in the earlier section of the code. See <a href="https://www.datacamp.com/community/tutorials/pipe-r-tutorial" target="_blank" rel="noopener">this tutorial</a> for details.</p>
 </li>
 <li>
 <p><code>&amp;</code> is a logical operator. <code>&amp;</code> and <code>&amp;&amp;</code> indicate logical AND and <code>|</code> and <code>||</code> indicate logical OR. The shorter form performs elementwise comparisons in much the same way as arithmetic operators. The longer form evaluates left to right examining only the first element of each vector. Evaluation proceeds only until the result is determined. The longer form is appropriate for programming control-flow and typically preferred in if clauses.</p>
@@ -1366,9 +1378,15 @@ chicago_df %&gt;%
 <p><code>write_csv</code> is a function that writes a dataset into a csv file.</p>
 </li>
 </ul>
+<hr>
+<p><strong>Exercise</strong></p>
+<p>The <code>write_csv</code> function in the above code chunk uses bad programming practise. Rewrite that piece of code in more correct way using project workflow ideas and <code>here</code>.</p>
+<hr>
 <p>Now consider that you want to programmatically create subsets of this data by year for each year. You can repeat the above code numerous times, each time modifying the filter function and the file path in the write_csv function. Such procedure is tedious. Instead, we can write a function that takes year as a argument, and repeatedly call the function with the right argument.</p>
 <pre><code class="language-r">write_chicago_df_fun &lt;- function(yr){  #yr is an argument. Avoid using names that are already other functions, such as year.
-  file_name_str &lt;- paste(&quot;../../../tutorials_datasets/buildingviolations/violations_&quot;, yr, &quot;.csv&quot; ,sep=&quot;&quot;) # This will create a string &quot;../../../tutorials_datasets/buildingviolations/voilations_2008.csv&quot; when yr == 2008 and store it in the variable &quot;file_name_str&quot;
+
+  file_name_str &lt;- paste(here('data', 'processed_data'), &quot;/violations_&quot;, yr, &quot;.csv&quot;, sep = &quot;&quot;)
+     # This will create a string &quot;$PROJ_HOME/data/processed_data/violations_2008.csv&quot; when yr == 2008 and store it in the variable &quot;file_name_str&quot; and so on. (with appropriate substitutions for PROJ_HOME that is unique to your computer)
   
    chicago_df %&gt;%
   filter(year(`VIOLATION DATE`) == yr) %&gt;%  # Note the ==
@@ -1381,11 +1399,12 @@ chicago_df %&gt;%
 for (yr2 in 2006:2020){  # I am using yr2 as a variable to avoid confusion between arguments.
   write_chicago_df_fun(yr2)
 }
+
 </code></pre>
 <pre><code class="language-r"># Alternately, if you don't think that you will use the write_chicago_df_fun again you can just write a loop
 
 for (yr2 in 2006:2020){
-  file_name_str &lt;- paste(&quot;../../../tutorials_datasets/buildingviolations/violations_&quot;, yr2, &quot;.csv&quot; ,sep=&quot;&quot;) #
+ file_name_str &lt;- paste(here('data', 'processed_data'), &quot;/violations_&quot;, yr, &quot;.csv&quot;, sep = &quot;&quot;) #
   
   chicago_df %&gt;%
   filter(year(`VIOLATION DATE`) == yr2) %&gt;%  # Note the yr2
@@ -1427,7 +1446,7 @@ for (yr2 in 2006:2020){
 <p>Adapt the function and the for loop to write out files in two year increments e.g. <code>violations_2006_2007.csv</code> and <code>violations_2008_2009.csv</code></p>
 </li>
 <li>
-<p>Can you find a more R way to replace the for loop? Hint: use <code>sapply</code>.</p>
+<p>Can you find a more R way to replace the for loop? Hint: use <code>map</code></p>
 </li>
 </ul>
 <hr>
