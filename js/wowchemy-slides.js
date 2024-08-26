@@ -2,7 +2,7 @@
   // ns-params:@params
   var slides = null;
 
-  // ns-hugo:/var/folders/pg/hfg8qpf94p78gvys8h6mjlxr0000gn/T/hugo_cache/modules/filecache/modules/pkg/mod/github.com/wowchemy/wowchemy-hugo-modules/wowchemy/v5@v5.0.0-20211231133358-6d4989f90f7a/assets/js/wowchemy-utils.js
+  // ns-hugo:C:\Users\kaza\AppData\Local\Temp\hugo_cache\modules\filecache\modules\pkg\mod\github.com\wowchemy\wowchemy-hugo-modules\wowchemy\v5@v5.0.0-20211231133358-6d4989f90f7a\assets\js\wowchemy-utils.js
   function fixMermaid(render = false) {
     let mermaids = [];
     [].push.apply(mermaids, document.getElementsByClassName("language-mermaid"));
