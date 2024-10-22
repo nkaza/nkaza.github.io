@@ -932,7 +932,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    9 min read
+    13 min read
   </span>
   
 
@@ -1025,16 +1025,17 @@
 <ol>
 <li>Cities are subdomains. i.e. if you need to information about Raleigh, you need to use <code>https://raleigh.craigslist.org/</code></li>
 <li>The second bit of it <code>/d/apts-housing-for-rent/search/apa</code> is same for all cities but will change if you want to scrape something other than apartments.</li>
-<li>The browser uses a <code>https</code> protocol instead of a <code>http</code> protocol. This is more secure, but occasionally poses problems for accessing the web using <code>curl</code> instead of a browser. cURL is a command-line tool for getting or sending data including files using URL syntax often used explicitly within scripts that are used for web scraping.</li>
+<li>The browser uses a <code>https</code> protocol instead of a <code>http</code> protocol. This is more secure, but occasionally poses problems for accessing the web using <code>curl</code> instead of a browser. cURL is a command-line tool for getting or sending data including files using URL syntax often used explicitly within scripts that are used for web scraping. We are going to use <code>rvest</code> which takes care of this issue.</li>
 <li>The arguments start after <code>?</code>.</li>
 <li>Match the options checked on the browser to the variables in the url and the values they take. For example, <code>postedToday</code> and <code>broker_fee</code> are set to 1 when corresponding boxes are checked.</li>
 <li>Variables are concatenated using <code>&amp;</code> in the url string.</li>
 <li>It looks like the spaces in <code>all dates</code> are replaced with a <code>+</code>. Usually they are replaced by <code>%20</code> a hexadecimal code for space. It is useful to <a href="https://www.w3schools.com/tags/ref_urlencode.ASP" target="_blank" rel="noopener">understand the hex codes</a> for special characters.</li>
 </ol>
 <p>Based on the understanding of the above url, we can use conventional string manipulation to construct the url in R as follows.</p>
-<pre><code class="language-r">library(tidyverse)
+<pre><code class="language-r">
+library(tidyverse)
 library(rvest)
-library(leaflet)
+library(tmap)
 
 location &lt;- 'boston'
 bedrooms &lt;- 2
@@ -1044,12 +1045,13 @@ min_sqft &lt;- 900
 baseurl &lt;- paste0(&quot;https://&quot;, location, &quot;.craigslist.org/search/apa&quot;)
 
 # Build out the query
-queries &lt;- c(&quot;?&quot;)
-queries &lt;- c(queries, paste0(&quot;bedrooms=&quot;, bedrooms))
-queries &lt;- c(queries, paste0(&quot;bathrooms=&quot;, bathrooms))
-queries &lt;- c(queries, paste0(&quot;minSqft=&quot;, min_sqft))
+queries &lt;- vector(&quot;character&quot;, 0) # Initialise a vector
+queries[1] &lt;- paste0(&quot;bedrooms=&quot;, bedrooms)
+queries[2] &lt;- paste0(&quot;bathrooms=&quot;, bathrooms)
+queries[3] &lt;- paste0(&quot;minSqft=&quot;, min_sqft)
 
-query_url &lt;- paste0(baseurl,queries[1], paste(queries[2:length(queries)], collapse = &quot;&amp;&quot;))
+(query_url &lt;- paste0(baseurl,&quot;?&quot;, paste(queries, collapse = &quot;&amp;&quot;)))
+# [1] &quot;https://boston.craigslist.org/search/apa?bedrooms=2&amp;bathrooms=2&amp;minSqft=900&quot;
 </code></pre>
 <hr>
 <p><strong>Exercise</strong></p>
@@ -1122,7 +1124,7 @@ You can right click on any post in the craigslist result page and use inspect el
     <div class="w-100" ><img src="./img/craigslist4.png" alt="" loading="lazy" data-zoomable /></div>
   </div></figure>
 </p>
-<p>In this particular instance each posted ad seems to be within a list, with a list element <code>&lt;li&gt;</code> with a class <code>result-row</code>, with a <code>data-pid</code> associated with it.</p>
+<p>In this particular instance each posted ad seems to be within a list, with a list element <code>&lt;li&gt;</code> with a class <code>cl-search-result</code>, with a <code>data-pid</code> associated with it.</p>
 <p>
 
 
@@ -1145,26 +1147,44 @@ You can right click on any post in the craigslist result page and use inspect el
   </div></figure>
 </p>
 <p>That is our way in to scraping and structuring the data. To take advantage of the HTML elements, you need to become somewhat familiar with css selectors. You can use a <a href="http://flukeout.github.io/" target="_blank" rel="noopener">fun game</a> to get started.</p>
-<h2 id="using-rvest-to-extract-data-from-html">Using rvest to extract data from html</h2>
-<p>The workhorse functions we are going to use are <code>html_nodes</code> and <code>html_node</code> from the <code>rvest</code> library. <code>html_node</code> always extracts exactly one element. In this instance we want to extract all elements that are of <code>result.row</code> class</p>
-<pre><code class="language-r">raw_query &lt;- xml2::read_html(query_url)
+<h2 id="selenium">Selenium</h2>
+<p>Selenium is a library and tool used for automating web browsers to do a number of tasks. One of such is web-scraping to extract useful data and information that may be otherwise unavailable. Craigslist has recently made it not possible to use <code>rvest</code> to scrape the data, by requiring only a browser with javascript capabilities to query the webpage</p>
+<p>In such cases, you can use <code>RSelenium</code> to scrape the data. Rselenium is a binding for Selenium framework where a web browser can be controlled programmatically to navigate and interact with web pages. It is useful to use a headless browser, which is a browser that does not have a graphical user interface. This is useful when you are running the code on a server or in a cloud environment. But for this work, you need to have appropriate ports not blocked by firewalls. We use <code>netstat</code> package to find a free port to use. <code>wdman</code> is a package that helps manage the webdriver.</p>
+<pre><code class="language-r">#install.packages(&quot;RSelenium&quot;)
+library(RSelenium)
+library(wdman)
+library(netstat)
 
-raw_query
-# {html_document}
-# &lt;html&gt;
-# [1] &lt;head&gt;\n&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8 ...
-# [2] &lt;body class=&quot;no-js show-curtain opaque search has-map&quot;&gt;\n    \n    &lt;ifram ...
+
+#remDr$close() # Close the browser if you had one started before.
+
+rD &lt;- rsDriver(browser = 'firefox',
+               verbose =F,
+               port = free_port()) # Sometimes these ports are blocked by the firewall. You can change the port number to something else. Or check with your system administrator.
+remDr &lt;- rD[[&quot;client&quot;]]
+
+remDr$navigate(query_url) # Navigate to the url
+
+Sys.sleep(2) # give the page time to fully load
+html_page &lt;- remDr$getPageSource()[[1]]
+#  # Close the browser whenever you are done with it.
+</code></pre>
+<h2 id="using-rvest-to-extract-data-from-html">Using rvest to extract data from html</h2>
+<p>The workhorse functions we are going to use are <code>html_elements</code> and <code>html_element</code> from the <code>rvest</code> library. <code>html_element</code> always extracts exactly one element. In this instance we want to extract all elements that are of <code>cl-search-result</code> class</p>
+<pre><code class="language-r">#(raw_query &lt;- read_html(query_url))
+
+raw_query &lt;- read_html(html_page)
 
 ## Select out the listing ads
-raw_ads &lt;- html_nodes(raw_query, &quot;li.result-row&quot;)
+raw_ads &lt;- html_elements(raw_query, &quot;li.cl-search-result&quot;)
 raw_ads %&gt;% head()
 # {xml_nodeset (6)}
-# [1] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450216459&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
-# [2] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450209549&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
-# [3] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450142443&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
-# [4] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450142437&quot; data-repost-of=&quot;7436846787&quot;&gt; ...
-# [5] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450067338&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
-# [6] &lt;li class=&quot;result-row&quot; data-pid=&quot;7450064894&quot;&gt;\n\n        &lt;a href=&quot;https:/ ...
+# [1] &lt;li data-pid=&quot;7795414882&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [2] &lt;li data-pid=&quot;7795400482&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [3] &lt;li data-pid=&quot;7795399517&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [4] &lt;li data-pid=&quot;7795398994&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [5] &lt;li data-pid=&quot;7795396985&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [6] &lt;li data-pid=&quot;7795396478&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
 </code></pre>
 <p>In the following bit of code, I extract the entire list of attributes that are part of each result-row. In particular, I want to extact id, title, price, date and locale. Notice how each of them require some special manipulation to get into a right format.</p>
 <pre><code class="language-r">ids &lt;-
@@ -1173,25 +1193,20 @@ raw_ads %&gt;% head()
 
 titles &lt;-
   raw_ads %&gt;%
-   html_node(&quot;a.result-title&quot;) %&gt;%
+   html_element(&quot;a.posting-title&quot;) %&gt;%
    html_text()
 
 prices &lt;-
    raw_ads %&gt;% 
-     html_node(&quot;span.result-price&quot;) %&gt;%
+     html_element(&quot;span.priceinfo&quot;) %&gt;%
      html_text() %&gt;%
      str_replace_all(&quot;\\$|,+&quot;, &quot;&quot;) %&gt;% # This is a function that includes a regular expression to extract a special symbol $ and , and replace them with nothing.
      as.numeric()
 
-dates &lt;-
+metadata &lt;-
   raw_ads%&gt;%
-  html_node('time') %&gt;%
-  html_attr('datetime')
-
-locales &lt;-
-  raw_ads %&gt;%
-  html_node(&quot;.result-hood&quot;) %&gt;%
-  html_text() 
+  html_element('div.meta') %&gt;%
+  html_text()
 </code></pre>
 <hr>
 <p><strong>Exercise</strong></p>
@@ -1200,13 +1215,10 @@ locales &lt;-
 <p>Notice the different functions <code>html_attr</code> and <code>html_text</code> that are used in different situations. Can you explain which is used when?</p>
 </li>
 <li>
-<p>Examine when you need to use “.” within html_node and when you don’t. for e.g. why is <code>html_node('time')</code> vs <code>html_node(&quot;.result_hood&quot;)</code> used in different contexts?</p>
+<p>Examine when you need to use “.” within html_node and when you don’t?</p>
 </li>
 <li>
-<p>Create a vector of sq.ft and number of bedrooms for these ads. You can use <code>lapply</code> or <code>map</code>.</p>
-</li>
-<li>
-<p>Since the tutorial has been created <code>html_node</code> is superseded by <code>html_element</code>. Rewrite the code to account for these changes.</p>
+<p>Parse the metadata to extract the date of posting, number of bedrooms, sq.ft and locale</p>
 </li>
 <li>
 <p>Use <a href="https://selectorgadget.com/" target="_blank" rel="noopener">selectorgadget</a> Chrome extension or bookmarklet to figure out which elements to extract more easily.</p>
@@ -1221,16 +1233,19 @@ locales &lt;-
 <h2 id="extracting-location-attributes">Extracting location attributes</h2>
 <p>Location of the apartments/houses are little bit more tricky because they are not embedded in the results page, but in each individual ad. To access them we need to access individual urls for the ads and then extract the location attributes.</p>
 <p>To do this we use the <code>map_*</code> function in <code>purrr</code> package. The function is effectively like a for loop. So the following code for each of the element of urls use the function(x) and then combine them into a table using row binding.</p>
-<pre><code class="language-r">urls &lt;-
+<pre><code class="language-r">
+urls &lt;-
   raw_ads %&gt;%
-  html_node(&quot;.result-title&quot;) %&gt;%
+  html_element(&quot;.cl-app-anchor&quot;) %&gt;%
   html_attr(&quot;href&quot;)
   
 
-latlongs &lt;- 
-  map_dfr(urls, function(x){
-    xml2::read_html(x) %&gt;% 
-      html_node(&quot;#map&quot;) %&gt;%
+latlongs &lt;- map_dfr(urls, function(x){
+    remDr$navigate(x) # Navigate to the url
+    Sys.sleep(1) # give the page time to fully load
+    html_page2 &lt;- remDr$getPageSource()[[1]]
+    xml2::read_html(html_page2) %&gt;%   
+      html_element(&quot;#map&quot;) %&gt;%
       html_attrs() %&gt;%
       t() %&gt;%
       as_tibble() %&gt;%
@@ -1243,17 +1258,17 @@ latlongs
 # # A tibble: 120 × 3
 #    `data-latitude` `data-longitude` `data-accuracy`
 #              &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;
-#  1            42.4            -71.1              10
-#  2            42.3            -71.0              20
-#  3            42.3            -71.1              15
-#  4            42.2            -71.0              22
-#  5            42.2            -71.0              10
-#  6            42.2            -71.0              10
-#  7            42.3            -71.2              10
-#  8            42.3            -71.1              10
-#  9            42.3            -71.0              22
-# 10            42.3            -71.1              10
-# # … with 110 more rows
+#  1            42.4            -71.0              22
+#  2            42.1            -71.4              22
+#  3            42.2            -71.0              10
+#  4            42.2            -71.2              22
+#  5            42.5            -71.2              22
+#  6            42.3            -71.1              10
+#  7            42.5            -71.0              22
+#  8            42.3            -71.0              22
+#  9            42.4            -71.0              10
+# 10            42.4            -71.6              10
+# # ℹ 110 more rows
 </code></pre>
 <hr>
 <p><strong>Exercise</strong></p>
@@ -1261,29 +1276,155 @@ latlongs
 <li>It is useful to go through each step of the function and see why they result in the lat longs finally.</li>
 </ul>
 <hr>
-<p>Now we are ready to combine them all into one table and visualise the results.</p>
-<pre><code class="language-r">craigslist_table &lt;- cbind(ids, titles, dates, locales, urls, latlongs, prices) 
-
-m1 &lt;- 
-leaflet(craigslist_table) %&gt;%
-  addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;) %&gt;%
-  addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;) %&gt;%
-  addCircles(lat = ~`data-latitude`, lng = ~`data-longitude`, label = paste(craigslist_table$ids, craigslist_table$locales, craigslist_table$prices, sep=&quot;,&quot;)
+<h3 id="geocoding-addresses">Geocoding addresses</h3>
+<p>Notice the <code>data-accuracy</code> field in the results. It is not clear, if the lat longs provided by the craigslist are accurate. It is useful to geocode the addresses to get a more accurate location. We first extract the addresses that are in each page and then geocode them using <code>tidygeocoder</code> package.</p>
+<pre><code class="language-r">
+addresses &lt;- map_dfr(urls, function(x){
+    remDr$navigate(x) # Navigate to the url
+    Sys.sleep(1) # give the page time to fully load and don't run afoul of rate limits
+    html_page2 &lt;- remDr$getPageSource()[[1]]
+    
+    id &lt;- str_split(x, &quot;(.*)/&quot;)[[1]][2] %&gt;% tools::file_path_sans_ext() 
+    
+    title &lt;- read_html(html_page2) %&gt;%   
+      html_element(&quot;span#titletextonly&quot;) %&gt;%
+      html_text()
+    
+    addr &lt;- read_html(html_page2) %&gt;%   
+      html_element(&quot;h2.street-address&quot;) %&gt;%
+      html_text()
+    
+    return(bind_cols(pid = id, title = title, full_addr = addr))
+    
+  }
   )
 
+head(addresses)
+# # A tibble: 6 × 3
+#   pid        title                                                     full_addr
+#   &lt;chr&gt;      &lt;chr&gt;                                                     &lt;chr&gt;    
+# 1 7795414882 ONLY $500 FOR SECURITY ! PETS OK ! NO EXTRA SECURITY FOR… &lt;NA&gt;     
+# 2 7795400482 Gas grills, Elevator, Patio, Washer and dryer             10 Indep…
+# 3 7795399517 Clubhouse available for rental, Office area, Pantry       800 West…
+# 4 7795398994 Walk-in closet, Loft apartments, Build credit score with… 8 Upland…
+# 5 7795396985 WALK IN closets*, Short term leases available, Washer an… 1 Inwood…
+# 6 7795396478 Vaulted ceilings, Gourmet kitchen with granite counterto… 32 Garri…
+
+library(tidygeocoder)
+library(sf)
+
+  addresses_geocode &lt;- addresses %&gt;%
+    geocode_combine(
+      queries = list(list(method = 'census'), list(method = 'arcgis')),
+      global_params = list(address = 'full_addr'), cascade = TRUE)
+  
+
+# Now Check to see if the distances between lat long and craigslist lat long 
+  
+
+
+craigslist_table &lt;- cbind(ids, titles, urls, latlongs, prices) %&gt;% 
+                    as_tibble
+
+craigslist_table &lt;- craigslist_table %&gt;% 
+  left_join(addresses_geocode, by=c(&quot;ids&quot; = &quot;pid&quot;))
+
+craigslist_table
+# # A tibble: 120 × 12
+#    ids      titles urls  `data-latitude` `data-longitude` `data-accuracy` prices
+#    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;           &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;
+#  1 7795414… ONLY … http…            42.4            -71.0              22   2995
+#  2 7795400… Gas g… http…            42.1            -71.4              22   2399
+#  3 7795399… Clubh… http…            42.2            -71.0              10   3515
+#  4 7795398… Walk-… http…            42.2            -71.2              22   4299
+#  5 7795396… WALK … http…            42.5            -71.2              22   2987
+#  6 7795396… Vault… http…            42.3            -71.1              10   5529
+#  7 7795394… Upgra… http…            42.5            -71.0              22   3851
+#  8 7795393… Den /… http…            42.3            -71.0              22   5911
+#  9 7795358… NEW C… http…            42.4            -71.0              10   3800
+# 10 7795310… New c… http…            42.4            -71.6              10   3600
+# # ℹ 110 more rows
+# # ℹ 5 more variables: title &lt;chr&gt;, full_addr &lt;chr&gt;, lat &lt;dbl&gt;, long &lt;dbl&gt;,
+# #   query &lt;chr&gt;
+
+craigslist_table$dist_err &lt;- diag(geosphere::distm(craigslist_table[,c(&quot;data-longitude&quot;, &quot;data-latitude&quot;)], craigslist_table[,c(&quot;long&quot;, &quot;lat&quot;)]))
+
+
+craigslist_table %&gt;% arrange(-`data-accuracy`) %&gt;% glimpse()
+# Rows: 120
+# Columns: 13
+# $ ids              &lt;chr&gt; &quot;7793439550&quot;, &quot;7795414882&quot;, &quot;7795400482&quot;, &quot;7795398994…
+# $ titles           &lt;chr&gt; &quot;2-3 bed, 1-2 bath condo- 2 units&quot;, &quot;ONLY $500 FOR SE…
+# $ urls             &lt;chr&gt; &quot;https://boston.craigslist.org/gbs/apa/d/belmont-3-be…
+# $ `data-latitude`  &lt;dbl&gt; 42.3960, 42.4138, 42.0935, 42.1868, 42.4829, 42.5326,…
+# $ `data-longitude` &lt;dbl&gt; -71.1820, -71.0052, -71.4058, -71.2033, -71.1574, -70…
+# $ `data-accuracy`  &lt;dbl&gt; 99, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 2…
+# $ prices           &lt;dbl&gt; 3400, 2995, 2399, 4299, 2987, 3851, 5911, 3600, 4850,…
+# $ title            &lt;chr&gt; &quot;2-3 bed, 1-2 bath condo- 2 units&quot;, &quot;ONLY $500 FOR SE…
+# $ full_addr        &lt;chr&gt; NA, NA, &quot;10 Independence Way, Franklin, MA 02038&quot;, &quot;8…
+# $ lat              &lt;dbl&gt; NA, NA, 42.05982, 42.21076, 42.52207, 42.55445, NA, N…
+# $ long             &lt;dbl&gt; NA, NA, -71.39399, -71.19273, -71.13192, -70.97567, N…
+# $ query            &lt;chr&gt; &quot;&quot;, &quot;&quot;, &quot;census&quot;, &quot;census&quot;, &quot;arcgis&quot;, &quot;census&quot;, &quot;&quot;, &quot;…
+# $ dist_err         &lt;dbl&gt; NA, NA, 3866.7285, 2800.6538, 4829.4004, 2702.8893, N…
+</code></pre>
+<p>Notice all the missing addresses with ‘high-accuracy’. Clearly the text address is an incomplete data. However, can you trust the CL created longitude and latitude?</p>
+<pre><code class="language-r">
+library(ggplot2)
+
+ggplot() +
+  geom_point(aes(x = `data-accuracy`, y = `dist_err`), data = craigslist_table) +
+  labs(x = &quot;Data Accuracy&quot;, y = &quot;Distance Error&quot;)
+</code></pre>
+<img src="https://nkaza.github.io/post/scraping-craigslist-posts/index_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>What can you infer from this graph? How does this condition your analysis further?</li>
+</ul>
+<hr>
+<p>Now we are ready to combine them all into one table and visualise the results.</p>
+<pre><code class="language-r">
+tmap_mode(&quot;view&quot;)
+
+craigslist_sf &lt;- st_as_sf(craigslist_table, coords = c(&quot;data-longitude&quot;, &quot;data-latitude&quot;), crs = 4326)
+
+m1 &lt;-
+  tm_shape(craigslist_sf) +
+  tm_dots(col = &quot;prices&quot;) +
+  tm_basemap(&quot;CartoDB.Positron&quot;) 
+
+
 library(widgetframe)
-frameWidget(m1)
+frameWidget(tmap_leaflet(m1))
 </code></pre>
 <div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-5.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-8.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<hr>
+<h2 id="navigating-to-next-page">Navigating to next page</h2>
+<p>The above code only extracts the first page of the results. To extract all the results, we need to navigate to the next page and extract the results. We can do this by clicking on the next button and then extracting the results. We can do this programmatically using Selenium and finding the button element and clicking on it.</p>
+<pre><code class="language-r">remDr$navigate(query_url)
+nextbutton &lt;- remDr$findElement(using = 'css selector', value = 'button.cl-next-page')
+nextbutton$clickElement()
+Sys.sleep(3)
+html_page2 &lt;- remDr$getPageSource()[[1]]
+raw_ads &lt;- html_elements(read_html(html_page2), &quot;li.cl-search-result&quot;)
+raw_ads %&gt;% head()
+# {xml_nodeset (6)}
+# [1] &lt;li data-pid=&quot;7795414882&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [2] &lt;li data-pid=&quot;7795400482&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [3] &lt;li data-pid=&quot;7795399517&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [4] &lt;li data-pid=&quot;7795398994&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [5] &lt;li data-pid=&quot;7795396985&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+# [6] &lt;li data-pid=&quot;7795396478&quot; class=&quot;cl-search-result cl-search-view-mode-gal ...
+</code></pre>
 <hr>
 <p><strong>Exercise</strong></p>
 <ul>
 <li>
-<p>If you remove all the filters from the url, there are more than 120 results. Craigslist only displays 120 results per page. Figure out how to loop through various pages to extract all the results. The more quickly you ping the server with your queries, you will run afoul of rate limits and may raise some eyebrows in San Francisco. Use <code>Sys.sleep</code> to slow down the query rate.</p>
+<p>Figure out how to loop through various pages to extract all the results. Do not repeat the code again and again, but try and use loops or functions.Figure out when you should end your loop. The more quickly you ping the server with your queries, you will run afoul of rate limits and may raise some eyebrows in San Francisco. Use <code>Sys.sleep</code> to slow down the query rate.</p>
 </li>
 <li>
-<p>Repeat this for few other metropolitan areas, such as Los Angeles and Raleigh.</p>
+<p>Repeat this for few other urban areas, such as Los Angeles and Raleigh.</p>
 </li>
 </ul>
 <hr>
@@ -1305,8 +1446,14 @@ frameWidget(m1)
     <li><a href="#additional-resources">Additional Resources</a></li>
     <li><a href="#understanding-the-structure-of-the-query">Understanding the structure of the query</a></li>
     <li><a href="#figuring-out-the-structure-of-the-results">Figuring out the structure of the results</a></li>
+    <li><a href="#selenium">Selenium</a></li>
     <li><a href="#using-rvest-to-extract-data-from-html">Using rvest to extract data from html</a></li>
-    <li><a href="#extracting-location-attributes">Extracting location attributes</a></li>
+    <li><a href="#extracting-location-attributes">Extracting location attributes</a>
+      <ul>
+        <li><a href="#geocoding-addresses">Geocoding addresses</a></li>
+      </ul>
+    </li>
+    <li><a href="#navigating-to-next-page">Navigating to next page</a></li>
     <li><a href="#cautions--conclusions">Cautions &amp; Conclusions</a></li>
   </ul>
 </nav>
