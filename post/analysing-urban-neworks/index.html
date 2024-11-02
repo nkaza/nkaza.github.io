@@ -932,7 +932,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    11 min read
+    13 min read
   </span>
   
 
@@ -979,7 +979,7 @@
 <script src="https://nkaza.github.io/post/analysing-urban-neworks/index_files/pymjs/pym.v1.js"></script>
 <script src="https://nkaza.github.io/post/analysing-urban-neworks/index_files/widgetframe-binding/widgetframe.js"></script>
 <h2 id="introduction">Introduction</h2>
-<p>Networks are ubiqutous in a urban systems. The more obvious ones are street, rail and utility networks that undergird the city. However, as planners we also focus on less obvious networks; e.g. social networks of people that allow for community formation, the transactional activity of firms that allow us to identify clusters of firms or industries, the mismatch between job seekers and job locations to better plan for social and physical infrastructure and information flow through organisational linkages during a disaster management process. These are but a few examples of network analysis in the urban domain. The problem definition frames the analytical tools used in the process.</p>
+<p>Networks are ubiquitous in a urban systems. The more obvious ones are street, rail and utility networks that undergird the city. However, as planners we also focus on less obvious networks; e.g. social networks of people that allow for community formation, the transactional activity of firms that allow us to identify clusters of firms or industries, the mismatch between job seekers and job locations to better plan for social and physical infrastructure and information flow through organisational linkages during a disaster management process. These are but a few examples of network analysis in the urban domain. The problem definition frames the analytical tools used in the process.</p>
 <h2 id="acquire-data">Acquire Data</h2>
 <p>Let’s begin by using the bike share data from New York, we are familiar with. We <a href="/post/geospatial-data-in-r/">already did some network analysis</a> with it (inadvertently). Let’s formalise it.
 Much of the following <a href="https://www.dropbox.com/s/wbzs2qisfgc2fts/201806-citibike-tripdata.csv?dl=0" target="_blank" rel="noopener">data</a> cleaning that you should be familiar with now.</p>
@@ -1009,9 +1009,9 @@ diffdesttrips &lt;- tripdata[tripdata$Estid != tripdata$Sstid, ] # to make sure 
 (trips_graph &lt;- diffdesttrips %&gt;% 
         select(Sstid,Estid) %&gt;%
         graph.data.frame(directed = T)) #We are using directed graph because the links have from and to edges. You can choose to ignore them.
-# IGRAPH 1e55545 DN-- 773 1909858 -- 
+# IGRAPH f03e9a5 DN-- 773 1909858 -- 
 # + attr: name (v/c)
-# + edges from 1e55545 (vertex names):
+# + edges from f03e9a5 (vertex names):
 #  [1] 72-&gt;173  72-&gt;477  72-&gt;457  72-&gt;379  72-&gt;459  72-&gt;446  72-&gt;212  72-&gt;458 
 #  [9] 72-&gt;212  72-&gt;514  72-&gt;514  72-&gt;465  72-&gt;173  72-&gt;524  72-&gt;173  72-&gt;212 
 # [17] 72-&gt;382  72-&gt;462  72-&gt;3141 72-&gt;456  72-&gt;519  72-&gt;328  72-&gt;426  72-&gt;3659
@@ -1031,11 +1031,12 @@ is.directed(trips_graph)
 # [1] TRUE
 </code></pre>
 <p>You can access the vertices and edges using <code>V</code> and <code>E</code> functions.</p>
-<pre><code class="language-r">V(trips_graph) %&gt;% head()
-# + 6/773 vertices, named, from 1e55545:
+<pre><code class="language-r">
+V(trips_graph) %&gt;% head()
+# + 6/773 vertices, named, from f03e9a5:
 # [1] 72  79  82  83  119 120
 E(trips_graph) %&gt;% head()
-# + 6/1909858 edges from 1e55545 (vertex names):
+# + 6/1909858 edges from f03e9a5 (vertex names):
 # [1] 72-&gt;173 72-&gt;477 72-&gt;457 72-&gt;379 72-&gt;459 72-&gt;446
 
 tmp1 &lt;- diffdesttrips %&gt;%
@@ -1078,6 +1079,19 @@ ggraph(sub_trips, layout = 'kk') +
 <li>Style the vertices using for e.g. number of incoming trips per day, or their location in different boroughs.</li>
 </ul>
 <hr>
+<h3 id="adjacency-matrix">Adjacency matrix</h3>
+<p>One representation of a graph is an adjacency matrix. It is a square matrix used to represent a finite graph. The elements of the matrix indicate whether pairs of vertices are adjacent or not in the graph. Each row and each column represents a single vertex. $ A $ is and adjacency matrix, whose elements $ a_{ij} $ is 0 when vertices/nodes $ i $ and $ j $ are not adjacent. If the graph is undirected and unweighted then $ a_{ij} $ is 1 when they are adjacent. In the case of a directed graph, the matrix is not symmetric. In our case, we have a weighted directed graph with the weights representing the number of trips between two stations. To visualise a portion of this matrix try</p>
+<pre><code class="language-r">as_adjacency_matrix(trips_graph)[1:6, 1:6]
+# 6 x 6 sparse Matrix of class &quot;dgCMatrix&quot;
+#     72 79 82 83 119 120
+# 72   .  7  .  .   .   .
+# 79  22  .  3  .   1   .
+# 82   1  3  .  .   .   .
+# 83   .  .  .  .   2  18
+# 119  .  .  1  1   .   1
+# 120  .  .  . 20   .   .
+</code></pre>
+<p>Adjacency matrix is very important as it allows us to perform matrix operations much more efficiently as we will see in <a href="/post/using-network-ananlysis-to-identify-clusters-of-deprivation/">other tutorials</a></p>
 <h3 id="degrees--their-distribution">Degrees &amp; their distribution.</h3>
 <p>Degree of a vertex, in graph theory, refers to the number of edges that has the vertex as one of its ends. An in-degree and out-degree qualifies it, by counting only edges that start and end at the vertex. Degree distributions are important for graphs as they tell us about how connected the graph is and which if any of the vertices are more important than others.</p>
 <pre><code class="language-r">degree(trips_graph, mode = 'out') %&gt;%
@@ -1085,8 +1099,9 @@ ggraph(sub_trips, layout = 'kk') +
   ggplot()+
   geom_density(aes(x=value))
 </code></pre>
-<img src="https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-4-1.png" width="768" />
-<pre><code class="language-r">degree.distribution(trips_graph) %&gt;% head() # Check out what the degree.distribution produces and how to interpret the results.
+<img src="https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-5-1.png" width="768" />
+<pre><code class="language-r">
+degree.distribution(trips_graph) %&gt;% head() # Check out what the degree.distribution produces and how to interpret the results.
 # [1] 0.000000000 0.003880983 0.005174644 0.002587322 0.001293661 0.001293661
 </code></pre>
 <p>In particular, you want to look for the outliers in the distribution. For example to find the stations with only end trips but no start trips, i.e stations that are solely destinations</p>
@@ -1096,6 +1111,7 @@ ggraph(sub_trips, layout = 'kk') +
 </code></pre>
 <p>We can also visualise these stations that are popular origins on the map. However, we need to attach the values to the station locations tibble.</p>
 <pre><code class="language-r">
+
 tmp &lt;- degree(trips_graph, mode = 'out') %&gt;%
   as.tibble() %&gt;%
   rename(Outdegree = value)%&gt;%
@@ -1105,43 +1121,60 @@ tmp &lt;- degree(trips_graph, mode = 'out') %&gt;%
 station_locs &lt;- station_locs %&gt;% 
   left_join(tmp, by='stid')
 
-library(leaflet)
 
- Npal &lt;- colorNumeric(
-   palette = &quot;Reds&quot;, n = 5,
-   domain = station_locs$Outdegree
- )
+library(tmap)
+library(sf)
 
+tmap_mode(&quot;view&quot;)
 
- m1 &lt;- 
-station_locs %&gt;%
-    leaflet()  %&gt;%
-  addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;) %&gt;%
-   addCircles(
-     lng = station_locs$lon,
-     lat = station_locs$lat,
-     radius = (station_locs$Outdegree - mean(station_locs$Outdegree))/sd(station_locs$Outdegree) * 30,
-     fillOpacity = .6,
-    fillColor = Npal(station_locs$Outdegree),
-     group = 'Stations',
-     stroke=FALSE
-   ) %&gt;%
-  addLegend(&quot;topleft&quot;, pal = Npal, values = ~Outdegree,
-            labFormat = function(type, cuts, p) {
-              n = length(cuts) 
-              paste0(prettyNum(cuts[-n], digits=0, big.mark = &quot;,&quot;, scientific=F), &quot; - &quot;, prettyNum(cuts[-1], digits=0, big.mark=&quot;,&quot;, scientific=F))
-            },
-            title = &quot;Out degree/Trip Starts&quot;,
-            opacity = 1
-  )
+m1 &lt;- 
+station_locs %&gt;% 
+  mutate(outdegree_std = (Outdegree - mean(Outdegree))/sd(Outdegree)) %&gt;%
+  filter(outdegree_std &gt;2) %&gt;% # focusing on the Outliers!
+  st_as_sf(coords = c('lon', 'lat'), crs=4326) %&gt;%
+  tm_shape()+
+  tm_dots(size = 'outdegree_std', alpha =.5, border.lwd=0)+
+  tm_basemap(leaflet::providers$CartoDB) 
+ 
+
+# Showing the use of leaflet  and fillcolorfor reference 
+ 
+# library(leaflet)
+# 
+#  Npal &lt;- colorNumeric(
+#    palette = &quot;Reds&quot;, n = 5,
+#    domain = station_locs$Outdegree
+#  )
+# 
+#  m1 &lt;- 
+# station_locs %&gt;%
+#     leaflet()  %&gt;%
+#   addProviderTiles(providers$CartoDB.Positron, group = &quot;Basemap&quot;) %&gt;%
+#    addCircles(
+#      lng = station_locs$lon,
+#      lat = station_locs$lat,
+#      radius = (station_locs$Outdegree - mean(station_locs$Outdegree))/sd(station_locs$Outdegree) * 30,
+#      fillOpacity = .6,
+#     fillColor = Npal(station_locs$Outdegree),
+#      group = 'Stations',
+#      stroke=FALSE
+#    ) %&gt;%
+#   addLegend(&quot;topleft&quot;, pal = Npal, values = ~Outdegree,
+#             labFormat = function(type, cuts, p) {
+#               n = length(cuts) 
+#               paste0(prettyNum(cuts[-n], digits=2, big.mark = &quot;,&quot;, scientific=F), &quot; - &quot;, prettyNum(cuts[-1], digits=2, big.mark=&quot;,&quot;, scientific=F))
+#             },
+#             title = &quot;Out degree/Trip Starts&quot;,
+#             opacity = 1
+#   )
 
 library(widgetframe)
-frameWidget(m1)
+frameWidget(tmap_leaflet(m1))
 </code></pre>
 <div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-7.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <p>You can also find out which stations are predominantly origin stations and which are predominantly destinations. I use 20% more as a cut off (arbitrary).</p>
-<pre><code class="language-r"># Careful with division. If you have a nodes that are only origins, i.e. in-degree is 0, you will have a divison by 0 problem.
+<pre><code class="language-r"># Careful with division. If you have a nodes that are only origins, i.e. in-degree is 0, you will have a division by 0 problem.
 
 V(trips_graph)$name[degree(trips_graph, mode=&quot;out&quot;) / degree(trips_graph, mode=&quot;in&quot;) &gt; 1.2]
 #  [1] &quot;216&quot;  &quot;258&quot;  &quot;266&quot;  &quot;289&quot;  &quot;339&quot;  &quot;356&quot;  &quot;391&quot;  &quot;397&quot;  &quot;399&quot;  &quot;443&quot; 
@@ -1157,14 +1190,15 @@ V(trips_graph)$name[degree(trips_graph, mode=&quot;out&quot;) / degree(trips_gra
 <hr>
 <h3 id="other-centrality-measures">Other centrality measures</h3>
 <h4 id="eigen-centrality">Eigen centrality</h4>
-<p>If (A = (a_{ij})) be the adjacency matrix of a graph, where (a_{ij} = 1) when (i) and (j) nodes are connected, (0) otherwise. The eigenvector centrality <code>\(x_{i}\)</code> of node <code>\(i\)</code> is given by:</p>
-<p>(x_i = <em>{k} a</em>{ki} , x_k)</p>
-<p>where () is a constant.</p>
+<p>If $ A = a_{ij} $ be the adjacency matrix of a graph, where $ a_{ij} = 1 $ when $ i $ and $ j $ nodes are connected, $ 0 $ otherwise. The eigenvector centrality $ x_{i} $ of node $ i $ is given by:</p>
+<p>$$ x_i = \frac{1}{\lambda} \sum_{k} a_{ki}, x_k $$</p>
+<p>where $ $ is a constant.</p>
 <p>Intuitively, a node is considered more central/important, if it is connected to large number of highly central/important nodes. So, a node may have a high degree score (i.e. many connections) but a relatively low eigen centrality score if many of those connections are with similarly low-scored nodes.</p>
-<pre><code class="language-r">station_locs$eigencentrality &lt;- eigen_centrality(trips_graph)$vector
+<pre><code class="language-r">station_locs$eigencentrality &lt;- eigen_centrality(trips_graph, directed = T)$vector
 </code></pre>
+<p>Showing only the stations with large eigen centrality scores.</p>
 <div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-9.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-10.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <h3 id="page-rank-centrality">Page rank centrality</h3>
 <p>Page rank is a version of eigen centrality, made popular by the founders of Google. We can use boxplot in the standard graphics package to identify the outliers. .</p>
 <pre><code class="language-r">tmp  &lt;- page_rank(trips_graph)$vector %&gt;% 
@@ -1198,7 +1232,7 @@ station_locs %&gt;%
 # 17 Kent Ave &amp; N 7 St
 </code></pre>
 <h4 id="closeness-centrality">Closeness centrality</h4>
-<p>While the above measures of centrality depend on local neighborhood, we can also take into account the whole graph. For example, if a station can every station within a few hops, then it is considered more central than ones that may have more localised trips within the neighborhood.</p>
+<p>While the above measures of centrality depend on local neighbourhood, we can also take into account the whole graph. For example, if a station can every station within a few hops, then it is considered more central than ones that may have more localised trips within the neighbourhood.</p>
 <pre><code class="language-r">tmp &lt;- closeness(trips_graph, mode='all') %&gt;% 
   boxplot.stats() %&gt;%
   .[['out']] %&gt;%
@@ -1219,8 +1253,8 @@ station_locs %&gt;%
 # 6 Morris Canal          
 # 7 Bike Mechanics at Riis
 </code></pre>
-<p>These seems like unsual stations to be outliers in a centrality index (bike mechanics??) and unlike the page rank index. A closer look at the centrality using box plot reveals that these are outliers at the left end of the centrality distribution.</p>
-<p>There are hundreds of centrality measures out there. Be careful to pick and choose the right ones for your proiblem. To assist with this, you can use <code>CINNA</code> (Central Informative Nodes in Network Analysis) package for computing, analyzing and comparing centrality measures submitted to CRAN repository.</p>
+<p>These seems like unusual stations to be outliers in a centrality index (bike mechanics??) and unlike the page rank index. A closer look at the centrality using box plot reveals that these are outliers at the left end of the centrality distribution.</p>
+<p>There are hundreds of centrality measures out there. Be careful to pick and choose the right ones for your proiblem. To assist with this, you can use <code>CINNA</code> (Central Informative Nodes in Network Analysis) package for computing, analysing and comparing centrality measures submitted to CRAN repository.</p>
 <pre><code class="language-r">library(CINNA)
 proper_centralities(trips_graph)
 #  [1] &quot;Alpha Centrality&quot;                                
@@ -1275,7 +1309,7 @@ proper_centralities(trips_graph)
 # [50] &quot;Wiener Index Centrality&quot;
 </code></pre>
 <h2 id="community-detection">Community Detection</h2>
-<p>Finding a community structure in a network is to identify clusters of nodes that are more strongly connected within the cluster than to nodes outside the cluster. There are many algorithms that identify community structures. Some work on weigthed networks and some work on digraphs. In any case it is better to convert multigraph (graph with two nodes having multiple edges) into a simple graph with edge weights, representing the number of trips.</p>
+<p>Finding a community structure in a network is to identify clusters of nodes that are more strongly connected within the cluster than to nodes outside the cluster. There are many algorithms that identify community structures. Some work on weighted networks and some work on digraphs. In any case it is better to convert multigraph (graph with two nodes having multiple edges) into a simple graph with edge weights, representing the number of trips.</p>
 <pre><code class="language-r">E(trips_graph)$weight &lt;- 1
 station_graph  &lt;- simplify(trips_graph, edge.attr.comb=&quot;sum&quot;)
 
@@ -1300,34 +1334,52 @@ wlktrp_mmbr$clstrmm %&gt;% summary()
 #  80 218 207  61   3 195   1   1   1   1   1   1   1   1   1
 </code></pre>
 <p>It seems like there are 5 distinct and non-trivial clusters of stations. You can visualise these results by joining them back to tibbles with location information.</p>
-<pre><code class="language-r">station_locs &lt;- station_locs %&gt;%
+<pre><code class="language-r">
+station_locs &lt;- station_locs %&gt;%
                 inner_join(wlktrp_mmbr, by='stid')
 
-
-library(ggmap)
-library(sf)
-bnds &lt;- station_locs %&gt;% st_as_sf(coords=c(&quot;lon&quot;,'lat')) %&gt;% st_bbox %&gt;% unname
-
-nybg &lt;- get_stamenmap(bbox=bnds, maptype = 'toner-lite', zoom = 11)
-
+library(basemaps)
 library(RColorBrewer)
 numColors &lt;- levels(station_locs$clstrmm) %&gt;% length()
 myColors &lt;- colorRampPalette(brewer.pal(8,&quot;Dark2&quot;))(numColors) # Expanding the number of colors available from 8 
 
-  ggmap(nybg)+
-  geom_point(aes(x=lon, y=lat, color=clstrmm), alpha=.9, data=station_locs)+
+station_locs_shp &lt;- st_as_sf(station_locs, coords = c(&quot;lon&quot;, 'lat'), crs = st_crs(4326)) 
+ext &lt;- station_locs_shp %&gt;% st_bbox()
+
+
+  ggplot()+
+      basemap_gglayer(ext, map_type = 'light', map_service = 'carto')+
+      scale_fill_identity()+
+  geom_sf(data = station_locs_shp %&gt;% st_transform(st_crs(3857)),
+          aes(color = clstrmm), alpha = .8)+
   scale_color_manual(values = myColors)+ 
      scale_x_continuous(&quot;&quot;, breaks=NULL)+
    scale_y_continuous(&quot;&quot;, breaks=NULL)+
-   theme(panel.background = element_rect(fill='white',colour='white'), legend.position = &quot;none&quot;) +
-  labs(colour = &quot;Communities&quot;) 
+  labs(colour = &quot;Communities&quot;, x = NULL, y = NULL) +
+      labs(x=NULL, y=NULL) +
+  theme(axis.line = element_blank(),  # Remove all the extraenous stuff from the plot.
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks.length = unit(0, &quot;pt&quot;), #length of tick marks
+        legend.position = &quot;none&quot;,
+        panel.background = element_blank(),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank(), 
+        plot.margin = unit(c(0,0,0,0),&quot;mm&quot;))
+# Loading basemap 'light' from map service 'carto'...
+# Using geom_raster() with maxpixels = 263341.
 </code></pre>
-<img src="https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-15-1.png" width="768" />
+<img src="https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-16-1.png" width="768" />
 <hr>
 <p><strong>Exercise</strong></p>
 <ul>
+<li>Use tmap instead of ggplot.</li>
 <li>Do the clusters change if you use a different algorithm?</li>
 <li>Are the clusters different for customers and subscribers? Men and Women?</li>
+<li>Are the clusters different at different times of the day? days of the week?</li>
 </ul>
 <hr>
 <h2 id="conclusions">Conclusions</h2>
@@ -1348,6 +1400,7 @@ myColors &lt;- colorRampPalette(brewer.pal(8,&quot;Dark2&quot;))(numColors) # Ex
     <li><a href="#acquire-data">Acquire Data</a></li>
     <li><a href="#key-nodes-in-a-network">Key nodes in a network</a>
       <ul>
+        <li><a href="#adjacency-matrix">Adjacency matrix</a></li>
         <li><a href="#degrees--their-distribution">Degrees &amp; their distribution.</a></li>
         <li><a href="#other-centrality-measures">Other centrality measures</a></li>
         <li><a href="#page-rank-centrality">Page rank centrality</a></li>
