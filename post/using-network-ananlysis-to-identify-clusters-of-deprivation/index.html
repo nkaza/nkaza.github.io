@@ -988,7 +988,7 @@
 <script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js"></script>
 <script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js"></script>
 <h2 id="introduction">Introduction</h2>
-<p>This post was last updated on 2024-10-29</p>
+<p>This post was last updated on 2024-11-02</p>
 <p>In addition to <a href="/post/analysing-urban-neworks/">obvious networks</a>, we can also use graph theory to think though some non-obvious applications. One place this often crops up in planning is to think about adjacency/proximity as a graph. See my post on <a href="/post/identifying-employment-centers/">employment centers</a> and paper on <a href="/publication/kazamagpie_india/">delineating areas</a>.</p>
 <p>In this post, I will demonstrate how to use networks for other spatial analysis. We can think of polygons as nodes and two nodes are connected if they share some part of the boundary.</p>
 <h2 id="acquire-data">Acquire data</h2>
@@ -1135,7 +1135,7 @@ plot(diff_nb_knn, coords, col='red', points=F,add=T, lty=2) # Quickly visualise 
 par(opar) # Reset the plotting matrix
 </code></pre>
 <h3 id="neighbors-based-on-travel-times-conditioned-on-road-networks">Neighbors based on travel times conditioned on road networks</h3>
-<p>We don’t even need to rely on geographic relationships to identify the neighbours. We could use maximum travel times (e.g. say 1.5 hr) as a proxy for adjacency . We could use the road network to calculate travel times between the centroids of the census tracts. I am not going to explain this code in detail, but it is an example of how to get a quick and dirty travel times using OpenStreetMap data.</p>
+<p>We don’t even need to rely on geographic relationships to identify the neighbours. We could use maximum travel times (e.g. say 1.5 hr) as a proxy for adjacency . We could use the road network to calculate travel times between the centroids of the counties. I am not going to explain this code in detail, but it is an example of how to get a quick and dirty travel times using OpenStreetMap data.</p>
 <pre><code class="language-r">
 library(dodgr)
 library(osmdata)

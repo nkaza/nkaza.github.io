@@ -195,7 +195,7 @@
 &lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;This post was last updated on 2024-10-29&lt;/p&gt;
+&lt;p&gt;This post was last updated on 2024-11-02&lt;/p&gt;
 &lt;p&gt;In addition to &lt;a href=&#34;https://nkaza.github.io/post/analysing-urban-neworks/&#34;&gt;obvious networks&lt;/a&gt;, we can also use graph theory to think though some non-obvious applications. One place this often crops up in planning is to think about adjacency/proximity as a graph. See my post on &lt;a href=&#34;https://nkaza.github.io/post/identifying-employment-centers/&#34;&gt;employment centers&lt;/a&gt; and paper on &lt;a href=&#34;https://nkaza.github.io/publication/kazamagpie_india/&#34;&gt;delineating areas&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;In this post, I will demonstrate how to use networks for other spatial analysis. We can think of polygons as nodes and two nodes are connected if they share some part of the boundary.&lt;/p&gt;
 &lt;h2 id=&#34;acquire-data&#34;&gt;Acquire data&lt;/h2&gt;
@@ -342,7 +342,7 @@ plot(diff_nb_knn, coords, col=&#39;red&#39;, points=F,add=T, lty=2) # Quickly vi
 par(opar) # Reset the plotting matrix
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h3 id=&#34;neighbors-based-on-travel-times-conditioned-on-road-networks&#34;&gt;Neighbors based on travel times conditioned on road networks&lt;/h3&gt;
-&lt;p&gt;We don’t even need to rely on geographic relationships to identify the neighbours. We could use maximum travel times (e.g. say 1.5 hr) as a proxy for adjacency . We could use the road network to calculate travel times between the centroids of the census tracts. I am not going to explain this code in detail, but it is an example of how to get a quick and dirty travel times using OpenStreetMap data.&lt;/p&gt;
+&lt;p&gt;We don’t even need to rely on geographic relationships to identify the neighbours. We could use maximum travel times (e.g. say 1.5 hr) as a proxy for adjacency . We could use the road network to calculate travel times between the centroids of the counties. I am not going to explain this code in detail, but it is an example of how to get a quick and dirty travel times using OpenStreetMap data.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 library(dodgr)
 library(osmdata)
@@ -867,9 +867,9 @@ diffdesttrips &amp;lt;- tripdata[tripdata$Estid != tripdata$Sstid, ] # to make s
 (trips_graph &amp;lt;- diffdesttrips %&amp;gt;% 
         select(Sstid,Estid) %&amp;gt;%
         graph.data.frame(directed = T)) #We are using directed graph because the links have from and to edges. You can choose to ignore them.
-# IGRAPH f03e9a5 DN-- 773 1909858 -- 
+# IGRAPH 12329bd DN-- 773 1909858 -- 
 # + attr: name (v/c)
-# + edges from f03e9a5 (vertex names):
+# + edges from 12329bd (vertex names):
 #  [1] 72-&amp;gt;173  72-&amp;gt;477  72-&amp;gt;457  72-&amp;gt;379  72-&amp;gt;459  72-&amp;gt;446  72-&amp;gt;212  72-&amp;gt;458 
 #  [9] 72-&amp;gt;212  72-&amp;gt;514  72-&amp;gt;514  72-&amp;gt;465  72-&amp;gt;173  72-&amp;gt;524  72-&amp;gt;173  72-&amp;gt;212 
 # [17] 72-&amp;gt;382  72-&amp;gt;462  72-&amp;gt;3141 72-&amp;gt;456  72-&amp;gt;519  72-&amp;gt;328  72-&amp;gt;426  72-&amp;gt;3659
@@ -891,10 +891,10 @@ is.directed(trips_graph)
 &lt;p&gt;You can access the vertices and edges using &lt;code&gt;V&lt;/code&gt; and &lt;code&gt;E&lt;/code&gt; functions.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 V(trips_graph) %&amp;gt;% head()
-# + 6/773 vertices, named, from f03e9a5:
+# + 6/773 vertices, named, from 12329bd:
 # [1] 72  79  82  83  119 120
 E(trips_graph) %&amp;gt;% head()
-# + 6/1909858 edges from f03e9a5 (vertex names):
+# + 6/1909858 edges from 12329bd (vertex names):
 # [1] 72-&amp;gt;173 72-&amp;gt;477 72-&amp;gt;457 72-&amp;gt;379 72-&amp;gt;459 72-&amp;gt;446
 
 tmp1 &amp;lt;- diffdesttrips %&amp;gt;%
@@ -1049,8 +1049,8 @@ V(trips_graph)$name[degree(trips_graph, mode=&amp;quot;out&amp;quot;) / degree(t
 &lt;h3 id=&#34;other-centrality-measures&#34;&gt;Other centrality measures&lt;/h3&gt;
 &lt;h4 id=&#34;eigen-centrality&#34;&gt;Eigen centrality&lt;/h4&gt;
 &lt;p&gt;If $ A = a_{ij} $ be the adjacency matrix of a graph, where $ a_{ij} = 1 $ when $ i $ and $ j $ nodes are connected, $ 0 $ otherwise. The eigenvector centrality $ x_{i} $ of node $ i $ is given by:&lt;/p&gt;
-&lt;p&gt;$$ x_i = \frac{1}{\lambda} \sum_{k} a_{ki}, x_k $$&lt;/p&gt;
-&lt;p&gt;where $ $ is a constant.&lt;/p&gt;
+&lt;p&gt;$$ x_i = \frac{1}{\lambda} \sum_{k} a_{ki} x_k $$&lt;/p&gt;
+&lt;p&gt;where $ $ is a constant and is the largest eigen value of the adjacency matrix.&lt;/p&gt;
 &lt;p&gt;Intuitively, a node is considered more central/important, if it is connected to large number of highly central/important nodes. So, a node may have a high degree score (i.e. many connections) but a relatively low eigen centrality score if many of those connections are with similarly low-scored nodes.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;station_locs$eigencentrality &amp;lt;- eigen_centrality(trips_graph, directed = T)$vector
 &lt;/code&gt;&lt;/pre&gt;
@@ -1112,7 +1112,7 @@ station_locs %&amp;gt;%
 # 7 Bike Mechanics at Riis
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;These seems like unusual stations to be outliers in a centrality index (bike mechanics??) and unlike the page rank index. A closer look at the centrality using box plot reveals that these are outliers at the left end of the centrality distribution.&lt;/p&gt;
-&lt;p&gt;There are hundreds of centrality measures out there. Be careful to pick and choose the right ones for your proiblem. To assist with this, you can use &lt;code&gt;CINNA&lt;/code&gt; (Central Informative Nodes in Network Analysis) package for computing, analysing and comparing centrality measures submitted to CRAN repository.&lt;/p&gt;
+&lt;p&gt;There are hundreds of centrality measures out there. Be careful to pick and choose the right ones for your problem. To assist with this, you can use &lt;code&gt;CINNA&lt;/code&gt; (Central Informative Nodes in Network Analysis) package for computing, analysing and comparing centrality measures submitted to CRAN repository.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(CINNA)
 proper_centralities(trips_graph)
 #  [1] &amp;quot;Alpha Centrality&amp;quot;                                
