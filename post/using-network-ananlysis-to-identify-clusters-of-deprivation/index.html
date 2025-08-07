@@ -988,7 +988,7 @@
 <script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js"></script>
 <script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js"></script>
 <h2 id="introduction">Introduction</h2>
-<p>This post was last updated on 2024-11-02</p>
+<p>This post was last updated on 2024-11-05</p>
 <p>In addition to <a href="/post/analysing-urban-neworks/">obvious networks</a>, we can also use graph theory to think though some non-obvious applications. One place this often crops up in planning is to think about adjacency/proximity as a graph. See my post on <a href="/post/identifying-employment-centers/">employment centers</a> and paper on <a href="/publication/kazamagpie_india/">delineating areas</a>.</p>
 <p>In this post, I will demonstrate how to use networks for other spatial analysis. We can think of polygons as nodes and two nodes are connected if they share some part of the boundary.</p>
 <h2 id="acquire-data">Acquire data</h2>
@@ -1110,7 +1110,7 @@ plot(st_geometry(ctys), border = 'gray')
 plot(cty_nb, coords, col='red', points=F, add=T) # Quickly visualise the graph
 </code></pre>
 <img src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-3-1.png" width="768" />
-\### K-nearest Neighbors
+<h3 id="k-nearest-neighbors">K-nearest Neighbors</h3>
 <p>There is no reason to think of adjacency as just sharing a boundary. It could be based on some other criteria. For example, we could think of adjacency as being close in distance. In this case, we could specify three closest neighbours as the adjacency. Note that this is not a symmetric relationship, unlike the queen contiguity.</p>
 <pre><code class="language-r">cty_knn &lt;- knn2nb(knearneigh(coords, k=3), row.names = ctys$GEOID)
 cty_knn &lt;- make.sym.nb(cty_knn) # Make it symmetric
@@ -1198,8 +1198,8 @@ par(opar) # Reset the plotting matrix
     Travel times are artifacts of which road network you use, what is the accuracy of the road network, how overpasses and underpasses are represented, how start and end points are snapped to the network etc. At the same time, contiguity is affected by boundary percision errors. You need to be careful with the idiosyncracies of the data you are using.
   </div>
 </div>
-<h3 id="neighbor-of-neighbors-of">Neighbor of Neighbors of…</h3>
-<p>There is no reason to think that neighborhood relationship should be of first order. For example, you might be interested in calculating the population of the neighbours of the neighbours. Recall that binary adjacency matrix $ A $ is a representation of paths of length 1 for each vertex. $ A^2 $ is then a representation of paths of length 2 and so on. Therefore, $ A^n + A $ is a representation of paths of at least length $ n $. Thus arbitrarily large order of neighbourhoods can be easily constructed.</p>
+<h3 id="neighbour-of-neighbours-of">Neighbour of Neighbours of…</h3>
+<p>There is no reason to think that neighbourhood relationship should be of first order. For example, you might be interested in calculating the population of the neighbours of the neighbours. Recall that binary adjacency matrix $ A $ is a representation of paths of length 1 for each vertex. $ A^2 $ is then a representation of number of paths of length 2 and so on. Therefore, $ A^n + A $ is a representation of number of paths of <em>at least</em> length $ n $ between any two nodes. Thus arbitrarily large order of neighbourhoods can be easily constructed. You can then binarise the matrix to get the adjacency matrix of the second order neighbours.</p>
 <p>Fortunately, <code>spdep</code> has a function called <code>nblag</code> that can help us with this.</p>
 <pre><code class="language-r">
 cty_nb2 &lt;- nblag(cty_nb, 2) %&gt;% nblag_cumul # This gives us the second order neighbourhood
@@ -1632,8 +1632,9 @@ frameWidget(tmap_leaflet(m5))
     <li><a href="#spatial-relationships-as-a-graphnetwork">Spatial Relationships as a Graph/Network</a>
       <ul>
         <li><a href="#queen-contiguity">Queen Contiguity</a></li>
+        <li><a href="#k-nearest-neighbors">K-nearest Neighbors</a></li>
         <li><a href="#neighbors-based-on-travel-times-conditioned-on-road-networks">Neighbors based on travel times conditioned on road networks</a></li>
-        <li><a href="#neighbor-of-neighbors-of">Neighbor of Neighbors of…</a></li>
+        <li><a href="#neighbour-of-neighbours-of">Neighbour of Neighbours of…</a></li>
       </ul>
     </li>
     <li><a href="#use-of-graphs-for-spatial-analysis">Use of Graphs for Spatial Analysis</a>

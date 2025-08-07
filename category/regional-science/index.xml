@@ -195,7 +195,7 @@
 &lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;This post was last updated on 2024-11-02&lt;/p&gt;
+&lt;p&gt;This post was last updated on 2024-11-05&lt;/p&gt;
 &lt;p&gt;In addition to &lt;a href=&#34;https://nkaza.github.io/post/analysing-urban-neworks/&#34;&gt;obvious networks&lt;/a&gt;, we can also use graph theory to think though some non-obvious applications. One place this often crops up in planning is to think about adjacency/proximity as a graph. See my post on &lt;a href=&#34;https://nkaza.github.io/post/identifying-employment-centers/&#34;&gt;employment centers&lt;/a&gt; and paper on &lt;a href=&#34;https://nkaza.github.io/publication/kazamagpie_india/&#34;&gt;delineating areas&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;In this post, I will demonstrate how to use networks for other spatial analysis. We can think of polygons as nodes and two nodes are connected if they share some part of the boundary.&lt;/p&gt;
 &lt;h2 id=&#34;acquire-data&#34;&gt;Acquire data&lt;/h2&gt;
@@ -317,7 +317,7 @@ plot(st_geometry(ctys), border = &#39;gray&#39;)
 plot(cty_nb, coords, col=&#39;red&#39;, points=F, add=T) # Quickly visualise the graph
 &lt;/code&gt;&lt;/pre&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;
-\### K-nearest Neighbors
+&lt;h3 id=&#34;k-nearest-neighbors&#34;&gt;K-nearest Neighbors&lt;/h3&gt;
 &lt;p&gt;There is no reason to think of adjacency as just sharing a boundary. It could be based on some other criteria. For example, we could think of adjacency as being close in distance. In this case, we could specify three closest neighbours as the adjacency. Note that this is not a symmetric relationship, unlike the queen contiguity.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;cty_knn &amp;lt;- knn2nb(knearneigh(coords, k=3), row.names = ctys$GEOID)
 cty_knn &amp;lt;- make.sym.nb(cty_knn) # Make it symmetric
@@ -405,8 +405,8 @@ par(opar) # Reset the plotting matrix
     Travel times are artifacts of which road network you use, what is the accuracy of the road network, how overpasses and underpasses are represented, how start and end points are snapped to the network etc. At the same time, contiguity is affected by boundary percision errors. You need to be careful with the idiosyncracies of the data you are using.
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;h3 id=&#34;neighbor-of-neighbors-of&#34;&gt;Neighbor of Neighbors of…&lt;/h3&gt;
-&lt;p&gt;There is no reason to think that neighborhood relationship should be of first order. For example, you might be interested in calculating the population of the neighbours of the neighbours. Recall that binary adjacency matrix $ A $ is a representation of paths of length 1 for each vertex. $ A^2 $ is then a representation of paths of length 2 and so on. Therefore, $ A^n + A $ is a representation of paths of at least length $ n $. Thus arbitrarily large order of neighbourhoods can be easily constructed.&lt;/p&gt;
+&lt;h3 id=&#34;neighbour-of-neighbours-of&#34;&gt;Neighbour of Neighbours of…&lt;/h3&gt;
+&lt;p&gt;There is no reason to think that neighbourhood relationship should be of first order. For example, you might be interested in calculating the population of the neighbours of the neighbours. Recall that binary adjacency matrix $ A $ is a representation of paths of length 1 for each vertex. $ A^2 $ is then a representation of number of paths of length 2 and so on. Therefore, $ A^n + A $ is a representation of number of paths of &lt;em&gt;at least&lt;/em&gt; length $ n $ between any two nodes. Thus arbitrarily large order of neighbourhoods can be easily constructed. You can then binarise the matrix to get the adjacency matrix of the second order neighbours.&lt;/p&gt;
 &lt;p&gt;Fortunately, &lt;code&gt;spdep&lt;/code&gt; has a function called &lt;code&gt;nblag&lt;/code&gt; that can help us with this.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 cty_nb2 &amp;lt;- nblag(cty_nb, 2) %&amp;gt;% nblag_cumul # This gives us the second order neighbourhood
@@ -867,9 +867,9 @@ diffdesttrips &amp;lt;- tripdata[tripdata$Estid != tripdata$Sstid, ] # to make s
 (trips_graph &amp;lt;- diffdesttrips %&amp;gt;% 
         select(Sstid,Estid) %&amp;gt;%
         graph.data.frame(directed = T)) #We are using directed graph because the links have from and to edges. You can choose to ignore them.
-# IGRAPH 12329bd DN-- 773 1909858 -- 
+# IGRAPH 2b31606 DN-- 773 1909858 -- 
 # + attr: name (v/c)
-# + edges from 12329bd (vertex names):
+# + edges from 2b31606 (vertex names):
 #  [1] 72-&amp;gt;173  72-&amp;gt;477  72-&amp;gt;457  72-&amp;gt;379  72-&amp;gt;459  72-&amp;gt;446  72-&amp;gt;212  72-&amp;gt;458 
 #  [9] 72-&amp;gt;212  72-&amp;gt;514  72-&amp;gt;514  72-&amp;gt;465  72-&amp;gt;173  72-&amp;gt;524  72-&amp;gt;173  72-&amp;gt;212 
 # [17] 72-&amp;gt;382  72-&amp;gt;462  72-&amp;gt;3141 72-&amp;gt;456  72-&amp;gt;519  72-&amp;gt;328  72-&amp;gt;426  72-&amp;gt;3659
@@ -891,10 +891,10 @@ is.directed(trips_graph)
 &lt;p&gt;You can access the vertices and edges using &lt;code&gt;V&lt;/code&gt; and &lt;code&gt;E&lt;/code&gt; functions.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 V(trips_graph) %&amp;gt;% head()
-# + 6/773 vertices, named, from 12329bd:
+# + 6/773 vertices, named, from 2b31606:
 # [1] 72  79  82  83  119 120
 E(trips_graph) %&amp;gt;% head()
-# + 6/1909858 edges from 12329bd (vertex names):
+# + 6/1909858 edges from 2b31606 (vertex names):
 # [1] 72-&amp;gt;173 72-&amp;gt;477 72-&amp;gt;457 72-&amp;gt;379 72-&amp;gt;459 72-&amp;gt;446
 
 tmp1 &amp;lt;- diffdesttrips %&amp;gt;%
@@ -1191,7 +1191,7 @@ wlktrp_mmbr$clstrmm %&amp;gt;% summary()
 #   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15 
 #  80 218 207  61   3 195   1   1   1   1   1   1   1   1   1
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;It seems like there are 5 distinct and non-trivial clusters of stations. You can visualise these results by joining them back to tibbles with location information.&lt;/p&gt;
+&lt;p&gt;It seems like there are 5 distinct and non-trivial clusters of stations ($ n $). You can visualise these results by joining them back to tibbles with location information.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 station_locs &amp;lt;- station_locs %&amp;gt;%
                 inner_join(wlktrp_mmbr, by=&#39;stid&#39;)

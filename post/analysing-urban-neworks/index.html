@@ -1009,9 +1009,9 @@ diffdesttrips &lt;- tripdata[tripdata$Estid != tripdata$Sstid, ] # to make sure 
 (trips_graph &lt;- diffdesttrips %&gt;% 
         select(Sstid,Estid) %&gt;%
         graph.data.frame(directed = T)) #We are using directed graph because the links have from and to edges. You can choose to ignore them.
-# IGRAPH 12329bd DN-- 773 1909858 -- 
+# IGRAPH 2b31606 DN-- 773 1909858 -- 
 # + attr: name (v/c)
-# + edges from 12329bd (vertex names):
+# + edges from 2b31606 (vertex names):
 #  [1] 72-&gt;173  72-&gt;477  72-&gt;457  72-&gt;379  72-&gt;459  72-&gt;446  72-&gt;212  72-&gt;458 
 #  [9] 72-&gt;212  72-&gt;514  72-&gt;514  72-&gt;465  72-&gt;173  72-&gt;524  72-&gt;173  72-&gt;212 
 # [17] 72-&gt;382  72-&gt;462  72-&gt;3141 72-&gt;456  72-&gt;519  72-&gt;328  72-&gt;426  72-&gt;3659
@@ -1033,10 +1033,10 @@ is.directed(trips_graph)
 <p>You can access the vertices and edges using <code>V</code> and <code>E</code> functions.</p>
 <pre><code class="language-r">
 V(trips_graph) %&gt;% head()
-# + 6/773 vertices, named, from 12329bd:
+# + 6/773 vertices, named, from 2b31606:
 # [1] 72  79  82  83  119 120
 E(trips_graph) %&gt;% head()
-# + 6/1909858 edges from 12329bd (vertex names):
+# + 6/1909858 edges from 2b31606 (vertex names):
 # [1] 72-&gt;173 72-&gt;477 72-&gt;457 72-&gt;379 72-&gt;459 72-&gt;446
 
 tmp1 &lt;- diffdesttrips %&gt;%
@@ -1333,7 +1333,7 @@ wlktrp_mmbr$clstrmm %&gt;% summary()
 #   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15 
 #  80 218 207  61   3 195   1   1   1   1   1   1   1   1   1
 </code></pre>
-<p>It seems like there are 5 distinct and non-trivial clusters of stations. You can visualise these results by joining them back to tibbles with location information.</p>
+<p>It seems like there are 5 distinct and non-trivial clusters of stations ($ n $). You can visualise these results by joining them back to tibbles with location information.</p>
 <pre><code class="language-r">
 station_locs &lt;- station_locs %&gt;%
                 inner_join(wlktrp_mmbr, by='stid')
