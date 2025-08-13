@@ -1,0 +1,1627 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Exploiting sharp edges at the border of a jurisdiction to test the effect of a program/policy." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/" />
+  <meta property="og:title" content="Spatial Regression Discontinuity Design Setup | Nikhil Kaza" />
+  <meta property="og:description" content="Exploiting sharp edges at the border of a jurisdiction to test the effect of a program/policy." /><meta property="og:image" content="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2018-07-08T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2018-07-08T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/"
+  },
+  "headline": "Spatial Regression Discontinuity Design Setup",
+  
+  "image": [
+    "https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/featured.png"
+  ],
+  
+  "datePublished": "2018-07-08T00:00:00Z",
+  "dateModified": "2018-07-08T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Exploiting sharp edges at the border of a jurisdiction to test the effect of a program/policy."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Spatial Regression Discontinuity Design Setup | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="c79f9c8799e16ad6c90ff0b599210522" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Spatial Regression Discontinuity Design Setup</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jul 8, 2018
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    10 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/regional-science/">regional-science</a>, <a href="/category/policy-evaluation/">policy-evaluation</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 227px;">
+  <div style="position: relative">
+    <img src="/post/spatial-regression-discontinuity-design-setup/featured_hu323e8ff2b38f35927d03e71f1ad90660_1069127_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="227" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        
+<script src="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/header-attrs/header-attrs.js"></script>
+<script src="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/widgetframe-binding/widgetframe.js"></script>
+
+<div id="TOC">
+<ul>
+<li><a href="#point-set-theory-and-the-de-9im-matrix">Point Set Theory and the DE-9IM Matrix</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The current gold standard for testing the efficacy of an intervention/program/procedure requires this randomisation of participants to treatment and control. The following video by <a href="https://www.povertyactionlab.org/">J-PAL</a> gives a simple explanation of why this may be the case.</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/Uxqw2Pgm7s8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>In many cases, randomisation to some program is not feasible. There may be political issues, information leaks and other real world problems that <a href="http://www.nber.org/papers/t0295">affect the conclusions</a> that can be drawn. There are also number of <a href="https://doi.org/10.1016/j.socscimed.2017.12.005">theoretical critiques</a> for randomised controlled trials.</p>
+</div>
+<div id="regression-discontinuity" class="section level2">
+<h2>Regression Discontinuity</h2>
+<p>Sometimes it is possible to exploit the sharp discontinuity in program application to see what the effect of the program is at the discontinuity. The key intuition is that at the <strong>a priori</strong> selected discontinuity, in a small window on either side of the discontinuity, the observations are essentially similar except for the treatment. For example, <a href="http://dx.doi.org/10.1002/pam.21929">Ellen, Horn &amp; Schwartz (2016)</a> test the effect of residential location choices of households, whose oldest child becomes eligible for kindergarten. To do this, they focus on voucher receiving households whose oldest child just met the kindergarten eligibility cut-off date and those who missed the cut-off. The <em>rating variable</em> in this case is age in years by Sep 1 (or some other date) and <em>cut-point</em> is 5 years. Because the cut-off is determined independent of the participants in the program and by looking at the effect of vouchers in a local neighborhood around the cut-off, they determined the effect of vouchers on residential mobility.</p>
+<p>There are multiple ways to conceptualise this design; 1) Discontinuity at the cut-point 2) local randomization at the cut-point. See below images for visualisation. In particular, please pay attention to the boxes around the cut-off that symblolise local neighborhood.</p>
+<p><img src="img/RDD_before.png" style="width:50.0%" alt="Before" /> <img src="img/RDD_after.png" style="width:50.0%" alt="After" />
+<em>Images adapted from <a href="https://www.mdrc.org/sites/default/files/RDD%20Guide_Full%20rev%202016_0.pdf">Jacob et. al (2012)</a></em></p>
+</div>
+<div id="spatial-regression-discontinuity" class="section level2">
+<h2>Spatial Regression Discontinuity</h2>
+<p>It is relatively straightforward to construct a regression discontinuity when the rating variable is on a real line and cut-point is a point on that line, due to fact that real numbers is a <a href="http://mathworld.wolfram.com/TotallyOrderedSet.html">totally ordered set</a>, in particular, the comparability property w.r.t. <span class="math inline">\(\lt\)</span> holds. However, it is often the case that the discontinuity is a spatial one.</p>
+<p>For example, a subsidy for rooftop solar is implemented by a city within its jurisdiction, and we want to test if the subsidy increased the adoption of rooftop solar. The idea is parcels and households on both sides of the edge of the jurisdictions are similar and the key difference is the eligibility to the subsidy and therefore comparing the adoption rates among those households will help us identify if the subsidy has any effect.</p>
+<p>Another example could be the effect of minimum wage regulation on employment levels as studied by <a href="https://doi.org/10.1162/REST_a_00039">Dube, Lester and Reich (2010)</a>. They do not employ a regression discontinuity design, but a matching design, but the intuition still applies. Counties at the state borders are likely to be similar and state policy on minimum wage is the only differentiator and differences in employment trends among these subset of counties (at the border) are an estimate of whether minimum wage policies reduce employment levels or not.</p>
+<p>Similar design for testing the effect of Clean Cities Coalition (CCC) program on air quality and number of alternative fueling stations in counties within and outside the coalition boundaries can be found in <a href="http://doi.og/10.1016/j.scitotenv.2016.11.119">Qiu and Kaza (2016)</a>. In this study, we not only use the spatial discontinuity of the boundaries but also the temporal discontinuity of when the CCC came into existence.</p>
+<div class="figure">
+<img src="img/ccc.jpg" width="600" alt="" />
+<p class="caption">Illustration of research design in <a href="http://doi.og/10.1016/j.scitotenv.2016.11.119">Qiu &amp; Kaza (2016)</a></p>
+</div>
+<p>There are some key differences between standard regression discontinuity and the spatial version. See <a href="http://doi.og/10.1093/pan/mpu014">Keele and Titiunik (2015)</a>. They are 1) different measures of distance from the cutoffs may require different identification assumptions 2) Compound treatments 3) Boundary points at the cut-off have different interpretation.</p>
+<p>For the most part, I am going to ignore these differences in this post for the sake of illustration. In particular, when polygonal entities (instead of points) are the observations of interest, many of the differences are not that important.</p>
+</div>
+<div id="identifying-relevant-observations-on-either-side-of-the-spatial-discontinuity." class="section level2">
+<h2>Identifying relevant observations on either side of the spatial discontinuity.</h2>
+<p>Let us assume that we have a discontinuity at the edge of the metropolitan statistical areas. For the purposes of illustration, I am going to download CBSA and county shapefiles from Census using <code>tigris</code> package. I am going to restrict my attention to Illinois for the sake of exposition.</p>
+<pre class="r"><code>
+cbsa &lt;- core_based_statistical_areas()
+cty_shp &lt;- counties(state=&quot;il&quot;)</code></pre>
+<pre class="r"><code>#library(rgeos)
+library(sf)
+library(tidyverse)
+library(tigris)
+
+msa &lt;- cbsa[cbsa$LSAD==&quot;M1&quot;,] # Restrict attention only to Metro areas, ignore Micro
+msa_IL &lt;- msa[st_centroid(cty_shp, byid=T),] # Select metros that are in IL. </code></pre>
+<p><div class="alert alert-warning">
+  <div>
+    If we used the <strong>“[”</strong> method using a polygon instead of points it selects MSAs that are also outside IL but are adjacent to IL county boundary files. It does not matter for the illustration, but may be problematic for other work. Hence we are keeping only those MSAs where the IL county centroids are in a MSA.
+  </div>
+</div>
+</p>
+<p>There are 102 counties in IL.</p>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-3.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>Before running any topology operations, it is always a good idea to check to see if the geometry is valid (e.g. no self-intersections etc.)</p>
+<pre class="r"><code>cty_shp[!st_is_valid(cty_shp, byid = TRUE),]
+# Simple feature collection with 0 features and 17 fields
+# Bounding box:  xmin: NA ymin: NA xmax: NA ymax: NA
+# Geodetic CRS:  NAD83
+#  [1] STATEFP  COUNTYFP COUNTYNS GEOID    NAME     NAMELSAD LSAD     CLASSFP 
+#  [9] MTFCC    CSAFP    CBSAFP   METDIVFP FUNCSTAT ALAND    AWATER   INTPTLAT
+# [17] INTPTLON geometry
+# &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<p>Since this returns an empty list, lets proceed to extract all the counties within the MSA and outside MSA and use the TOUCHES relationship with the MSA boundary to extract counties within and outside the MSA. Note the &gt; 0, for the reason that counties can be adjacent to many MSA boundaries.</p>
+<pre class="r"><code>msa_ctyID &lt;- cty_shp$CBSAFP %in% msa_IL$CBSAFP
+msa_cty &lt;- cty_shp[msa_ctyID,]
+nonmsa_cty &lt;- cty_shp[!msa_ctyID,]
+treat_cty &lt;- msa_cty[rowSums(st_touches(msa_cty, st_boundary(msa_IL),sparse=F)) &gt; 0,]
+cntrl_cty &lt;- nonmsa_cty[rowSums(st_touches(nonmsa_cty, st_boundary(msa_IL), sparse=F)) &gt; 0,]</code></pre>
+<p>Here is a visual representation.</p>
+<div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>Note how Kane and Dupage counties, near Chicago, that are completely within MSA, are not part of the treatment. Nor are Clark and Cumberland near Terra Haute, IN that are outisde MSA but not touching the boundary are not in Controls. It looks like we have achieved the right results.</p>
+<p>Now that treatment and control groups are formulated at the spatial discontinuity boundary, standard techniques will then be followed to estimate the local treatment effect.</p>
+<p>A major point to note, however, is the distinction between what is considered ‘local’ around the cutoff in RDD. In the standard case, the local is defined as a neighborhood based on the distance to the rating variable, i.e. rectangle around the cut-off. In the spatial case, the local is defined as any region that is on either side of the discontinuity (at least in this case). In some senses, Touches criterion is also a ‘distance’ metric, if we were to reimagine the regions as network nodes, where two nodes are connected by a link, if they are contigous. The network distance threshold is then 1. One could also imagine a different neighborhood around the discontinuity e.g. all regions within a k-buffer around the discontinuity, or all regions that are continguous of order 2 etc. The choice of this neighborhood is largely arbitrary and based on convention in the field.</p>
+</div>
+<div id="point-set-theory-and-the-de-9im-matrix" class="section level1">
+<h1>Point Set Theory and the DE-9IM Matrix</h1>
+<p>Another way of doing this would be to use the function <code>st_relate</code> in sf or <code>gRelate</code> in <code>rgeos</code>. These functions would give the DE-9IM relation for each pair of polygons (e.g. FF2FF1212). Then it is a matter of parsing the code to figure out which ones are exterior and which ones are interior to MSA polygons.</p>
+<p>It is useful to digress into some topology and <a href="http://docs.geotools.org/stable/userguide/library/jts/dim9.html">summarize the relationships and their representations</a>.</p>
+<p>We need concepts for interior, exterior and a boundary for various spatial types of points, lines and polygons</p>
+<ul>
+<li>Point: Everything outside the point is in the exterior, no boundary</li>
+<li>Line: All points along length is interior, boundary is the two end points and exterior is everything outside the line.</li>
+<li>polygons: Standard definitions apply (see below), however, pay attention to the holes.</li>
+</ul>
+<p>Relationships between polygons are described as a matrix produced by comparing the intersection of the Interior, Boundary and Exterior properties of both polygons. This comparison referred to as the Dimensionally Extended 9-Intersection Matrix or DE-9IM.</p>
+<div class="figure">
+<img src="img/twopolygons.png" width="500" height="500" alt="" />
+<p class="caption">Image from <a href="https://en.wikipedia.org/wiki/DE-9IM">Wikipedia</a></p>
+</div>
+<p>The above figure has the DE-9IM(<em>a</em>,<em>b</em>) string code is ‘212101212’, each character corresponding to the dimension of the intersction in the above matrix. Thus the relationship between two spatial entities can be described has string of 9 characters.</p>
+<p>Consider the following definition of Area/Area overlap:</p>
+<table>
+<thead>
+<tr class="header">
+<th>OVERLAP</th>
+<th>Interior</th>
+<th>Boundary</th>
+<th>Exterior</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Interior</td>
+<td>T</td>
+<td>*</td>
+<td>T</td>
+</tr>
+<tr class="even">
+<td>Boundary</td>
+<td>*</td>
+<td>*</td>
+<td>*</td>
+</tr>
+<tr class="odd">
+<td>Exterior</td>
+<td>T</td>
+<td>*</td>
+<td>*</td>
+</tr>
+</tbody>
+</table>
+<p>Where T is dimension <span class="math inline">\(\ge\)</span> 0, F is <span class="math inline">\(\neg\)</span> T and * is any. So the binary representation for overlap is “T*T***T**”. Interpretation is that interiors of the two areas intersect, exteriors of the two areas intersect and atleast exterior of region <em>a</em> (row) intersects with interior of region <em>b</em>.</p>
+<p>Another relevant relationship for this post is is TOUCHES, whose binary representation is “F***T****”, i.e. interiors do not intersect, but boundaries do (when <em>a</em> and <em>b</em> are not points).</p>
+<p>So to return to our example to get control and treatment counties we can exploit these patterns. Counties at the edge of the MSA but are within it, intersect on the interior and the boundary but the no intersection among the exterior and the boundary. Counties at the edge of MSA that are outside the MSA, have intersection of the interior of the county and exterior of the MSA, boundaries of of the MSA and counties, and no intersection between interiors.</p>
+<p>We will also exploit the feature that counties belong to a single MSA but could be exterior to multiple MSA. To account for that in the control observations, we simply exclude the observations that are already selected as treatment in the prior step.</p>
+<pre class="r"><code>
+msaId2 &lt;- rowSums(st_relate(cty_shp, msa_IL, pattern=&quot;T*F*TF***&quot;, sparse = F)) &gt; 0
+treat_cty2 &lt;- cty_shp[msaId2,] #Interiors and boundaries intersect, exteriors and interior does not and neither does boundary and exterior.
+cntrl_cty2 &lt;- cty_shp[rowSums(st_relate(cty_shp, msa_IL, pattern=&quot;F*T*T****&quot;, sparse =F)) &gt; 0 &amp; !msaId2,] #Interiors do not intersect, boundaries intersect, exteriors of MSA and interior of county intersects. Also ignore the ones that are already selected into treatment.
+all.equal(treat_cty, treat_cty2)
+# [1] TRUE
+all.equal(cntrl_cty, cntrl_cty2)
+# [1] TRUE</code></pre>
+<div id="limitations" class="section level2">
+<h2>Limitations</h2>
+<p>There are many limitations of RD designs and the some of those limitations translate to spatial discontinuity designs. But there are three chief limitations, we should pay attention to.</p>
+<ol style="list-style-type: decimal">
+<li><p>Apriori determination/Endogeneity: It is mostly not true that the discontinuity is exogenous and determined <em>a priori</em>. For example, the MSA boundaries are largely determined by economic activity and inclusion in an MSA is usually correlated with the variable we are seeking to observe. Thus in many situations, it will not be possible to over come these limitations. One way to validate the results is to change the spatial discontinuity (by buffering outwards and inwards for example) and see if there is an observed effect of the ‘real’ boundary.</p></li>
+<li><p>Fuzzy boundaries and Errors: Spatial operations are notoriously susceptible to boundary errors. Just as on real line, machine tolerances and representations of numbers trip up <span class="math inline">\(\lt\)</span>, <span class="math inline">\(=\)</span> operators, errors at the boundary lines, accuracy and scale crucially determine whether the topological relations are identified or not (especially <code>st_relate</code>). To see this issue in the example in the post, download and rerun the analysis with cartographic boundary files, e.g. using tigris download command <code>counties(state="IL", cb=TRUE)</code> etc. One can overcome this by considering all the polygons within the bounding box or <span class="math inline">\(\epsilon\)</span> distance between the boundaries.</p></li>
+<li><p>Exchangeability: Exchangeability is an assumption that states that assignment of observations to the treatment condition is random, in other words, control regions could potentially be treatment regions. This is often a problem, if there are dramatic differences between regions within and outside the spatial discontinuity. For example, notice that we paid no attention to the size of the county in our analyses and if counties within MSA are smaller (on popultion, area, economic activity etc.) than outside MSA then there is a violation of exchangeability assumption. This assumption is often violated, so special attention should be paid to the descriptives.</p></li>
+</ol>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>All in all spatial regression discontinuity is becoming increasingly popular method to evaluate the effect of various programs, especially in a political system that is federated and the jurisdictional boundaries often serve as spatial discontinuity. While care should be paid to the analysis and the assumptions, it is a useful tool.</p>
+</div>
+</div>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/r/">R</a>
+  
+  <a class="badge badge-light" href="/tag/research/">research</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/&amp;text=Spatial%20Regression%20Discontinuity%20Design%20Setup" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/&amp;t=Spatial%20Regression%20Discontinuity%20Design%20Setup" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Spatial%20Regression%20Discontinuity%20Design%20Setup&amp;body=https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/&amp;title=Spatial%20Regression%20Discontinuity%20Design%20Setup" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Spatial%20Regression%20Discontinuity%20Design%20Setup%20https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/&amp;title=Spatial%20Regression%20Discontinuity%20Design%20Setup" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/identifying-employment-centers/">Identifying Employment Centers</a></li>
+      
+      <li><a href="/post/regional-employment-structure-using-labor-market-centrality-index/">Regional Employment Structure Using Labor Market Centrality Index</a></li>
+      
+      <li><a href="/post/transportation-energy-consumption/">Transportation Energy Consumption in the US</a></li>
+      
+      <li><a href="/post/analysing-urban-neworks/">Analysing Urban Neworks</a></li>
+      
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

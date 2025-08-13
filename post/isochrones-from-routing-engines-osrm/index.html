@@ -1,0 +1,1654 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction In other posts, I have shown how to use external servers (google, craigslist etc.) to access information. You can also query a local (on your computer) server and your R session acts like a client (e." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/" />
+  <meta property="og:title" content="Isochrones from Routing Engines (OSRM) | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction In other posts, I have shown how to use external servers (google, craigslist etc.) to access information. You can also query a local (on your computer) server and your R session acts like a client (e." /><meta property="og:image" content="https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2022-01-25T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2022-01-25T16:16:07-05:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/"
+  },
+  "headline": "Isochrones from Routing Engines (OSRM)",
+  
+  "image": [
+    "https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/featured.png"
+  ],
+  
+  "datePublished": "2022-01-25T00:00:00Z",
+  "dateModified": "2022-01-25T16:16:07-05:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction In other posts, I have shown how to use external servers (google, craigslist etc.) to access information. You can also query a local (on your computer) server and your R session acts like a client (e."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Isochrones from Routing Engines (OSRM) | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="f1ba9d1199c9abf2ce8287c60ad6ced1" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Isochrones from Routing Engines (OSRM)</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Jan 25, 2022
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    4 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/transportation/">transportation</a>, <a href="/category/new-urban-analytics/">new-urban-analytics</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 331px;">
+  <div style="position: relative">
+    <img src="/post/isochrones-from-routing-engines-osrm/featured_hu53837ad3be75a0db6cc0a3e088dfff4d_563634_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="331" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <h2 id="introduction">Introduction</h2>
+<p>In other posts, I have shown how to use external servers (google, craigslist etc.) to access information.  You can also query a local (on your computer) server and your R session acts like a client (e.g. browser).</p>
+<p>We can demonstrate this using (Open Source Routing Machine) OSRM server and constructing Isocrhrones. <a href="https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times" target="_blank" rel="noopener">Isochrones</a> are area you can reach from a point within a specified time. Often isochrones are used to identify gaps in the service area boundaries (e.g. 15 min distance from fire stations).</p>
+<p>We can plot isochornes of every 2 min biking, around some random points in Orange County, NC. While we use OSRM, though any other API works as well (e.g. Google, Mapbox etc. <a href="https://mrakow.wordpress.com/2015/11/30/isochrone-generation-with-the-google-maps-api-using-a-quadtree/" target="_blank" rel="noopener">see this blog</a> for example.) . If you want to set other types of local routing engine, <a href="https://github.com/valhalla/valhalla" target="_blank" rel="noopener">Valhalla</a> and associated R packages  might be a good option. Use whichever one suits your needs.</p>
+<div class="alert alert-note">
+  <div>
+    I am using a OSRM server. T
+  </div>
+</div>
+<h2 id="setting-up-a-osrm-server">Setting up a OSRM server</h2>
+<p>We are going to <a href="https://github.com/Project-OSRM/osrm-backend" target="_blank" rel="noopener">set up a OSRM server</a> on your computer.</p>
+<ul>
+<li>
+<p>Different OS require different instructions, so please follow the <a href="https://github.com/Project-OSRM/osrm-backend" target="_blank" rel="noopener">website</a> to construct the backend for your OS.</p>
+</li>
+<li>
+<p>Download North Carolina road network from Openstreetmap from <a href="https://download.geofabrik.de/north-america.html" target="_blank" rel="noopener">Geofabrik</a> for example (use the pbf file).</p>
+</li>
+<li>
+<p>Construct a graph that can be used for finding shortest routes. Use suitably modified versions of (mind the file locations)</p>
+</li>
+</ul>
+<pre><code>    - osrm-extract nc.osm.pbf -p ./profiles/bicycle.lua
+    - osrm-partition nc.osrm
+    - osrm-customize nc.osrm
+    - osrm-routed --algorithm mld nc.osrm 
+</code></pre>
+<p>in the command window/terminal (outside R). If all goes well, this sequence of steps will create local server ready to accept your requests.  The server will be ready to be queried at  http://localhost:5000/ or http://127.0.0.1:5000</p>
+<p>To get other modes, simply change the <code>lua</code> profile.</p>
+<p>The following code is here for the sake of completeness and is not evaluated. it can only be evaluated with the server is runnign in the background at <code>localhost:5000</code></p>
+<pre><code class="language-r">library(osrm)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(widgetframe)
+
+# Ideally set these options up
+ options(osrm.server = &quot;http://localhost:5000/&quot;)
+options(osrm.profile = 'bike') 
+
+randompoints &lt;- matrix(c( -79.065443, 35.924787, -79.087353, 35.914525, -79.066203, 35.881521), 
+                       ncol=2, byrow =TRUE) %&gt;%
+                      data.frame()
+names(randompoints) &lt;- c('lng', 'lat')
+randompoints$name &lt;- c('pt1', 'pt2', 'pt3')
+
+rt &lt;- osrmRoute(src = randompoints[1,c('name', 'lng','lat')], 
+                dst = randompoints[2,c('name','lng','lat')], 
+                returnclass = &quot;sf&quot;)
+
+m1 &lt;- 
+rt %&gt;% leaflet() %&gt;%
+    addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;) %&gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;) %&gt;%
+  addMarkers(data=randompoints[1:2,], ~lng, ~lat) %&gt;%
+  addPolylines(weight =5, smoothFactor = .5, color='red')
+
+
+frameWidget(m1)
+
+</code></pre>
+<p>OSRM is a convenience package that is wrapping the calls to the server and parsing the output into sf classes. For example, the curl query in the backend looks like</p>
+<p><code>http://localhost:5000/route/v1/biking/-78.901330,36.002806,-78.909020,36.040266</code></p>
+<p>and should result in the following image</p>
+<p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<figure  >
+  <div class="d-flex justify-content-center">
+    <div class="w-100" ><img src="./img/single_route.png" alt="" loading="lazy" data-zoomable /></div>
+  </div></figure>
+
+You can always shut the server down by closing the terminal/command window, after you are done with your analysis.</p>
+<p>To get a matrix of distances and durations between multiple points,</p>
+<pre><code class="language-r">ttmatrix &lt;- osrmTable(loc=randompoints[, c('name', 'lng', 'lat')], measure = c('duration', 'distance'))
+
+</code></pre>
+<p><code>ttmatrix$durations</code> should return a table similar to</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>pt1</th>
+<th>pt2</th>
+<th>pt3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>pt1</em></td>
+<td>0.0</td>
+<td>22.8</td>
+<td>32.5</td>
+</tr>
+<tr>
+<td><em>pt2</em></td>
+<td>22.8</td>
+<td>0.0</td>
+<td>25.1</td>
+</tr>
+<tr>
+<td><em>pt3</em></td>
+<td>32.9</td>
+<td>25.8</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="querying-a-osrm-server">Querying a OSRM server</h2>
+<pre><code class="language-r">iso &lt;- list()
+for (i in 1:nrow(randompoints)){
+iso[[i]] &lt;- osrmIsochrone(loc = randompoints[i,c('lng','lat')], breaks = seq(from = 0,to = 15, by = 2)) %&gt;% st_as_sf()
+}
+
+iso &lt;- do.call('rbind', iso)
+
+ Npal &lt;- colorNumeric(
+   palette = &quot;Reds&quot;, n = 5,
+   domain = iso$center
+ )
+ 
+iso %&gt;% leaflet() %&gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;) %&gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;) %&gt;%
+  addMarkers(data=randompoints, ~lng, ~lat) %&gt;%
+  addPolygons(color = &quot;#444444&quot;, weight = 1, smoothFactor = 0.5,
+    opacity = 1.0, fillOpacity = 0.5, fillColor = ~Npal(iso$center),
+    group = &quot;Isochrone&quot;) %&gt;%
+  addLegend(&quot;topleft&quot;, pal = Npal, values = ~iso$center,
+            title = &quot;Biking Time (min)&quot;,opacity = 1
+            )
+
+</code></pre>
+<p>The result should looks similar to the following.</p>
+<p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<figure  >
+  <div class="d-flex justify-content-center">
+    <div class="w-100" ><img src="./img/isochrones.png" alt="" loading="lazy" data-zoomable /></div>
+  </div></figure>
+</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Change the profile of the OSRM server to car and notice the differences in the Isochrones (shapes and extents).</li>
+<li>Repeat the entire exercise for all the major shopping areas in the Triangle.</li>
+</ul>
+<hr>
+<h2 id="conclusions">Conclusions</h2>
+<p>It should be obvious that having a local server might reduce latency and allow for quicker turnaround. However, there are some distinct disadvantages compared to commercial option, including but not limited to incorporating real time information, setup costs and maintenance costs. Nonetheless, it is useful to think about how these might be beneficial within an organisation.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#setting-up-a-osrm-server">Setting up a OSRM server</a></li>
+    <li><a href="#querying-a-osrm-server">Querying a OSRM server</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/r/">R</a>
+  
+  <a class="badge badge-light" href="/tag/teaching/">teaching</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/&amp;text=Isochrones%20from%20Routing%20Engines%20%28OSRM%29" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/&amp;t=Isochrones%20from%20Routing%20Engines%20%28OSRM%29" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Isochrones%20from%20Routing%20Engines%20%28OSRM%29&amp;body=https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/&amp;title=Isochrones%20from%20Routing%20Engines%20%28OSRM%29" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Isochrones%20from%20Routing%20Engines%20%28OSRM%29%20https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/&amp;title=Isochrones%20from%20Routing%20Engines%20%28OSRM%29" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
+      
+      <li><a href="/post/exploratory-data-analysis-and-visualisation/">Exploratory Data Analysis and Visualisation</a></li>
+      
+      <li><a href="/post/intersection-density-from-osm-using-qgis-r/">Intersection Density From OSM using QGIS &amp; R</a></li>
+      
+      <li><a href="/post/analysing-free-form-text/">Analysing Free Form Text</a></li>
+      
+      <li><a href="/post/matching-messy-texts/">Matching Messy Texts</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

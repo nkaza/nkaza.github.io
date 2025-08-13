@@ -1,0 +1,2059 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/transit-accessibility-using-gtfs/" />
+  <meta property="og:title" content="Transit Accessibility Using GTFS | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people." /><meta property="og:image" content="https://nkaza.github.io/post/transit-accessibility-using-gtfs/featured.gif" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/transit-accessibility-using-gtfs/featured.gif" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2022-11-18T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2022-11-18T12:54:36-05:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/transit-accessibility-using-gtfs/"
+  },
+  "headline": "Transit Accessibility Using GTFS",
+  
+  "image": [
+    "https://nkaza.github.io/post/transit-accessibility-using-gtfs/featured.gif"
+  ],
+  
+  "datePublished": "2022-11-18T00:00:00Z",
+  "dateModified": "2022-11-18T12:54:36-05:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Transit Accessibility Using GTFS | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="b9d6829f20de50868d8a0bf102393bbb" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Transit Accessibility Using GTFS</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Nov 18, 2022
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    20 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/transportation/">transportation</a>, <a href="/category/r/">R</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 577px;">
+  <div style="position: relative">
+    <img src="/post/transit-accessibility-using-gtfs/featured_huf129ee15297687fd818fa998b9ea447d_262942_720x2500_fit_q75_h2_lanczos.webp" width="720" height="577" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js"></script>
+<h2 id="introduction">Introduction</h2>
+<p>Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people. Analysing fixed route public transit has become relatively straightforward with the introduction of the “General Transit Feed Specification”, a common standard for transit agencies to publish their schedules. <a href="https://beyondtransparency.org/chapters/part-2/pioneering-open-data-standards-the-gtfs-story/" target="_blank" rel="noopener">Pioneered by TriMet of Portland, Oregon</a> in collaboration with Google, this specification has become common for transit agencies around the world to publish their consumer facing datasets.</p>
+<p>GTFS is split into a schedule component that contains schedule, fare, and geographic transit information and a real-time component that contains arrival predictions, vehicle positions and service advisories. Static GTFS consists of routes, trips, stop_times, stops and calendar as mandatory tables. There are also other optional tables such as fares and frequencies. Real Time GTFS (gtfs-rt) consists of trip updates, service interruptions etc.</p>
+<h2 id="reading-in-gtfs-files">Reading in GTFS files</h2>
+<p>Because GTFS are regularly updated (usually semi-annually) and published on transit agency’s website, it is a good idea to get the latest schedule. Fortunately, <a href="https://database.mobilitydata.org/" target="_blank" rel="noopener">Mobility Database</a> has a catalogue of various GTFS feeds and their source locations. In this tutorial, I am going to use Metro St. Louis GTFS feed.</p>
+<p>In addition, I am going to use <code>tidytransit</code> and <code>gtfsrouter</code> packages. <code>extract_gtfs</code> is a function in the <code>gtfsrouter</code> package that reads the zipfile and converts it into bunch of data tables. Similarly <code>read_gtfs</code> from <code>tidytransit</code> could also be used.</p>
+<p>In the following code, I am showing how to download the latest GTFS files. However, I am going to use an <a href="https://www.dropbox.com/s/v0lgu35uxmva00r/google_transit.zip?dl=0" target="_blank" rel="noopener">archived GTFS files</a> for consistency.</p>
+<pre><code class="language-r">
+
+gtfs_feeds &lt;- read_csv(&quot;https://bit.ly/catalogs-csv&quot;) %&gt;%
+               filter(provider == &quot;Metro St. Louis&quot;) %&gt;%
+               filter(data_type == &quot;gtfs&quot;) %&gt;%
+               pull('urls.direct_download')
+
+gtfs_feeds
+
+
+## function to download and read the gtfs feeds. Particularly helpful, if there are multiple feeds and/or multiple transit agencies in the area.
+
+download_read_gtfs &lt;- function(feed_url){
+      zipfilename &lt;- basename(feed_url)
+     download.file(feed_url, destfile = zipfilename)
+#      gtfsrouter::extract_gtfs(zipfilename)
+      tidytransit::read_gtfs(zipfilename)
+}
+
+stlouis_gtfs &lt;- gtfs_feeds %&gt;% download_read_gtfs()
+
+summary(stlouis_gtfs)
+</code></pre>
+<pre><code class="language-r">library(widgetframe)
+library(tidytransit)
+library(tidyverse)
+library(sf)
+library(units)
+library(here)
+
+stlouis_gtfs &lt;- here(&quot;tutorials_datasets/gtfs/google_transit.zip&quot;) %&gt;%tidytransit::read_gtfs()
+
+summary(stlouis_gtfs)
+# tidygtfs object
+# files        agency, stops, routes, trips, stop_times, calendar, calendar_dates, shapes
+# agency       Metro St. Louis
+# service      from 2022-09-26 to 2023-03-12
+# uses         stop_times (no frequencies)
+# # routes       121
+# # trips      17704
+# # stop_ids    5315
+# # stop_names  5256
+# # shapes       420
+</code></pre>
+<p>Notice that there are about 121 routes with over 5,000 stops in the St. Louis region. Visualising these stops is pretty straightforward, once you convert them into <code>sf</code> objects.</p>
+<pre><code class="language-r">stlouis_gtfs &lt;- gtfs_as_sf(stlouis_gtfs, skip_shapes = FALSE, crs = 4326, quiet = TRUE)
+
+stlouis_gtfs 
+# $agency
+# # A tibble: 1 × 8
+#   agency_phone agency_url        agenc…¹ agenc…² agenc…³ agenc…⁴ agenc…⁵ agenc…⁶
+#   &lt;chr&gt;        &lt;chr&gt;             &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+# 1 314-231-2345 http://www.metro… EN      &quot;&quot;      Metro … Americ… http:/… Transi…
+# # … with abbreviated variable names ¹​agency_lang, ²​agency_id, ³​agency_name,
+# #   ⁴​agency_timezone, ⁵​agency_fare_url, ⁶​agency_email
+# 
+# $calendar_dates
+# # A tibble: 6 × 3
+#   service_id       date       exception_type
+#   &lt;chr&gt;            &lt;date&gt;              &lt;int&gt;
+# 1 3_merged_3039412 2023-01-02              1
+# 2 3_merged_3039412 2022-12-26              1
+# 3 1_merged_3039411 2023-01-02              2
+# 4 1_merged_3039411 2022-12-26              2
+# 5 3_merged_3039415 2022-11-24              1
+# 6 1_merged_3039414 2022-11-24              2
+# 
+# $calendar
+# # A tibble: 6 × 10
+#   service_id start_date end_date   monday tuesday wedne…¹ thurs…² friday satur…³
+#   &lt;chr&gt;      &lt;date&gt;     &lt;date&gt;      &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;  &lt;int&gt;   &lt;int&gt;
+# 1 2_merged_… 2022-09-26 2022-11-27      0       0       0       0      0       1
+# 2 2_merged_… 2022-11-28 2023-03-12      0       0       0       0      0       1
+# 3 3_merged_… 2022-11-28 2023-03-12      0       0       0       0      0       0
+# 4 1_merged_… 2022-11-28 2023-03-12      1       1       1       1      1       0
+# 5 3_merged_… 2022-09-26 2022-11-27      0       0       0       0      0       0
+# 6 1_merged_… 2022-09-26 2022-11-27      1       1       1       1      1       0
+# # … with 1 more variable: sunday &lt;int&gt;, and abbreviated variable names
+# #   ¹​wednesday, ²​thursday, ³​saturday
+# 
+# $stops
+# Simple feature collection with 5315 features and 7 fields
+# Geometry type: POINT
+# Dimension:     XY
+# Bounding box:  xmin: -90.66209 ymin: 38.46975 xmax: -89.87466 ymax: 38.82565
+# Geodetic CRS:  WGS 84
+# # A tibble: 5,315 × 8
+#    wheelchair_boarding zone_id stop_id stop_desc         stop_…¹ locat…² stop_…³
+#  *               &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;  
+#  1                   2 &quot;&quot;      9160    FAR SIDE NATURAL… NATURA…       0 9160   
+#  2                   2 &quot;&quot;      16079   FAR SIDE KINGSHI… KINGSH…       0 16079  
+#  3                   2 &quot;&quot;      4446    FAR SIDE WOODSON… WOODSO…       0 4446   
+#  4                   2 &quot;&quot;      5745    NEAR SIDE 546 NO… 546 NO…       0 5745   
+#  5                   2 &quot;&quot;      16076   FAR SIDE CRAIG @… CRAIG …       0 16076  
+#  6                   2 &quot;&quot;      16075   FAR SIDE CRAIG @… CRAIG …       0 16075  
+#  7                   2 &quot;&quot;      16074   MID-BLOCK NATURA… NATURA…       0 16074  
+#  8                  NA &quot;&quot;      11542   NEAR SIDE MEMORI… MEMORI…       0 11542  
+#  9                  NA &quot;&quot;      11543   NEAR SIDE MEMORI… MEMORI…       0 11543  
+# 10                   1 &quot;&quot;      4024    NEAR SIDE CHEROK… CHEROK…       0 4024   
+# # … with 5,305 more rows, 1 more variable: geometry &lt;POINT [°]&gt;, and
+# #   abbreviated variable names ¹​stop_name, ²​location_type, ³​stop_code
+# 
+# $routes
+# # A tibble: 121 × 7
+#    route_long_name               route…¹ route…² agenc…³ route…⁴ route…⁵ route…⁶
+#    &lt;chr&gt;                           &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+#  1 MetroLink Red Line                  2 f6f6fc  &quot;&quot;      18164R  CC0033  MLR    
+#  2 OFallon-Fairview Heights            3 000000  &quot;&quot;      18093   FFFFFF  12     
+#  3 Washington Park                     3 000000  &quot;&quot;      18092   FFFFFF  9      
+#  4 Alta Sita                           3 000000  &quot;&quot;      18091   FFFFFF  8      
+#  5 Rosemont                            3 000000  &quot;&quot;      18090   FFFFFF  6      
+#  6 St Clair Square                     3 000000  &quot;&quot;      18097   FFFFFF  16     
+#  7 Belleville-Shiloh-OFallon           3 000000  &quot;&quot;      18096   FFFFFF  15     
+#  8 Memorial Hosp-Westfield Plaza       3 000000  &quot;&quot;      18095   FFFFFF  14     
+#  9 Caseyville-Marybelle                3 000000  &quot;&quot;      18094   FFFFFF  13     
+# 10 OFallon-Fairview Heights            3 000000  &quot;&quot;      18158   FFFFFF  12     
+# # … with 111 more rows, and abbreviated variable names ¹​route_type,
+# #   ²​route_text_color, ³​agency_id, ⁴​route_id, ⁵​route_color, ⁶​route_short_name
+# 
+# $trips
+# # A tibble: 17,704 × 8
+#    block_id route_id wheelchair_access…¹ direc…² trip_…³ shape…⁴ servi…⁵ trip_id
+#    &lt;chr&gt;    &lt;chr&gt;                  &lt;int&gt;   &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+#  1 b_65655  18076                      1       0 TO NOR… 110261  2_merg… 3020482
+#  2 b_65657  18076                      1       0 TO NOR… 110261  2_merg… 3020483
+#  3 b_65655  18076                      1       0 TO NOR… 110261  2_merg… 3020480
+#  4 b_65654  18076                      1       0 TO NOR… 110261  2_merg… 3020481
+#  5 b_65657  18076                      1       0 TO NOR… 110261  2_merg… 3020486
+#  6 b_65657  18076                      1       0 TO NOR… 110261  2_merg… 3020487
+#  7 b_65657  18076                      1       0 TO NOR… 110261  2_merg… 3020484
+#  8 b_65656  18076                      1       0 TO NOR… 110261  2_merg… 3020485
+#  9 b_65656  18076                      1       0 TO NOR… 110261  2_merg… 3020488
+# 10 b_65652  18076                      1       0 TO NOR… 110259  2_merg… 3020489
+# # … with 17,694 more rows, and abbreviated variable names
+# #   ¹​wheelchair_accessible, ²​direction_id, ³​trip_headsign, ⁴​shape_id,
+# #   ⁵​service_id
+# 
+# $stop_times
+# # A tibble: 945,643 × 10
+#    trip_id arrival_time depart…¹ stop_id stop_…² stop_…³ picku…⁴ drop_…⁵ shape…⁶
+#    &lt;chr&gt;   &lt;time&gt;       &lt;time&gt;   &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;     &lt;int&gt;   &lt;int&gt;   &lt;dbl&gt;
+#  1 3020482 16:50        16:50    16146         1 &quot;&quot;           NA      NA     NA 
+#  2 3020482 16:51        16:51    16301         2 &quot;&quot;           NA      NA    677.
+#  3 3020482 16:51        16:51    16281         3 &quot;&quot;           NA      NA   1000.
+#  4 3020482 16:52        16:52    10164         4 &quot;&quot;           NA      NA   1574.
+#  5 3020482 16:54        16:54    15534         5 &quot;&quot;           NA      NA   2670.
+#  6 3020482 16:55        16:55    14708         6 &quot;&quot;           NA      NA   3301.
+#  7 3020482 16:56        16:56    6691          7 &quot;&quot;           NA      NA   3866.
+#  8 3020482 16:57        16:57    6693          8 &quot;&quot;           NA      NA   4196.
+#  9 3020482 16:57        16:57    6694          9 &quot;&quot;           NA      NA   4474.
+# 10 3020482 16:58        16:58    6695         10 &quot;&quot;           NA      NA   4836.
+# # … with 945,633 more rows, 1 more variable: timepoint &lt;int&gt;, and abbreviated
+# #   variable names ¹​departure_time, ²​stop_sequence, ³​stop_headsign,
+# #   ⁴​pickup_type, ⁵​drop_off_type, ⁶​shape_dist_traveled
+# 
+# $shapes
+# Simple feature collection with 420 features and 1 field
+# Geometry type: LINESTRING
+# Dimension:     XY
+# Bounding box:  xmin: -90.66385 ymin: 38.4682 xmax: -89.87396 ymax: 38.82576
+# Geodetic CRS:  WGS 84
+# First 10 features:
+#    shape_id                       geometry
+# 1    110120 LINESTRING (-90.30889 38.64...
+# 2    110121 LINESTRING (-90.30062 38.65...
+# 3    110122 LINESTRING (-90.2599 38.635...
+# 4    110124 LINESTRING (-90.30172 38.68...
+# 5    110125 LINESTRING (-90.30172 38.68...
+# 6    110126 LINESTRING (-90.30172 38.68...
+# 7    110129 LINESTRING (-90.33777 38.62...
+# 8    110131 LINESTRING (-90.30814 38.64...
+# 9    110132 LINESTRING (-90.315 38.7197...
+# 10   110134 LINESTRING (-90.20271 38.62...
+# 
+# $.
+# $.$dates_services
+# # A tibble: 168 × 2
+#    date       service_id      
+#    &lt;date&gt;     &lt;chr&gt;           
+#  1 2022-09-26 1_merged_3039414
+#  2 2022-09-27 1_merged_3039414
+#  3 2022-09-28 1_merged_3039414
+#  4 2022-09-29 1_merged_3039414
+#  5 2022-09-30 1_merged_3039414
+#  6 2022-10-01 2_merged_3039416
+#  7 2022-10-02 3_merged_3039415
+#  8 2022-10-03 1_merged_3039414
+#  9 2022-10-04 1_merged_3039414
+# 10 2022-10-05 1_merged_3039414
+# # … with 158 more rows
+
+library(tmap)
+tmap_mode(&quot;view&quot;)
+
+
+m1 &lt;- tm_shape(stlouis_gtfs$stops)+
+        tm_dots(col = &quot;red&quot;)+
+       tm_shape(stlouis_gtfs$shapes) +
+        tm_lines(col = 'green', alpha = 0.5)+
+        tm_basemap(leaflet::providers$Stamen.Toner)
+
+library(widgetframe)
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-3.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<h2 id="analysing-service-patterns">Analysing Service Patterns</h2>
+<p>The GTFS reference specifies that a “service_id contains an ID that uniquely identifies a set of dates when service is available for one or more routes”. A service could run on every weekday or only on Saturdays for example. However, feeds are not required to indicate anything with service_ids and some feeds even use a unique service_id for each trip and day. Service patterns can be used to find a typical day for further analysis like routing or trip frequencies for different days.</p>
+<pre><code class="language-r">
+stlouis_gtfs &lt;- set_servicepattern(stlouis_gtfs)
+
+# service ids used
+length(unique(stlouis_gtfs$trips$service_id))
+# [1] 6
+
+# unique date patterns 
+length(unique(stlouis_gtfs$.$servicepatterns$servicepattern_id))
+# [1] 6
+</code></pre>
+<p>In this particular instance, service patterns and service_ids are the same.</p>
+<pre><code class="language-r">
+#Visualise the service patterns.
+
+calendar &lt;- tibble(date = unique(stlouis_gtfs$.$dates_services$date)) %&gt;% 
+  mutate(
+    weekday = (function(date) {
+      c(&quot;Sunday&quot;, &quot;Monday&quot;, &quot;Tuesday&quot;, 
+        &quot;Wednesday&quot;, &quot;Thursday&quot;, &quot;Friday&quot;, 
+        &quot;Saturday&quot;)[as.POSIXlt(date)$wday + 1]
+    })(date)
+  )
+
+stlouis_gtfs$.$dates_servicepatterns %&gt;% 
+  left_join(calendar, by = 'date') %&gt;%
+  ggplot()+
+  geom_point(aes(x = date, y = servicepattern_id, color = weekday), size = 1) + 
+  scale_x_date(breaks = scales::date_breaks(&quot;1 month&quot;)) + theme(legend.position = &quot;bottom&quot;)
+</code></pre>
+<img src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+<p>The above figure shows that s_3204bc1 service pattern is a Saturday service from Dec 2022, while s_597ac4c is mostly a Saturday service with occasional Thursday before Dec 2022. s_5a57195 and s_f4dfeef seem to be weekday service patterns. We use those service patterns to calculate the frequencies for the rest of the tutorial.</p>
+<pre><code class="language-r">service_ids &lt;- stlouis_gtfs$.$servicepattern %&gt;% 
+  filter(servicepattern_id %in%  c('s_5a57195', 's_f4dfeef' )) %&gt;% 
+  pull(service_id)
+</code></pre>
+<p>Getting route frequncies are straightforward when we know which service patterns we want to use. <code>tidytransit</code> uses times as seconds from the midnight. If we want midday frequency between 11 AM and 4 PM, we need to convert them to seconds.</p>
+<p>Please pay explicit attention to the units and their conversion, as I have done below.</p>
+<pre><code class="language-r">midday_route_freq &lt;- get_route_frequency(stlouis_gtfs, service_ids = service_ids, 
+                                     start_time = 11*3600, end_time = 16*3600) %&gt;% # these are in seconds starting from 00H00.
+                       mutate(across(ends_with(&quot;headways&quot;),  ~units::set_units(.x, 's'))) %&gt;%
+                       mutate(across(ends_with(&quot;headways&quot;),  ~units::set_units(.x, 'min')))
+
+
+m1 &lt;-
+get_route_geometry(stlouis_gtfs, service_ids = service_ids) %&gt;%
+  inner_join(midday_route_freq, by = &quot;route_id&quot;) %&gt;%
+  mutate(frequency = (1/set_units(median_headways, &quot;hr&quot;))) %&gt;%
+  tm_shape()+
+  tm_lines(col='frequency', alpha = 0.4, style = &quot;pretty&quot;, n=4, scale = 5, lwd = &quot;frequency&quot;) +
+  tm_basemap(leaflet::providers$Stamen.Toner)
+  
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-7.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>While it is fine to know which routes are more frequent than others, it is also useful to know which stops have smaller headways and more frequent departures.</p>
+<pre><code class="language-r">
+midday_stops &lt;-
+  get_stop_frequency(stlouis_gtfs, start_time = 11*3600, end_time = 16*3600, # these are in seconds starting from 00H00.
+                              service_ids = service_ids, by_route = FALSE) %&gt;%
+  mutate(mean_headway = units::set_units(mean_headway, &quot;s&quot;),
+         mean_headway  = units::set_units(mean_headway, &quot;min&quot;)) %&gt;%
+  arrange(mean_headway)
+</code></pre>
+<p>Notice that stop frequencies are summarised by different service patterns. Since we selected multiple patterns, we need to average them out to get a reasonable estimate.</p>
+<pre><code class="language-r">midday_stops_summ &lt;- midday_stops %&gt;% 
+group_by(stop_id) %&gt;% 
+  summarise(n_departures = sum(n_departures, na.rm = T), 
+            mean_headway = mean(mean_headway, na.rm=T)) %&gt;% 
+  arrange(mean_headway)
+
+head(midday_stops_summ)  # Some stops have less than 3 min wait time. However, note that this is not by route, because we set the argument in such a way in earlier piece of code 
+# # A tibble: 6 × 3
+#   stop_id n_departures mean_headway
+#   &lt;chr&gt;          &lt;int&gt;        [min]
+# 1 13330            199         3.02
+# 2 14330            184         3.27
+# 3 14769            165         3.64
+# 4 11102            160         3.75
+# 5 14792            160         3.75
+# 6 7424             142         4.23
+
+tail(midday_stops_summ)  # Some stops have more than 2 hr wait between the buses
+# # A tibble: 6 × 3
+#   stop_id n_departures mean_headway
+#   &lt;chr&gt;          &lt;int&gt;        [min]
+# 1 16085              6         112.
+# 2 13653              4         150 
+# 3 16293              4         150 
+# 4 6086               4         150 
+# 5 15619              3         225 
+# 6 13966              2         300
+
+m1 &lt;-
+stlouis_gtfs$stops %&gt;% 
+ left_join(midday_stops_summ, by='stop_id') %&gt;% 
+ mutate(bubble_size = n_departures^2) %&gt;% 
+ tm_shape()+ 
+ tm_dots(size = &quot;bubble_size&quot;, style = &quot;cont&quot;, alpha=.7, popup.vars = &quot;stop_name&quot;, id = 'stop_name') + 
+ tm_shape(stlouis_gtfs$shapes)+ 
+ tm_lines(col = 'green', alpha =.1) + 
+ tm_basemap(leaflet::providers$Stamen.Toner) 
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-3" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-9.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>Notice how some stops have more frequent departures and some have long wait times. There are some spatial patterns. The classic hub and spoke transit system means that the downtown (hub) have a lot of stops that have high quality transit. However, there are also some transit centers at the outskirts that also have large number of departures. These serve as transfer stations or terminus.</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>
+<p>Notice that these stop frequencies do not account for routes. However, it may be more useful to get the frequencies averaged by the route. Does the geography of access change?</p>
+</li>
+<li>
+<p>In the above, only midday weekday services are mapped out. What about other patterns? Saturday Morning might have a different accessibility pattern. Think about how to analyse them and represent the variation over day as well as over the week.</p>
+</li>
+<li>
+<p>If there are seasonal variations, it would be helpful to know. For example, university transit systems have reduced operations during Winter and Summer breaks. Using the above as a template, and Duke University transit as your public transit system, figure out the seasonal variations in accessibility.</p>
+</li>
+</ul>
+<hr>
+<h2 id="accessibility-as-cumulative-opportunity">Accessibility as Cumulative Opportunity</h2>
+<p>While it is useful to think of accessibility as frequency of transit at a particular location, that indicator does not tell us much about the system level accessibility. While a specific bus station might have frequent departures, it may be on a line that is broadly disconnected from the rest of the transit system (e.g. connected to other lines that have significant wait times). It is thus useful to measure accessibility as opportunities that can be accessed within a travel budget (say 45 minutes). To do compute these, it is useful to figure out how much area can be covered within 45 min of travel time.</p>
+<p>It is reasonably straightforward to figure out how much area can be <a href="/post/isochrones-from-routing-engines-osrm/">covered by foot using routing engines such as OSRM</a>. The tricky bit is to figure out how much time is spent waiting at transit stations before boarding the buses/trains and during transfers.</p>
+<p>Typically, accessibility is measured for centroids of population centers (block groups e.g.). However, any origin set should be fine. I select the the three counties for the analysis (St. Clair in IL and St. Louis City, St. Louis County in MO)</p>
+<pre><code class="language-r">
+transitstops &lt;- stlouis_gtfs$stops
+
+blkgrp_centroid &lt;- list()
+
+blkgrp_centroid[[1]] &lt;- tigris::block_groups(state=&quot;MO&quot;, county = c('510', '189'), progress_bar = FALSE) %&gt;% 
+                        st_centroid() %&gt;% 
+                        st_transform(st_crs(transitstops)) %&gt;%
+                        select(GEOID) 
+
+blkgrp_centroid[[2]] &lt;- tigris::block_groups(state=&quot;IL&quot;, county = '163', progress_bar = FALSE) %&gt;% 
+  st_centroid() %&gt;% 
+  st_transform(st_crs(transitstops)) %&gt;%
+  select(GEOID) 
+
+
+blkgrps &lt;- do.call(rbind, blkgrp_centroid)
+</code></pre>
+<p>An analytical decision to make early on is to assign the origin to a nearest starting point on the transit network or to the nearest starting point on the road (foot/bike) network. It is always more computationally expensive to model both the first and last mile of travel. In this tutorial, I will demonstrate how this might be possible.</p>
+<p>We need to operationalise a few things. Some of them are easier to precompute and some of them are easier on the fly.</p>
+<ol>
+<li>
+<p>Travel time from each origin (block group centroid) to each destination (transit station) by foot. This is presumably time invariant, as the road network is not subject to schedules. However, this is highly dependent on the quality of the road network and appropriate information about crossings and non-pedestrian roads.</p>
+</li>
+<li>
+<p>Travel time from each transit station to every other transit station. For the sake of practicality, we will limit the number of transfers to 3. This is highly dependent on schedules, especially when the trip starts and what time the transit reaches each stop and if there are any transfers available to other routes within the travel budget. This is time varying.</p>
+</li>
+<li>
+<p>The geography that can be covered from each transit stop in the remaining time after the transit trip is concluded. While, we do not know apriori how much time is remaining, we know that it cannot exceed the travel budget (45 min). So we can precompute 1 min ischocrones from each transit station and select them as necessary.</p>
+</li>
+<li>
+<p>While we are focused on transit, it could very well be that many of the blockgroups may not have access to good quality transit and therefore the entire travel budget is spent on foot.Thus, we also compute the isochrones for the blockgroup centeroids.</p>
+</li>
+</ol>
+<p>All the steps (except the second) can be computed using routing engines such as OSRM. Since these are time consuming, I am only going to show the code rather than running it. For this to run, OSRM needs to be <a href="post/isochrones-from-routing-engines-osrm/">set up with appropriate street networks</a>. See</p>
+<pre><code class="language-r">library(osrm)
+
+options(osrm.server = &quot;http://localhost:5000/&quot;)
+options(osrm.profile = 'foot') 
+
+
+ttmatrix &lt;- osrmTable(src=blkgrps, dst=transitstops, measure = c('duration'))
+ttmatrix$durations &lt;- round(ttmatrix$durations)
+
+stop_iso &lt;- list()
+stop_iso &lt;- map(1:nrow(transitstops), possibly(function(x){osrmIsochrone(loc=transitstops[x,], breaks = seq(0,45,1))}, otherwise = NULL))
+
+blkgrp_iso &lt;- list()
+blkgrp_iso &lt;- map(1:nrow(blkgrps), possibly(function(x){osrmIsochrone(loc=blkgrps[x,], breaks = seq(0,45,1))}, otherwise = NULL))
+</code></pre>
+<p>I precomputed these and saved them in <a href="https://www.dropbox.com/s/66fwvifw1jcg3en/ttmatrix.RData?dl=0" target="_blank" rel="noopener">an RData file</a>. The RData file has three main objects. stop_iso is list of isochrones for each stop. blkgrp_iso is the list of isochrones for each blkgrp. ttmatrix is large list where the element duration is a travel time matrix from blkgrps to transit stops.</p>
+<p>Some clean up is necessary, like adding names to easily filter and identify.</p>
+<pre><code class="language-r">load(here::here(&quot;tutorials_datasets/gtfs/ttmatrix.RData&quot;))
+
+str(blkgrp_iso[[1]])
+# Classes 'sf' and 'data.frame':    42 obs. of  4 variables:
+#  $ id      : int  1 2 3 4 5 6 7 8 9 10 ...
+#  $ isomin  : num  0 4 5 6 7 8 9 10 11 12 ...
+#  $ isomax  : num  4 5 6 7 8 9 10 11 12 13 ...
+#  $ geometry:sfc_MULTIPOLYGON of length 42; first list element: List of 1
+#   ..$ :List of 1
+#   .. ..$ : num [1:7, 1:2] -90.2 -90.2 -90.2 -90.2 -90.2 ...
+#   ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;XY&quot; &quot;MULTIPOLYGON&quot; &quot;sfg&quot;
+#  - attr(*, &quot;sf_column&quot;)= chr &quot;geometry&quot;
+#  - attr(*, &quot;agr&quot;)= Factor w/ 3 levels &quot;constant&quot;,&quot;aggregate&quot;,..: NA NA NA
+#   ..- attr(*, &quot;names&quot;)= chr [1:3] &quot;id&quot; &quot;isomin&quot; &quot;isomax&quot;
+length(blkgrp_iso)
+# [1] 1260
+
+str(stop_iso[[1]])
+# Classes 'sf' and 'data.frame':    41 obs. of  4 variables:
+#  $ id      : int  1 2 3 4 5 6 7 8 9 10 ...
+#  $ isomin  : num  0 5 6 7 8 9 10 11 12 13 ...
+#  $ isomax  : num  5 6 7 8 9 10 11 12 13 14 ...
+#  $ geometry:sfc_MULTIPOLYGON of length 41; first list element: List of 1
+#   ..$ :List of 1
+#   .. ..$ : num [1:7, 1:2] -90.3 -90.3 -90.3 -90.3 -90.3 ...
+#   ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;XY&quot; &quot;MULTIPOLYGON&quot; &quot;sfg&quot;
+#  - attr(*, &quot;sf_column&quot;)= chr &quot;geometry&quot;
+#  - attr(*, &quot;agr&quot;)= Factor w/ 3 levels &quot;constant&quot;,&quot;aggregate&quot;,..: NA NA NA
+#   ..- attr(*, &quot;names&quot;)= chr [1:3] &quot;id&quot; &quot;isomin&quot; &quot;isomax&quot;
+length(stop_iso)
+# [1] 5315
+
+str(ttmatrix)
+# List of 3
+#  $ durations   : num [1:1260, 1:5315] 208 191 186 180 186 217 195 190 92 178 ...
+#   ..- attr(*, &quot;dimnames&quot;)=List of 2
+#   .. ..$ : chr [1:1260] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;11&quot; ...
+#   .. ..$ : chr [1:5315] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+#  $ sources     :'data.frame': 1260 obs. of  2 variables:
+#   ..$ lon: num [1:1260] -90.2 -90.2 -90.2 -90.4 -90.4 ...
+#   ..$ lat: num [1:1260] 38.8 38.8 38.8 38.8 38.8 ...
+#  $ destinations:'data.frame': 5315 obs. of  2 variables:
+#   ..$ lon: num [1:5315] -90.3 -90.3 -90.4 -90.3 -90.4 ...
+#   ..$ lat: num [1:5315] 38.7 38.6 38.7 38.8 38.7 ...
+
+row.names(ttmatrix$durations) &lt;-  blkgrps$GEOID
+
+plot(blkgrp_iso[[4]][5,&quot;id&quot;])
+</code></pre>
+<img src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/unnamed-chunk-12-1.png" width="672" />
+<p>Based on the above, it looks likes each element of the isochrone list corresponds to either origin or destination. Each of that element is a tibble with isomin and isomax times (e.g. can be reached between 10 and 11 min). But we need the cumulative isochrone (e.g. reached within 11 min) for stops and only 45 min isochrone from block groups.</p>
+<pre><code class="language-r">sf_use_s2(FALSE)
+
+names(stop_iso) &lt;- stlouis_gtfs$stops$stop_id
+stop_iso_cumulative &lt;- map(stop_iso, ~nngeo::st_remove_holes(.)) 
+
+names(blkgrp_iso) &lt;- blkgrps$GEOID
+blkgrp_iso_cumulative &lt;- map(blkgrp_iso,
+                            ~ slice_max(., isomax, n = 1) %&gt;% 
+                              nngeo::st_remove_holes() %&gt;% 
+                              st_geometry() %&gt;% 
+                              st_make_valid()
+                            )
+
+# We don't need the attributes for the block group isochrones any more (they are all 45 min) so we only keep that geometry.
+</code></pre>
+<p>The second part is computed using the Round-Based Public Transit Routing Algorithm (RAPTOR) for each start time. But first we need to make a transfer table. Typically GTFS should come with one that specifies the time taken to transfer between two stations (within reasonable time frame). Since we do not have it here in the St. Louis GTFS, we infer one based on distance (typically within 200 m). We need the <code>gtfsrouter</code> package for this.</p>
+<p>But first we must recover <code>stop_lon</code> and <code>stop_lat</code> in the stops table that we lost when we converted using <code>gtfs_as_sf</code>.</p>
+<pre><code class="language-r">
+stlouis_gtfs$stops &lt;- stlouis_gtfs$stops %&gt;%
+  bind_cols(st_coordinates(stlouis_gtfs$stops)) %&gt;%
+  rename(stop_lon = X, stop_lat = Y)
+
+stlouis_gtfs$transfers &lt;-
+  gtfsrouter::gtfs_transfer_table(stlouis_gtfs)
+</code></pre>
+<p>In the following code, I am going to demonstrate the extent of reach for a single block group “291892138006” and focus on the variation through out the day on a weekday. Let’s focus on a single start time at 6:20 AM and then figure out how to iterate over a vector of times and blkgrops</p>
+<pre><code class="language-r">library(lubridate)
+
+blk_start_time &lt;- &quot;6:20&quot; %&gt;% hm %&gt;% period_to_seconds
+blkgrp_id &lt;- &quot;291892138006&quot;
+
+geo_temp_sf2 &lt;- blkgrp_iso_cumulative[[blkgrp_id]]
+
+
+
+# The following computes how much time it takes to reach different transit stations from the block group centeroid and how much time is leftover in the travel budget that can be used for waiting/transit travel.
+
+travel_to_stations &lt;-
+        tibble(tt = ttmatrix$durations[blkgrp_id,],
+               stop_id = stlouis_gtfs$stops$stop_id) %&gt;%
+        filter(tt &lt;= 45) %&gt;%  # Note that these are in minutes rather than seconds.
+        mutate(min_start_time = blk_start_time + tt * 60,
+               max_start_time = blk_start_time + 45 * 60,
+               allowed_timerange = max_start_time - min_start_time) %&gt;%
+        filter(allowed_timerange &gt;0)
+
+
+
+##  The following code calculates for each transit station that can be accessed by foot with 45 min, the other transit stations that can be accessed by transit and the remaining time from travel budget.
+
+remain_time_dt &lt;- map_dfr(1:nrow(travel_to_stations), function(idx) {
+  transit_stop_times &lt;- filter_stop_times(stlouis_gtfs, &quot;2022-11-22&quot;,
+                                          min_departure_time = travel_to_stations[idx,] %&gt;% pull(&quot;min_start_time&quot;))
+  
+  raptor(
+    transit_stop_times,
+    stlouis_gtfs$transfers,
+    stop_ids = travel_to_stations[idx,] %&gt;% pull('stop_id'),
+    time_range = travel_to_stations[idx, ] %&gt;% pull('allowed_timerange'),
+    max_transfers = 3,
+    keep = 'shortest'
+  )
+}) %&gt;%
+  mutate(remain_time = (blk_start_time + 45 * 60) - journey_arrival_time) %&gt;%
+  filter(remain_time &gt;0) %&gt;%
+  select(to_stop_id, remain_time) %&gt;%
+  bind_cols(tibble(&quot;GEOID&quot; = blkgrp_id, &quot;start&quot; = blk_start_time))
+
+
+# For each reachable transit stop, extract the isochrone that is corresponding to the remaining travel time on the budget.
+
+geo_temp_sf1 &lt;-
+  map_dfr(1:nrow(remain_time_dt), function(idx) {
+    stop_iso_cumulative[[remain_time_dt[idx, ]$to_stop_id]] %&gt;%
+      filter(isomax &lt;= remain_time_dt[idx, ]$remain_time / 60) %&gt;%
+      slice_max(isomax, n = 1)
+  }) %&gt;%
+  st_union() %&gt;%
+  st_make_valid()
+
+
+## Union the various polygons along with the foot isochrone of the block group.
+geo_sf &lt;-
+  st_union(geo_temp_sf2, geo_temp_sf1)  %&gt;%
+  st_sf(GEOID = blkgrp_id, start = blk_start_time) %&gt;%
+  st_make_valid()
+
+
+m1 &lt;-
+  tm_shape(geo_sf) +
+  tm_polygons(col = 'blue', alpha = .5) +
+  tm_shape(blkgrps %&gt;% filter (GEOID == blkgrp_id)) +
+  tm_markers() +
+  tm_basemap(leaflet::providers$Stamen.Toner)
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-4" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-15.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>
+<p>Create a function that will take start time as an argument and return the transit+walk isochrones for a block group. Use it to compute the isochrones for every 10 min for a single block group</p>
+</li>
+<li>
+<p>Create a function that will return the isochrones for a single start time, but for all block groups.</p>
+</li>
+<li>
+<p>Combine the two functions and create the isochrones that change over time and over space for all of St. Louis. What story can you tell about diurnal variation in accessibility.</p>
+</li>
+<li>
+<p>Repeat this exercise for a transit system that has significant weekly and seasonal variablity (e.g. Duke/Durham)</p>
+</li>
+</ul>
+<hr>
+<p>Your goal is to get something that resembles this.</p>
+<p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<figure  >
+  <div class="d-flex justify-content-center">
+    <div class="w-100" ><img alt=""
+           src="/post/transit-accessibility-using-gtfs/images/stlouis2.gif"
+           loading="lazy" data-zoomable /></div>
+  </div></figure>
+</p>
+<p>Notice the variation in the reacheable area by transit in 45 min. Compare that to the reacheable areas by biking and driving.</p>
+<div class="alert alert-warning">
+  <div>
+    Animations are terrible visualisations. They are primarily used for vanity purposes and have little informational content. Avoid them.
+  </div>
+</div>
+<h2 id="conclusions">Conclusions</h2>
+<p>Cumulative Opportunity is only one type of accessibility measures and perhaps not even the most useful one. But the above code can be easily adapted to gravity based measures or even any other kind of time/distance decay weighting. In any case, it is important to recognise that accessibility is unevenly distributed in both space and in time. Cumulative Opportunity is as good as any in demonstrating this.</p>
+<p>Also while GTFS is about schedules, it is important to note that real travel times on transit systems rarely conform to the schedule. It is useful to think about how real time information can be useful in understanding why transit may or may not be a viable option for different constraints of life. More importantly, the above analysis does not account for tours and has implicitly assumed trips as the basis for accessibility. Again, caution should be used to interpret these.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#reading-in-gtfs-files">Reading in GTFS files</a></li>
+    <li><a href="#analysing-service-patterns">Analysing Service Patterns</a></li>
+    <li><a href="#accessibility-as-cumulative-opportunity">Accessibility as Cumulative Opportunity</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/transit-accessibility-using-gtfs/&amp;text=Transit%20Accessibility%20Using%20GTFS" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/transit-accessibility-using-gtfs/&amp;t=Transit%20Accessibility%20Using%20GTFS" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Transit%20Accessibility%20Using%20GTFS&amp;body=https://nkaza.github.io/post/transit-accessibility-using-gtfs/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/transit-accessibility-using-gtfs/&amp;title=Transit%20Accessibility%20Using%20GTFS" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Transit%20Accessibility%20Using%20GTFS%20https://nkaza.github.io/post/transit-accessibility-using-gtfs/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/transit-accessibility-using-gtfs/&amp;title=Transit%20Accessibility%20Using%20GTFS" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

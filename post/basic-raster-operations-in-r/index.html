@@ -1,0 +1,1850 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Basic Raster Operations in R" />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/basic-raster-operations-in-r/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/basic-raster-operations-in-r/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/basic-raster-operations-in-r/" />
+  <meta property="og:title" content="Basic Raster Operations in R | Nikhil Kaza" />
+  <meta property="og:description" content="Basic Raster Operations in R" /><meta property="og:image" content="https://nkaza.github.io/post/basic-raster-operations-in-r/featured.jpg" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/basic-raster-operations-in-r/featured.jpg" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2020-02-27T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2020-02-27T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/basic-raster-operations-in-r/"
+  },
+  "headline": "Basic Raster Operations in R",
+  
+  "image": [
+    "https://nkaza.github.io/post/basic-raster-operations-in-r/featured.jpg"
+  ],
+  
+  "datePublished": "2020-02-27T00:00:00Z",
+  "dateModified": "2020-02-27T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Basic Raster Operations in R"
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Basic Raster Operations in R | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="066a95f2a9278da1d39d769e03669a5c" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Basic Raster Operations in R</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Feb 27, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    11 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 600px; max-height: 338px;">
+  <div style="position: relative">
+    <img src="/post/basic-raster-operations-in-r/featured_hued9163bbb4c1f3683e1b26c3a3b46f97_56394_720x2500_fit_q75_h2_lanczos.webp" width="600" height="338" alt="" class="featured-image">
+    <span class="article-header-caption"><a href="https://storymaps.arcgis.com/stories/b60b7399f6944bca86d1be6616c178cf">https://storymaps.arcgis.com/stories/b60b7399f6944bca86d1be6616c178cf</a></span>
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <script src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/widgetframe-binding/widgetframe.js"></script>
+<h2 id="introduction">Introduction</h2>
+<p>While much of urban data systems moved to vector object based data structures, raster datasets are ubiquitous and ever present. Raster datasets are simply an array of pixels/cells organized into rows and columns (or a grid) where each cell contains a value representing information, such as temperature, soil type, land use, water level. Rasters are aerial photographs, imagery from satellites, google street view images. Few things to note.</p>
+<ul>
+<li>Raster datasets are always rectangular (rows x col) similar to matrices. Irregular boundaries are created by using NAs.</li>
+<li>Rasters have to contain values of the same type (int, float, boolean) throughout the raster, just like matrices and unlike data.frames</li>
+<li>The size of the raster depends on the resolution and the extent of the raster. As such many rasters are large and often cannot be held in memory completely.</li>
+<li>In general, rasters we would interested in have a coordinate system (projected or unprojected). Because of it regular nature of the data structure, all we need to store is the Origin coordinates and the cell resolution (square or rectangular).</li>
+</ul>
+<h2 id="rasters-in-r">Rasters in R</h2>
+<p>The workhorse package for working with rasters in R is <code>raster</code> and <code>terra</code> packages by Robert Hijmans. In particular see <a href="https://rspatial.org/raster/index.html" target="_blank" rel="noopener">Spatial Data Science with R</a>. <code>terra</code> is better and faster in many instances, but is newer and does not have all the functionality and support associated with <code>raster</code>. I will switch back and forth between the two packages as necessary. Most functions are available in both packages, but it is useful to learn the differences</p>
+<p>Eventually, if you get into the weeds in Remote Sensing, you should use <code>RStoolbox</code> package that has support for parallel processing. If you are working in rasters that are not geographically located (such as digital pictures) <code>magick</code> wrapper around <a href="https://imagemagick.org/index.php" target="_blank" rel="noopener">ImageMagick</a> may be a good option.</p>
+<h2 id="download-data">Download data</h2>
+<p>You can download the datasets used in this tutorial <a href="https://www.dropbox.com/s/5ecfr5zm49fr3p9/Archive.zip?dl=0" target="_blank" rel="noopener">here</a></p>
+<h2 id="reading-in-rasters">Reading in Rasters</h2>
+<p>Let’s start with toy examples and examine the use of functions in the raster library.</p>
+<pre><code class="language-r">
+library(raster)
+library(rasterVis)
+library(sf)
+library(tidyverse)
+library(tigris)
+library(leaflet)
+library(skimr)
+library(terra)
+
+# Let's create a raster of size 5x5. #creates an empty raster object
+raster_object &lt;- raster(ncol=5, nrow=5, xmx=-100, xmn=-500, ymn=100, ymx=500, crs='+proj=longlat +datum=WGS84')
+
+#In terra, you can create an object with 'rast'. Notice the difference between xmx and xmax argument names.
+
+raster_object_terra &lt;- rast(ncol=5, nrow=5, xmax=-100, xmin=-500, ymin=100, ymax=500, crs='+proj=longlat +datum=WGS84')
+
+#view its properties
+raster_object
+# class      : RasterLayer 
+# dimensions : 5, 5, 25  (nrow, ncol, ncell)
+# resolution : 80, 80  (x, y)
+# extent     : -500, -100, 100, 500  (xmin, xmax, ymin, ymax)
+# crs        : +proj=longlat +datum=WGS84 +no_defs
+raster_object_terra
+# class       : SpatRaster 
+# dimensions  : 5, 5, 1  (nrow, ncol, nlyr)
+# resolution  : 80, 80  (x, y)
+# extent      : -500, -100, 100, 500  (xmin, xmax, ymin, ymax)
+# coord. ref. : +proj=longlat +datum=WGS84 +no_defs
+
+
+#access the resolution of the object
+res(raster_object)
+# [1] 80 80
+
+#we can also set the resolution of the object
+res(raster_object) &lt;- 100
+res(raster_object)
+# [1] 100 100
+
+# We can assign values to the object by supplying the right number of values.
+values(raster_object) &lt;- runif(ncell(raster_object))
+plot(raster_object)
+</code></pre>
+<img src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+<pre><code class="language-r">
+# Basic airthmetic is treated as 
+raster_object2 &lt;- raster_object * 2
+</code></pre>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Notice the difference in the format between objects created by <code>rast</code> and <code>raster</code>. Read up on those differences.</li>
+</ul>
+<hr>
+<p>Of course, the real advantage is to reading in rasters that we can work with in the urban policy arena. <a href="https://gdal.org/drivers/raster/index.html" target="_blank" rel="noopener">Rasters come in many formats</a>.</p>
+<p>Say for example, we want to read in tree cover data in the ERDAS Imagine (*.img) format.</p>
+<pre><code class="language-r">
+library(here)
+
+
+(durham_treecover_raster &lt;- here(&quot;tutorials_datasets&quot;, &quot;basicraster&quot;, &quot;durham_treecover.img&quot;) %&gt;% raster)
+# class      : RasterLayer 
+# dimensions : 1483, 888, 1316904  (nrow, ncol, ncell)
+# resolution : 30, 30  (x, y)
+# extent     : 1510245, 1536885, 1558875, 1603365  (xmin, xmax, ymin, ymax)
+# crs        : +proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs 
+# source     : durham_treecover.img 
+# names      : Layer_1 
+# values     : 0, 100  (min, max)
+
+
+# Download the boundary of the county for visualisation purposes.
+
+durhamcty_sf &lt;- counties(state = 37, refresh=TRUE, cb=TRUE, progress_bar = FALSE) %&gt;%
+                  st_as_sf() %&gt;%
+                  filter(GEOID == &quot;37063&quot;) %&gt;%
+                  st_transform(crs = crs(durham_treecover_raster))
+</code></pre>
+<p>Note that the durham_treecover_raster only is a reference to a file and not loaded fully into memory. Also note the resolution, origin and dimensions. The tree cover is also an integer raster with values ranging from 0 to 100. Integers take up fewer bytes than floats and doubles, in general. The raster can be visualised as a static plot or in leaflet.</p>
+<pre><code class="language-r">
+rasterVis::levelplot(durham_treecover_raster,
+                     ylab=NULL, xlab=NULL,
+                     scales=list(y=list(draw=FALSE), x=list(draw=FALSE)),
+                     col.regions = rgb(0,0:100/100,0:50/100),
+                     margin = list(FUN = 'median')
+                     ) +
+  latticeExtra::layer(sp.lines(as(durhamcty_sf, &quot;Spatial&quot;), col=&quot;gray30&quot;, lwd=4))
+</code></pre>
+<img src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+<pre><code class="language-r">
+library(widgetframe)
+
+leaflet() %&gt;% 
+  addRasterImage(durham_treecover_raster, layerId = &quot;values&quot;, colors = colorNumeric(&quot;Greens&quot;, domain = 0:100)) %&gt;% 
+  leafem::addMouseCoordinates() %&gt;%
+ # leafem::addImageQuery(durham_treecover_raster, type=&quot;click&quot;, layerId = &quot;values&quot;) %&gt;%  # looks like broken in leafem.
+  frameWidget()
+</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-3.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div class="alert alert-alert">
+  <div>
+    Leaflet based visualisation is only suitable for small to medium sized rasters, as the entire image will be embedded into the HTML page. Also for the moment leafem deals with <code>RasterLayer</code> not <code>SpatRaster</code>.
+  </div>
+</div>
+<p>In addition to visualisation we can process the entire raster or use a focal window. The first bit provides the median of all the values of the raster (removing NAs automatically) and the second creates a raster, whose value is the the median in 3x3 window around the focal cell. Note that we have treat NAs explicitly in the focal operations.</p>
+<pre><code class="language-r">
+cellStats(durham_treecover_raster, &quot;sd&quot;, asSample = FALSE)  
+# [1] 39.14223
+
+durham_treecover_focal &lt;- focal(durham_treecover_raster, w = matrix(1, nrow = 3, ncol = 3), fun = function(x,...){sd(x,na.rm=TRUE)})
+
+# leaflet() %&gt;% 
+#   addRasterImage(durham_treecover_focal, layerId = &quot;values&quot;, colors = colorNumeric(&quot;Greens&quot;, domain = 0:70)) %&gt;% 
+#   leafem::addMouseCoordinates() %&gt;%
+#  # leafem::addImageQuery(durham_treecover_focal, type=&quot;mousemove&quot;, layerId = &quot;values&quot;) %&gt;% # Looks like this is broken in leafem. see https://github.com/r-spatial/leafem/issues/7
+#   frameWidget()  
+
+rasterVis::levelplot(durham_treecover_focal)
+</code></pre>
+<img src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<p>More complicated functions are certainly possible. The following takes the average of the deviation all the cells in the 3x3 neighborhood w.r.t. the value of the focal cell.</p>
+<pre><code class="language-r">unevenness_raster &lt;- focal(durham_treecover_raster, w=matrix(1, nrow=3, ncol=3), fun=function(x, ...) sum(abs(x[-5]-x[5]))/8, pad=TRUE, padValue=NA)
+
+rasterVis::levelplot(unevenness_raster,
+                     ylab=NULL, xlab=NULL,
+                     scales=list(y=list(draw=FALSE), x=list(draw=FALSE)),
+                     col.regions = rgb(0:100/100,0:100/100,0),
+                     margin = list(FUN = 'median')
+)
+</code></pre>
+<img src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+<hr>
+<p>** Exercise **</p>
+<ul>
+<li>Use a different window (neighborhood) and calculate the focal values.</li>
+<li>Use a different function to summarize the values. How are cells on the edge treated, with lot of the neighbors being NAs?</li>
+</ul>
+<hr>
+<h2 id="vectors--rasters">Vectors &amp; Rasters</h2>
+<p>In addition to raster based windows, we can use vector based neighborhoods and calculate the statistics (or any other metric). The only difference is that in a focal operation, the windows move over the raster cell by cell, where as zonal operations are exclusive, i.e. if a cell belongs to a zone, it is does not belong to another zone. For example, the following code calculates the Median and Interquartile ranges in each tract of Durham and stores them per tract.</p>
+<p>This is where <code>terra</code> shines. I am going to convert the Rasterlayer to SpatRaster and proceed. However, terra requires the vector layer to be in its proprietary format. Fortunately, <code>vect</code> easily converts an <code>sf</code> object to a <code>vect</code> object.</p>
+<pre><code class="language-r">
+durham_tracts_sf &lt;- tracts(state='37', county='063', progress_bar = FALSE, year='2010') %&gt;% 
+  st_as_sf() %&gt;%
+  st_transform(crs = crs(durham_treecover_raster))
+
+
+durham_treecover_terra &lt;- rast(durham_treecover_raster) 
+
+tree_bg &lt;- terra::extract(durham_treecover_terra, vect(durham_tracts_sf))
+
+tree_bg_summary &lt;-tree_bg %&gt;% 
+                    group_by(ID) %&gt;% 
+                    dplyr::summarise(treecover_iqr = IQR(Layer_1, na.rm=T),
+                                      treecover_median = median(Layer_1, na.rm=T))        
+
+
+durham_tracts_sf &lt;- cbind(durham_tracts_sf, tree_bg_summary) # Can do this because extract uses the record ID and we have not scrambled the sf object. Use with caution. See further down for a better method
+
+durham_tracts_sf %&gt;% 
+  st_set_geometry(NULL) %&gt;%
+  dplyr::select(treecover_median, treecover_iqr) %&gt;%
+  skim
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:left"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Name</td>
+<td style="text-align:left">Piped data</td>
+</tr>
+<tr>
+<td style="text-align:left">Number of rows</td>
+<td style="text-align:left">60</td>
+</tr>
+<tr>
+<td style="text-align:left">Number of columns</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">_______________________</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Column type frequency:</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">numeric</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">________________________</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Group variables</td>
+<td style="text-align:left">None</td>
+</tr>
+</tbody>
+</table>
+<p>Table 1: Data summary</p>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">skim_variable</th>
+<th style="text-align:right">n_missing</th>
+<th style="text-align:right">complete_rate</th>
+<th style="text-align:right">mean</th>
+<th style="text-align:right">sd</th>
+<th style="text-align:right">p0</th>
+<th style="text-align:right">p25</th>
+<th style="text-align:right">p50</th>
+<th style="text-align:right">p75</th>
+<th style="text-align:right">p100</th>
+<th style="text-align:left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">treecover_median</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">46.20</td>
+<td style="text-align:right">24.92</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">31</td>
+<td style="text-align:right">45.5</td>
+<td style="text-align:right">65.5</td>
+<td style="text-align:right">92</td>
+<td style="text-align:left">▃▅▇▃▃</td>
+</tr>
+<tr>
+<td style="text-align:left">treecover_iqr</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">61.33</td>
+<td style="text-align:right">20.29</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">48</td>
+<td style="text-align:right">62.0</td>
+<td style="text-align:right">79.0</td>
+<td style="text-align:right">94</td>
+<td style="text-align:left">▁▂▇▇▇</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Notice the output differences when you use <code>raster::extract</code> and <code>terra::extract</code>.
+<ul>
+<li>Modify the code so that you can merge with the sf object.</li>
+<li>Run microbenchmarks on these two functions and see which is faster and more efficient. Also think about the collection of functions to get to the output and run the microbenchmarks. Bottlenecks can be in different places.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="categorical-rasters">Categorical Rasters</h1>
+<p>Some times raster can be categorical (nominal or ordinal values), however, they are stored as numbers for convenience just as factors in regular R. For example a land cover raster might have a value 21 representing Developed Open Space and 95 representing Emergent Wetlands. While it is certainly possible to do arithmetic on them (additions and subtractions etc.), those operations do not make substantive sense.
+Explicit care should be taken to analyse these categorical rasters.</p>
+<p>In particular, use ratify function to create a Raster Attribute Table and use it for analyses and visualisation as below.</p>
+<pre><code class="language-r">
+
+
+durham_lc_raster &lt;- here(&quot;tutorials_datasets&quot;, &quot;basicraster&quot;, &quot;c11_37063.img&quot;) %&gt;% 
+                  raster() %&gt;%
+                  ratify() 
+
+
+nlcd_class &lt;- here(&quot;tutorials_datasets&quot;, &quot;basicraster&quot;, &quot;legend_csv.csv&quot;) %&gt;%
+              read_csv()
+
+                       
+rat &lt;- levels(durham_lc_raster)[[1]] %&gt;% merge(nlcd_class, by.x=&quot;ID&quot;, by.y=&quot;Value&quot;)
+
+levels(durham_lc_raster) &lt;- rat
+
+levelplot(durham_lc_raster, att=&quot;Classification&quot;, ylab=NULL, xlab=NULL, scales=list(y=list(draw=FALSE), x=list(draw=FALSE)),  col.regions=levels(durham_lc_raster)[[1]]$colortable, main=&quot;2011 Land Cover&quot;)
+</code></pre>
+<img src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+<p>We can also extract all cells with in each polygon and produce counts using the <code>table</code> function. Confirm to make sure that the projections and vectors and rasters are the same.</p>
+<pre><code class="language-r">
+proj4string(durham_lc_raster)
+# [1] &quot;+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs&quot;
+crs(durham_tracts_sf)
+# [1] &quot;PROJCRS[\&quot;Albers\&quot;,\n    BASEGEOGCRS[\&quot;GCS_GRS 1980(IUGG, 1980)\&quot;,\n        DATUM[\&quot;D_unknown\&quot;,\n            ELLIPSOID[\&quot;GRS80\&quot;,6378137,298.257222101,\n                LENGTHUNIT[\&quot;metre\&quot;,1,\n                    ID[\&quot;EPSG\&quot;,9001]]]],\n        PRIMEM[\&quot;Greenwich\&quot;,0,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433]]],\n    CONVERSION[\&quot;unnamed\&quot;,\n        METHOD[\&quot;Albers Equal Area\&quot;,\n            ID[\&quot;EPSG\&quot;,9822]],\n        PARAMETER[\&quot;Latitude of false origin\&quot;,23,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8821]],\n        PARAMETER[\&quot;Longitude of false origin\&quot;,-96,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8822]],\n        PARAMETER[\&quot;Latitude of 1st standard parallel\&quot;,29.5,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8823]],\n        PARAMETER[\&quot;Latitude of 2nd standard parallel\&quot;,45.5,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8824]],\n        PARAMETER[\&quot;Easting at false origin\&quot;,0,\n            LENGTHUNIT[\&quot;metre\&quot;,1],\n            ID[\&quot;EPSG\&quot;,8826]],\n        PARAMETER[\&quot;Northing at false origin\&quot;,0,\n            LENGTHUNIT[\&quot;metre\&quot;,1],\n            ID[\&quot;EPSG\&quot;,8827]]],\n    CS[Cartesian,2],\n        AXIS[\&quot;(E)\&quot;,east,\n            ORDER[1],\n            LENGTHUNIT[\&quot;metre\&quot;,1,\n                ID[\&quot;EPSG\&quot;,9001]]],\n        AXIS[\&quot;(N)\&quot;,north,\n            ORDER[2],\n            LENGTHUNIT[\&quot;metre\&quot;,1,\n                ID[\&quot;EPSG\&quot;,9001]]]]&quot;
+
+durham_lc_terra &lt;- rast(durham_lc_raster)
+</code></pre>
+<p><code>extract</code> from terra conflicts with the same function from raster, so it is useful to explicitly specify the package the function comes from.</p>
+<p>Furthermore, extract relies on on the record number or row number. It is useful to create a new table with the row number and an ID column like GEOID10 which can then be used to merge back.</p>
+<pre><code class="language-r">tract_geoid &lt;- tibble(ID = 1:nrow(durham_tracts_sf), GEOID10 = durham_tracts_sf$GEOID10)
+
+
+lc_tracts &lt;- terra::extract(durham_lc_terra, vect(durham_tracts_sf)) %&gt;% 
+              mutate(Layer_1 = paste0(&quot;lc&quot;, Layer_1)) %&gt;% # This is an easy way to convert to characters and therefore to factors. Layer_1 and ID are columns in the tibble that results from from terra::extract
+              group_by(ID, Layer_1)  %&gt;%
+              summarize(count = n()) 
+
+lc_tracts_tbl &lt;- lc_tracts %&gt;% 
+                 ungroup() %&gt;% # Groups are no longer necessary
+                  pivot_wider(names_from = Layer_1, values_from = count) %&gt;%
+                  left_join(tract_geoid)
+
+lc_tracts_tbl
+# # A tibble: 60 × 17
+#       ID  lc11  lc21  lc22  lc23  lc24  lc41  lc42  lc43  lc52  lc71  lc81  lc90
+#    &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+#  1     1    35  3994  2233   790   176  1373  1139   224    91   175    72     7
+#  2     2     9  4099   633   276    22   371   308    79     1    18    NA   854
+#  3     3    NA   429   618   249   253    NA    NA    NA    NA    NA    NA    NA
+#  4     4  3907 12486  2371   723   209 85032 25850  8729  5115 11342 39446  7882
+#  5     5    NA   690   950   859   157    51    17    NA    NA    NA    NA    NA
+#  6     6  9776  4085   755   412    76 25189 15132  4238  3421  5364  4986  1674
+#  7     7    NA  2517   566   458   156    41    NA    35    NA     7    NA    NA
+#  8     8   914  5732  1114   212     5 12414  2242   919   565  1498  2801  1371
+#  9     9   153  6603   731   108    NA 11765  3395  1670   381   952  1489    75
+# 10    10   130  5958  1996  1387   224  3112  2519   410   105   369   308  3490
+# # … with 50 more rows, and 4 more variables: lc31 &lt;int&gt;, lc82 &lt;int&gt;,
+# #   lc95 &lt;int&gt;, GEOID10 &lt;chr&gt;
+</code></pre>
+<h2 id="tips--tricks">Tips &amp; Tricks</h2>
+<h3 id="exploit-rasteroptions">Exploit RasterOptions</h3>
+<p>There are two parameters that have a lot of influence on the performance of the package: chunksize and maxmemory.</p>
+<ul>
+<li>chunksize: integer. Maximum number of cells to read/write in a single chunk while processing (chunk by chunk) disk based Raster* objects</li>
+<li>maxmemory: integer. Maximum number of cells to read into memory.</li>
+</ul>
+<p>You can override the default values using <code>rasterOptions(maxmemory = 1e+09)</code>. Other options that are useful to set within rasterOptions are overwrite and datatype</p>
+<h3 id="parallelise-your-operations">Parallelise your operations</h3>
+<p>While rasters are large, you can take advantage of the fact that not all operations have to be sequential and can be done in parallel.</p>
+<ul>
+<li>Use <code>clusterR</code> to parallelize some operations such as <code>calc</code>, <code>overlay</code> and <code>predict</code>.</li>
+<li>Use <code>foreach</code> and <code>doParallel</code> packages whenever possible.</li>
+</ul>
+<h3 id="manage-your-temp-files">Manage your temp files</h3>
+<p>When multiple operations are run on rasters, because they need to written to disk often, they create multiple copies of the same raster. This quickly takes up space and stops the script from moving forward. Use <code>removeTmpFiles(h=)</code> to periodically empty tempfiles. It is always a good idea to set temporary directory using <code>tempdir()</code> at the beginning of the script and then <code>unlink()</code> to delete the directory at the end of the script.</p>
+<h2 id="conclusions">Conclusions</h2>
+<p>Rasters are incredibly useful in urban domains but are often left to remote sensing experts. In the next few tutorials we will see how they can be used to characterise urban form and identify suitable sites. They should sit along side with vector data manipulation in the analysts’ toolbox.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#rasters-in-r">Rasters in R</a></li>
+    <li><a href="#download-data">Download data</a></li>
+    <li><a href="#reading-in-rasters">Reading in Rasters</a></li>
+    <li><a href="#vectors--rasters">Vectors &amp; Rasters</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#tips--tricks">Tips &amp; Tricks</a>
+      <ul>
+        <li><a href="#exploit-rasteroptions">Exploit RasterOptions</a></li>
+        <li><a href="#parallelise-your-operations">Parallelise your operations</a></li>
+        <li><a href="#manage-your-temp-files">Manage your temp files</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/r/">R</a>
+  
+  <a class="badge badge-light" href="/tag/teaching/">teaching</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/basic-raster-operations-in-r/&amp;text=Basic%20Raster%20Operations%20in%20R" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/basic-raster-operations-in-r/&amp;t=Basic%20Raster%20Operations%20in%20R" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Basic%20Raster%20Operations%20in%20R&amp;body=https://nkaza.github.io/post/basic-raster-operations-in-r/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/basic-raster-operations-in-r/&amp;title=Basic%20Raster%20Operations%20in%20R" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Basic%20Raster%20Operations%20in%20R%20https://nkaza.github.io/post/basic-raster-operations-in-r/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/basic-raster-operations-in-r/&amp;title=Basic%20Raster%20Operations%20in%20R" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
+      
+      <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
+      
+      <li><a href="/post/exploratory-data-analysis-and-visualisation/">Exploratory Data Analysis and Visualisation</a></li>
+      
+      <li><a href="/post/intersection-density-from-osm-using-qgis-r/">Intersection Density From OSM using QGIS &amp; R</a></li>
+      
+      <li><a href="/post/analysing-free-form-text/">Analysing Free Form Text</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

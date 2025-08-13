@@ -1,0 +1,1851 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="McMillen method of identifying outliers in local neighborhood." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/identifying-employment-centers/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/identifying-employment-centers/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/identifying-employment-centers/" />
+  <meta property="og:title" content="Identifying Employment Centers | Nikhil Kaza" />
+  <meta property="og:description" content="McMillen method of identifying outliers in local neighborhood." /><meta property="og:image" content="https://nkaza.github.io/post/identifying-employment-centers/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/identifying-employment-centers/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2018-07-04T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2018-07-04T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/identifying-employment-centers/"
+  },
+  "headline": "Identifying Employment Centers",
+  
+  "image": [
+    "https://nkaza.github.io/post/identifying-employment-centers/featured.png"
+  ],
+  
+  "datePublished": "2018-07-04T00:00:00Z",
+  "dateModified": "2018-07-04T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "McMillen method of identifying outliers in local neighborhood."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Identifying Employment Centers | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="316cb7a4cf4b341f448f9fe3a6e09bb2" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Identifying Employment Centers</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jul 4, 2018
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    10 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/regional-science/">regional-science</a>, <a href="/category/new-urban-analytics/">new-urban-analytics</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+<div class="btn-links mb-3">
+  
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+  
+  <a class="btn btn-outline-primary btn-page-header" href="/project/urban-change/">
+    Project
+  </a>
+  
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 277px;">
+  <div style="position: relative">
+    <img src="/post/identifying-employment-centers/featured_hu3e1b341b3cc0524b9798e05638aa8cb6_796980_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="277" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js"></script>
+<p>In this post, I am going to show the techniques behind identifying centers. Centers are defined collections of contiguous high value (e.g. employment, opportunity, activity etc.) locations. This is related to, but different from using autocorrelation statistics such as Local Indicators of Spatial Autocorrelation. The methods described in this post draw from <a href="https://doi.org/10.1006/juec.2001.2228" target="_blank" rel="noopener">McMillen (2001)</a> and <a href="https://doi.org/10.1016/0166-0462%2891%2990032-I" target="_blank" rel="noopener">Giuliano &amp; Small (1991)</a>.</p>
+<h2 id="requirements">Requirements</h2>
+<p>This requires <a href="http://r-project.org" target="_blank" rel="noopener">R</a>, and many libraries including <a href="https://cran.r-project.org/web/packages/igraph/" target="_blank" rel="noopener">igraph</a>,<a href="https://cran.r-project.org/web/packages/spdep/" target="_blank" rel="noopener">spdep</a>, <a href="https://cran.r-project.org/web/packages/rgdal" target="_blank" rel="noopener">rgdal</a>, <a href="https://cran.r-project.org/package=tigris" target="_blank" rel="noopener">tigris</a> <a href="https://cran.r-project.org/package=locfit" target="_blank" rel="noopener">locfit</a> and <a href="https://cran.r-project.org/package=leaflet" target="_blank" rel="noopener">leaflet</a>. You should install them, as necessary, with <code>install.packages()</code> command.</p>
+<p>Most of the methods and results are discussed in <a href="https://nkaza.github.io/publication/kazaedq/" target="_blank" rel="noopener">Hartley, Kaza &amp; Lester (2016)</a> and <a href="https://nkaza.github.io/publication/lesterkazamcadam2018" target="_blank" rel="noopener">Lester, Kaza &amp; McAdam (in review)</a>. Please refer to those articles.</p>
+<h2 id="additional-resources">Additional resources</h2>
+<p>I strongly recommend that you read through some of the tutorials on using <a href="http://www.nickeubank.com/gis-in-r/" target="_blank" rel="noopener">R for GIS</a>. You should have <a href="http://www.asdar-book.org/" target="_blank" rel="noopener">Applied Spatial Data Analysis in R</a> by Bivand et.al in your library.</p>
+<h2 id="acquire-data">Acquire data</h2>
+<p>The data I will use in this exercise will be downloaded directly from Census. For this work, we will use the Work Area Characteristics files from Local Origin Destination Employment Statistics (LODES). <a href="https://lehd.ces.census.gov/data/lodes/LODES7/LODESTechDoc7.3.pdf" target="_blank" rel="noopener">LODES</a> is a synthetic data set that provides, if not spatially accurate, distributionally consistent annual employment information as well as commuting information. We will restrict our attention to the Kentucky. Let’s download and set up the data.</p>
+<pre><code class="language-r">
+library(data.table)
+library(rgdal)
+library(spdep)
+library(rgeos)
+library(igraph)
+library(ggplot2)
+library(tigris)
+library(tidyverse)
+library(sf)
+
+state &lt;- &quot;ky&quot;
+baseurl &lt;- 'http://lehd.ces.census.gov/data/lodes/LODES7/'
+years &lt;- as.character(2015)
+wac_file &lt;- NULL
+for (year in years){
+  filename &lt;- paste(state, &quot;_wac_S000_JT00_&quot;, year, &quot;.csv.gz&quot;, sep=&quot;&quot; ) #State, S000-Total Number of jobs , JT00,- All jobs
+  url &lt;- paste(baseurl, state, &quot;/wac/&quot;, filename, sep=&quot;&quot; )
+  if(!file.exists(filename)){download.file(url, filename, mode='wb')}
+  wac_file[[year]] &lt;- data.table(read.csv(filename, colClasses = c('character', rep('integer',51), 'character'))) ##based on the documentation of the classes
+wac_file &lt;- rbindlist(wac_file, idcol=&quot;Year&quot;, use.names = TRUE)
+}
+
+ky_tr &lt;- tracts(&quot;Kentucky&quot;, year=2010, progress_bar =FALSE)
+</code></pre>
+<div class="alert alert-note">
+  <div>
+    I am using <code>read.csv</code> only because I am using a much faster <code>data.table</code> package for illustration purposes. The code can be easily adapted to <code>tibbles</code> using <code>read_csv</code>.
+  </div>
+</div>
+<h2 id="data-preparation--exploration">Data preparation &amp; exploration</h2>
+<p>The data set is at a block level. This level of geography is far too fine (28,996 blocks) for our analyses. Lets aggregate it up to census tracts. Since blocks are nested within the tract, all we need to do is to trim the GEOID and aggregate the data.table to the trimmed GEOID.</p>
+<pre><code class="language-r">wac_file$w_geocode_tr &lt;- substr(wac_file$w_geocode, 1,11) #trim GEOID to 11. Trim it to 12 if Blockgroups are needed
+setkey(wac_file, w_geocode_tr, Year)
+cols = sapply(wac_file, is.numeric)  #identify the columns where summation can be applied.
+cols = names(cols)[cols]
+wac_file_tr &lt;- wac_file[,lapply(.SD, sum), .SDcols = cols, by=list(w_geocode_tr, Year)] # Aggregate the columns to tract ids.
+
+#C000 is the column that contains the numbers for total jobs.
+summary(wac_file_tr$C000)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     1.0   250.5   763.5  1646.8  1950.5 57291.0
+</code></pre>
+<p>We have now a manageable number of geographic units (1,112 tracts). The summary statistics look pretty skewed. It is useful to visualise the inequality of the distribution. We can use Lorenz curve for this. We need the <code>ineq</code> package for this.</p>
+<pre><code class="language-r">library(ineq)
+ plot(Lc(wac_file_tr$C000), xlab=&quot;Cumulative % of tracts&quot;, ylab=&quot;Cumulative % of Jobs&quot;)
+ abline(v =.5, lty=2, col='blue')
+ abline(h=.09, lty=2, col='blue')
+ abline(v=.9, lty=2, col='red')
+ abline(h=.53, lty=2, col='red')
+</code></pre>
+<img src="https://nkaza.github.io/post/identifying-employment-centers/index_files/figure-html/unnamed-chunk-3-1.png" width="768" />
+The bottom 50% of the tracts only contribute to less than 10% of the total employment, while the top 10% of the tracts contribute to more than 45% of employment. About 11% of tracts have less than 100 jobs. This shows that jobs are pretty well concentrated in particular centers.
+<p>We can visualise the spatial distribution of jobs. We already used <code>tigris</code> to download and load the polygons, and <code>leaflet</code> to visualise the information. Tigris is a convenience package that automatically downloads TIGER files from Census for particular geography. Visualising complicated geography is problematic, so we will use a polygon simplifier <a href="https://bost.ocks.org/mike/simplify/" target="_blank" rel="noopener">Visvasalingam algorithm</a> to simplify the boundaries. As long as the topology is preserved, we don’t loose much for this analysis.</p>
+<pre><code class="language-r">
+##Simplify shape for display and analysis. As long as the topology is preserved, complicated boundaries are not necessary for this purpose.
+library(rmapshaper)
+ky_tr_simple &lt;- rmapshaper::ms_simplify(ky_tr)
+c(object.size(ky_tr), object.size(ky_tr_simple))
+# [1] 20041168  2299040
+</code></pre>
+<p>Merge the spatial polygons with the WAC file.</p>
+<pre><code class="language-r">ky_tr_simple &lt;-  ky_tr_simple %&gt;% 
+                  left_join(wac_file_tr[Year==year, .(w_geocode_tr, C000),], by = c(&quot;GEOID10&quot;=&quot;w_geocode_tr&quot;))
+
+ky_tr_simple$C000[is.na(ky_tr_simple$C000)] &lt;- 0 #set NAs to 0. This may not be kosher depending on your application.
+ky_tr_simple$empdens &lt;- ky_tr_simple$C000/(ky_tr_simple$ALAND10) * 10^4 #Jobs per ha. ALAND10 is in sq.m
+</code></pre>
+<h2 id="visualising-spatial-data">Visualising spatial data</h2>
+<p>Let us visualise the spatial distribution of employment. Note the use of Quintile colour cuts. There may be other cuts that are more preferable.</p>
+<div class="alert alert-warning">
+  <div>
+    The Leaflet package expects all point, line, and shape data to be specified in latitude and longitude using WGS 84 (a.k.a. EPSG:4326). By default, when displaying this data it projects everything to EPSG:3857 and expects that any map tiles are also displayed in EPSG:3857. Other projections are not fully supported. It turns out that Census files are in that coordinate system, however, you may have to pay attention To the projections, when using your own polygon files. See <a href="https://rstudio.github.io/leaflet/projections.html">https://rstudio.github.io/leaflet/projections.html</a>
+  </div>
+</div>
+<pre><code class="language-r">library(leaflet)
+
+ky_tr_simple &lt;- ky_tr_simple %&gt;% sf::st_transform(4326)
+
+m &lt;-  leaflet(ky_tr_simple) %&gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;,
+                   options = providerTileOptions(minZoom = 7, maxZoom = 11)) %&gt;%
+   addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;,
+                    options = providerTileOptions(minZoom = 7, maxZoom = 11)) 
+ 
+
+Qpal &lt;- colorQuantile(
+  palette = &quot;BuPu&quot;, n = 7,
+  domain = ky_tr_simple$C000
+)
+
+
+labels &lt;- sprintf(
+  &quot;Tract #: %s &lt;br/&gt; Jobs: &lt;strong&gt;%s&lt;/strong&gt;&quot;,
+  ky_tr_simple$GEOID10, ky_tr_simple$C000
+) %&gt;% lapply(htmltools::HTML)
+
+  
+m2 &lt;- m %&gt;%
+     addPolygons(color = &quot;#CBC7C6&quot;, weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+             fillColor = Qpal(ky_tr_simple$C000),
+              highlightOptions = highlightOptions(color = &quot;white&quot;, weight = 2, bringToFront = TRUE),
+             label = labels,
+             labelOptions = labelOptions(
+               style = list(&quot;font-weight&quot; = &quot;normal&quot;, padding = &quot;3px 8px&quot;),
+               textsize = &quot;15px&quot;,
+               direction = &quot;auto&quot;),
+             group = &quot;Tracts&quot;
+             ) %&gt;%
+   addLegend(&quot;topleft&quot;, pal = Qpal, values = ~C000,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=1, big.mark = &quot;,&quot;, scientific=F), &quot; - &quot;, prettyNum(cuts[-1], digits=1, big.mark=&quot;,&quot;, scientific=F))
+             },
+             title = &quot;Number of Jobs&quot;,
+             opacity = 1
+   ) %&gt;%
+  addLayersControl(
+    overlayGroups = c(&quot;Tracts&quot;, 'Basemap'),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+
+library(widgetframe) 
+frameWidget(m2)
+</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>The problem with choropleth maps is that large spatial areas visually draw attention and skew the perception of the map. See for example, the small tracts in Louisville compared to rural tracts around Bradstown. One way to deal with this issue, is to intensify the color of smaller tracts by normalising employment with some variable (area or per capita) to visualise the spatial distribution better. Sometimes, it is also better to ignore the boundaries. It does not get solve the problem completely.</p>
+<pre><code class="language-r">
+Qpal &lt;- colorQuantile(
+  palette = &quot;BuPu&quot;, n = 5,
+  domain = ky_tr_simple$empdens
+)
+
+
+labels &lt;- sprintf(
+  &quot;Tract #: %s &lt;br/&gt; Job Density: &lt;strong&gt;%s&lt;/strong&gt;&quot;,
+  ky_tr_simple$GEOID10, prettyNum(ky_tr_simple$empdens, digits=2, big.mark = &quot;,&quot;)
+) %&gt;% lapply(htmltools::HTML)
+
+  
+m2 &lt;- m %&gt;%
+     addPolygons(color = &quot;#CBC7C6&quot;, weight = 0, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+             fillColor = Qpal(ky_tr_simple$empdens),
+              highlightOptions = highlightOptions(color = &quot;white&quot;, weight = 2, bringToFront = TRUE),
+             label = labels,
+             labelOptions = labelOptions(
+               style = list(&quot;font-weight&quot; = &quot;normal&quot;, padding = &quot;3px 8px&quot;),
+               textsize = &quot;15px&quot;,
+               direction = &quot;auto&quot;),
+             group = &quot;Tracts&quot;
+             ) %&gt;%
+   addLegend(&quot;topleft&quot;, pal = Qpal, values = ~empdens,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=2, big.mark = &quot;,&quot;, scientific=F), &quot; - &quot;, prettyNum(cuts[-1], digits=2, big.mark=&quot;,&quot;, scientific=F))
+             },
+             title = &quot;Employment Density per ha&quot;,
+             opacity = 1
+   ) %&gt;%
+  addLayersControl(
+    overlayGroups = c(&quot;Tracts&quot;, 'Basemap'),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+ 
+frameWidget(m2)
+</code></pre>
+<div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-7.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<h2 id="employment-center-definitions">Employment center definitions</h2>
+<p>What counts as an employment center depends on what definition you use. Giuliano &amp; Small use a density floor (~25 jobs per ha) and floor on the total jobs ( at least 10,000 jobs). i.e. an employment center is defined as collection of contiguous geographies whose sum total of employment is more than 10,000 and whose density is more than 25 jobs per ha. Notice that these cutoffs are arbitrary and different values give different results. In this post, I am not going to use this definition, though the code is below.</p>
+<pre><code class="language-r">subgs &lt;-function(shpfile,dens,emp,mind=25,totemp=10000, wmat=0) {
+  if (identical(wmat,0)) {
+    neighbors &lt;- poly2nb(shpfile,queen=TRUE)
+    wmat &lt;- nb2mat(neighbors,style=&quot;B&quot;,zero.policy=TRUE)
+  }
+  dens &lt;- ifelse(is.na(dens),0,dens)
+  obs &lt;- seq(1:length(dens))
+  densobs &lt;- obs[dens&gt;mind]
+  wmat &lt;- wmat[densobs,densobs]
+  n = nrow(wmat)
+  amat &lt;- matrix(0,nrow=n,ncol=n)
+  amat[row(amat)==col(amat)] &lt;- 1
+  bmat &lt;- wmat
+  wmat1 &lt;- wmat
+  newnum = sum(bmat)
+  cnt = 1
+  while (newnum&gt;0) {
+    amat &lt;- amat+bmat
+    wmat2 &lt;- wmat1%*%wmat
+    bmat &lt;- ifelse(wmat2&gt;0&amp;amat==0,1,0)
+    wmat1 &lt;- wmat2
+    newnum = sum(bmat)
+    cnt = cnt+1
+  }
+  emat &lt;- emp[dens&gt;mind]
+  tmat &lt;- amat%*%emat
+  obsmat &lt;- densobs[tmat&gt;totemp]
+  
+  subemp &lt;- array(0,dim=length(dens))
+  subemp[obsmat] &lt;- tmat[tmat&gt;totemp]
+  subobs &lt;- ifelse(subemp&gt;0,1,0)
+  
+  tab &lt;- tabulate(factor(subemp))
+  numsub = sum(tab&gt;0)-1
+  
+  cat(&quot;Number of Subcenters = &quot;,numsub,&quot;\n&quot;)
+  cat(&quot;Total Employment and Number of Tracts in each Subcenter&quot;,&quot;\n&quot;)
+  print(table(subemp))
+  
+  out &lt;- list(subemp,subobs)
+  names(out) &lt;- c(&quot;subemp&quot;,&quot;subobs&quot;)
+  return(out)
+}
+</code></pre>
+<p>McMillen, on the other hand, uses a non-parametric method. He fits a employment density surface based on local neighborhood values and predicts the employment density at a location. If the actual employment density is <em>substanially higher</em> than predicted values then the tract is labelled an employment center. Note the choice of the parameters, <code>window</code>, (observations that are defined as neighborhood) and the <code>pval</code> (statistical significance). They are as arbitrary as Giuliano and Small’s parameters, but are more widely accepted.</p>
+<p>In the later part, we will merge such contiguous tracts. For this section we use <code>locfit</code> package</p>
+<pre><code class="language-r">library(locfit)
+ #### This is the McMillen's method for determining the tracts that are significantly different from the neighbours. 
+ subnp &lt;- function(ydens,long,lat,window=.5,pval=.10) {
+   data &lt;- data.frame(ydens,long,lat)
+   names(data) &lt;- c(&quot;ydens&quot;,&quot;long&quot;,&quot;lat&quot;)
+   fit &lt;- locfit(ydens~lp(long,lat,nn=window,deg=1),kern=&quot;tcub&quot;,ev=dat(cv=FALSE),data=data)
+   mat &lt;- predict(fit,se.fit=TRUE,band=&quot;pred&quot;)
+   yhat &lt;- mat$fit
+   sehat &lt;- mat$se.fit
+   upper &lt;- yhat - qnorm(pval/2)*sehat
+   subobs &lt;- ifelse(ydens&gt;upper,1,0)
+   
+   cat(&quot;Number of tracts identified as part of subcenters:  &quot;,sum(subobs),&quot;\n&quot;)
+   out &lt;- list(subobs)
+   names(out) &lt;- c(&quot;subobs&quot;)
+   return(out)
+ }
+
+temp &lt;-  subnp(ky_tr_simple$empdens, ky_tr_simple$INTPTLON10, ky_tr_simple$INTPTLAT10)
+# Number of tracts identified as part of subcenters:   23
+ky_tr_simple$empcenter &lt;- temp$subobs
+</code></pre>
+<h2 id="visualise-the-results">Visualise the results</h2>
+<p>We use the same code as before, except styling the colors using <code>colorFactor</code> instead of <code>colorQuantile</code> to visualise the outputs.</p>
+<div id="htmlwidget-3" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-10.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<h2 id="merge-contiguous-tracts-and-aggregate-values">Merge contiguous tracts and aggregate values</h2>
+<p>One of the neat tricks that <code>spdep</code> package allows us to do is to construct a graph from spatial adjacency matrix. Once a graph is created, it is simply a matter of finding the connected components of the graph and then merging based on the component name.</p>
+<pre><code class="language-r">ky_empc_tr &lt;- ky_tr_simple[ky_tr_simple$empcenter==1,]
+
+g &lt;- ky_empc_tr %&gt;% as(&quot;Spatial&quot;) %&gt;%
+  spdep::poly2nb(queen=T, row.names=ky_empc_tr$GEOID10) %&gt;%
+  spdep::nb2mat(zero.policy=TRUE, style=&quot;B&quot;) %&gt;%
+  igraph::graph_from_adjacency_matrix(mode='undirected', add.rownames=&quot;NULL&quot;)
+
+ky_empc_tr$clustermember &lt;- paste0(&quot;C&quot;,igraph::components(g)$membership)
+</code></pre>
+<p>Dissolving polygons is a breeze due to <code>sf</code>.</p>
+<pre><code class="language-r">ky_empc_pt &lt;- 
+    ky_empc_tr %&gt;% 
+      group_by(clustermember) %&gt;%
+      summarise(emp = sum(C000), area = sum(ALAND10)) %&gt;%
+      mutate(empdens = emp/area *10^4) %&gt;% 
+      st_centroid %&gt;%
+      st_as_sf()
+# Warning in st_centroid.sf(.): st_centroid assumes attributes are constant over
+# geometries of x
+</code></pre>
+<p>We went from 23 tracts to 14 centers due to this merging. Final visualisation could be done using markers, instead of a choropleth plot. The tracts are used for visualisation, only to show the extent.</p>
+<pre><code class="language-r">labels2 &lt;- sprintf(
+  &quot;Employment Cluster #: %s &lt;br/&gt; Jobs: &lt;strong&gt;%s&lt;/strong&gt;, Density: &lt;strong&gt;%s per ha&lt;/strong&gt;&quot;,
+  ky_empc_pt$clustermember, prettyNum(ky_empc_pt$emp, big.mark = &quot;,&quot;, scientific=F), prettyNum(ky_empc_pt$empdens, digits=2)
+) %&gt;% lapply(htmltools::HTML)
+
+
+
+
+m4 &lt;- leaflet(ky_empc_pt) %&gt;%
+  addTiles() %&gt;%
+  addPolygons(data= ky_empc_tr, weight = 0,fillOpacity = 0.5, fillColor = 'red' ) %&gt;%
+  addMarkers(label = ~labels2, 
+             labelOptions = labelOptions(
+               style = list(&quot;font-weight&quot; = &quot;normal&quot;, padding = &quot;3px 8px&quot;),
+               textsize = &quot;15px&quot;,
+               direction = &quot;auto&quot;))
+
+frameWidget(m4)
+</code></pre>
+<div id="htmlwidget-4" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-13.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<h2 id="further-explorations">Further explorations</h2>
+<p>Many improvements and extensions are possible. For example,</p>
+<ul>
+<li>In this post, I only used 2015 employment. But the code is set up to download and run for multiple years with suitable modifications. Have the employment center locations and characteristics changed between 2002 and 2015?</li>
+<li>It turns out KY has only 14 employment centers through out the state. How does KY fare compared to rest of the US?</li>
+<li>These centers (23 tracts) only account for 12.95% of the state employment. Yet we saw from the Lorenz cure that that the top 10% (~111 tracts ) have about 45% of employment. So what is happening with the other 88 tracts? Are they dispersed? clustered? Why did not they show up?</li>
+<li>Based on the above, what improvements can we make to McMillen method?</li>
+<li>What are the outcomes if we use Giuliano and Small’s method?</li>
+<li>What are the impacts of different parameters on identification?</li>
+<li>What is the impact of spatial scale? In this analyses we used Census tracts. Are results dramatically different, if we use block groups or blocks?</li>
+<li>Is total employment even a relevant indicator for employment centers? Should we be identifying specialised employment centers by industry or occupation?</li>
+<li>How can be adapt this method to identify other concentrated activities (such as retail etc.)</li>
+</ul>
+<h2 id="accomplishments">Accomplishments</h2>
+<ul>
+<li>Downloading and reading vector data</li>
+<li>Vector data operations (Union, neighbors)</li>
+<li>Visualising spatial data with leaflet</li>
+<li>Switching between spatial and network conceptual frames</li>
+<li>Local regression with spatial coordinates</li>
+<li>Spatial outlier detection</li>
+</ul>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#additional-resources">Additional resources</a></li>
+    <li><a href="#acquire-data">Acquire data</a></li>
+    <li><a href="#data-preparation--exploration">Data preparation &amp; exploration</a></li>
+    <li><a href="#visualising-spatial-data">Visualising spatial data</a></li>
+    <li><a href="#employment-center-definitions">Employment center definitions</a></li>
+    <li><a href="#visualise-the-results">Visualise the results</a></li>
+    <li><a href="#merge-contiguous-tracts-and-aggregate-values">Merge contiguous tracts and aggregate values</a></li>
+    <li><a href="#further-explorations">Further explorations</a></li>
+    <li><a href="#accomplishments">Accomplishments</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/r/">R</a>
+  
+  <a class="badge badge-light" href="/tag/research/">research</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/identifying-employment-centers/&amp;text=Identifying%20Employment%20Centers" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/identifying-employment-centers/&amp;t=Identifying%20Employment%20Centers" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Identifying%20Employment%20Centers&amp;body=https://nkaza.github.io/post/identifying-employment-centers/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/identifying-employment-centers/&amp;title=Identifying%20Employment%20Centers" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Identifying%20Employment%20Centers%20https://nkaza.github.io/post/identifying-employment-centers/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/identifying-employment-centers/&amp;title=Identifying%20Employment%20Centers" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/spatial-regression-discontinuity-design-setup/">Spatial Regression Discontinuity Design Setup</a></li>
+      
+      <li><a href="/post/regional-employment-structure-using-labor-market-centrality-index/">Regional Employment Structure Using Labor Market Centrality Index</a></li>
+      
+      <li><a href="/post/analysing-urban-neworks/">Analysing Urban Neworks</a></li>
+      
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
+      
+      <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

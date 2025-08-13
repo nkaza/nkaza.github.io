@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>land-suitability | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/category/land-suitability/</link>
+      <atom:link href="https://nkaza.github.io/category/land-suitability/index.xml" rel="self" type="application/rss+xml" />
+    <description>land-suitability</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Mon, 16 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>land-suitability</title>
+      <link>https://nkaza.github.io/category/land-suitability/</link>
+    </image>
+    
+    <item>
+      <title>Some Issues with Land Suitability Analysis</title>
+      <link>https://nkaza.github.io/post/some-troubles-with-land-suitability-analysis-a-conversation-with-lew/</link>
+      <pubDate>Mon, 16 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/some-troubles-with-land-suitability-analysis-a-conversation-with-lew/</guid>
+      <description>&lt;p&gt;In 2018, as I was setting up this website, I had a conversation about &lt;a href=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/&#34;&gt;land suitabilty analysis&lt;/a&gt; over email with Lew Hopkins, who was my doctoral advisor when I was at Illinois. I want to capture this conversation on this site, as a caveat, instead of sitting in my Inbox. The emails are slightly edited.&lt;/p&gt;
+&lt;hr&gt;
+&lt;div style=&#34;background-color:#f5b7b1;&#34;&gt;
+&lt;p&gt;Lew,&lt;/p&gt;
+&lt;p&gt;I am in the process of getting some blog posts up regarding planning methods and I was imagining writing one about land suitability analysis.&lt;/p&gt;
+&lt;p&gt;I have not done much on this before but the more I thought about it, its problems are becoming more apparent.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;conversion of real values (e.g. slopes) to categorical (even when it is 1 -100)&lt;/li&gt;
+&lt;li&gt;rescaling categorical values (e.g. soil types) to same scale as others&lt;/li&gt;
+&lt;li&gt;arbitrary assignment of weights. (some times these are inconsistent e.g. A&amp;gt;B&amp;gt;C&amp;gt;A). Probably can use AHP to get at inconsistency issues.&lt;/li&gt;
+&lt;li&gt;Global assignment of weights&lt;/li&gt;
+&lt;li&gt;Independence of variables assumed when adding up. This is related to #4.&lt;/li&gt;
+&lt;li&gt;Conversion to a single scale (to create order). This masks the &amp;lsquo;tradeoffs&amp;rsquo; implicit in the weighting scheme.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I know that you have done some work on this before. Anything else I should be thinking about? and how to correct for some of these issues?&lt;/p&gt;
+&lt;p&gt;My regards to Susan.&lt;/p&gt;
+&lt;p&gt;Nikhil&lt;/p&gt;
+&lt;/div&gt;
+&lt;div style=&#34;background-color: #fad7a0;&#34;&gt;
+&lt;p&gt;Nikhil,&lt;/p&gt;
+&lt;p&gt;Where to begin? Or, perhaps more appropriately, where to end? I have been pointing out these problems, literally, for 50 years, first published in&lt;/p&gt;
+&lt;p&gt;______, &amp;ldquo;Methods for Generating Land Suitability Maps:  A Comparative Evaluation,&amp;rdquo; Journal of the American Institute of Planners, 43:4 (1977) pp. 386-400.&lt;/p&gt;
+&lt;p&gt;Even then, this was a review article based on well established knowledge.&lt;/p&gt;
+&lt;p&gt;Although still widely cited, I could count on one hand the applications, much less the methods books, that explicitly follow the recommendation to focus on what I then called &amp;ldquo;rules of combination&amp;rdquo;.  That approach addresses many of the problems you mention by avoiding numerical manipulations of doubtful validity and retaining substantive meaning and interaction among variables in expressing relationships.  I developed various better examples later in teaching, but the basic premise remains: it is better to keep the meaning of data as salient as possible throughout a process of multiattribute decision making.&lt;/p&gt;
+&lt;p&gt;There are even more fundamental flaws in many applications. There is often confusion about what  meaning of &amp;ldquo;suitability&amp;rdquo; is being used, confounding predictions of where development will occur versus where it should occur, confounding absolutes with factors fungible as costs, focusing only on site attributes without considering spatial situation, failing to distinguish among factors subject to expertise from factors subject to preference, etc.&lt;/p&gt;
+&lt;p&gt;As Gold, JAIP, 1974, 284-286 pointed out, suitability analysis characterizes only supply, then implies that suitability determines use, completely ignoring demand.&lt;/p&gt;
+&lt;p&gt;These problems led to lots of what I did in the 1970s, trying to figure out how to use actual models of spatial relationships of air pollution, water resources, and accessibility while also considering demand and supply with explicit measures of cost or flooding or whatever and a presumption that complete definition of a single scale  or model is impossible.&lt;/p&gt;
+&lt;p&gt;I don&amp;rsquo;t think AHP resolves anything; it mostly adds obfuscation. My technical point of view best explained in&lt;/p&gt;
+&lt;p&gt;Shih-Kung Lai and ______, &amp;ldquo;The Meanings of Tradeoffs in Multi-attribute Evaluation Methods: A Comparison,&amp;rdquo; Environment and Planning B: Planning and Design 16:2, (1989).  pp. 155-170.&lt;/p&gt;
+&lt;p&gt;My attitude about how to provide tools for helping people deal with multi attribute decisions is still probably best expressed in these:&lt;/p&gt;
+&lt;p&gt;E. Downey Brill, Jr., John M. Flach, ______, and S. Ranjithan, &amp;ldquo;MGA: A Decision Support System for Complex, Incompletely Defined Problems,&amp;rdquo; IEEE Transactions on Systems, Man and Cybernetics, 20:4 (1990), 745-757.&lt;/p&gt;
+&lt;p&gt;Shih-Kung Lai and ______, &amp;ldquo;Can Decision Makers Express Multiattribute Preferences Using AHP and MUT?  An Experiment,&amp;rdquo; Environment and Planning B: Planning and Design 22:1 (1995) pp. 21.34.&lt;/p&gt;
+&lt;p&gt;Insung Lee and ______, &amp;ldquo;Procedural Expertise for Efficient Multiattribute Evaluation:  A Procedural Support Strategy for CEA,&amp;rdquo; Journal of Planning Education and Research, 14:4 (1995) pp. 255-268. (Chester Rapkin Award, best paper in volume 14 of JPER)&lt;/p&gt;
+&lt;p&gt;These obviously get far from what most people think of as suitability analysis, but that is perhaps the point.  If the task is an initial screening of site factors for site development, then rules of combination should suffice. If it is more than that, then the task should be reframed under some other label. Put differently, my impression from the last 50 years is that attempts to resolve the methodological flaws of numerical suitability analysis just lead to greater obfuscation.&lt;/p&gt;
+&lt;p&gt;If I were sufficiently motivated to work on this, I think tools and protocols to implement something akin to rules of combination, ideally with hooks to models, would be the most promising way to contribute to teaching about suitability analysis.&lt;/p&gt;
+&lt;p&gt;Lew&lt;/p&gt;
+&lt;/div&gt;
+&lt;div style=&#34;background-color: #f5b7b1;&#34;&gt;
+&lt;p&gt;Lew,&lt;/p&gt;
+&lt;p&gt;Thanks for the detailed email. I will take a look at these papers. Though one naive question. Instead of asking decision makers to identify weights on each factors, why not ask them to identify the &amp;lsquo;best examples&amp;rsquo; of sites for suitability and derive the implicit rules using standard techniques such as a logit regression or machine learning techniques such as a random forest (which would account for non-linear interactions of variables)? This would then simply be a classification problem that is trained on the examples and predictions are on the rest of the &amp;lsquo;sites&amp;rsquo; (similar to remote sensing classification methods)? Am I missing a point here?&lt;/p&gt;
+&lt;p&gt;Nikhil&lt;/p&gt;
+&lt;/div&gt;
+&lt;div style=&#34;background-color: #fad7a0&#34;&gt;
+&lt;p&gt;This assumes decision makers (or experts? or stakeholders?) can identify best examples by Gestalt, that is without considering factors and interactions among them in some explicit way. Weights are definitely a bad idea, but we have to have a way to come up with best sites to begin with. Gestalt judgment is difficult, though I did that in the field with airphotos for a land development consultant when I was a student. Rules of combination is a way to articulate reasoning so as to deliberate whether among experts, stakeholders, or decision makers. Modeling phenomena, or using substantive expert knowledge about phenomena is even better.&lt;/p&gt;
+&lt;p&gt;You are correct that there are two separable tasks. One is deciding what constitute useful spatial categories for a particular purpose. The second is applying those categories to space, either exhaustively or as a search problem. Traditional suitability analysis assumes we find the spatial pattern for each factor first, then combine them, which does not make sense because of all the difficulties of combination. Applying complex rules and modeled relationships was not feasible in the early 1970s for high resolution spatial data; it is feasible now. Thus, think of as applying a multidimensional filter, in a very generalized sense, that embeds modeled relationships, including logical rules. Use whatever expertise, preference, or whatever is appropriate to develop the filters.  Then use them to classify land or find sites.&lt;/p&gt;
+&lt;p&gt;Another perspective is that the problems are actually way too simple to bother with elaborate methodology. The hard task is not defining a floodplain, but rather choosing what definition of a floodplain is appropriate for a particular purpose. And for many purposes, all we need to know is that it is a floodplain by a particular criterion. The big problem is figuring out what to do given that it is a floodplain, and that requires the demand side plus whatever the problem is about&amp;ndash;trading off various objectives and consequences in specific, complex institutional situations. Weights on factors are no help and suitabilities are insufficient.&lt;/p&gt;
+&lt;p&gt;Or an endangered species habitat: determine what the habitat requirements are, including their interrelationships, patch size, migration routes, conflicts, interspecies relationships whatever, then identify places to which this applies. That is, figure out the phenomena of interest first, then devise a way to search for places based on available data, which might rely on iterative screening by various methods. The search might use disaggregated factors, but the logic is not based on scaling and weighting.&lt;/p&gt;
+&lt;p&gt;I doubt that regression or machine learning will be useful because we do not have lots of instances of expert judgment to rely on from which to derive the information. And still, once we identify these places, it does not tell us what to do.&lt;/p&gt;
+&lt;p&gt;Lew&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>techniques | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/tag/techniques/</link>
+      <atom:link href="https://nkaza.github.io/tag/techniques/index.xml" rel="self" type="application/rss+xml" />
+    <description>techniques</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Fri, 06 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>techniques</title>
+      <link>https://nkaza.github.io/tag/techniques/</link>
+    </image>
+    
+    <item>
+      <title>Land Suitability Analysis</title>
+      <link>https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/</link>
+      <pubDate>Fri, 06 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Land suitability analysis has a long tradition in planning. Ian McHarg at Penn, pioneered the method of overlaying transparencies about suitability criteria, which then got translated into GIS with the advent of computers. Suitability analysis has many uses in planning. It can be used, for example, for&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Retail site selection&lt;/li&gt;
+&lt;li&gt;Determining best locations for future land use (such as residential, agriculture, commercial etc..)&lt;/li&gt;
+&lt;li&gt;Ecological planning for protecting natural habitats&lt;/li&gt;
+&lt;li&gt;Prioritising investments (such as flood protection)&lt;/li&gt;
+&lt;li&gt;Post-Disaster housing relocation (see &lt;a href=&#34;https://coastalresiliencecenter.unc.edu/files/2018/12/LSA-Technical-Memo-6.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Christian Karmath&amp;rsquo;s MP report&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These analyses have a long tradition in planning. In fact, my former doctoral advisor, Lew Hopkins, &lt;a href=&#34;https://doi.org/10.1080/01944367708977903&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;wrote a  paper&lt;/a&gt; in 1977,  on this topic and is still considered a classic. Dick Klosterman&amp;rsquo;s Planning Support System, &lt;a href=&#34;http://www.whatifinc.biz/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;WhatIf?™&lt;/a&gt; relies heavily on land suitability analysis.&lt;/p&gt;
+&lt;p&gt;In this tutorial, I give a contrived example of finding suitable site for locating a landfill using rasters. Every cell is treated as potential alternative site for the landfill and is given a score based on different criteria (such as distance to schools, population centers etc.). The trick is to figure out a right combination of these scores to order the cells (alternatives). The analytical techniques used are rather straightforward and rely on simple raster algebra. As we will see, the skill is about picking the right kinds of criteria and making appropriate judgments about how to evaluate alternatives with respect to the criteria. Subjectivity and analyst&amp;rsquo;s bias is omnipresent in these steps. In particular, it is also subject to all sorts of other theoretical problems that the insistence on quantification &lt;a href=&#34;https://nkaza.github.io/post/some-troubles-with-land-suitability-analysis-a-conversation-with-lew/&#34;&gt;obfuscates&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
+&lt;p&gt;Many new packages are introduced in this analysis including &lt;a href=&#34;https://github.com/r-quantities/units/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;units&lt;/a&gt; (to systematically think and capture units such as km^2), &lt;a href=&#34;https://github.com/ecohealthalliance/fasterize&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;fasterize&lt;/a&gt; (fast rasterization) and others such as &lt;code&gt;rasterVis&lt;/code&gt;, &lt;code&gt;terra&lt;/code&gt;, &lt;code&gt;sf&lt;/code&gt; and &lt;code&gt;tidycensus&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The datasets are available &lt;a href=&#34;https://www.dropbox.com/s/ye4b4hjkxripuon/Archive.zip?dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;additional-resources&#34;&gt;Additional resources&lt;/h2&gt;
+&lt;p&gt;I strongly recommend that you read through &lt;a href=&#34;http://rspatial.org/index.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R spatial&lt;/a&gt; by &lt;a href=&#34;https://desp.ucdavis.edu/people/robert-j-hijmans&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Robert Hijmans&lt;/a&gt;, the author of the &lt;code&gt;raster&lt;/code&gt; and &lt;code&gt;terra&lt;/code&gt; packages. In addition, you can also check out the &lt;a href=&#34;https://www.r-exercises.com/tag/geospatial/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R-exercises&lt;/a&gt; tagged as geospatial.&lt;/p&gt;
+&lt;h2 id=&#34;land-suitability-for-locating-a-landfill&#34;&gt;Land Suitability for Locating a Landfill&lt;/h2&gt;
+&lt;p&gt;There are no accepted conventions for identifying the appropriate locations of landfills. Locating one, is a contentious topic, as it is a Locally Unwanted Land Use (LULU). Furthermore, there are many regulatory agencies that are involved in regulating the landfill locations including the Environmental Protection Agency.&lt;/p&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    Nothing in this tutorial is an endorsement of particular criteria used for site selection purposes. This is to be treated as an in-class exercise and caution should be used to interpret the results.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;In this example, I am going to use 4 &lt;em&gt;arbitrary&lt;/em&gt; criteria&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Distance to Schools. (Farther the better)&lt;/li&gt;
+&lt;li&gt;Distance to Parks. (Farther the better)&lt;/li&gt;
+&lt;li&gt;Slope (Flatter the better)&lt;/li&gt;
+&lt;li&gt;Distance to population centres (Sufficiently far, but no further)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;But first set up the project crs by setting it to the crs of the land use raster and also create a template raster, by taking the extent and projection from a land use raster and setting every value to 0.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(terra)
+library(rasterVis)
+library(here)
+library(tidyverse)
+library(fasterize)
+library(sf)
+
+
+
+
+lu_raster &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;landsuitability&amp;quot;, &amp;quot;c11_37063.img&amp;quot;) %&amp;gt;% rast 
+template_raster &amp;lt;- classify(lu_raster, cbind(0, 100, 0), right=FALSE) %&amp;gt;% raster::raster() #fasterize works with raster object instead of spatRaster object. Hence the conversion
+project_crs &amp;lt;- crs(lu_raster)
+
+vector_read_fn &amp;lt;- function(x){
+      if(file.exists(x)){
+          temp1 &amp;lt;- st_read(x, quiet=TRUE) %&amp;gt;% st_transform(project_crs)
+          return(temp1)
+      } 
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;distance-to-schools--parks&#34;&gt;Distance to Schools &amp;amp; Parks&lt;/h3&gt;
+&lt;p&gt;The workhorse functions are &lt;code&gt;gridDistance&lt;/code&gt; and &lt;code&gt;classify&lt;/code&gt; both from the &lt;code&gt;terra&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;gridDistance is a function that calculates the distance to cells of a SpatRaster when the path has to go through the centers of neighboring raster cells. This is effectively like buffering at multiple distances.&lt;/p&gt;
+&lt;p&gt;Xlassify is a function that (re)classifies groups of values to other values. For example, all values between 0 and 1000 become 1, and all values between 1000 and 2000 become 2 in the following code. In particular, see the &lt;code&gt;rcl&lt;/code&gt; matrix argument in &lt;code&gt;?classify&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;schools &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;landsuitability&amp;quot;, &amp;quot;NCDurhamSchools&amp;quot;, &amp;quot;SchoolPts.shp&amp;quot;) %&amp;gt;% vector_read_fn()
+
+
+schools_raster_dist &amp;lt;- schools %&amp;gt;% 
+                  st_buffer(10) %&amp;gt;%  # Fasterize only works with polygons, so we create tiny buffers around the points
+                  fasterize(raster= template_raster, background = 0) %&amp;gt;%
+                  rast %&amp;gt;%  # Converting to SpRaster.
+                  gridDistance(target=1) %&amp;gt;% # Check ?fasterize especially the `field argument on why target is 1.
+                  mask(lu_raster) %&amp;gt;%
+                  classify(rcl = matrix(c(0,1000,1, 1000,2000,2, 2000,4000,3, 4000,8000,4, 8000,Inf,5), ncol=3, byrow = T), include.lowest =T, right = F)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Similar approach can be taken to distance to parks. Here we have three different types of parks, including easement. We just select the geometry and treat them all the same. There is no need to buffer them, because they are already polygons.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+parks &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;landsuitability&amp;quot;, &amp;quot;NCDurhamParksTrailsGreenways&amp;quot;, &amp;quot;Parks.shp&amp;quot;) %&amp;gt;% vector_read_fn() %&amp;gt;% dplyr::select(geometry)
+future &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;landsuitability&amp;quot;, &amp;quot;NCDurhamParksTrailsGreenways&amp;quot;, &amp;quot;Future_Parks.shp&amp;quot;) %&amp;gt;% vector_read_fn() %&amp;gt;% dplyr::select(geometry)
+easements &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;landsuitability&amp;quot;, &amp;quot;NCDurhamParksTrailsGreenways&amp;quot;, &amp;quot;GreenwayEasementParcels.shp&amp;quot;) %&amp;gt;% vector_read_fn() %&amp;gt;% dplyr::select(geometry)
+
+parks_and_others &amp;lt;- reduce(list(parks, future, easements), rbind)
+rm(parks, future, easements)
+
+
+
+parks_others_raster_dist &amp;lt;- parks_and_others  %&amp;gt;% 
+  fasterize(raster= template_raster, background =0) %&amp;gt;%
+  rast() %&amp;gt;%
+  gridDistance(target=1) %&amp;gt;%
+  mask(lu_raster) %&amp;gt;%#Create a new Raster* object that has the same values as x, except for the cells that are NA (or other maskvalue) in a &#39;mask&#39;.
+  classify(rcl = matrix(c(0,500,1, 500,1000,2, 1000,2000,3, 2000,4000,4, 4000,Inf,5), ncol=3, byrow = T), include.lowest=T, right = FALSE)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Visualise them using the following code&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(RColorBrewer)
+schools_raster_dist  %&amp;gt;% plot(col=brewer.pal(5, &amp;quot;PuRd&amp;quot;), type = &amp;quot;classes&amp;quot;, axes=F, main = &amp;quot;Distance to Schools&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;parks_others_raster_dist %&amp;gt;% plot(col=brewer.pal(5, &amp;quot;PuRd&amp;quot;), type = &amp;quot;classes&amp;quot;, axes =F, main = &amp;quot;Distance to Parks&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-4-2.png&#34; width=&#34;672&#34; /&gt;
+&lt;h3 id=&#34;slope&#34;&gt;Slope&lt;/h3&gt;
+&lt;p&gt;Fortunately to calculate slopes in the US, there is an excellent package called &lt;code&gt;elevatr&lt;/code&gt; that downloads the USGS Digital elevation model. USGS Digital elevation models (DEMs) are arrays of regularly spaced elevation values.&lt;/p&gt;
+&lt;p&gt;Once we acquire the raw elevation data, we can use the &lt;code&gt;terrain&lt;/code&gt; function to create the slope raster.&lt;/p&gt;
+&lt;p&gt;Note the use of &lt;code&gt;resample&lt;/code&gt; to make sure that the slope data that conforms to the extent, dimensions and resolution of the original land use dataset.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(elevatr)
+durham_slope &amp;lt;- get_elev_raster(template_raster, z = 11) %&amp;gt;% rast() %&amp;gt;%
+                    terrain(v=&amp;quot;slope&amp;quot;, unit=&amp;quot;degrees&amp;quot;) %&amp;gt;%
+                    resample(lu_raster, method= &amp;quot;bilinear&amp;quot;) %&amp;gt;% 
+                    mask(lu_raster) %&amp;gt;%
+                    classify(rcl = matrix(c(0,5,5, 5,7,4, 7,10,3, 10,13,2, 13,Inf,1), ncol=3, byrow = T), include.lowest=T)
+
+durham_slope  %&amp;gt;% plot(col=brewer.pal(5, &amp;quot;PuRd&amp;quot;), type = &amp;quot;classes&amp;quot;, axes =F, main = &amp;quot;Slope&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;h3 id=&#34;more-complicated-distance-calculations&#34;&gt;More Complicated Distance Calculations&lt;/h3&gt;
+&lt;p&gt;In this subsection, I am going to demonstrate how to use more complicated network distance calculations, instead of a geographic distance that we used earlier. We are going to use &lt;code&gt;gdistance&lt;/code&gt; package by Jacob Van Etten. It is useful to peruse the &lt;a href=&#34;https://cran.r-project.org/web/packages/gdistance/vignettes/Overview.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;vignette for the package&lt;/a&gt;.  Remember raster can be treated as a network/graph that is mostly regular (except at the corners of the raster). Then the problem is simply finding the shortest route on the graph if the we can assign costs to the edges.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/raster_graph.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;To do this, we take advantage of the highway network and its attributes. There is a SPEED_LMT, which we will treat as the speed to traverse that link. The LANES attribute can be used to construct the width of the road and then use it to construct the raster.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(gdistance)
+
+highways &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;landsuitability&amp;quot;, &amp;quot;Roads&amp;quot;, &amp;quot;Roads.shp&amp;quot;) %&amp;gt;% 
+             vector_read_fn() %&amp;gt;% 
+             filter(func_class != &amp;quot;Local Roads&amp;quot;) %&amp;gt;%
+             mutate(LANES = as.numeric(as.character(LANES)),
+                     SPEED_LMT = as.numeric(as.character(SPEED_LMT)),
+                    bufferwidth = ifelse(is.na(LANES), 30, LANES * 30/2)
+                   )%&amp;gt;%
+            st_buffer(dist = .$bufferwidth) %&amp;gt;% 
+            fasterize(template_raster, field = &amp;quot;SPEED_LMT&amp;quot;, fun=&#39;max&#39;)
+
+
+
+highways[is.na(highways)] &amp;lt;- 0
+levelplot(highways, margin = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+highways &amp;lt;- rast(highways)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For the rest of the raster that are not covered by highways, we arbitarily assign a speed based on land cover class. In this instance, we assign of 15mph to developed cells and 5 mph to cells that are forests and other land covers. We also make water, wetlands impassable by assigning them NA speed. We take advantage of the fact that
+&lt;a href=&#34;https://www.mrlc.gov/data/legends/national-land-cover-database-2016-nlcd2016-legend&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;National Land Cover Dataset has two digit code&lt;/a&gt;, which the first digit representing a higher landuse type (Water, Developed etc.). Hence, the integer division by 10 using &lt;code&gt;floor()&lt;/code&gt; discarding the remainder.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+speed_raster &amp;lt;- floor(lu_raster / 10) %&amp;gt;%
+                  classify(rcl = matrix(c(1,NA, 2,15, 3,5, 4,5, 5, 5, 6,5, 7,5, 8,5, 9, NA), ncol=2, byrow=T))
+                    
+                
+combined_speed_raster &amp;lt;- max(speed_raster, highways)
+
+
+p1 &amp;lt;- levelplot(raster(highways), margin = FALSE, main =&#39;Speed on Roads&#39;)
+p2 &amp;lt;- levelplot(raster(combined_speed_raster), margin=FALSE, main = &amp;quot;Speed on all cells&amp;quot;)
+
+library(gridExtra)
+grid.arrange(p1,p2, ncol=2)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Feel free to experiment with other speeds based on other datasets.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;In gdistance package, the edge weights on the neighbor graph are stored using a conductance framework (instead of a resistance) and the key concept is a transition matrix. It is stored as a sparse matrix. It is essentially captures which two cells are connected and how much conductance is there between the two cells. It is useful to work through &lt;a href=&#34;https://gis.stackexchange.com/questions/280593/understanding-the-values-from-transition-layers-produced-by-the-r-package-gdist&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;some toy examples&lt;/a&gt; to understand how to construct the appropriate transition matrix.&lt;/p&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    As of writing this tutorial, gdistance and rastervis does not seem to work very well with SpatRaster but only with rasters from Raster package. Convert and reconvert as necessary.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+Trmatx &amp;lt;- transition(1/(raster(combined_speed_raster)*0.44704) , function(x){1/mean(x)}, 8, symm=TRUE) %&amp;gt;%
+          geoCorrection # 0.44704 is conversion between mph and m/s
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This particular methodology assumes a number of things, including distances by traversing the cells is a good proxy for real travel distance. But sometimes, it may not be. For example, limited access highways can only accessed at very specific locations (interchanges). So least cost travel distance will have to account for the fact that sometimes you will have to travel futher to access a higher speed cell. How would you adjust this method to account for these features?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;In this example, I am going to use population centres as defined  high population density and high population and calculate the network distance to these centres for each pixel in the raster. I am arbitrarily setting that being 1200s is ideal and deviation in either direction is penalised. As usual, I am categorizing the distance raster.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(units)
+#library(tidycensus) # In Oct 2022, the census website was down.
+#durham_blk &amp;lt;- get_decennial(geography = &amp;quot;block&amp;quot;, variables = &amp;quot;P001001&amp;quot;, state = &amp;quot;NC&amp;quot;, county = &amp;quot;Durham&amp;quot;, geometry = T, year = &#39;2010&#39;) %&amp;gt;%
+#                st_transform(crs=project_crs) %&amp;gt;% 
+#                mutate(popdens = value/(st_area(.) %&amp;gt;% set_units(km^2)))
+
+
+durham_blk &amp;lt;-  here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;landsuitability&amp;quot;, &amp;quot;Blocks&amp;quot;, &amp;quot;2010_Census_Blocks.shp&amp;quot;) %&amp;gt;% # This is all NC blocks
+              st_read() %&amp;gt;%
+              mutate(county_fips = str_sub(geoid10, start = 1L, end = 5L)) %&amp;gt;%
+              filter(county_fips == &amp;quot;37063&amp;quot;) %&amp;gt;% # Durham FIPS code
+              st_transform(crs=project_crs) %&amp;gt;%
+              mutate(popdens = total_pop/(st_area(.) %&amp;gt;% set_units(km^2)))
+          
+  
+
+pop_concentrations &amp;lt;- durham_blk %&amp;gt;% 
+                      filter(popdens&amp;gt;set_units(10000, 1/km^2) &amp;amp; total_pop &amp;gt; 300) %&amp;gt;% # Arbitrarily picking 10,000 people/km^2 and 300 people as thresholds
+                      st_centroid()
+
+dist_popcenters_raster &amp;lt;- accCost(Trmatx, pop_concentrations %&amp;gt;% as_Spatial()) %&amp;gt;% 
+                              raster::calc(function(x){ceiling(5-(abs(x-1200)/300))}) %&amp;gt;%  # These are functions in raster not terra. Only using this because acCost gives raster not SpatRaster
+                              raster::clamp(lower=1, upper=5, useValues=FALSE) %&amp;gt;% 
+                              rast()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Convert output from &lt;code&gt;accCost&lt;/code&gt; into a SpatRaster and use functions for terra to achieve the same result.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;dist_popcenters_raster   %&amp;gt;% 
+  mask(lu_raster) %&amp;gt;%
+ plot(col=brewer.pal(5, &amp;quot;PuRd&amp;quot;), type = &amp;quot;classes&amp;quot;, axes =F, main = &amp;quot;Distance to Population Centers&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Boolean (0-1/T-F) rasters have special meaning and arithmetic operations with boolean rasters are effectively boolean algebra. Sum of two boolean rasters is &amp;lsquo;OR&amp;rsquo; and product of two boolean rasters is &lt;code&gt;AND&lt;/code&gt;. Why?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Use these features of Boolean rasters to effectively remove cells from consideration as alternatives to speed up processing. For example, a landfill may not be located on land that is already developed.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;multi-criteria-decision-making&#34;&gt;Multi-criteria Decision Making&lt;/h2&gt;
+&lt;p&gt;Until now, we have 4 criteria. Alternatives were assessed w.r.t. the criteria and there is forced consistency in the scales (1 is worst, 5 is best). Even though, these are ordinal scales, much of land suitability analyses treat them as numerical values.  If so, then a simplest way is combine (add) them all and pick the best cells that score the highest (or at least above a threshold). See for example.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;durham_stack &amp;lt;- c(schools_raster_dist, parks_others_raster_dist,durham_slope,dist_popcenters_raster)
+
+combo_raster &amp;lt;- durham_stack[[1]] + durham_stack[[2]] + durham_stack[[3]] + durham_stack[[4]]
+
+(combo_raster &amp;gt; 18)   %&amp;gt;% plot(type = &amp;quot;classes&amp;quot;, axes =F, main = &amp;quot;Combined (Simple)&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;h3 id=&#34;weighted-linear-combination&#34;&gt;Weighted Linear Combination&lt;/h3&gt;
+&lt;p&gt;The above method treats every criteria equally. There is no reason to think that this should always be the case. If we assign weight to each of the four criteria and combine them according to those weights, then we are peforming weighted linear combination&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;combo_raster &amp;lt;-  durham_stack[[1]]*.2 + durham_stack[[2]]*.25 + durham_stack[[3]] * .4 + durham_stack[[4]]*.15  # Note the abitrary assignment of weights
+(combo_raster &amp;gt; 4.9) %&amp;gt;% plot(type = &amp;quot;classes&amp;quot;, axes =F, main = &amp;quot;Combined (Weighted)&amp;quot;)  #Note the arbitrary cutoff
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;Note that the weights summing to 1 is a matter of convention, not a mathematical necessity (Sort of. It is a necessity, if you want to stick to 1-5 range.). More importantly, this arbitrary assignment of weights obscures  judgments made by the analysts. That is distance from schools is half as important as slope (0.2 vs 0.4) and  is 80% important as distance from parks etc. Furthermore, this weight assignment preserves consistency (i.e. transitive property). Distance to schools is 80% as important as distance to parks; distance to parks is 62.5% as important as slope and distance to school is (0.2/0.25) * (0.25/0.4) = 0.5 as important as slope.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;**Exercise **&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Would it be better to eliminate the alternatives using boolean raster after WLC or before? If before, what is the appropriate step? Why? (Hint: Remember the difference between NA and 0).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;categorical-combination-method&#34;&gt;Categorical Combination Method&lt;/h3&gt;
+&lt;p&gt;While it is true that ordinal scales are treated as numeric often, they can also be treated as nominal by ignoring the order.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;combo_raster &amp;lt;- 
+ lapp(durham_stack, 
+         fun = function(x){paste0(x[[1]],x[[2]],x[[3]],x[[4]], collapse=&amp;quot;&amp;quot;)}
+         )
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I am not displaying the raster because of enormous number of categories. 6 categories (5 levels + NA) in each raster layer with 4 layers, so the total number of combinations are 6^4 = 1,296. Clearly this is not reasonable number of categories from an analytical perspective and only few categories are going to be relevant, such as &amp;ldquo;5555&amp;rdquo; or &amp;ldquo;5455&amp;rdquo; etc. In such an instance it is probably better to reclassify ahead of time to sort for the relevant categories of interest (say for example 2) and restrict the total number of combinations (2^4=16).&lt;/p&gt;
+&lt;h3 id=&#34;analytical-hierarchy-process&#34;&gt;Analytical Hierarchy Process&lt;/h3&gt;
+&lt;p&gt;Developed by Thomas Satay in the 1970s, the Analytical Hierarchy Process (AHP) reduces the complexity of decisions by making the analyst only compare among two alternatives at a time, without sacrificing consistency. It has been widely used in decision making in different sectors (including hiring processes, environmental analyses, product development etc.). In the case of land suitability the AHP is useful to create a set of consistent weights and then applying the weighted linear combination method.&lt;/p&gt;
+&lt;p&gt;For a worked out example, please refer to &lt;a href=&#34;https://en.wikipedia.org/wiki/Analytic_hierarchy_process_%E2%80%93_leader_example&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;this wikipedia article&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The key feature of AHP is the ranking among two criteria using a 1-9 scale, with 1 being the two criteria (e.g. A &amp;amp; B) being equally important and 9 being that A is extremely important compared to B. The rest of them are in between. The idea is to construct a matrix, whose elements represent a pairwise comparison. Also if A is extremely important compared to B (value = 9) the B to A comparison receives a reciprocal value (1/9). In this case, we have 4 criteria, (schools, parks, slope, population centres). By this logic, the diagonal elements are always 1.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;AHPmatrix &amp;lt;- matrix(1,nrow=nlyr(durham_stack), ncol=nlyr(durham_stack))
+row.names(AHPmatrix) &amp;lt;- colnames(AHPmatrix) &amp;lt;- c(&#39;Schools&#39;, &#39;Parks&#39;, &amp;quot;Slope&amp;quot;, &amp;quot;PopulationCenters&amp;quot;)
+AHPmatrix[upper.tri(AHPmatrix)] &amp;lt;- c(2,5,3,4,7,2)
+
+for(i in 1:dim(AHPmatrix)[1]){
+  for(j in i:dim(AHPmatrix)[2])
+    AHPmatrix[j,i] = 1/AHPmatrix[i,j]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Check to make sure that the AHP is indeed of the format required by the process. Once it is correct, the weights on the criteria are given by normalising the largest eigen vector of the matrix. But first we need to check the consistency of the matrix (i.e if the transitive property mostly holds). To do that we compute, &lt;code&gt;\(CI := \frac{(\lambda_{max} - n)}{(n-1)}\)&lt;/code&gt; where &lt;code&gt;\(\lambda_{max}\)&lt;/code&gt; is the largest eigen value of the matrix and &lt;code&gt;\(n\)&lt;/code&gt; is the number of criteria.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;CI &amp;lt;- (Mod(eigen(AHPmatrix)$values[1]) - 4)/3 #Using Modulus to ignore the zero imaginary part of the complex number.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The CI is compared to Random Consistency Index (RCI) from the table below. Pick the right RCI for the right number of criteria.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/The-Random-Consistency-Index-RCI.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;If Consistency Ration (CR) = CI/RCI &amp;lt; 0.10 is TRUE, then the AHP matrix is said to be consistent. If not, revise the weights till consistency is achieved.&lt;/p&gt;
+&lt;p&gt;Once consistency is achieved, the weights on the criteria are calculated by normalising the largest eigen vector of the matrix.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;(weights &amp;lt;- eigen(AHPmatrix, symmetric =F)$vectors[,1] / sum(eigen(AHPmatrix, symmetric =F)$vectors[,1]))
+# [1] 0.47975196+0i 0.33842037+0i 0.11097265+0i 0.07085501+0i
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This demonstrates that Schools weigthed the highest followed by Parks in the pairwise weighting. The analysis then proceeds just like Weighted Linear Combination method.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;combo_raster &amp;lt;- durham_stack[[1]]*Re(weights)[1] + durham_stack[[2]]*Re(weights)[2] + durham_stack[[3]]*Re(weights)[3] + durham_stack[[4]]*Re(weights)[4]
+                   
+(combo_raster &amp;gt; 4.9) %&amp;gt;% plot(type = &amp;quot;classes&amp;quot;, axes =F, main = &amp;quot;Combined (AHP)&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/land-suitabilty-with-ahp-wlc/index_files/figure-html/unnamed-chunk-17-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Experiment with increasing and decreasing the number of criteria.&lt;/li&gt;
+&lt;li&gt;Experiment with different AHP matrices to identify consistency issues.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;These are but some very basic and tried and tested methods used in planning practise. There are significant advances since the 70s including using fuzzy arithmetic, non-linear combinations etc. However, the point of many of these methods is not to identify the right locations, but provide a basis for discussion with relevant participants in the decision making processes.&lt;/p&gt;
+&lt;p&gt;It should however be noted that Multi-Criteria Decision Making and land suitability analyses are often presented as rational methods for making decisions about land uses. I hope I have demonstrated, in this tutorial, the subjective nature of the process. Please re-read the &lt;a href=&#34;https://nkaza.github.io/post/some-troubles-with-land-suitability-analysis-a-conversation-with-lew/&#34;&gt;caveats&lt;/a&gt;.The things we choose to care about, says a lot about the values of the analyst.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

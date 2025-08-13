@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>landscape-metrics | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/tag/landscape-metrics/</link>
+      <atom:link href="https://nkaza.github.io/tag/landscape-metrics/index.xml" rel="self" type="application/rss+xml" />
+    <description>landscape-metrics</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Thu, 02 May 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>landscape-metrics</title>
+      <link>https://nkaza.github.io/tag/landscape-metrics/</link>
+    </image>
+    
+    <item>
+      <title>Landscape Shape Adjusted Compactness Index</title>
+      <link>https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/</link>
+      <pubDate>Thu, 02 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34; id=&#34;toc-introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#extent-shape-adjustment&#34; id=&#34;toc-extent-shape-adjustment&#34;&gt;Extent Shape Adjustment&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#urban-compactness-scores-redux&#34; id=&#34;toc-urban-compactness-scores-redux&#34;&gt;Urban Compactness Scores Redux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#significant-changes-in-the-compactness-score&#34; id=&#34;toc-significant-changes-in-the-compactness-score&#34;&gt;Significant changes in the compactness score&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusions&#34; id=&#34;toc-conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;An updated method is &lt;a href=&#34;https://nkaza.github.io/publication/kaza-2019-ab&#34;&gt;published&lt;/a&gt; in&lt;/p&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Kaza, N. Landscape shape adjusted compactness index for urban areas. GeoJournal (2020). &lt;a href=&#34;https://doi-org./10.1007/s10708-020-10262-9&#34; class=&#34;uri&#34;&gt;https://doi-org./10.1007/s10708-020-10262-9&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The indices can be downloaded from &lt;a href=&#34;https://dataverse.unc.edu/dataset.xhtml?persistentId=doi:10.15139/S3/YLZEH4&#34;&gt;UNC dataverse&lt;/a&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/a-new-compactness-index-for-urban-patterns/&#34;&gt;earlier post&lt;/a&gt;, I demonstrated some of the problems associated with the Index of Moment of Inertia to characterise the compactness of urban form. One of the chief problems is related to the shape of the unit of analysis. In our case, it is the County. If the shape of the county is elongated, urban areas within these counties have conform to this shape. Because moment of inertia is calculated with respect to the circle, these areas are `unfairly’ penalised.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/threecounties.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Illustration of the effect of landscape shape on IMI. County boundaries are in red, while black represents urban areas&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;In the above figures, IMI for Manhattan (New York, NY) is 0.27. It is one of the densest places in the US and among the most compact by many other measures. Yet IMI puts in the middle of the pack of all the counties in the continental US. Similarly, Portland (Multanomah, OR) has IMI of 0.53, while somewhat high, is not indicative of the reputation of the city and the region as a icon of growth management in the country. Examples like these are abound.&lt;/p&gt;
+&lt;p&gt;In this post, I will provide an characterisation of a index that will mitigate this issue to some extent.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;extent-shape-adjustment&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Extent Shape Adjustment&lt;/h1&gt;
+&lt;p&gt;Recall that IMI was defined as the ratio of MIs of the urban area and corresponding disk.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[IMI_{undaj} := \frac{A^2}{2 \pi \sum_{i \in S} s^2 (\frac{s^2}{6} + d_i^2) \unicode{x1D7D9}_i } \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; is the area of the urban area and &lt;span class=&#34;math inline&#34;&gt;\(s\)&lt;/span&gt; is the raster resolution. IMI for the boundary/landscape shape can also be similarly defined, as long as the raster resolution is the same;call it &lt;span class=&#34;math inline&#34;&gt;\(IMI_p\)&lt;/span&gt;. Define adjusted IMI as&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[IMI_{adj} := IMI_{unadj}^{IMI_p}\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Recall that IMI is &lt;span class=&#34;math inline&#34;&gt;\((0,1)\)&lt;/span&gt;. &lt;span class=&#34;math inline&#34;&gt;\(IMI_p\)&lt;/span&gt; for elongated shapes is closer to 0 and for more compact shapes like square and circles are closer to 1. Urban areas within landscapes that are ‘compact’ will have IMI similar to unadjusted IMI, while urban areas in elongated or in disconnected and distant (multi) shapes receive a much higher score than before. Since &lt;span class=&#34;math inline&#34;&gt;\(IMI_p &amp;lt; 1\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(IMI_{adj} &amp;gt; IMI_{unadj}\)&lt;/span&gt;. Thus, the adjustment is non-linear, monotonic and is bounded.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/manhattan_illustration.png&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The ratios of MI of various polygons in the following figure illustrate the adjustment. Black represents urban areas, while the black circle is the corresponding circle of the same area.
+The red polygon is the county boundary, while the red circle is the corresponding circle of the same area as the boundary.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;urban-compactness-scores-redux&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Urban Compactness Scores Redux&lt;/h1&gt;
+&lt;p&gt;It should be noted that the raster data comes from the National Land cover dataset and is pre-processed using &lt;a href=&#34;https://nkaza.github.io/post/2018-07-01-urban-morphology-landscape-metrics/urban-morphology-landscape-metrics/&#34;&gt;various procedures described elsewhere&lt;/a&gt;. The boundary files for the US counties are &lt;a href=&#34;ftp://ftp2.census.gov/geo/tiger&#34;&gt;downloaded from the US Census&lt;/a&gt; and include water. Future indices could correct these boundaries to exclude non-developable land (including high slopes). At the moment, this version of the index only accounts for shape of the county, but these other extensions are relatively straightforward.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-1.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;At the first glance, the map above is not that different from the map of unadjusted IMI compactness scores. This is partly because many of the counties whose scores are likely to change because of the county shape are small and choropleth maps are a terrible way to visualise the information. However, the stability of the compactness score is apparent in the table below, which shows the to most compact county in each Census Division, especially when compared against the unadjusted IMIs. Only in Pacific (San Francisco) and New England (Suffolk) the most compact county has changed from the previous &lt;a href=&#34;(/post/2019-04-24-a-new-compactness-index-for-urban-patterns/a-new-compactness-index-for-urban-patterns/)&#34;&gt;list&lt;/a&gt;.&lt;/p&gt;
+&lt;table class=&#34;table table-striped&#34; style=&#34;width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;caption&gt;
+&lt;span id=&#34;tab:unnamed-chunk-2&#34;&gt;Table 1: &lt;/span&gt;Most Compact Counties according to IMI
+&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Division
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+County
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+IMI
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+IMI_unadj
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+East North Central
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Marion County, Indiana
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.85
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.84
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+East South Central
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Shelby County, Tennessee
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.70
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.67
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Middle Atlantic
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Kings County, New York
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.83
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.82
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mountain
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Salt Lake County, Utah
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.77
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.76
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New England
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Suffolk County, Massachusetts
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.71
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.41
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pacific
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Francisco County, California
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.91
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.49
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+South Atlantic
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Roanoke city, Virginia
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.85
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.84
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+West North Central
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+St. Louis city, Missouri
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.80
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.73
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+West South Central
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Dallas County, Texas
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.74
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.73
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;significant-changes-in-the-compactness-score&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Significant changes in the compactness score&lt;/h1&gt;
+&lt;p&gt;It is thus useful to explicitly note where adjustment has changed the compact score most. Since percentage changes are susceptible to small numbers and because many of the counties have extraordinarily low scores (&amp;lt;.01), I only report the absolute changes.&lt;/p&gt;
+&lt;table class=&#34;table table-striped&#34; style=&#34;width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;caption&gt;
+&lt;span id=&#34;tab:unnamed-chunk-3&#34;&gt;Table 2: &lt;/span&gt;Counties that experienced the most change in the score because of adjustment
+&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+Division
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+County
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+IMI
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+IMI_unadj
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+East North Central
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Rock Island County, Illinois
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.58
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.20
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+East South Central
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pickett County, Tennessee
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.26
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.03
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Middle Atlantic
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New York County, New York
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.60
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.27
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Mountain
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Denver County, Colorado
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.71
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.33
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+New England
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Suffolk County, Massachusetts
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.71
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.41
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pacific
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+San Francisco County, California
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.91
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.49
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+South Atlantic
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Fulton County, Georgia
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.61
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.20
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+West North Central
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Pennington County, South Dakota
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.30
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.06
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+West South Central
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Jefferson Parish, Louisiana
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.68
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.17
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Many of these counties experience significant changes in the compactness score. In particular, New York county (Manhattan) goes from 0.20 (relatively non-compact) to 0.61 (moderately compact). The largest gains seems to be in San Francisco, CA and Fulton, GA (Atlanta). While this adjustment seems to provide defensible indicators for San Francisco, the value for Fulton should remind us that IMI does not capture the effect of density by only the level of dispersion of fragmentary urban patterns.&lt;/p&gt;
+&lt;p&gt;In the following map, I show the spatial distribution of counties that experienced more than 0.1 change in index because of adjustment. The size of the circle is proportional to the size of the change. The changes are more apparent in this dot plot than the choropleth map.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-4.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;It is interesting to note that there is little relationship between level of urbanisation of a county and the change in the IMI score, on average. The following figure shows how much variation there is in the IMI changes because of the adjustment.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/landscape-shape-adjusted-compactness-index/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;While the current adjustment for landscape shape makes the IMI more representative of the compactness of urban form, it should be noted that it does not fully capture our intuitive understanding of compact urban form. Thus, it should be used with other indicators to fully capture the richness of the multi-dimensionality of urban condition.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Urban Change &amp; Its Impacts</title>
+      <link>https://nkaza.github.io/project/urban-change/</link>
+      <pubDate>Fri, 27 Apr 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/project/urban-change/</guid>
+      <description>&lt;p&gt;It is notoriously hard to measure and track &amp;lsquo;urban&amp;rsquo; as there are multiple dimensions to it; social, demographic, geographic, perceputal, environmental and  patterns of growth and decline. In this long standing research project, we seek to provide some novel ways of understanding our urban environments operate and change, and how those changes shape our behaviours. In doing so, we seek to understand the limitations as well as the suitability of measurements from various types of data streams (administrative to environmental sensors). By tracking the changes in these measurements, we seek characterise urban change around the world.&lt;/p&gt;
+&lt;p&gt;For example, in &lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.03.008&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;McCarty &amp;amp; Kaza(2015)&lt;/a&gt; we used data from different air pollution sensors in a county to calculate the number of days with bad air quality in a year. We then relate it to &lt;a href=&#34;https://sia.planning.unc.edu/post/urban-morphology-landscape-metrics/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;urban fragmentation metrics&lt;/a&gt; obtained from land cover data. We find that while counties with higher forest land area have higher number of polluted days. This effect is mitigated when these forests are closer to urban areas. Similarly, urban form measured as land use density or type or measured as geomorphometry have been shown to have different  on energy consumption patterns in cities.&lt;/p&gt;
+&lt;p&gt;At the same time, urban economy is also rapidly changing. One narrative of the cities argues for understanding and applauding the renaissance of cities during the decades of 1990s and 2000s (comeback cities). Another narrative suggest that this renaissance is highly uneven and is concentrated in innovative regions, while cities in the rest of the   regions (backwards) are loosing ground. To provide evidence for explanations and to disentangle the causes of these phenomena are some of the main motivations of this project.&lt;/p&gt;
+&lt;p&gt;A natural outgrowth of this research is produce different plausible futures of urban form in different places. Since the configuration as well as the extent of urban form matter for climate as well as environmental outcomes, we seek to develop methods for projecting different futures based on various patterns, we observe in the past and learn from them.&lt;/p&gt;
+&lt;p&gt;Our goal is to expand the repertoire of urban areas to include areas from various parts of the world, including Asia, Africa and South America.&lt;/p&gt;
+&lt;h2 id=&#34;collaborators&#34;&gt;Collaborators&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.twilliamlester.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;T. William Lester&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.urban-three.com/josh-mccarty/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Josh McCarty&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The changing urban landscape of continental United States</title>
+      <link>https://nkaza.github.io/publication/kaza-changing-2013/</link>
+      <pubDate>Tue, 01 Jan 2013 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/publication/kaza-changing-2013/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,851 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>machine-learning | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/category/machine-learning/</link>
+      <atom:link href="https://nkaza.github.io/category/machine-learning/index.xml" rel="self" type="application/rss+xml" />
+    <description>machine-learning</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Fri, 20 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>machine-learning</title>
+      <link>https://nkaza.github.io/category/machine-learning/</link>
+    </image>
+    
+    <item>
+      <title>Unsupervised Clustering </title>
+      <link>https://nkaza.github.io/post/unsupervised-clustering/</link>
+      <pubDate>Fri, 20 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/unsupervised-clustering/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/unsupervised-clustering/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#what-is-the-point&#34;&gt;What is the point?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In an earlier &lt;a href=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/&#34;&gt;post&lt;/a&gt;, I used location information to identify spatial patterns/clusters. Recall that space is, often simply 2 dimensional dataset (X,Y) coordinates. There is no reason to presume that clusters are of interest only in geographic space. Higher dimensional and non spatial datasets are of interest to planners as well. In this post, I am going to demonstrate few tried and tested methods to identify patterns in higher dimensional data about urban indicators.&lt;/p&gt;
+&lt;p&gt;Unsupervised learning works by identifying patterns in the data. The following graphic vividly illustrates the point.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/unsupervised.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Source: Booz Allen Hamilton&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-required-packages&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data &amp;amp; Required Packages&lt;/h2&gt;
+&lt;p&gt;In this tutorial, I am going to use different &lt;a href=&#34;https://www.dropbox.com/s/ctf2kvf04771da3/2k11_metrics_2019.csv?dl=0&#34;&gt;urban landscape metrics&lt;/a&gt; that were found using methods described in &lt;a href=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/&#34;&gt;other posts&lt;/a&gt;, at a county level for all the 3,100 counties in the conteminous United States for the 2011 land cover data. In additon, I am going restrict my attention few of the counties classified as &lt;a href=&#34;https://www.dropbox.com/s/k394ex8bbeeqvm0/NCHSURCodes2013.xlsx?dl=0&#34;&gt;Large Fringe Metro counties and Medium Metro counties&lt;/a&gt;, by the &lt;a href=&#34;https://www.cdc.gov/nchs/data/series/sr_02/sr02_166.pdf&#34;&gt;National Center for Health Statistics&lt;/a&gt; using the 2013 datasets.&lt;/p&gt;
+&lt;p&gt;For this tutorial, in addition to other packages for visualisation, you will need to install and initalise &lt;code&gt;factoExtra&lt;/code&gt; and &lt;code&gt;cluster&lt;/code&gt; packages.&lt;/p&gt;
+&lt;p&gt;Prepare the dataset as follows. It is often necessary to scale the variables in machine learning. Conventional scaling is to subtract the mean and divide by the standard deviation. But, any appropriate scaling techniques can be used as shown below.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+library(tidyverse)
+library(skimr)
+library(openxlsx)
+library(tigris)
+library(cluster)
+library(factoextra)
+library(here)
+
+
+
+county_df &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;,&amp;quot;unsupervisedclustering&amp;quot;,&amp;quot;2k11_metrics_2019.csv&amp;quot;) %&amp;gt;%
+                  read_csv()  %&amp;gt;%
+                  mutate(FIPS = cntyfips %&amp;gt;% as.integer %&amp;gt;% formatC(width=5, flag=&amp;quot;0&amp;quot;)) 
+
+nchsurc_codes &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;,&amp;quot;unsupervisedclustering&amp;quot;,&amp;quot;NCHSURCodes2013.xlsx&amp;quot;) %&amp;gt;%
+                  read.xlsx() %&amp;gt;%
+                  as_tibble() %&amp;gt;%
+                  mutate(FIPS = `FIPS.code` %&amp;gt;% as.integer %&amp;gt;% formatC(width=5, flag=&amp;quot;0&amp;quot;)) %&amp;gt;%
+                  dplyr::select(FIPS, CountyName = County.name, CBSA = CBSA.title, NCHSURC_code = Code2013) %&amp;gt;%
+                  mutate(NCHSURC_code  = NCHSURC_code %&amp;gt;% as.factor)
+
+county_df &amp;lt;- county_df %&amp;gt;% 
+              left_join(nchsurc_codes)
+
+county_df_scaled &amp;lt;- county_df %&amp;gt;%
+                      mutate_if(is.numeric, scale) 
+
+# county_df_scaled %&amp;gt;% skim()
+
+
+scale2 &amp;lt;- function(x, na.rm = TRUE) ((x) / (max(x, na.rm=na.rm) - min(x,na.rm=na.rm)))
+
+county_df_scaled2 &amp;lt;- county_df %&amp;gt;%
+                     mutate_if(is.numeric, scale2) 
+
+# county_df_scaled2 %&amp;gt;% skim()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;different-clustering-techniques&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Different clustering techniques&lt;/h2&gt;
+&lt;p&gt;All clustering techniques rely on the notion of distance. It is fairly straightforward to think of geographic (eulcidean) distance &lt;span class=&#34;math inline&#34;&gt;\(d(i,j)\)&lt;/span&gt; between two points &lt;span class=&#34;math inline&#34;&gt;\(i:= (x_i,y_i, z_i), j:= (x_j,y_j, z_i)\)&lt;/span&gt; as&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\sqrt{(x_i-x_j)^2 + (y_i -y_j)^2 + (z_i -z_j)^2}\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;But there are other types of distances that are possible as well. For example, Manhattan distance is&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[|x_i-x_j| + |y_i-y_j| + |z_i-z_j|\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In fact distance can be any metric that satisfies&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(d(i,j) = 0\)&lt;/span&gt; if and only if &lt;span class=&#34;math inline&#34;&gt;\(i = j\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(d(i,j) \leq d(i,k) + d(j,k)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;There are others criteria, but the above two are most important. Note that &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt;,&lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt;,&lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; can be of any dimensions. Some popular distances are Manhattan distance, &lt;span class=&#34;math inline&#34;&gt;\(L_p\)&lt;/span&gt; norm, Minkowski distance, Hamming distance, Cosine Simiarlity etc.&lt;/p&gt;
+&lt;div id=&#34;partition-based-clustering&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Partition based clustering&lt;/h3&gt;
+&lt;p&gt;The &lt;em&gt;K-Means algorithm&lt;/em&gt; is perhaps the most well known, clusters data by trying to separate samples into &lt;span class=&#34;math inline&#34;&gt;\(K\)&lt;/span&gt; groups, minimizing a criterion known as within-cluster sum-of-squares, by focusing on euclidean distance. This algorithm requires the number of clusters to be specified. It scales well to large number of samples and has been used across a large range of application areas in many different fields. This algorithm is susceptible to outliers that skew the euclidean norm. The following animation provides some indication of how the algorithm works.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://media.giphy.com/media/12vVAGkaqHUqCQ/source.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;em&gt;Partition around Medoids&lt;/em&gt; (PAM) on the other hand, is bit more robust than k-means. Instead of finding the centroids (white xs in the above animation), the algorithm finds a ‘medoid’ (a representative point that is a member of the set). Note that centroids may not be members of the cluster. As such, PAM can accept any distance metric or dissimilarity matrix, instead of calculating the distance on the fly.&lt;/p&gt;
+&lt;p&gt;In the rest of the tutorial, I am going to restrict my attention to a subset of counties (large fringe and medium metro) and a subset of variables (number of patches, mean and variance in patch areas). The following code divides the dataset into 5 clusters using K-means and PAM.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+county_df_scaled_sel &amp;lt;- county_df_scaled %&amp;gt;% 
+                        filter(NCHSURC_code %in% c(2,3)) %&amp;gt;%
+                        select(FIPS, n.patches, mean.patch.area, sd.patch.area)%&amp;gt;%
+                        na.omit()
+
+km.res &amp;lt;- county_df_scaled_sel %&amp;gt;%
+          select(-FIPS) %&amp;gt;%
+          kmeans(5, nstart = 25, iter.max=30)
+
+pm.res &amp;lt;- county_df_scaled_sel %&amp;gt;%
+  select(-FIPS) %&amp;gt;%
+  pam(k = 5)
+
+as_tibble(cbind(pam =pm.res$cluster %&amp;gt;% as.factor(), kmeans = km.res$cluster %&amp;gt;% as.factor)) %&amp;gt;%
+  table()
+#    kmeans
+# pam   1   2   3   4   5
+#   1   0   0 286   0   0
+#   2   0   0  27   0 124
+#   3   0   0  17  57  74
+#   4   0  54   0   6  21
+#   5  14   0   0  58   0&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;From the above table, it should be apparent that the both the algorithms produce very different set of clusters. While most of the cluster 3 identified by K-means are also identified as cluster 1, half of the cluster 1 in k-means is split between clusters 3 and 5 of PAM.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise &lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Change the cluster numbers and other parameters&lt;/li&gt;
+&lt;li&gt;Note that we scaled the dataset and then filtered it. This seems problematic for any number of reasons (means and variances are different for the different subsets). What if we reversed the operation, i.e. first filtering and then scaling. How do the results change?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;One of the problems with the partition based methods is that we have to apriori specify the number of clusters that we intend to find. This is often problematic. But over the years, some heuristics have been developed to identify the appropriate number of clusters. One popular heuristic is called the ‘eblow’ method. The point of the eblow method is to repeat the clustering for the arbitary number of clusters and identify the number at which there is &lt;code&gt;kink&lt;/code&gt; in the Total WSS. In the following figure, it is around 9.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+county_df_scaled_sel %&amp;gt;%
+  select(-FIPS) %&amp;gt;%
+  fviz_nbclust(pam, method = &amp;quot;wss&amp;quot;, k.max=20)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/unsupervised-clustering/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The idea is that after 9 clusters, the total sum of WSS does not decrease significantly for the effort that is put in.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://datasciencelab.wordpress.com/tag/gap-statistic/&#34;&gt;Gap statistic&lt;/a&gt; is a more robust way of selecting the number of clusters. This is based on bootstrapping (repeated sampling the dataset and constructing empirical distributions).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;county_df_scaled_sel %&amp;gt;%
+  select(-FIPS) %&amp;gt;%
+  fviz_nbclust(pam, method = &amp;quot;gap_stat&amp;quot;, k.max=20)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;img/gapstat.png&#34; /&gt;
+In this particular instance, the number of clusters suggested by the gap-stastistic and elbow method are the same.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise &lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Compute the ‘right’ number of clusters for both K-means and PAM. Save these into columns named &lt;code&gt;knn_cluster&lt;/code&gt; and &lt;code&gt;pam_cluster&lt;/code&gt; etc. Make sure they are all stored as factors.&lt;/li&gt;
+&lt;li&gt;Note the PAM can take different distance/dissimiarlity matrix instead of a matrixof observations. Use &lt;code&gt;get_dist&lt;/code&gt; from &lt;code&gt;factoExtra&lt;/code&gt; to compute a different dissimilarity matrix and use PAM to identify clusters&lt;/li&gt;
+&lt;li&gt;CLARA is another algorithm, similar to PAM to identify clusters in large datasets. Instead of the subset of counties, use this algorithm on the full dataset.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;agglomerative-hierarchical-clustering&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Agglomerative Hierarchical Clustering&lt;/h3&gt;
+&lt;p&gt;In this mode of clustering, each point starts out as it own cluster and then the nearest point is added to it in iterative fashion. This builds a dendogram. To determine, what nearest point is, we have to define a linkage function. The linkage function could be minimum of maximum distance between the candidate point and the candidate cluster or average to all points in the candidate cluster etc. The following animation, illustrates the point&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/hierarch_1.gif&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;source: &lt;a href=&#34;https://dashee87.github.io/data%20science/general/Clustering-with-Scikit-with-GIFs/&#34; class=&#34;uri&#34;&gt;https://dashee87.github.io/data%20science/general/Clustering-with-Scikit-with-GIFs/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Once this dendrogram is constructed, all that is left is is to cut it at an ‘appropriate height’ to get the clusters.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+res.hc &amp;lt;- county_df_scaled_sel%&amp;gt;% 
+        select(n.patches, mean.patch.area, sd.patch.area) %&amp;gt;%
+         get_dist(method = &amp;quot;pearson&amp;quot;) %&amp;gt;%
+         hclust(method = &amp;quot;ward.D2&amp;quot;)     # Compute hierachical clustering
+
+# Visualize using factoextra
+# Cut in 4 groups and color by groups
+
+fviz_dend(res.hc, k = 4, # Cut in four groups
+          k_colors = c(&amp;quot;#2E9FDF&amp;quot;, &amp;quot;#00AFBB&amp;quot;, &amp;quot;#E7B800&amp;quot;, &amp;quot;#FC4E07&amp;quot;),
+          color_labels_by_k = TRUE, # color labels by groups
+          rect = TRUE, # Add rectangle around groups
+          show_labels = FALSE
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/unsupervised-clustering/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+county_df_scaled_sel$hc_cluster &amp;lt;- cutree(res.hc,4) %&amp;gt;% as.factor()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;clustering-using-random-forest&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Clustering using Random Forest&lt;/h2&gt;
+&lt;p&gt;While tree based weak learners are often used for ‘supervised learning’, it is possible to use them for unsupervised learning as well. The idea is construct a ‘proximity’ matrix among the observations using lots of these weak learners (trees) and use the hierarchical clustering (or any other) to identify the clusters. The trick is to simulate points from the same distribution as the ‘real data’ and then try to use random forest to predict/classify whether the points are ‘real’ or ‘simulated’. But the real use is to create the proximity matrix, which is an nxn matrix where each value is the proportion of times the ‘real’ observations &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt; end up in the same terminal node.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+
+library(randomForest)
+
+rf.fit &amp;lt;- county_df_scaled_sel %&amp;gt;%
+          select(n.patches, mean.patch.area, sd.patch.area) %&amp;gt;%
+          randomForest(y = NULL, ntree = 10000, proximity = TRUE, oob.prox = TRUE)
+
+hclust.rf &amp;lt;- hclust(as.dist(1-rf.fit$proximity), method = &amp;quot;ward.D2&amp;quot;)
+
+county_df_scaled_sel$rf_cluster &amp;lt;- cutree(hclust.rf,4) %&amp;gt;% as.factor()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-is-the-point&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;What is the point?&lt;/h1&gt;
+&lt;p&gt;The point of all these classification is to see if we can find some patterns in the dataset that we can say something about. To do that we will have to examine how these cluster classification say something about the patterns within the data. One way to do it is to look back as the observations relative to the clustering.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+for(clustertype in c(&amp;quot;knn_cluster&amp;quot;, &amp;quot;pam_cluster&amp;quot;, &amp;quot;hc_cluster&amp;quot;, &amp;quot;rf_cluster&amp;quot;)){
+g1 &amp;lt;-  
+  county_df_scaled_sel %&amp;gt;%
+  select(n.patches, mean.patch.area, sd.patch.area, all_of(clustertype)) %&amp;gt;%
+  pivot_longer(-all_of(clustertype), names_to = &amp;quot;variable&amp;quot;, values_to = &amp;quot;val&amp;quot;) %&amp;gt;%
+  ggplot() +
+  geom_density(aes_string(x = &amp;quot;val&amp;quot;, color=clustertype)) + # Note the use of aes_string instead of aes to account for the variable name &amp;#39;clustertype&amp;#39; which is not a column name.
+  geom_rug(aes_string(x = &amp;quot;val&amp;quot;, color=clustertype)) + # Note the use of quotes around val, when used with aes_string instead of aes
+  facet_wrap(~variable) +
+  xlab(&amp;#39;Value&amp;#39;) +
+  ggtitle(clustertype)
+
+print(g1)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/unsupervised-clustering/index_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;https://nkaza.github.io/post/unsupervised-clustering/index_files/figure-html/unnamed-chunk-8-2.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;https://nkaza.github.io/post/unsupervised-clustering/index_files/figure-html/unnamed-chunk-8-3.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;https://nkaza.github.io/post/unsupervised-clustering/index_files/figure-html/unnamed-chunk-8-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The cluster may or may not make any substantive sense. It is up to the analyst to interpret the results to draw meaningful conclusions.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise &lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Are there any spatial patterns of these clusters? Does visualising a map tell us much about these clusters?&lt;/li&gt;
+&lt;li&gt;Does it matter that we used a subset of counties? What happens when we try to cluster for the entire dataset?&lt;/li&gt;
+&lt;li&gt;What happens when we try to identify subsets in different qualitative subsets, say in non-metro counties in Pacific Northwest? Are the clusters more meaningful then?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;Unsupervised classification and learning is a task that requires a lot of finesse, judgement, substantive expertise and is an art form. Just like any other technique, we have dealt with in the course. The only way to get better, is to constantly re-evaluate how the clusters that are identified by different algorithms are sensitive to particular choices the analyst makes and develop an intuitive understanding of the structure of the data. The clusters might also point to further investigations into anamolies that shed some light on the data generating processes. All in all, these techniques should help with getting a better handle on what we are measuring and how we measure. And then the much harder task is to make sense what these clusters are telling us substantively.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Machine Learning for Remote Sensing</title>
+      <link>https://nkaza.github.io/post/machine-learning-for-remote-sensing/</link>
+      <pubDate>Tue, 07 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/machine-learning-for-remote-sensing/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Machine learning (ML) is currently a buzzword in urban analytics. It is a process of automated model building that generates a predictive model that can reasonably explain not just the data that it is trained on, but generalised to other data from the same data generating process. Traditional models are rules that operate on data to produce and output. Machine learning approaches, on the other hand, usually take outputs and data to figure out the appropriate rules. While traditional models have to rely upon external justification for the rules, the promise of ML is that it discovers these rules empirically, without a theoretical basis for understanding the correlations among the different variables.One important thing to note about machine learning is that the models are restricted to the hypothesis space and the search is not among the arbitrary model specifications. For example, in machine learning, that is about logistic regression model, the features are restricted to enter the model in a linear fashion, where as in a decision tree, they behave non-linearly based on the partition. While this may be too esoteric for students who are starting out on understanding ML techniques, it is useful to temper the expectations regarding what kinds of models can we expect to be generated by the various algorithms. In other words, there is no guarantee that the ML model is the &lt;code&gt;best&lt;/code&gt; model that explains and predicts the observed data. Practical ML is as much an art as it is a science.&lt;/p&gt;
+&lt;p&gt;It might be beneficial to illustrate some of the salient points about ML though a practical example that interests planners. Identifying objects and land use classes from remotely sensed images of urban areas.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;stages-of-ml-approach&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Stages of ML approach&lt;/h2&gt;
+&lt;p&gt;There are 5 distinct stages of Machine Learning. Let’s focus on supervised learning, a subset of ML approaches. In supervised learning, target outcome is known for a vector of features and the dataset consists of a collection of the features and target. So for example, land use class is frequently the target (dependent variable) and the features (independent variables) are various bands, indices, textures, proximity etc.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Identifying appropriate data sources, especially labelled data. Wrangle, Clean and Assemble (Data Preprocessing)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Feature Engineering. Identify the right variable combinations from the independent variables.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Splitting the data into training, validation and holdout.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Iterating over the algorithm to fit best explain the training dataset. Use the validation data to tune the model.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Choosing the best model that does well (prediction) on the holdout dataset.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;ML approaches are fundamentally iterative. I cannot emphasise this enough. While there are distinct steps in the approaches, because later stages crucially depend on earlier stages, all stages, except the last one, are iterative. We usually iterate to find better fitting algorithms to the data, which necessitates changes to feature engineering and selection as shown in the figure below.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/1528719478855-image3[4].png&#34; style=&#34;width:100.0%;height:100.0%&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Image credit: &lt;a href=&#34;https://www.zeolearn.com/magazine/understanding-the-human-process-in-machine-learning&#34;&gt;Goyal (2018)&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;In the following steps, for the sake of brevity, I do not demonstrate the iterative aspects of ML.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-acquisition-and-preprocessing&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data Acquisition and Preprocessing&lt;/h2&gt;
+&lt;p&gt;For this exercise, I am going to use a 3m, 4-band Planetscope image from around Wuhan, China. You can download it from around &lt;a href=&#34;https://www.dropbox.com/s/thx2gdi7230qme2/data.zip?dl=0&#34;&gt;here&lt;/a&gt;. The 4 bands are Blue, Green, Red and Near Infra Red (NIR). These are initial set of features.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(terra)
+library(here)
+library(tidyverse)
+library(sf)
+
+wuhan_raster &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;wuhanremotesensing&amp;quot;, &amp;quot;20170914_022008_0f28_3B_AnalyticMS.tif&amp;quot;) %&amp;gt;% rast()
+names(wuhan_raster) &amp;lt;- c(&amp;#39;Blue&amp;#39;, &amp;quot;Green&amp;quot;, &amp;quot;Red&amp;quot;, &amp;#39;NIR&amp;#39;)
+wuhan_raster
+# class       : SpatRaster 
+# dimensions  : 4695, 9068, 4  (nrow, ncol, nlyr)
+# resolution  : 3, 3  (x, y)
+# extent      : 231990, 259194, 3372027, 3386112  (xmin, xmax, ymin, ymax)
+# coord. ref. : WGS 84 / UTM zone 50N (EPSG:32650) 
+# source      : 20170914_022008_0f28_3B_AnalyticMS.tif 
+# names       : Blue, Green, Red, NIR
+
+plotRGB(wuhan_raster, r=3, g=2, b=1, stretch=&amp;#39;hist&amp;#39;, main=&amp;#39;True color composite&amp;#39;) #TRUE colour composite&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plotRGB(wuhan_raster, r=4,g=3,b=2, stretch=&amp;#39;hist&amp;#39;, main = &amp;#39;False color composite&amp;#39;) # FALSE colour Composite&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-1-2.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The labels are vector data derived from Openstreetmap data. It is available as part of the zip file you downloaded earlier. In particular, the labels are in the ‘landuse’ class.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt; library(sf)
+ shp &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;wuhanremotesensing&amp;quot;, &amp;quot;landuse3.shp&amp;quot;) %&amp;gt;% st_read
+# Reading layer `landuse3&amp;#39; from data source 
+#   `/Users/kaza/Dropbox/website_new/website/tutorials_datasets/wuhanremotesensing/landuse3.shp&amp;#39; 
+#   using driver `ESRI Shapefile&amp;#39;
+# Simple feature collection with 629 features and 25 fields
+# Geometry type: MULTIPOLYGON
+# Dimension:     XY
+# Bounding box:  xmin: 114.21 ymin: 30.45716 xmax: 114.4891 ymax: 30.57547
+# Geodetic CRS:  WGS 84
+shp &amp;lt;- st_transform(shp, crs(wuhan_raster)) 
+
+## Note that shp was not in the same projection as raster, so transform it to make the spatial operations possible. In general, it is quicker and easier to transform vectors.
+
+summary(shp$landuse)
+#    Length     Class      Mode 
+#       629 character character
+
+library(tmap)
+
+tmap_mode(&amp;#39;plot&amp;#39;)
+
+m &amp;lt;- 
+shp %&amp;gt;% 
+tm_shape+
+  tm_fill(col = &amp;quot;landuse&amp;quot;,
+          style = &amp;quot;cat&amp;quot;,
+          palette = &amp;#39;Dark2&amp;#39;
+          ) +
+  tm_layout(legend.outside = TRUE)
+
+m&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;For the sake of simplicity, lets sample 15 locations from each polygon and use that as the basis for our dataset.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ptsamp &amp;lt;- shp %&amp;gt;% 
+  st_sample(rep(15, nrow(shp)), type = &amp;#39;random&amp;#39;) %&amp;gt;% 
+  st_sf() %&amp;gt;%
+  st_join(shp, join=st_intersects)
+
+
+m +
+  tm_shape(ptsamp)+
+  tm_dots(alpha = 0.5)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;We will ultimately extract the raster values from the locations of these points to construct the columns in the training data. The expectation is that at each of these points, the underlying rasters have different values for different bands (or other variables) and the key is figure out what combination of of these predictor variables can usefully predict the target variable (in this case, ‘landuse’). But before we do that we need to construct appropriate predictor variables.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;feature-engineering&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Feature engineering&lt;/h2&gt;
+&lt;p&gt;Feature engineering is careful construction of new variables from raw data. For example, we can construct ‘Age’ from ‘Birth Date’ and ‘CurrentDate’, even when ‘CurrentDate’ is a not explicitly part of the dataset. Or combining two categorical variables into one. In this example, you already have variables ‘Blue’, ‘NIR’, ‘Red’ etc.&lt;/p&gt;
+&lt;p&gt;Feature engineering is one of the critical steps in ML approaches and is often overlooked. Because the raw data can be transformed into any number of features, it is critical that we need to draw upon domain knowledge to produce a proper ‘hypothesis space’ to find the ‘best model’.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“Coming up with features is difficult, time-consuming, requires expert knowledge. ‘Applied machine learning’ is basically feature engineering.” - Andrew Ng&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;For example, it is common practice to construct Normalised Difference Index by doing some band math. One such indices is Normalised Difference Vegetation Index (NDVI) that is based on the ratio of NIR and Red. Normalised Difference Water Index is based on NIR and Green.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+band_math_ratio &amp;lt;- function(x, y){ (x - y ) / (x + y) } 
+ndvi &amp;lt;- band_math_ratio(wuhan_raster[[&amp;#39;NIR&amp;#39;]], wuhan_raster[[&amp;#39;Red&amp;#39;]])
+names(ndvi) &amp;lt;- &amp;quot;NDVI&amp;quot;
+ndwi &amp;lt;- band_math_ratio(wuhan_raster[[&amp;#39;Green&amp;#39;]], wuhan_raster[[&amp;#39;NIR&amp;#39;]])
+names(ndwi) &amp;lt;- &amp;quot;NDWI&amp;quot;
+          
+plot(ndvi, main = &amp;quot;NDVI&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(ndwi, main = &amp;quot;NDWI&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-4-2.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Calculate&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Visible Atmospherically Resistant Index &lt;span class=&#34;math inline&#34;&gt;\((Green - Red)/ (Green + Red - Blue)\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Modified Soil Adjusted Vegetation Index (MSAVI2): &lt;span class=&#34;math inline&#34;&gt;\(\frac{(2* NIR+1)-\sqrt{(2*NIR+1)^2-8*(NIR-Red))}}{2}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Look up the original references for these indices and see if they can really be applied to Planetscopse sensors. What are the limitations of each of these indices including NDVI, NDWI&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Plot these indices and see if the values visually distinguish different classes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;It is often useful to look at correlations within the different bands in the dataset to see if different features are adding much to the information content.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;wuhan_raster &amp;lt;- c(wuhan_raster, ndvi, ndwi) # Only possible because the extents, resolution and crs are same.
+pairs(wuhan_raster)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;From this plot, Blue and Red are pairwise heavily correlated (linearly) to Green. One way to reduce the dimensions is to extract the principal components of the data that encompasses most of the information. The other is to use either Red or Green. Also notice how NDVI and NDWI are highly correlated. Perhaps you don’t need both. Make appropriate judgements as to what to keep and what to throw out and proceed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;textures&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Textures&lt;/h2&gt;
+&lt;p&gt;Textures describe the spatial distribution of intensities, which makes it useful in classification of similar regions in different images. Haralick textures are usually from discrete gray level images.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/GLCM.jpg&#34; style=&#34;width:100.0%&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Image credit: &lt;a href=&#34;https://doi.org/10.1016/j.cageo.2013.07.006&#34;&gt;Eichkitz et.al (2013)&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The main idea is that a gray level image is discretized into n-levels. In a moving window of 3x3 or 5x5, the proportion of co-occurence of two levels is noted in a matrix. From the Gray Level Co-Occurrence Matrix (GLCM), we can derive texture features such as Variance Homogeneity, Dissimilarity etc.&lt;/p&gt;
+&lt;p&gt;The following code is not evaluated because it takes a long time, but is here to demonstrate. feel free to experiment with various textures based on gray images of different layers.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(glcm)
+library(raster)
+textures &amp;lt;- glcm(raster(wuhan_raster[[&amp;#39;NDVI&amp;#39;]]), shift=list(c(0,1), c(1,1), c(1,0), c(1,-1)))
+textures &amp;lt;- textures[[-8]]&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The above code calculates isotropic textures (taking the mean of all the directions). However, sometimes it might be better to calculate anisotropic textures for urban orbject detection. See &lt;a href=&#34;http://dx.doi.org/10.1109/JSTARS.2008.2002869&#34;&gt;Pesaresi et.al (2008)&lt;/a&gt;. Calculate the PanTex features from Pesaresi et.al based on maximum, instead of the mean of different directions for this image.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;constructing-the-training-dataset&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Constructing the training dataset&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(wuhan_analysis_raster &amp;lt;- c(wuhan_raster[[c(&amp;quot;Blue&amp;quot;, &amp;quot;Green&amp;quot;, &amp;quot;NDVI&amp;quot;, &amp;quot;NIR&amp;quot;)]], textures))
+# class       : SpatRaster 
+# dimensions  : 4695, 9068, 11  (nrow, ncol, nlyr)
+# resolution  : 3, 3  (x, y)
+# extent      : 231990, 259194, 3372027, 3386112  (xmin, xmax, ymin, ymax)
+# coord. ref. : WGS 84 / UTM zone 50N (EPSG:32650) 
+# sources     : 20170914_022008_0f28_3B_AnalyticMS.tif  (2 layers) 
+#               memory  
+#               20170914_022008_0f28_3B_AnalyticMS.tif  
+#               ... and 1 more source(s)
+# names       :        Blue,       Green,        NDVI,         NIR,        mean,    variance, ... 
+# min values  :          ? ,          ? , -0.53435452,          ? ,  0.03125000,  0.91175974, ... 
+# max values  :          ? ,          ? ,   0.6235793,          ? ,   0.9826389, 936.7556695, ...
+raster_sample &amp;lt;- terra::extract(wuhan_analysis_raster, vect(ptsamp))
+raster_sample$landuse &amp;lt;- factor(ptsamp$landuse)
+raster_sample &amp;lt;- raster_sample[complete.cases(raster_sample),] %&amp;gt;% as_tibble() %&amp;gt;% dplyr::select(-ID) # select every column but ID column
+
+
+raster_sample
+# # A tibble: 10,623 × 12
+#     Blue Green     NDVI   NIR   mean variance homogeneity contrast dissimilarity
+#    &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;  &amp;lt;dbl&amp;gt;    &amp;lt;dbl&amp;gt;       &amp;lt;dbl&amp;gt;    &amp;lt;dbl&amp;gt;         &amp;lt;dbl&amp;gt;
+#  1  5508  5036  0.0595   4248 0.0764     5.85       0.778    0.444         0.444
+#  2  5508  5036  0.0595   4248 0.0764     5.85       0.778    0.444         0.444
+#  3  5381  4765  0.181    4957 0.0625     3.75       1        0             0    
+#  4  5381  4765  0.181    4957 0.0625     3.75       1        0             0    
+#  5  6428  5907  0.0188   5062 0.118     14.3        0.889    0.222         0.222
+#  6  6428  5907  0.0188   5062 0.118     14.3        0.889    0.222         0.222
+#  7  5970  5277  0.00332  4082 0.0955     9.19       0.944    0.111         0.111
+#  8  5970  5277  0.00332  4082 0.0955     9.19       0.944    0.111         0.111
+#  9  6135  5422 -0.0239   4199 0.0955     8.44       0.944    0.111         0.111
+# 10  6135  5422 -0.0239   4199 0.0955     8.44       0.944    0.111         0.111
+# # … with 10,613 more rows, and 3 more variables: entropy &amp;lt;dbl&amp;gt;,
+# #   second_moment &amp;lt;dbl&amp;gt;, landuse &amp;lt;fct&amp;gt;
+
+
+library(skimr)
+skim(raster_sample)&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;caption&gt;&lt;span id=&#34;tab:unnamed-chunk-8&#34;&gt;Table 1: &lt;/span&gt;Data summary&lt;/caption&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Name&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;raster_sample&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Number of rows&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;10623&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Number of columns&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;12&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;_______________________&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Column type frequency:&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;factor&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;numeric&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;________________________&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Group variables&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;None&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: factor&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;skim_variable&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_missing&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;complete_rate&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;ordered&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_unique&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;top_counts&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;landuse&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;FALSE&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;res: 4838, mea: 1609, ind: 840, for: 806&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: numeric&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;left&#34;&gt;skim_variable&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;n_missing&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;complete_rate&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;mean&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;sd&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p0&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p25&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p50&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p75&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;p100&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;hist&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Blue&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6215.15&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1099.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4579.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5454.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5968.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6669.50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17674.00&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;Green&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5590.43&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1115.06&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;3945.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4824.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5345.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;6033.50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17654.00&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;NDVI&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.08&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.15&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.06&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.19&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.52&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▁▆▇▆▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;NIR&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5099.24&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1184.50&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1950.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4253.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5086.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5896.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;12356.00&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▂▇▂▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;mean&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.05&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.03&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.07&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.10&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.13&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.66&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;variance&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;13.76&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;17.72&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.92&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;4.29&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;8.47&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;15.42&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;413.87&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;homogeneity&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.83&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.15&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.06&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.74&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.83&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.94&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▁▁▁▃▇&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;contrast&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.43&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.75&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.33&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.56&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;31.33&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;dissimilarity&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.35&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.35&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.33&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.56&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;5.11&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;entropy&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.78&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.53&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.00&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.35&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.94&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.15&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;2.20&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▆▅▇▂▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;left&#34;&gt;second_moment&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.56&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.28&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.33&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.48&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.80&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.00&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;▃▇▃▃▅&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;To test the generalisability of the model, we will hold out a portion of the dataset and train the model on the remaining dataset. The following image illustrates this.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/1_4G__SV580CxFj78o9yUXuQ.png&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Image credit: &lt;a href=&#34;https://towardsdatascience.com/train-test-split-and-cross-validation-in-python-80b61beca4b6&#34;&gt;Borhnstein (2017)&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(caret)
+# create a holdout test set
+# use 80% of the original training data for training # use the remaining 20% of the original training data for testing
+set.seed(12)
+train_index &amp;lt;- createDataPartition(raster_sample$landuse, p=0.80, list=FALSE)
+test_dataset &amp;lt;- raster_sample[-train_index,]
+train_dataset &amp;lt;- raster_sample[train_index,]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We will use repeated cross validation to fine tune each model. During each iteration, we will shuffle the dataset, so that the model is trained and tested on different datasets.
+&lt;img src=&#34;img/1_J2B_bcbd1-s1kpWOu_FZrg.png&#34; alt=&#34;Image credit: Borhnstein (2017)&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Fortunately the Caret library has convenience functions that automate this process.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;control &amp;lt;- trainControl(method=&amp;quot;repeatedcv&amp;quot;, repeats =3, classProbs= TRUE, summaryFunction = multiClassSummary)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;build-models-using-different-algorithms&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Build models using different algorithms&lt;/h2&gt;
+&lt;p&gt;Let’s build a simple decision tree model and see the results.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;m_tree&amp;lt;- train(landuse~., data=train_dataset, method=&amp;quot;rpart&amp;quot;, 
+                trControl=control, preProcess = c(&amp;quot;center&amp;quot;, &amp;quot;scale&amp;quot;, &amp;#39;nzv&amp;#39;) )
+plot(m_tree$finalModel, uniform=TRUE, main=&amp;quot;Classification Tree&amp;quot;)
+text(m_tree$finalModel, cex = 0.8)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+varImp(m_tree, scale=TRUE) %&amp;gt;% plot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-11-2.png&#34; width=&#34;768&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;pred_hold_tree &amp;lt;- predict.train(m_tree,test_dataset, type=&amp;#39;raw&amp;#39;)
+confusionMatrix(pred_hold_tree,test_dataset$landuse)
+# Confusion Matrix and Statistics
+# 
+#                Reference
+# Prediction      basin commercial construction forest grass industrial lake
+#   basin             0          0            0      0     0          0    0
+#   commercial        0          0            0      0     0          0    0
+#   construction      0          0            0      0     0          0    0
+#   forest            0          7            5     72    22          8    0
+#   grass             0          0            0      0     0          0    0
+#   industrial        0          0            6      0     0         13    0
+#   lake              0          0            0      0     0          0    0
+#   meadow            7          2            9     13    29         22    0
+#   railway           0          0            0      0     0          0    0
+#   residential      14        120          104     76    78        125    9
+#   retail            0          0            0      0     0          0    0
+#   river             0          0            0      0     0          0    0
+#   village_green     0          0            0      0     0          0    0
+#                Reference
+# Prediction      meadow railway residential retail river village_green
+#   basin              0       0           0      0     0             0
+#   commercial         0       0           0      0     0             0
+#   construction       0       0           0      0     0             0
+#   forest            25       0          67      0     0             0
+#   grass              0       0           0      0     0             0
+#   industrial         1       0           7      1     0             0
+#   lake               0       0           0      0     0             0
+#   meadow            58       0          44      0     0             1
+#   railway            0       0           0      0     0             0
+#   residential      237       3         849     76     6             5
+#   retail             0       0           0      0     0             0
+#   river              0       0           0      0     0             0
+#   village_green      0       0           0      0     0             0
+# 
+# Overall Statistics
+#                                           
+#                Accuracy : 0.4677          
+#                  95% CI : (0.4463, 0.4892)
+#     No Information Rate : 0.4559          
+#     P-Value [Acc &amp;gt; NIR] : 0.1428          
+#                                           
+#                   Kappa : 0.131           
+#                                           
+#  Mcnemar&amp;#39;s Test P-Value : NA              
+# 
+# Statistics by Class:
+# 
+#                      Class: basin Class: commercial Class: construction
+# Sensitivity              0.000000           0.00000             0.00000
+# Specificity              1.000000           1.00000             1.00000
+# Pos Pred Value                NaN               NaN                 NaN
+# Neg Pred Value           0.990099           0.93918             0.94154
+# Prevalence               0.009901           0.06082             0.05846
+# Detection Rate           0.000000           0.00000             0.00000
+# Detection Prevalence     0.000000           0.00000             0.00000
+# Balanced Accuracy        0.500000           0.50000             0.50000
+#                      Class: forest Class: grass Class: industrial Class: lake
+# Sensitivity                0.44720      0.00000          0.077381    0.000000
+# Specificity                0.93163      1.00000          0.992320    1.000000
+# Pos Pred Value             0.34951          NaN          0.464286         NaN
+# Neg Pred Value             0.95352      0.93918          0.925944    0.995757
+# Prevalence                 0.07591      0.06082          0.079208    0.004243
+# Detection Rate             0.03395      0.00000          0.006129    0.000000
+# Detection Prevalence       0.09712      0.00000          0.013201    0.000000
+# Balanced Accuracy          0.68942      0.50000          0.534850    0.500000
+#                      Class: meadow Class: railway Class: residential
+# Sensitivity                0.18069       0.000000             0.8780
+# Specificity                0.92944       1.000000             0.2608
+# Pos Pred Value             0.31351            NaN             0.4988
+# Neg Pred Value             0.86415       0.998586             0.7184
+# Prevalence                 0.15134       0.001414             0.4559
+# Detection Rate             0.02735       0.000000             0.4003
+# Detection Prevalence       0.08722       0.000000             0.8025
+# Balanced Accuracy          0.55506       0.500000             0.5694
+#                      Class: retail Class: river Class: village_green
+# Sensitivity                 0.0000     0.000000             0.000000
+# Specificity                 1.0000     1.000000             1.000000
+# Pos Pred Value                 NaN          NaN                  NaN
+# Neg Pred Value              0.9637     0.997171             0.997171
+# Prevalence                  0.0363     0.002829             0.002829
+# Detection Rate              0.0000     0.000000             0.000000
+# Detection Prevalence        0.0000     0.000000             0.000000
+# Balanced Accuracy           0.5000     0.500000             0.500000&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This model has particularly low accuracy. Nevertheless, it is useful to predict the classes for the whole image and see where the issues might lie.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+wuhan_tree_class &amp;lt;- terra::predict(wuhan_analysis_raster, m_tree, type = &amp;#39;raw&amp;#39;, factors = levels(train_dataset$landuse))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Visualise this raster with appropriate colors and legend.&lt;/li&gt;
+&lt;li&gt;Increase the number of random points in each class and see if your classification is better.&lt;/li&gt;
+&lt;li&gt;Change the polygons for the land use and see the impact on the classification.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;note-on-performance-measures&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Note on performance measures&lt;/h2&gt;
+&lt;p&gt;Let us consider a binary classification (1, 0 classes) problem, as digression and consider the contingency table and define some terms&lt;/p&gt;
+&lt;p&gt;True Positive (TP): When the algorithm results 1, when it should result 1
+True Negative (TN): When the algorithm results 0, when it should be 0
+False Positive (FP): When the algorithm results 1, when it should be 0
+False Negative (FN): When the algorithm results 0, when it should be 1&lt;/p&gt;
+&lt;p&gt;Once we define these terms, we can define&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Accuracy as &lt;span class=&#34;math inline&#34;&gt;\((TP+TN)/(TP + TN + FP + FN)\)&lt;/span&gt;; Accuracy can be terribly biased if there are large number of Negatives or Positives, i.e if the data is unbalanced&lt;/li&gt;
+&lt;li&gt;Precision/Positive Predictive Value as &lt;span class=&#34;math inline&#34;&gt;\(TP/(TP +FP)\)&lt;/span&gt;; What proportion of positive identifications was actually correct?&lt;/li&gt;
+&lt;li&gt;Recall/Sensitivity as &lt;span class=&#34;math inline&#34;&gt;\(TP/(TP+FN)\)&lt;/span&gt;; What proportion of actual positives was identified correctly?&lt;/li&gt;
+&lt;li&gt;True Negative Rate/ Specificity as &lt;span class=&#34;math inline&#34;&gt;\(TN/(TN+FP)\)&lt;/span&gt;; What proportion of negative identifications are actually correct&lt;/li&gt;
+&lt;li&gt;F1-Score as harmonic mean of Precision and Recall.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Instead of overall accuracy measure, F1-scores may be a better measure.&lt;/p&gt;
+&lt;p&gt;These could be extended to multi-class classifications. Kappa is a measure of agreement above random chance. Though it has been discouraged in recent literature (see &lt;a href=&#34;https://doi.org/10.1016/j.rse.2014.02.015&#34;&gt;Olofsson et.al (2014)&lt;/a&gt;), it is still widely reported.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;choosing-among-different-predictive-algorithms&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Choosing among different predictive algorithms&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+library(doParallel)
+cl &amp;lt;- makeCluster(detectCores(), type=&amp;#39;PSOCK&amp;#39;)
+registerDoParallel(cl)
+
+algos &amp;lt;- c(&amp;#39;multinom&amp;#39;, &amp;#39;kknn&amp;#39;, &amp;#39;ranger&amp;#39;, &amp;#39;xgbTree&amp;#39;)
+
+m_algos &amp;lt;- lapply(algos, function(x){train(landuse~., data=train_dataset, method=x, trControl=control, preProcess = c(&amp;quot;center&amp;quot;, &amp;quot;scale&amp;quot;, &amp;#39;nzv&amp;#39;)) })
+
+names(m_algos) &amp;lt;- algos
+
+stopCluster(cl)
+
+# calculate resamples // exclude SIMCA and PLS
+resample_results &amp;lt;- resamples(m_algos)
+# print results to console
+bwplot(resample_results , metric = c(&amp;quot;Kappa&amp;quot;,&amp;quot;Accuracy&amp;quot;))
+summary(resample_results,metric = c(&amp;quot;Kappa&amp;quot;,&amp;quot;Accuracy&amp;quot;,&amp;quot;logLoss&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;img/accuracy_kappa.jpg&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Despite all this effort, the mean accuracy is low. Furthermore, the even the maximum Kappa statistic is less than 20%. In other words, the machine learning algorithms are at best 20% better at predicting the land use than random chance alone. Furthermore, I am checking the accuracy here on the training dataset. This is not typically kosher.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Explore the tuning parameters for each of the algorithms and try to optimise the performance of the model&lt;/li&gt;
+&lt;li&gt;For each of these models, plot and describe the variable importance.&lt;/li&gt;
+&lt;li&gt;Pick the best model of the lot and test its performance on the holdout dataset&lt;/li&gt;
+&lt;li&gt;Visualise the result of the classification of the entire scene.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;potential-improvements&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Potential Improvements&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Get better training dataset. Reduce the number of classes, by merging similar classes.&lt;/li&gt;
+&lt;li&gt;Perform image segmentation to extract objects and then use machine learning algorithms&lt;/li&gt;
+&lt;li&gt;Add information from ancilliary datasets (such as distance to roads, railroads etc.)&lt;/li&gt;
+&lt;li&gt;Tune the hyperparameters of model. Explore &lt;code&gt;caret&lt;/code&gt; package documentation&lt;/li&gt;
+&lt;li&gt;Work on feature engineering more.&lt;/li&gt;
+&lt;li&gt;Try hierarchical image classification (impervious/water/barren/park at first level; residential/commercial/industrial within urban etc.)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;In this post, I showed how machine learning can be used to classify remote sensing images. However, these methods are more general than satellite image applications. We can use these methods to predict time series data, classify textual informtion, identify sentiments in tweets and complaints and in general find patterns in data. While ML approaches are powerful, they are not always the most useful (as this post has shown) nor can they be a substitute for careful analysis, problem framing, data assembly, feature engineering, label data construction etc. Another big critique of the ML approaches are that most of them do not give us an understanding of the correlations. Causal relationships are even more problematic to ascertain. In any case, ML approaches, just like any other tool, should be used with caution and for appropriate purposes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acknowledgements&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acknowledgements&lt;/h2&gt;
+&lt;p&gt;Parts of the code in this post is written by &lt;a href=&#34;https://planning.unc.edu/student/chenyan/&#34;&gt;Yan Chen&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

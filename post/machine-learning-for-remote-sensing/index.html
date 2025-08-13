@@ -1,0 +1,1993 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Classification trees, random forests, neural networks and the like." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/machine-learning-for-remote-sensing/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/machine-learning-for-remote-sensing/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/machine-learning-for-remote-sensing/" />
+  <meta property="og:title" content="Machine Learning for Remote Sensing | Nikhil Kaza" />
+  <meta property="og:description" content="Classification trees, random forests, neural networks and the like." /><meta property="og:image" content="https://nkaza.github.io/post/machine-learning-for-remote-sensing/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/machine-learning-for-remote-sensing/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2018-08-07T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2018-08-07T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/machine-learning-for-remote-sensing/"
+  },
+  "headline": "Machine Learning for Remote Sensing",
+  
+  "image": [
+    "https://nkaza.github.io/post/machine-learning-for-remote-sensing/featured.png"
+  ],
+  
+  "datePublished": "2018-08-07T00:00:00Z",
+  "dateModified": "2018-08-07T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Classification trees, random forests, neural networks and the like."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Machine Learning for Remote Sensing | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="7b49c9a560af9d2e50189f9cb05c2098" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Machine Learning for Remote Sensing</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+  <span >
+      <a href="/author/nikhil-kaza/">Nikhil Kaza</a></span>, <span >
+      <a href="/author/yan-chen/">Yan Chen</a></span>
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Aug 7, 2018
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    16 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/remote-sensing/">remote-sensing</a>, <a href="/category/machine-learning/">machine-learning</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 260px;">
+  <div style="position: relative">
+    <img src="/post/machine-learning-for-remote-sensing/featured_hu335f4ea0b956171d85a18efc1754789e_75926_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="260" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        
+<script src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Machine learning (ML) is currently a buzzword in urban analytics. It is a process of automated model building that generates a predictive model that can reasonably explain not just the data that it is trained on, but generalised to other data from the same data generating process. Traditional models are rules that operate on data to produce and output. Machine learning approaches, on the other hand, usually take outputs and data to figure out the appropriate rules. While traditional models have to rely upon external justification for the rules, the promise of ML is that it discovers these rules empirically, without a theoretical basis for understanding the correlations among the different variables.One important thing to note about machine learning is that the models are restricted to the hypothesis space and the search is not among the arbitrary model specifications. For example, in machine learning, that is about logistic regression model, the features are restricted to enter the model in a linear fashion, where as in a decision tree, they behave non-linearly based on the partition. While this may be too esoteric for students who are starting out on understanding ML techniques, it is useful to temper the expectations regarding what kinds of models can we expect to be generated by the various algorithms. In other words, there is no guarantee that the ML model is the <code>best</code> model that explains and predicts the observed data. Practical ML is as much an art as it is a science.</p>
+<p>It might be beneficial to illustrate some of the salient points about ML though a practical example that interests planners. Identifying objects and land use classes from remotely sensed images of urban areas.</p>
+</div>
+<div id="stages-of-ml-approach" class="section level2">
+<h2>Stages of ML approach</h2>
+<p>There are 5 distinct stages of Machine Learning. Let’s focus on supervised learning, a subset of ML approaches. In supervised learning, target outcome is known for a vector of features and the dataset consists of a collection of the features and target. So for example, land use class is frequently the target (dependent variable) and the features (independent variables) are various bands, indices, textures, proximity etc.</p>
+<ol style="list-style-type: decimal">
+<li><p>Identifying appropriate data sources, especially labelled data. Wrangle, Clean and Assemble (Data Preprocessing)</p></li>
+<li><p>Feature Engineering. Identify the right variable combinations from the independent variables.</p></li>
+<li><p>Splitting the data into training, validation and holdout.</p></li>
+<li><p>Iterating over the algorithm to fit best explain the training dataset. Use the validation data to tune the model.</p></li>
+<li><p>Choosing the best model that does well (prediction) on the holdout dataset.</p></li>
+</ol>
+<p>ML approaches are fundamentally iterative. I cannot emphasise this enough. While there are distinct steps in the approaches, because later stages crucially depend on earlier stages, all stages, except the last one, are iterative. We usually iterate to find better fitting algorithms to the data, which necessitates changes to feature engineering and selection as shown in the figure below.</p>
+<div class="figure">
+<img src="img/1528719478855-image3[4].png" style="width:100.0%;height:100.0%" alt="" />
+<p class="caption">Image credit: <a href="https://www.zeolearn.com/magazine/understanding-the-human-process-in-machine-learning">Goyal (2018)</a></p>
+</div>
+<p>In the following steps, for the sake of brevity, I do not demonstrate the iterative aspects of ML.</p>
+</div>
+<div id="data-acquisition-and-preprocessing" class="section level2">
+<h2>Data Acquisition and Preprocessing</h2>
+<p>For this exercise, I am going to use a 3m, 4-band Planetscope image from around Wuhan, China. You can download it from around <a href="https://www.dropbox.com/s/thx2gdi7230qme2/data.zip?dl=0">here</a>. The 4 bands are Blue, Green, Red and Near Infra Red (NIR). These are initial set of features.</p>
+<pre class="r"><code>library(terra)
+library(here)
+library(tidyverse)
+library(sf)
+
+wuhan_raster &lt;- here(&quot;tutorials_datasets&quot;, &quot;wuhanremotesensing&quot;, &quot;20170914_022008_0f28_3B_AnalyticMS.tif&quot;) %&gt;% rast()
+names(wuhan_raster) &lt;- c(&#39;Blue&#39;, &quot;Green&quot;, &quot;Red&quot;, &#39;NIR&#39;)
+wuhan_raster
+# class       : SpatRaster 
+# dimensions  : 4695, 9068, 4  (nrow, ncol, nlyr)
+# resolution  : 3, 3  (x, y)
+# extent      : 231990, 259194, 3372027, 3386112  (xmin, xmax, ymin, ymax)
+# coord. ref. : WGS 84 / UTM zone 50N (EPSG:32650) 
+# source      : 20170914_022008_0f28_3B_AnalyticMS.tif 
+# names       : Blue, Green, Red, NIR
+
+plotRGB(wuhan_raster, r=3, g=2, b=1, stretch=&#39;hist&#39;, main=&#39;True color composite&#39;) #TRUE colour composite</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-1-1.png" width="768" /></p>
+<pre class="r"><code>plotRGB(wuhan_raster, r=4,g=3,b=2, stretch=&#39;hist&#39;, main = &#39;False color composite&#39;) # FALSE colour Composite</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-1-2.png" width="768" /></p>
+<p>The labels are vector data derived from Openstreetmap data. It is available as part of the zip file you downloaded earlier. In particular, the labels are in the ‘landuse’ class.</p>
+<pre class="r"><code> library(sf)
+ shp &lt;- here(&quot;tutorials_datasets&quot;, &quot;wuhanremotesensing&quot;, &quot;landuse3.shp&quot;) %&gt;% st_read
+# Reading layer `landuse3&#39; from data source 
+#   `/Users/kaza/Dropbox/website_new/website/tutorials_datasets/wuhanremotesensing/landuse3.shp&#39; 
+#   using driver `ESRI Shapefile&#39;
+# Simple feature collection with 629 features and 25 fields
+# Geometry type: MULTIPOLYGON
+# Dimension:     XY
+# Bounding box:  xmin: 114.21 ymin: 30.45716 xmax: 114.4891 ymax: 30.57547
+# Geodetic CRS:  WGS 84
+shp &lt;- st_transform(shp, crs(wuhan_raster)) 
+
+## Note that shp was not in the same projection as raster, so transform it to make the spatial operations possible. In general, it is quicker and easier to transform vectors.
+
+summary(shp$landuse)
+#    Length     Class      Mode 
+#       629 character character
+
+library(tmap)
+
+tmap_mode(&#39;plot&#39;)
+
+m &lt;- 
+shp %&gt;% 
+tm_shape+
+  tm_fill(col = &quot;landuse&quot;,
+          style = &quot;cat&quot;,
+          palette = &#39;Dark2&#39;
+          ) +
+  tm_layout(legend.outside = TRUE)
+
+m</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-2-1.png" width="768" /></p>
+<p>For the sake of simplicity, lets sample 15 locations from each polygon and use that as the basis for our dataset.</p>
+<pre class="r"><code>ptsamp &lt;- shp %&gt;% 
+  st_sample(rep(15, nrow(shp)), type = &#39;random&#39;) %&gt;% 
+  st_sf() %&gt;%
+  st_join(shp, join=st_intersects)
+
+
+m +
+  tm_shape(ptsamp)+
+  tm_dots(alpha = 0.5)</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-3-1.png" width="768" /></p>
+<p>We will ultimately extract the raster values from the locations of these points to construct the columns in the training data. The expectation is that at each of these points, the underlying rasters have different values for different bands (or other variables) and the key is figure out what combination of of these predictor variables can usefully predict the target variable (in this case, ‘landuse’). But before we do that we need to construct appropriate predictor variables.</p>
+</div>
+<div id="feature-engineering" class="section level2">
+<h2>Feature engineering</h2>
+<p>Feature engineering is careful construction of new variables from raw data. For example, we can construct ‘Age’ from ‘Birth Date’ and ‘CurrentDate’, even when ‘CurrentDate’ is a not explicitly part of the dataset. Or combining two categorical variables into one. In this example, you already have variables ‘Blue’, ‘NIR’, ‘Red’ etc.</p>
+<p>Feature engineering is one of the critical steps in ML approaches and is often overlooked. Because the raw data can be transformed into any number of features, it is critical that we need to draw upon domain knowledge to produce a proper ‘hypothesis space’ to find the ‘best model’.</p>
+<blockquote>
+<p>“Coming up with features is difficult, time-consuming, requires expert knowledge. ‘Applied machine learning’ is basically feature engineering.” - Andrew Ng</p>
+</blockquote>
+<p>For example, it is common practice to construct Normalised Difference Index by doing some band math. One such indices is Normalised Difference Vegetation Index (NDVI) that is based on the ratio of NIR and Red. Normalised Difference Water Index is based on NIR and Green.</p>
+<pre class="r"><code>
+band_math_ratio &lt;- function(x, y){ (x - y ) / (x + y) } 
+ndvi &lt;- band_math_ratio(wuhan_raster[[&#39;NIR&#39;]], wuhan_raster[[&#39;Red&#39;]])
+names(ndvi) &lt;- &quot;NDVI&quot;
+ndwi &lt;- band_math_ratio(wuhan_raster[[&#39;Green&#39;]], wuhan_raster[[&#39;NIR&#39;]])
+names(ndwi) &lt;- &quot;NDWI&quot;
+          
+plot(ndvi, main = &quot;NDVI&quot;)</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-4-1.png" width="768" /></p>
+<pre class="r"><code>plot(ndwi, main = &quot;NDWI&quot;)</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-4-2.png" width="768" /></p>
+<hr />
+<p><strong>Exercise</strong></p>
+<p>Calculate</p>
+<ul>
+<li><p>Visible Atmospherically Resistant Index <span class="math inline">\((Green - Red)/ (Green + Red - Blue)\)</span></p></li>
+<li><p>Modified Soil Adjusted Vegetation Index (MSAVI2): <span class="math inline">\(\frac{(2* NIR+1)-\sqrt{(2*NIR+1)^2-8*(NIR-Red))}}{2}\)</span></p></li>
+<li><p>Look up the original references for these indices and see if they can really be applied to Planetscopse sensors. What are the limitations of each of these indices including NDVI, NDWI</p></li>
+<li><p>Plot these indices and see if the values visually distinguish different classes.</p></li>
+</ul>
+<hr />
+<p>It is often useful to look at correlations within the different bands in the dataset to see if different features are adding much to the information content.</p>
+<pre class="r"><code>wuhan_raster &lt;- c(wuhan_raster, ndvi, ndwi) # Only possible because the extents, resolution and crs are same.
+pairs(wuhan_raster)</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-5-1.png" width="768" /></p>
+<p>From this plot, Blue and Red are pairwise heavily correlated (linearly) to Green. One way to reduce the dimensions is to extract the principal components of the data that encompasses most of the information. The other is to use either Red or Green. Also notice how NDVI and NDWI are highly correlated. Perhaps you don’t need both. Make appropriate judgements as to what to keep and what to throw out and proceed.</p>
+</div>
+<div id="textures" class="section level2">
+<h2>Textures</h2>
+<p>Textures describe the spatial distribution of intensities, which makes it useful in classification of similar regions in different images. Haralick textures are usually from discrete gray level images.</p>
+<div class="figure">
+<img src="img/GLCM.jpg" style="width:100.0%" alt="" />
+<p class="caption">Image credit: <a href="https://doi.org/10.1016/j.cageo.2013.07.006">Eichkitz et.al (2013)</a></p>
+</div>
+<p>The main idea is that a gray level image is discretized into n-levels. In a moving window of 3x3 or 5x5, the proportion of co-occurence of two levels is noted in a matrix. From the Gray Level Co-Occurrence Matrix (GLCM), we can derive texture features such as Variance Homogeneity, Dissimilarity etc.</p>
+<p>The following code is not evaluated because it takes a long time, but is here to demonstrate. feel free to experiment with various textures based on gray images of different layers.</p>
+<pre class="r"><code>library(glcm)
+library(raster)
+textures &lt;- glcm(raster(wuhan_raster[[&#39;NDVI&#39;]]), shift=list(c(0,1), c(1,1), c(1,0), c(1,-1)))
+textures &lt;- textures[[-8]]</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<p>The above code calculates isotropic textures (taking the mean of all the directions). However, sometimes it might be better to calculate anisotropic textures for urban orbject detection. See <a href="http://dx.doi.org/10.1109/JSTARS.2008.2002869">Pesaresi et.al (2008)</a>. Calculate the PanTex features from Pesaresi et.al based on maximum, instead of the mean of different directions for this image.</p>
+<hr />
+</div>
+<div id="constructing-the-training-dataset" class="section level2">
+<h2>Constructing the training dataset</h2>
+<pre class="r"><code>(wuhan_analysis_raster &lt;- c(wuhan_raster[[c(&quot;Blue&quot;, &quot;Green&quot;, &quot;NDVI&quot;, &quot;NIR&quot;)]], textures))
+# class       : SpatRaster 
+# dimensions  : 4695, 9068, 11  (nrow, ncol, nlyr)
+# resolution  : 3, 3  (x, y)
+# extent      : 231990, 259194, 3372027, 3386112  (xmin, xmax, ymin, ymax)
+# coord. ref. : WGS 84 / UTM zone 50N (EPSG:32650) 
+# sources     : 20170914_022008_0f28_3B_AnalyticMS.tif  (2 layers) 
+#               memory  
+#               20170914_022008_0f28_3B_AnalyticMS.tif  
+#               ... and 1 more source(s)
+# names       :        Blue,       Green,        NDVI,         NIR,        mean,    variance, ... 
+# min values  :          ? ,          ? , -0.53435452,          ? ,  0.03125000,  0.91175974, ... 
+# max values  :          ? ,          ? ,   0.6235793,          ? ,   0.9826389, 936.7556695, ...
+raster_sample &lt;- terra::extract(wuhan_analysis_raster, vect(ptsamp))
+raster_sample$landuse &lt;- factor(ptsamp$landuse)
+raster_sample &lt;- raster_sample[complete.cases(raster_sample),] %&gt;% as_tibble() %&gt;% dplyr::select(-ID) # select every column but ID column
+
+
+raster_sample
+# # A tibble: 10,623 × 12
+#     Blue Green     NDVI   NIR   mean variance homogeneity contrast dissimilarity
+#    &lt;int&gt; &lt;int&gt;    &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
+#  1  5508  5036  0.0595   4248 0.0764     5.85       0.778    0.444         0.444
+#  2  5508  5036  0.0595   4248 0.0764     5.85       0.778    0.444         0.444
+#  3  5381  4765  0.181    4957 0.0625     3.75       1        0             0    
+#  4  5381  4765  0.181    4957 0.0625     3.75       1        0             0    
+#  5  6428  5907  0.0188   5062 0.118     14.3        0.889    0.222         0.222
+#  6  6428  5907  0.0188   5062 0.118     14.3        0.889    0.222         0.222
+#  7  5970  5277  0.00332  4082 0.0955     9.19       0.944    0.111         0.111
+#  8  5970  5277  0.00332  4082 0.0955     9.19       0.944    0.111         0.111
+#  9  6135  5422 -0.0239   4199 0.0955     8.44       0.944    0.111         0.111
+# 10  6135  5422 -0.0239   4199 0.0955     8.44       0.944    0.111         0.111
+# # … with 10,613 more rows, and 3 more variables: entropy &lt;dbl&gt;,
+# #   second_moment &lt;dbl&gt;, landuse &lt;fct&gt;
+
+
+library(skimr)
+skim(raster_sample)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-8">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">raster_sample</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">10623</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">12</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">factor</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">11</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">ordered</th>
+<th align="right">n_unique</th>
+<th align="left">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">landuse</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">FALSE</td>
+<td align="right">13</td>
+<td align="left">res: 4838, mea: 1609, ind: 840, for: 806</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Blue</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">6215.15</td>
+<td align="right">1099.05</td>
+<td align="right">4579.00</td>
+<td align="right">5454.00</td>
+<td align="right">5968.00</td>
+<td align="right">6669.50</td>
+<td align="right">17674.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Green</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5590.43</td>
+<td align="right">1115.06</td>
+<td align="right">3945.00</td>
+<td align="right">4824.00</td>
+<td align="right">5345.00</td>
+<td align="right">6033.50</td>
+<td align="right">17654.00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">NDVI</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.08</td>
+<td align="right">0.15</td>
+<td align="right">-0.39</td>
+<td align="right">-0.05</td>
+<td align="right">0.06</td>
+<td align="right">0.19</td>
+<td align="right">0.52</td>
+<td align="left">▁▆▇▆▁</td>
+</tr>
+<tr class="even">
+<td align="left">NIR</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5099.24</td>
+<td align="right">1184.50</td>
+<td align="right">1950.00</td>
+<td align="right">4253.00</td>
+<td align="right">5086.00</td>
+<td align="right">5896.00</td>
+<td align="right">12356.00</td>
+<td align="left">▂▇▂▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">mean</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.11</td>
+<td align="right">0.05</td>
+<td align="right">0.03</td>
+<td align="right">0.07</td>
+<td align="right">0.10</td>
+<td align="right">0.13</td>
+<td align="right">0.66</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">variance</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">13.76</td>
+<td align="right">17.72</td>
+<td align="right">0.92</td>
+<td align="right">4.29</td>
+<td align="right">8.47</td>
+<td align="right">15.42</td>
+<td align="right">413.87</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">homogeneity</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.83</td>
+<td align="right">0.15</td>
+<td align="right">0.06</td>
+<td align="right">0.74</td>
+<td align="right">0.83</td>
+<td align="right">0.94</td>
+<td align="right">1.00</td>
+<td align="left">▁▁▁▃▇</td>
+</tr>
+<tr class="even">
+<td align="left">contrast</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.43</td>
+<td align="right">0.75</td>
+<td align="right">0.00</td>
+<td align="right">0.11</td>
+<td align="right">0.33</td>
+<td align="right">0.56</td>
+<td align="right">31.33</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">dissimilarity</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.35</td>
+<td align="right">0.35</td>
+<td align="right">0.00</td>
+<td align="right">0.11</td>
+<td align="right">0.33</td>
+<td align="right">0.56</td>
+<td align="right">5.11</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">entropy</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.78</td>
+<td align="right">0.53</td>
+<td align="right">0.00</td>
+<td align="right">0.35</td>
+<td align="right">0.94</td>
+<td align="right">1.15</td>
+<td align="right">2.20</td>
+<td align="left">▆▅▇▂▁</td>
+</tr>
+<tr class="odd">
+<td align="left">second_moment</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.56</td>
+<td align="right">0.28</td>
+<td align="right">0.11</td>
+<td align="right">0.33</td>
+<td align="right">0.48</td>
+<td align="right">0.80</td>
+<td align="right">1.00</td>
+<td align="left">▃▇▃▃▅</td>
+</tr>
+</tbody>
+</table>
+<p>To test the generalisability of the model, we will hold out a portion of the dataset and train the model on the remaining dataset. The following image illustrates this.</p>
+<div class="figure">
+<img src="img/1_4G__SV580CxFj78o9yUXuQ.png" alt="" />
+<p class="caption">Image credit: <a href="https://towardsdatascience.com/train-test-split-and-cross-validation-in-python-80b61beca4b6">Borhnstein (2017)</a></p>
+</div>
+<pre class="r"><code>library(caret)
+# create a holdout test set
+# use 80% of the original training data for training # use the remaining 20% of the original training data for testing
+set.seed(12)
+train_index &lt;- createDataPartition(raster_sample$landuse, p=0.80, list=FALSE)
+test_dataset &lt;- raster_sample[-train_index,]
+train_dataset &lt;- raster_sample[train_index,]</code></pre>
+<p>We will use repeated cross validation to fine tune each model. During each iteration, we will shuffle the dataset, so that the model is trained and tested on different datasets.
+<img src="img/1_J2B_bcbd1-s1kpWOu_FZrg.png" alt="Image credit: Borhnstein (2017)" /></p>
+<p>Fortunately the Caret library has convenience functions that automate this process.</p>
+<pre class="r"><code>control &lt;- trainControl(method=&quot;repeatedcv&quot;, repeats =3, classProbs= TRUE, summaryFunction = multiClassSummary)</code></pre>
+</div>
+<div id="build-models-using-different-algorithms" class="section level2">
+<h2>Build models using different algorithms</h2>
+<p>Let’s build a simple decision tree model and see the results.</p>
+<pre class="r"><code>m_tree&lt;- train(landuse~., data=train_dataset, method=&quot;rpart&quot;, 
+                trControl=control, preProcess = c(&quot;center&quot;, &quot;scale&quot;, &#39;nzv&#39;) )
+plot(m_tree$finalModel, uniform=TRUE, main=&quot;Classification Tree&quot;)
+text(m_tree$finalModel, cex = 0.8)</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-11-1.png" width="768" /></p>
+<pre class="r"><code>
+varImp(m_tree, scale=TRUE) %&gt;% plot()</code></pre>
+<p><img src="https://nkaza.github.io/post/machine-learning-for-remote-sensing/index_files/figure-html/unnamed-chunk-11-2.png" width="768" /></p>
+<pre class="r"><code>pred_hold_tree &lt;- predict.train(m_tree,test_dataset, type=&#39;raw&#39;)
+confusionMatrix(pred_hold_tree,test_dataset$landuse)
+# Confusion Matrix and Statistics
+# 
+#                Reference
+# Prediction      basin commercial construction forest grass industrial lake
+#   basin             0          0            0      0     0          0    0
+#   commercial        0          0            0      0     0          0    0
+#   construction      0          0            0      0     0          0    0
+#   forest            0          7            5     72    22          8    0
+#   grass             0          0            0      0     0          0    0
+#   industrial        0          0            6      0     0         13    0
+#   lake              0          0            0      0     0          0    0
+#   meadow            7          2            9     13    29         22    0
+#   railway           0          0            0      0     0          0    0
+#   residential      14        120          104     76    78        125    9
+#   retail            0          0            0      0     0          0    0
+#   river             0          0            0      0     0          0    0
+#   village_green     0          0            0      0     0          0    0
+#                Reference
+# Prediction      meadow railway residential retail river village_green
+#   basin              0       0           0      0     0             0
+#   commercial         0       0           0      0     0             0
+#   construction       0       0           0      0     0             0
+#   forest            25       0          67      0     0             0
+#   grass              0       0           0      0     0             0
+#   industrial         1       0           7      1     0             0
+#   lake               0       0           0      0     0             0
+#   meadow            58       0          44      0     0             1
+#   railway            0       0           0      0     0             0
+#   residential      237       3         849     76     6             5
+#   retail             0       0           0      0     0             0
+#   river              0       0           0      0     0             0
+#   village_green      0       0           0      0     0             0
+# 
+# Overall Statistics
+#                                           
+#                Accuracy : 0.4677          
+#                  95% CI : (0.4463, 0.4892)
+#     No Information Rate : 0.4559          
+#     P-Value [Acc &gt; NIR] : 0.1428          
+#                                           
+#                   Kappa : 0.131           
+#                                           
+#  Mcnemar&#39;s Test P-Value : NA              
+# 
+# Statistics by Class:
+# 
+#                      Class: basin Class: commercial Class: construction
+# Sensitivity              0.000000           0.00000             0.00000
+# Specificity              1.000000           1.00000             1.00000
+# Pos Pred Value                NaN               NaN                 NaN
+# Neg Pred Value           0.990099           0.93918             0.94154
+# Prevalence               0.009901           0.06082             0.05846
+# Detection Rate           0.000000           0.00000             0.00000
+# Detection Prevalence     0.000000           0.00000             0.00000
+# Balanced Accuracy        0.500000           0.50000             0.50000
+#                      Class: forest Class: grass Class: industrial Class: lake
+# Sensitivity                0.44720      0.00000          0.077381    0.000000
+# Specificity                0.93163      1.00000          0.992320    1.000000
+# Pos Pred Value             0.34951          NaN          0.464286         NaN
+# Neg Pred Value             0.95352      0.93918          0.925944    0.995757
+# Prevalence                 0.07591      0.06082          0.079208    0.004243
+# Detection Rate             0.03395      0.00000          0.006129    0.000000
+# Detection Prevalence       0.09712      0.00000          0.013201    0.000000
+# Balanced Accuracy          0.68942      0.50000          0.534850    0.500000
+#                      Class: meadow Class: railway Class: residential
+# Sensitivity                0.18069       0.000000             0.8780
+# Specificity                0.92944       1.000000             0.2608
+# Pos Pred Value             0.31351            NaN             0.4988
+# Neg Pred Value             0.86415       0.998586             0.7184
+# Prevalence                 0.15134       0.001414             0.4559
+# Detection Rate             0.02735       0.000000             0.4003
+# Detection Prevalence       0.08722       0.000000             0.8025
+# Balanced Accuracy          0.55506       0.500000             0.5694
+#                      Class: retail Class: river Class: village_green
+# Sensitivity                 0.0000     0.000000             0.000000
+# Specificity                 1.0000     1.000000             1.000000
+# Pos Pred Value                 NaN          NaN                  NaN
+# Neg Pred Value              0.9637     0.997171             0.997171
+# Prevalence                  0.0363     0.002829             0.002829
+# Detection Rate              0.0000     0.000000             0.000000
+# Detection Prevalence        0.0000     0.000000             0.000000
+# Balanced Accuracy           0.5000     0.500000             0.500000</code></pre>
+<p>This model has particularly low accuracy. Nevertheless, it is useful to predict the classes for the whole image and see where the issues might lie.</p>
+<pre class="r"><code>
+wuhan_tree_class &lt;- terra::predict(wuhan_analysis_raster, m_tree, type = &#39;raw&#39;, factors = levels(train_dataset$landuse))
+</code></pre>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Visualise this raster with appropriate colors and legend.</li>
+<li>Increase the number of random points in each class and see if your classification is better.</li>
+<li>Change the polygons for the land use and see the impact on the classification.</li>
+</ul>
+<hr />
+</div>
+<div id="note-on-performance-measures" class="section level2">
+<h2>Note on performance measures</h2>
+<p>Let us consider a binary classification (1, 0 classes) problem, as digression and consider the contingency table and define some terms</p>
+<p>True Positive (TP): When the algorithm results 1, when it should result 1
+True Negative (TN): When the algorithm results 0, when it should be 0
+False Positive (FP): When the algorithm results 1, when it should be 0
+False Negative (FN): When the algorithm results 0, when it should be 1</p>
+<p>Once we define these terms, we can define</p>
+<ul>
+<li>Accuracy as <span class="math inline">\((TP+TN)/(TP + TN + FP + FN)\)</span>; Accuracy can be terribly biased if there are large number of Negatives or Positives, i.e if the data is unbalanced</li>
+<li>Precision/Positive Predictive Value as <span class="math inline">\(TP/(TP +FP)\)</span>; What proportion of positive identifications was actually correct?</li>
+<li>Recall/Sensitivity as <span class="math inline">\(TP/(TP+FN)\)</span>; What proportion of actual positives was identified correctly?</li>
+<li>True Negative Rate/ Specificity as <span class="math inline">\(TN/(TN+FP)\)</span>; What proportion of negative identifications are actually correct</li>
+<li>F1-Score as harmonic mean of Precision and Recall.</li>
+</ul>
+<p>Instead of overall accuracy measure, F1-scores may be a better measure.</p>
+<p>These could be extended to multi-class classifications. Kappa is a measure of agreement above random chance. Though it has been discouraged in recent literature (see <a href="https://doi.org/10.1016/j.rse.2014.02.015">Olofsson et.al (2014)</a>), it is still widely reported.</p>
+</div>
+<div id="choosing-among-different-predictive-algorithms" class="section level2">
+<h2>Choosing among different predictive algorithms</h2>
+<pre class="r"><code>
+library(doParallel)
+cl &lt;- makeCluster(detectCores(), type=&#39;PSOCK&#39;)
+registerDoParallel(cl)
+
+algos &lt;- c(&#39;multinom&#39;, &#39;kknn&#39;, &#39;ranger&#39;, &#39;xgbTree&#39;)
+
+m_algos &lt;- lapply(algos, function(x){train(landuse~., data=train_dataset, method=x, trControl=control, preProcess = c(&quot;center&quot;, &quot;scale&quot;, &#39;nzv&#39;)) })
+
+names(m_algos) &lt;- algos
+
+stopCluster(cl)
+
+# calculate resamples // exclude SIMCA and PLS
+resample_results &lt;- resamples(m_algos)
+# print results to console
+bwplot(resample_results , metric = c(&quot;Kappa&quot;,&quot;Accuracy&quot;))
+summary(resample_results,metric = c(&quot;Kappa&quot;,&quot;Accuracy&quot;,&quot;logLoss&quot;))
+</code></pre>
+<p><img src="img/accuracy_kappa.jpg" /></p>
+<p>Despite all this effort, the mean accuracy is low. Furthermore, the even the maximum Kappa statistic is less than 20%. In other words, the machine learning algorithms are at best 20% better at predicting the land use than random chance alone. Furthermore, I am checking the accuracy here on the training dataset. This is not typically kosher.</p>
+<hr />
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Explore the tuning parameters for each of the algorithms and try to optimise the performance of the model</li>
+<li>For each of these models, plot and describe the variable importance.</li>
+<li>Pick the best model of the lot and test its performance on the holdout dataset</li>
+<li>Visualise the result of the classification of the entire scene.</li>
+</ul>
+<hr />
+</div>
+<div id="potential-improvements" class="section level2">
+<h2>Potential Improvements</h2>
+<ul>
+<li>Get better training dataset. Reduce the number of classes, by merging similar classes.</li>
+<li>Perform image segmentation to extract objects and then use machine learning algorithms</li>
+<li>Add information from ancilliary datasets (such as distance to roads, railroads etc.)</li>
+<li>Tune the hyperparameters of model. Explore <code>caret</code> package documentation</li>
+<li>Work on feature engineering more.</li>
+<li>Try hierarchical image classification (impervious/water/barren/park at first level; residential/commercial/industrial within urban etc.)</li>
+</ul>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>In this post, I showed how machine learning can be used to classify remote sensing images. However, these methods are more general than satellite image applications. We can use these methods to predict time series data, classify textual informtion, identify sentiments in tweets and complaints and in general find patterns in data. While ML approaches are powerful, they are not always the most useful (as this post has shown) nor can they be a substitute for careful analysis, problem framing, data assembly, feature engineering, label data construction etc. Another big critique of the ML approaches are that most of them do not give us an understanding of the correlations. Causal relationships are even more problematic to ascertain. In any case, ML approaches, just like any other tool, should be used with caution and for appropriate purposes.</p>
+</div>
+<div id="acknowledgements" class="section level2">
+<h2>Acknowledgements</h2>
+<p>Parts of the code in this post is written by <a href="https://planning.unc.edu/student/chenyan/">Yan Chen</a>.</p>
+</div>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/teaching/">teaching</a>
+  
+  <a class="badge badge-light" href="/tag/r/">R</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/machine-learning-for-remote-sensing/&amp;text=Machine%20Learning%20for%20Remote%20Sensing" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/machine-learning-for-remote-sensing/&amp;t=Machine%20Learning%20for%20Remote%20Sensing" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Machine%20Learning%20for%20Remote%20Sensing&amp;body=https://nkaza.github.io/post/machine-learning-for-remote-sensing/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/machine-learning-for-remote-sensing/&amp;title=Machine%20Learning%20for%20Remote%20Sensing" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Machine%20Learning%20for%20Remote%20Sensing%20https://nkaza.github.io/post/machine-learning-for-remote-sensing/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/machine-learning-for-remote-sensing/&amp;title=Machine%20Learning%20for%20Remote%20Sensing" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+
+
+
+
+  
+    
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/unsupervised-clustering/">Unsupervised Clustering </a></li>
+      
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
+      
+      <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
+      
+      <li><a href="/post/exploratory-data-analysis-and-visualisation/">Exploratory Data Analysis and Visualisation</a></li>
+      
+      <li><a href="/post/intersection-density-from-osm-using-qgis-r/">Intersection Density From OSM using QGIS &amp; R</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

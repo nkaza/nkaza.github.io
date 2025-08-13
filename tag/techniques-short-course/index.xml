@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>techniques-short-course | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/tag/techniques-short-course/</link>
+      <atom:link href="https://nkaza.github.io/tag/techniques-short-course/index.xml" rel="self" type="application/rss+xml" />
+    <description>techniques-short-course</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Fri, 03 Aug 2018 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>techniques-short-course</title>
+      <link>https://nkaza.github.io/tag/techniques-short-course/</link>
+    </image>
+    
+    <item>
+      <title>Scraping web for data</title>
+      <link>https://nkaza.github.io/post/scraping-web-for-data/</link>
+      <pubDate>Fri, 03 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/scraping-web-for-data/</guid>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#legality&#34;&gt;Legality&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#an-example-using-baidu&#34;&gt;An example using Baidu&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#apis-for-non-point-data&#34;&gt;APIs for non-point data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#unstructured-data&#34;&gt;Unstructured data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusions&#34;&gt;Conclusions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#acknowledgements&#34;&gt;Acknowledgements&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;Extracting data from un/semi/structured websites is becoming increasingly common place. Since data is collected, modified and refined continuously, it is increasingly useful to both serve them via web protocols rather than flat files that are downloaded. Furthermore, much of spatial data collection has become private, which also means that firms have stronger incentives to protect their datasets and curate what is available to the others. In other instances, the user or the analyst requires only a small section of the dataset. In these instances and others, data is served by a web-based protocol. Harvesting data usually takes the form of automating the process of sending requests to the webserver and parsing the output to extract relevant data for storage and analysis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;legality&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Legality&lt;/h1&gt;
+&lt;p&gt;Different jurisdictions have different legal restrictions and permissions on web scraping. There are also end user agreements that prevent certain actions (storage, retrieval, replication etc.). Please make sure that you are aware of these before attempting to make a local copy of the data that might be privately owned.&lt;/p&gt;
+&lt;p&gt;In general, scraping requires automated and repeated requests to the server. As long as these requests are not a disruptive rate, it is unlikely that you will run afoul of legality. Local data storage and replication of services is an entirely different ball game. Please consult a lawyer.&lt;/p&gt;
+&lt;p&gt;Many public and government websites are also now serving up data using web protocols. It is, therefore, useful to learn how to parse the outputs of these requests. In some instances, private firms such as Google, Baidu, Instagram etc. also provide application programming interfaces (API) that serve data in a structured format. In these instances, subject to end user agreements, rate limits and daily quotas, restrictions on storage and transfer, it may be possible to access datasets that are otherwise unavailable.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;an-example-using-baidu&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;An example using Baidu&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.baidu.com/&#34;&gt;Baidu&lt;/a&gt; is a technology service company that provides a number of services including maps and social networking. According to Wikipedia,&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The name Baidu (百度) literally means “a hundred times”, or alternatively, “countless times”. It is a quote from the last line of Xin Qiji (辛弃疾)’s classical poem “Green Jade Table in The Lantern Festival” (青玉案·元夕) saying: “Having searched hundreds of times in the crowd, suddenly turning back, She is there in the dimmest candlelight.” (众里寻他千百度，蓦然回首，那人却在灯火阑珊处。)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In this post, we are going to query Baidu for points of interest around &lt;a href=&#34;https://www.travelchinaguide.com/cityguides/wuhan.htm&#34;&gt;Wuhan, China&lt;/a&gt;. This is similar to Google Places.&lt;/p&gt;
+&lt;div id=&#34;setting-up&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setting up&lt;/h2&gt;
+&lt;p&gt;In general, all API require registration and perusal of documentation, so that queries can be structured appropriately. In the case of Baidu, there are additional steps that are required so that the IP address of the computer that you are querying from is not blacklisted for abuse. Please see the &lt;a href=&#34;http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi&#34;&gt;documentation&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acquiring-api-keys.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acquiring API keys.&lt;/h2&gt;
+&lt;p&gt;Every request to API requires a key so the website can control the how much and who can access the information. To acquire a key we need to :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Have a Baidu account. Register at &lt;a href=&#34;https://passport.baidu.com/v2/?reg&#34; class=&#34;uri&#34;&gt;https://passport.baidu.com/v2/?reg&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;img/1.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Find your computer IP address. Preferably use &lt;a href=&#34;http://ifconfig.me/&#34;&gt;ifconfig&lt;/a&gt; or &lt;a href=&#34;http://ip138.com/&#34;&gt;ip138&lt;/a&gt;
+&lt;img src=&#34;img/2.png&#34; alt=&#34;ifconfig.me&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Login your Baidu account and go to &lt;a href=&#34;http://lbsyun.baidu.com/apiconsole/key?application=key&#34; class=&#34;uri&#34;&gt;http://lbsyun.baidu.com/apiconsole/key?application=key&lt;/a&gt;, click “创建应用” to create a new application. Use the IP address from the previous step to “IP白名单”, then submit the application.
+&lt;img src=&#34;img/3.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;After getting back to the application management page, make a note of the api key. You will need to use it in your R code.
+&lt;img src=&#34;img/4.png&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;scraping&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Scraping&lt;/h2&gt;
+&lt;p&gt;There are There are a few steps to scrape and visualize information fro web queries. In this post, we will use Baidu API as a example to scrape the resturants around Huazhong Agricultural University (HZAU). For the moment, we will deal with structured data. Parsing unstructured data is for a different time.&lt;/p&gt;
+&lt;p&gt;The steps are:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Intialise your R session&lt;/li&gt;
+&lt;li&gt;Set the parameters of the query&lt;/li&gt;
+&lt;li&gt;Send the query repreatedly to get all the results&lt;/li&gt;
+&lt;li&gt;Cleaning and exporting the data&lt;/li&gt;
+&lt;li&gt;Visualize the result&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The two main packages, we are going to use for scraping the web is &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;RCurl&lt;/a&gt; and &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;rjson&lt;/a&gt;. Install them, if necessary and intialise them into the library. We will also use &lt;a href=&#34;https://CRAN.R-project.org/package=rjson&#34;&gt;devtools&lt;/a&gt; package to install packages that are not on Comprehensive R Archive Network &lt;a href=&#34;https://cran.r-project.org&#34;&gt;(CRAN)&lt;/a&gt;, but on places like &lt;a href=&#34;http://github.com&#34;&gt;Github&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Curl is a command line tool that allows us to transfer data especially over the web. Rcurl is an interface for that tool. Because the result of the API query is formatted in JavaScript Object Notation (JSON), we use RJSON to parse it easily. JSON is lightweight data-interchange format.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;##################### USE YOUR OWN KEY #########################
+### aquire the key from: http://lbsyun.baidu.com/apiconsole/key?application=key
+key = &amp;quot;_YOUR_KEY_HERE_&amp;quot;
+library(rjson)
+library(RCurl)
+library(tidyverse) # We have seen this package before.
+################################################################&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;parameters-of-the-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Parameters of the query&lt;/h3&gt;
+&lt;p&gt;According to the &lt;a href=&#34;http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi&#34;&gt;API documentation&lt;/a&gt;, we need to set a number of parameters to send the request to API. First, we will use the “round buffer” API to search all the restraunts within 2km distance around Huazhong Agricultural University. You can extract the coordinates from &lt;a href=&#34;http://api.map.baidu.com/lbsapi/getpoint/index.html&#34; class=&#34;uri&#34;&gt;http://api.map.baidu.com/lbsapi/getpoint/index.html&lt;/a&gt; by searching for 华中农业大学. Also Note the lat/long format, instead of the long/lat format we should be using. Pay attention to what the API requires.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;location &amp;lt;- &amp;quot;30.48178,114.363708&amp;quot;   #Latitude and Longitude as a string.
+keyword &amp;lt;- &amp;quot;餐馆&amp;quot; %&amp;gt;% curlEscape() ### set the keyword to search for in this case, resturants
+city &amp;lt;- &amp;quot;武汉&amp;quot; %&amp;gt;% curlEscape() ### set the city to search
+
+radius &amp;lt;- 4000 ### set the search radius as 2000 meters
+page_size &amp;lt;- 20 ### set the number of records in each page of the response
+
+#It will be replaced by the actual value of the result once get the first response
+placeIDSet = name = lat = lng = address = NULL ### set the initial value of the other parameters&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;querying-the-api&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Querying the API&lt;/h3&gt;
+&lt;p&gt;Querying the API is simply passing the url string to the server. &lt;code&gt;paste&lt;/code&gt; and &lt;code&gt;paste0&lt;/code&gt; are quite useful for constructing these queries&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(searchURL &amp;lt;- paste(&amp;quot;http://api.map.baidu.com/place/v2/search?query=&amp;quot;,
+                      keyword,
+                      &amp;quot;&amp;amp;location=&amp;quot;,location,
+                      &amp;quot;&amp;amp;radius=&amp;quot;,radius,
+                      &amp;quot;&amp;amp;scope=&amp;quot;,1,
+                      &amp;quot;&amp;amp;page_num=&amp;quot;, 1,
+                      &amp;quot;&amp;amp;page_size=&amp;quot;,page_size,
+                      &amp;quot;&amp;amp;region=&amp;quot;,city,
+                      &amp;quot;&amp;amp;output=json&amp;quot;,
+                      &amp;quot;&amp;amp;ak=&amp;quot;,key,
+                      sep=&amp;quot;&amp;quot;))
+# [1] &amp;quot;http://api.map.baidu.com/place/v2/search?query=%E9%A4%90%E9%A6%86&amp;amp;location=30.48178,114.363708&amp;amp;radius=4000&amp;amp;scope=1&amp;amp;page_num=1&amp;amp;page_size=20&amp;amp;region=%E6%AD%A6%E6%B1%89&amp;amp;output=json&amp;amp;ak=mSWfSeru2jtlMtAutjy9Vv28XLC568N3&amp;quot;
+
+
+result &amp;lt;- getURL(url = URLencode(searchURL),ssl.verifypeer = FALSE)
+x &amp;lt;- fromJSON(result)
+str(x, max.level = 2) # Setting max.level so that it won&amp;#39;t overwhelm the page. Feel free to explore.
+# List of 2
+#  $ status : num 210
+#  $ message: chr &amp;quot;APP IPæ ¡éªŒå¤±è´¥&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Query Baidu for Parks around 1 km of Huazhong Agricultural University and print raw results&lt;/li&gt;
+&lt;li&gt;Query Baidu for bus and train stations around Wuhan University and print the results&lt;/li&gt;
+&lt;li&gt;How many day care centers are there in this area?&lt;/li&gt;
+&lt;li&gt;Intepret these results&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;repeated-queries&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Repeated queries&lt;/h3&gt;
+&lt;p&gt;Because many of the results are paginated, it is imperative that we query the server repeatedly to get all the results we want. In the following code, we query until all the results are retrieved. We use the while loop for this, though other loops might be more suitable for particular use cases.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+page_num &amp;lt;- 0 ### set the starting page 
+total &amp;lt;- 20 ### the total number of records, initial value is 20, 
+
+while(page_num &amp;lt;= ceiling(total/page_size)-1){
+    ### run the query to get the result from the server
+    searchURL &amp;lt;- paste(&amp;quot;http://api.map.baidu.com/place/v2/search?query=&amp;quot;,
+                      keyword,
+                      &amp;quot;&amp;amp;location=&amp;quot;,location,
+                      &amp;quot;&amp;amp;radius=&amp;quot;,radius,
+                      &amp;quot;&amp;amp;scope=&amp;quot;,1,
+                      &amp;quot;&amp;amp;page_num=&amp;quot;,page_num,
+                      &amp;quot;&amp;amp;page_size=&amp;quot;,page_size,
+                      &amp;quot;&amp;amp;region=&amp;quot;,city,
+                      &amp;quot;&amp;amp;output=json&amp;quot;,
+                      &amp;quot;&amp;amp;ak=&amp;quot;,key,
+                      sep=&amp;quot;&amp;quot;)
+    result = getURL(url = searchURL,ssl.verifypeer = FALSE)
+    ### transfer the result from json to a list format in R
+    x = fromJSON(result)
+    ### get the number of total records from the result
+    total = x$total
+    ### print the process
+    cat(&amp;quot;Retrieving&amp;quot;,page_num+1,&amp;quot;from total&amp;quot;,ceiling(total/page_size),&amp;quot;pages ...\n&amp;quot;)
+    page_num = page_num + 1
+    ### extract the value from the result
+    
+    # PLACEID
+    placeIDSet = c(placeIDSet,
+                   unlist(lapply(X = x$results,FUN = function(x)return(x$uid))))
+    # Name of the place
+    name = c(name,
+             unlist(lapply(X = x$results,FUN = function(x)return(x$name))))
+    #latitude
+    lat = c(lat,
+            unlist(lapply(X = x$results,FUN = function(x)return(x$location$lat))))
+    #longitude
+    lng = c(lng,
+            unlist(lapply(X = x$results,FUN = function(x)return(x$location$lng))))
+    #address
+    address = c(address,
+                unlist(lapply(X = x$results,FUN = function(x)return(x$address))))
+    Sys.sleep(1) # Set this so that you do not bombard the server. The process stops for 1s. Change this to suit your purpose. 
+}
+# Retrieving 1 from total  pages ...
+# Error in while (page_num &amp;lt;= ceiling(total/page_size) - 1) {: argument is of length zero
+# save the extracted information as a dataframe
+dat &amp;lt;- data.frame(name,lng,lat,address,placeIDSet)
+nrow(dat)
+# [1] 0&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The above is a very brittle code. If the server returns an error because of heavy volume, the loop fails. Use &lt;code&gt;tryCatch&lt;/code&gt; to trap errors and continue loop and keep track of which pages have returned errors. In particular use the status and message of the results to write more graceful code that will survive.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cleaning-and-exporting-the-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Cleaning and exporting the data&lt;/h3&gt;
+&lt;p&gt;Baidu has its own projection system. To visualize the data, we need to transform the coordinates from BD09 coordinate system to the commonly used WGS84 system (epsg:4326). To achieve that, we need use a customized package on github. &amp;quot;devtools“ package is required here.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(devtools)
+install_github(&amp;quot;waholulu/bd09towgs84&amp;quot;)
+library(bdtowgs)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we can use its build-in function “bd09towgs84” to project the coordinates.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;coord &amp;lt;- subset(dat, select = c(&amp;quot;lng&amp;quot;, &amp;quot;lat&amp;quot;))
+# Error in `[.data.frame`(x, r, vars, drop = drop): undefined columns selected
+transfer &amp;lt;- as.data.frame(t(apply(coord,1,bd09towgs84)))
+# Error in apply(coord, 1, bd09towgs84): object &amp;#39;coord&amp;#39; not found
+dat$lng &amp;lt;- transfer$V1
+# Error in eval(expr, envir, enclos): object &amp;#39;transfer&amp;#39; not found
+dat$lat &amp;lt;- transfer$V2
+# Error in eval(expr, envir, enclos): object &amp;#39;transfer&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then the data can be saved as a csv file.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# save the information as an excel file
+write_csv(dat, path= &amp;quot;search_results.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualise-results&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Visualise results&lt;/h3&gt;
+&lt;p&gt;Now we can use leaflet to visuzalize the locations of the restaurants.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# Error in `[.data.frame`(dat, , c(&amp;quot;lng&amp;quot;, &amp;quot;lat&amp;quot;, &amp;quot;name&amp;quot;)): undefined columns selected
+# Error in structure(list(options = options), leafletData = data): object &amp;#39;locations_df&amp;#39; not found
+# Error in eval(expr, envir, enclos): object &amp;#39;m&amp;#39; not found&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Instead of a buffer search, use a bounding box search to return the results for restaurants (“餐馆”). Use the bounds as &lt;code&gt;c(30.531539,114.357628,30.552129,114.385296)&lt;/code&gt; (SW-NE corner points). Display on a map.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What happens you search for day care centers?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;apis-for-non-point-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;APIs for non-point data&lt;/h1&gt;
+&lt;p&gt;In the above, we primarily used API to query point location information. There is no reason to think that this is limited to points. For example we can get routing information or travel time isoschornes or whatever API is serving that can be read.&lt;/p&gt;
+&lt;p&gt;To demonstrate this, we can plot &lt;a href=&#34;https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times&#34;&gt;Isochrones&lt;/a&gt; of every 2 min biking, around some random points in Wuhan. For this we use the Open Source Routing Library (OSRM), though any other API works as well (e.g. Google, Mapbox etc.). For this purposes, we are going to use the demo server for OSRM, though ideally you will &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34;&gt;set one up&lt;/a&gt; for your purposes. If you set one up for yourself, you can get other directions and travel such as walking, driving etc.&lt;/p&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    &lt;/p&gt;
+&lt;p&gt;You should be careful using the OSRM demo server, it is not always very stable.&lt;/p&gt;
+&lt;p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(sf)
+library(osrm)
+# Ideally set these options up
+ options(osrm.server = &amp;quot;http://localhost:5000/&amp;quot;)
+options(osrm.profile = &amp;#39;bike&amp;#39;) #Change this for other modes. However, the demo server only returns car profile
+
+randompoints &amp;lt;- matrix(c(114.346566,30.533282,
+                           114.298273,30.381364,
+                           114.347141,30.599453), ncol=2, byrow =TRUE) %&amp;gt;% data.frame()
+names(randompoints) &amp;lt;- c(&amp;#39;lng&amp;#39;, &amp;#39;lat&amp;#39;)
+randompoints$name &amp;lt;- c(&amp;#39;pt1&amp;#39;, &amp;#39;pt2&amp;#39;, &amp;#39;pt3&amp;#39;)
+
+rt &amp;lt;- osrmRoute(src = randompoints[1,c(&amp;#39;name&amp;#39;, &amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], 
+                dst = randompoints[2,c(&amp;#39;name&amp;#39;,&amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], 
+                sp = TRUE) %&amp;gt;% st_as_sf()
+# Error in UseMethod(&amp;quot;st_as_sf&amp;quot;): no applicable method for &amp;#39;st_as_sf&amp;#39; applied to an object of class &amp;quot;NULL&amp;quot;
+
+rt %&amp;gt;% leaflet() %&amp;gt;%
+    addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints[1:2,], ~lng, ~lat) %&amp;gt;%
+  addPolylines(weight =5, smoothFactor = .5, color=&amp;#39;red&amp;#39;)
+# Error in polygonData.default(data): Don&amp;#39;t know how to get path data from object of class function&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OSRM is a convenience package that is wrapping the calls to the server and parsing the output into Spatial*. For example, the curl query in the backend looks like&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://router.project-osrm.org/route/v1/driving/114.346566,30.533282,114.298273,30.381364&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;iso &amp;lt;- list()
+for (i in 1:nrow(randompoints)){
+iso[[i]] &amp;lt;- osrmIsochrone(loc = randompoints[i,c(&amp;#39;lng&amp;#39;,&amp;#39;lat&amp;#39;)], breaks = seq(from = 0,to = 20, by = 2)) %&amp;gt;% st_as_sf()
+}
+# Error in (function (classes, fdef, mtable) : unable to find an inherited method for function &amp;#39;coordinates&amp;#39; for signature &amp;#39;&amp;quot;NULL&amp;quot;&amp;#39;
+
+iso &amp;lt;- do.call(&amp;#39;rbind&amp;#39;, iso)
+
+ Npal &amp;lt;- colorNumeric(
+   palette = &amp;quot;Reds&amp;quot;, n = 5,
+   domain = iso$center
+ )
+ 
+iso %&amp;gt;% leaflet() %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+  addMarkers(data=randompoints, ~lng, ~lat) %&amp;gt;%
+  addPolygons(color = &amp;quot;#444444&amp;quot;, weight = 1, smoothFactor = 0.5,
+    opacity = 1.0, fillOpacity = 0.5, fillColor = ~Npal(iso$center),
+    group = &amp;quot;Isochrone&amp;quot;) %&amp;gt;%
+  addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~iso$center,
+            title = &amp;quot;Biking Time (min)&amp;quot;,opacity = 1
+            )
+# Error in derivePolygons(data, lng, lat, missing(lng), missing(lat), &amp;quot;addPolygons&amp;quot;): Polygon data not found; please provide addPolygons with data and/or lng/lat arguments&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;unstructured-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Unstructured data&lt;/h1&gt;
+&lt;p&gt;JSON files are well-structured. Therefore, it is relatively easy to parse them. If the files are unstructured, a lot of effort goes into figuring out different structures and searches that will yield the dataset that is necessary. In general, packages such as &lt;code&gt;xml2&lt;/code&gt; and &lt;code&gt;rvest&lt;/code&gt; will help such tasks. This is left for a different day.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Reading data from server based APIs are no different from reading and parsing a local file. However, unlike local files that are well structured, and OS handling handling of low level functions of memory management and error recovery, we ought to be extra mindful of how errors might affect and break our code. Once the data is scraped, analysis proceeds in the usual fashion. However, because the data is not of specific vintage, reproducibility of research is a serious concern. You should note it and be able to provide archival of scraped data for others to use, subject to end use restrictions. In any case, currency of the data should be balanced with the archival mission of the organisation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acknowledgements&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Acknowledgements&lt;/h1&gt;
+&lt;p&gt;Parts of the code in this post is written by &lt;a href=&#34;https://planning.unc.edu/student/chenyan/&#34;&gt;Yan Chen&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Techniques &amp; Politics of New Urban Analytics</title>
+      <link>https://nkaza.github.io/teaching/techniques-politics-short-course/</link>
+      <pubDate>Thu, 26 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/teaching/techniques-politics-short-course/</guid>
+      <description>
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#course-description-objectives&#34;&gt;Course Description &amp;amp; Objectives&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#textbooks&#34;&gt;Textbooks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#course-policies&#34;&gt;Course Policies&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#schedule&#34;&gt;Schedule&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;course-description-objectives&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Course Description &amp;amp; Objectives&lt;/h1&gt;
+&lt;p&gt;This course is about different techniques used in assembling, managing, visualising, analysing and predicting using heterogeneous and messy data sets in urban environments. These include point, polygon, raster, vector, text, image and network data; data sets with high cadence and high spatial resolution; data sets that are inherently messy and incomplete. In addition to the mechanics of urban data analytics, we will also explore the issues of ethics and politics of data generation and analysis.&lt;/p&gt;
+&lt;div id=&#34;prerequisites&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;Much of the analytical techniques will be taught using R. A working knowledge of the R environment is useful, though the first couple of labs, we will go over the basics. However, the course moves quickly. You are advised to seek help to keep up&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;textbooks&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Textbooks&lt;/h1&gt;
+&lt;p&gt;We will discuss the topics from the following two books in class. Students ae expected to read through the material before Day 1.&lt;/p&gt;
+&lt;p&gt;O’Neil, Cathy (2016). &lt;em&gt;Weapons of Math Destruction: How Big Data Increases Inequality and Threatens Democracy&lt;/em&gt;. New York: Crown.&lt;/p&gt;
+&lt;p&gt;Townsend, Anthony M (2013). &lt;em&gt;Smart cities: Big data, civic hackers, and the quest for a new utopia&lt;/em&gt;. WW Norton &amp;amp; Company.&lt;/p&gt;
+&lt;p&gt;The following books are recommended for reference.&lt;/p&gt;
+&lt;p&gt;Bivand, Roger S, Edzer Pebesma and Virgilio Gómez-Rubio (2013). &lt;em&gt;Applied Spatial Data Analysis with R&lt;/em&gt;. 2nd ed. 2013 edition. New York Heidelberg Dordrecht London: Springer. ISBN: 978-1-4614-7617-7.&lt;/p&gt;
+&lt;p&gt;Brewer, Cynthia A. (2015). &lt;em&gt;Designing Better Maps: A Guide for GIS Users&lt;/em&gt;. 2 edition. Redlands, California: Esri Press. ISBN: 978-1-58948-440-5.&lt;/p&gt;
+&lt;p&gt;Few, Stephen (2004). &lt;em&gt;Show Me the Numbers: Designing Tables and Graphs to Enlighten&lt;/em&gt;. Oakland, Calif: Analytics Press. ISBN: 978-0-9706019-9-5.&lt;/p&gt;
+&lt;p&gt;Grolemund, Garrett and Hadley Wickham (2017). &lt;em&gt;R for Data Science: Import, Tidy, Transform, Visualize, and Model Data&lt;/em&gt;. Sebastopol, CA: O’ Reilly media,. URL: &lt;a href=&#34;http://r4ds.had.co.nz/&#34; class=&#34;uri&#34;&gt;http://r4ds.had.co.nz/&lt;/a&gt; (visited on May. 25, 2018).&lt;/p&gt;
+&lt;p&gt;Tufte, E. R (2001). &lt;em&gt;The Visual display of Quantitative Information&lt;/em&gt;. Cheshire, CT: Graphics Press.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;course-policies&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Course Policies&lt;/h1&gt;
+&lt;div id=&#34;equipment&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Equipment&lt;/h2&gt;
+&lt;p&gt;Every student should have a working laptop that has &lt;a href=&#34;https://www.r-project.org/&#34;&gt;R&lt;/a&gt; and &lt;a href=&#34;https://www.rstudio.com/&#34;&gt;Rstudio&lt;/a&gt; installed. The laptops should have sufficient memory and processing capacity to deal with large data sets.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;grading&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Grading&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;30%&lt;/strong&gt; lab reports to be submitted at the end of the lab (Individual)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;30%&lt;/strong&gt; Daily homework assignments due by 11:59 PM (Individual)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;20%&lt;/strong&gt; Final project (Group)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;10%&lt;/strong&gt; Class &amp;amp; lab participation&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Grading of labs and homeworks will be through Canvas. Instructions will be provided on the first day of class.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;academic-conduct&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Academic Conduct&lt;/h2&gt;
+&lt;p&gt;I firmly believe in learning from your peers and from others. All homework and lab submissions could benefit from collaborations, however, the submissions are individual. This means that interpreting the data and the results, producing the visualisations, drawing appropriate conclusions from the data is necessarily individual even when the strategies can be discussed and developed with others in class or out of class. &lt;strong&gt;All&lt;/strong&gt; help, however, should be explicitly acknowledged. Severe penalties are imposed for non-attribution.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;schedule&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Schedule&lt;/h1&gt;
+&lt;hr /&gt;
+&lt;div id=&#34;day-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 1&lt;/h2&gt;
+&lt;div id=&#34;am---1140-am-lec-lab-introduction&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;8:30 AM - 11:40 AM (Lec &amp;amp; Lab): Introduction&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Lecture. &lt;a href=&#34;https://nkaza.github.io/slides/techniques_Introduction/Introduction_slides.html&#34;&gt;slides&lt;/a&gt; | &lt;a href=&#34;https://stats.idre.ucla.edu/r/seminars/intro/&#34;&gt;UCLA slides&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Lab Session: Introduction to R. &lt;a href=&#34;https://nkaza.github.io/post/introduction-to-r-exploratory-data-visualisation&#34;&gt;Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pm---440-pm-lab-visualising-urban-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2:30 PM - 4:40 PM (Lab): Visualising urban data&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Lab Session: Exploring large urban datasets. Vector data. Visualsing using small multiples, choropleth maps etc. &lt;a href=&#34;https://nkaza.github.io/post/geospatial-data-in-r&#34;&gt;Notes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;../techniques_hw/hw1.pdf&#34;&gt;Homework&lt;/a&gt;: Due Day 1 11:59 PM in Canvas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day-2&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 2&lt;/h2&gt;
+&lt;div id=&#34;am---1140-am-lec-lab-raster-analysis&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;8:30 AM - 11:40 AM (Lec &amp;amp; Lab): Raster Analysis&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Lecture. &lt;a href=&#34;https://nkaza.github.io/slides/Raster/rasterR_slides.html&#34;&gt;slides&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Lab Session: Basic raster analysis in R, Urban landscape metrics &lt;a href=&#34;https://www.rspatial.org/analysis/rst/9-remotesensing.html#part-i&#34;&gt;Notes 1&lt;/a&gt; | &lt;a href=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/&#34;&gt;Notes 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;../techniques_hw/hw2.pdf&#34;&gt;Homework&lt;/a&gt;: Due Day 2 11:59 PM in Canvas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pm---440-pm-seminar-the-ethics-of-smart-cities&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2:30 PM - 4:40 PM (Seminar) : The ethics of smart cities&lt;/h3&gt;
+&lt;p&gt;Students are expected to read through the material and be prepared to discuss the topics in class. This is a student driven discussion. Instructor will only facilitate.&lt;/p&gt;
+&lt;div id=&#34;assigned-readings&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Assigned Readings&lt;/h4&gt;
+&lt;p&gt;Goodspeed, Robert (2014). “Smart cities: moving beyond urban cybernetics to tackle wicked problems”. In: &lt;em&gt;Cambridge Journal of Regions, Economy and Society&lt;/em&gt; 8.1, pp. 79-92.&lt;/p&gt;
+&lt;p&gt;Hill, Dan (2008). &lt;em&gt;The street as platform&lt;/em&gt;. URL: &lt;a href=&#34;http://www.cityofsound.com/blog/2008/02/the-street-as-p.html&#34; class=&#34;uri&#34;&gt;http://www.cityofsound.com/blog/2008/02/the-street-as-p.html&lt;/a&gt; (visited on Jun. 03, 2018).&lt;/p&gt;
+&lt;p&gt;Vanolo, Alberto (2014). “Smartmentality: The smart city as disciplinary strategy”. In: &lt;em&gt;Urban Studies&lt;/em&gt; 51.5, pp. 883-898.&lt;/p&gt;
+&lt;p&gt;Wang, Tricia (2016). &lt;em&gt;Why Big Data Needs Thick Data&lt;/em&gt;. URL: &lt;a href=&#34;https://medium.com/ethnography-matters/why-big-data-needs-thick-data-b4b3e75e3d7&#34; class=&#34;uri&#34;&gt;https://medium.com/ethnography-matters/why-big-data-needs-thick-data-b4b3e75e3d7&lt;/a&gt; (visited on Jun. 03, 2018).&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day-3&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 3&lt;/h2&gt;
+&lt;div id=&#34;am---1140-am-lec-lab-classification-machine-learning&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;8:30 AM - 11:40 AM (Lec &amp;amp; Lab): Classification &amp;amp; Machine Learning&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Lecture. &lt;a href=&#34;https://docs.google.com/presentation/d/120Wer0YimQ3SKqOQ-M-MYf0A0-PqQTohYdUESifj1NQ/edit#slide=id.p&#34;&gt;slides&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Lab Session: Remote sensing classification, machine learning. &lt;a href=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/&#34;&gt;Notes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;../techniques_hw/hw3.pdf&#34;&gt;Homework&lt;/a&gt;: Due Day 3 11:59 PM in Canvas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pm---440-pm-lec-predictive-blackboxes-algorithmic-biases&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2:30 PM - 4:40 PM (Lec): Predictive Blackboxes &amp;amp; Algorithmic Biases&lt;/h3&gt;
+&lt;div id=&#34;assigned-readings-1&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Assigned Readings&lt;/h4&gt;
+&lt;p&gt;Rosenblat, Alex (2016). “The truth about how Uber’s app manages drivers”. In: &lt;em&gt;Harvard Business Review&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Tufekci, Zeynep (2015). “Algorithmic Harms beyond Facebook and Google: Emergent Challenges of Computational Agency”. In: &lt;em&gt;Colorado Technology Law Journal&lt;/em&gt; 13, p. 203. URL: &lt;a href=&#34;https://heinonline.org/HOL/Page?handle=hein.journals/jtelhtel13&amp;amp;id=227&amp;amp;div=&amp;amp;collection=&#34; class=&#34;uri&#34;&gt;https://heinonline.org/HOL/Page?handle=hein.journals/jtelhtel13&amp;amp;id=227&amp;amp;div=&amp;amp;collection=&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Ziewitz, Malte (2015). “Governing Algorithms”. In: &lt;em&gt;Science, Technology, &amp;amp; Human Values&lt;/em&gt; 41.1, pp. 3-16. ISSN: 1552-8251. DOI: &lt;a href=&#34;https://doi.org/10.1177/0162243915608948&#34;&gt;10.1177/0162243915608948&lt;/a&gt;. URL: &lt;a href=&#34;http://dx.doi.org/10.1177/0162243915608948&#34; class=&#34;uri&#34;&gt;http://dx.doi.org/10.1177/0162243915608948&lt;/a&gt;.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day-4&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 4&lt;/h2&gt;
+&lt;div id=&#34;am---1140-am-lab-scraping-the-web-for-data&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;8:30 AM - 11:40 AM (Lab): Scraping the web for data&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Lab Session: Points of Interest on Baidu. &lt;a href=&#34;https://nkaza.github.io/post/scraping-web-for-data/&#34;&gt;Notes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;../techniques_hw/hw4.pdf&#34;&gt;Homework&lt;/a&gt;: Due Day 4 11:59 PM in Canvas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pm---440-pm-research-talk-misadventures-in-urban-analytics&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2:30 PM - 4:40 PM (Research Talk): (Mis)adventures in urban analytics&lt;/h3&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day-5&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 5&lt;/h2&gt;
+&lt;div id=&#34;am---1140-am-lec-lab-visualising-analysing-point-patterns&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;8:30 AM - 11:40 AM (Lec &amp;amp; Lab) : Visualising &amp;amp; Analysing Point Patterns&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Lecture:&lt;/li&gt;
+&lt;li&gt;Lab Session: Analysing crime clusters in Manchester &lt;a href=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data&#34;&gt;Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pm---440-pm-group-project-work&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2:30 PM - 4:40 PM: Group Project Work&lt;/h3&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;day-6&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Day 6&lt;/h2&gt;
+&lt;div id=&#34;am---1140-am-short-project-presentations&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;8:30 AM - 11:40 AM: Short Project Presentations&lt;/h3&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Machine Learning for Urban Analytics</title>
+      <link>https://nkaza.github.io/slides/machinelearning/ml_slides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/slides/machinelearning/ml_slides/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;class: right, bottom&lt;/p&gt;
+&lt;div id=&#34;machine-learning-for-urban-analytics&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Machine Learning for Urban Analytics&lt;/h2&gt;
+&lt;div id=&#34;nikhil-kaza&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Nikhil Kaza&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div id=&#34;department-of-city-regional-planning-university-of-north-carolina-at-chapel-hill&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Department of City &amp;amp; Regional Planning &lt;br /&gt; University of North Carolina at Chapel Hill&lt;/h5&gt;
+&lt;div id=&#34;updated-2022-01-22&#34; class=&#34;section level6&#34;&gt;
+&lt;h6&gt;updated: 2022-01-22&lt;/h6&gt;
+&lt;table style=&#34;width:6%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;# What is Machine Learning ?&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;img src=&#34;figs/ML_what.jpg&#34; width=&#34;360&#34; /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-purpose-of-machine-learning&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The purpose of Machine Learning&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Mostly for Prediction…
+&lt;ul&gt;
+&lt;li&gt;Classification (Categories of objects e.g. spam/not spam; median strip /side walk/road, default/ prepayment / Current)&lt;/li&gt;
+&lt;li&gt;Regression (Continous variables, e.g. volume of water consumption/ energy use )
+&lt;ul&gt;
+&lt;li&gt;Not the same as statistical inference such as linear regression.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;### OK. What kinds of prediction?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Local governments: Traffic congestion&lt;/li&gt;
+&lt;li&gt;Google: What ads to show&lt;/li&gt;
+&lt;li&gt;Amazon: What products to buy&lt;/li&gt;
+&lt;li&gt;Insurance: Risk based on prior claims&lt;/li&gt;
+&lt;li&gt;UNC: Sakai use to identify students in need of intervention.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;different-terms&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Different Terms&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Prediction&lt;/li&gt;
+&lt;li&gt;Projection&lt;/li&gt;
+&lt;li&gt;Forecast&lt;/li&gt;
+&lt;li&gt;Scenarios&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;what-do-you-think-the-differences-are&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What do you think the differences are?&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;figs/sunspots.png&#34; width=&#34;1200&#34; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-central-dogma-of-prediction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The central dogma of prediction&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;figs/centraldogma.png&#34; width=&#34;678&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;components-of-a-predictor&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Components of a predictor&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+&lt;redtext&gt;question&lt;/redtext&gt; -&amp;gt; input data -&amp;gt; features -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Start with a general question&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Can I automatically detect emails that are SPAM that are not?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Make it concrete&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Can I use quantitative characteristics of the emails to classify them as SPAM/HAM?&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-1&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; &lt;redtext&gt;input data &lt;/redtext&gt; -&amp;gt; features -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;img class=center src=./figs/spamR.png height=&#39;400&#39; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://rss.acs.unt.edu/Rdoc/library/kernlab/html/spam.html&#34;&gt;http://rss.acs.unt.edu/Rdoc/library/kernlab/html/spam.html&lt;/a&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-2&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; &lt;redtext&gt;features&lt;/redtext&gt; -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;
+Dear Jeff,&lt;/p&gt;
+&lt;p&gt;Can you send me your address so I can send you the invitation?&lt;/p&gt;
+&lt;p&gt;Thanks,&lt;/p&gt;
+&lt;p&gt;Ben
+&lt;/b&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-3&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; &lt;redtext&gt;features&lt;/redtext&gt; -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;&lt;/p&gt;
+&lt;p&gt;Dear Jeff,&lt;/p&gt;
+&lt;p&gt;Can &lt;rt&gt;you&lt;/rt&gt; send me your address so I can send &lt;rt&gt;you&lt;/rt&gt; the invitation?&lt;/p&gt;
+&lt;p&gt;Thanks,&lt;/p&gt;
+&lt;p&gt;Ben
+&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;Frequency of you &lt;span class=&#34;math inline&#34;&gt;\(= 2/17 = 0.118\)&lt;/span&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-4&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; &lt;redtext&gt;features&lt;/redtext&gt; -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(kernlab)
+data(spam)
+str(spam)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;#39;data.frame&amp;#39;:    4601 obs. of  58 variables:
+##  $ make             : num  0 0.21 0.06 0 0 0 0 0 0.15 0.06 ...
+##  $ address          : num  0.64 0.28 0 0 0 0 0 0 0 0.12 ...
+##  $ all              : num  0.64 0.5 0.71 0 0 0 0 0 0.46 0.77 ...
+##  $ num3d            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ our              : num  0.32 0.14 1.23 0.63 0.63 1.85 1.92 1.88 0.61 0.19 ...
+##  $ over             : num  0 0.28 0.19 0 0 0 0 0 0 0.32 ...
+##  $ remove           : num  0 0.21 0.19 0.31 0.31 0 0 0 0.3 0.38 ...
+##  $ internet         : num  0 0.07 0.12 0.63 0.63 1.85 0 1.88 0 0 ...
+##  $ order            : num  0 0 0.64 0.31 0.31 0 0 0 0.92 0.06 ...
+##  $ mail             : num  0 0.94 0.25 0.63 0.63 0 0.64 0 0.76 0 ...
+##  $ receive          : num  0 0.21 0.38 0.31 0.31 0 0.96 0 0.76 0 ...
+##  $ will             : num  0.64 0.79 0.45 0.31 0.31 0 1.28 0 0.92 0.64 ...
+##  $ people           : num  0 0.65 0.12 0.31 0.31 0 0 0 0 0.25 ...
+##  $ report           : num  0 0.21 0 0 0 0 0 0 0 0 ...
+##  $ addresses        : num  0 0.14 1.75 0 0 0 0 0 0 0.12 ...
+##  $ free             : num  0.32 0.14 0.06 0.31 0.31 0 0.96 0 0 0 ...
+##  $ business         : num  0 0.07 0.06 0 0 0 0 0 0 0 ...
+##  $ email            : num  1.29 0.28 1.03 0 0 0 0.32 0 0.15 0.12 ...
+##  $ you              : num  1.93 3.47 1.36 3.18 3.18 0 3.85 0 1.23 1.67 ...
+##  $ credit           : num  0 0 0.32 0 0 0 0 0 3.53 0.06 ...
+##  $ your             : num  0.96 1.59 0.51 0.31 0.31 0 0.64 0 2 0.71 ...
+##  $ font             : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num000           : num  0 0.43 1.16 0 0 0 0 0 0 0.19 ...
+##  $ money            : num  0 0.43 0.06 0 0 0 0 0 0.15 0 ...
+##  $ hp               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ hpl              : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ george           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num650           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ lab              : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ labs             : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ telnet           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num857           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ data             : num  0 0 0 0 0 0 0 0 0.15 0 ...
+##  $ num415           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num85            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ technology       : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num1999          : num  0 0.07 0 0 0 0 0 0 0 0 ...
+##  $ parts            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ pm               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ direct           : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ cs               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ meeting          : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ original         : num  0 0 0.12 0 0 0 0 0 0.3 0 ...
+##  $ project          : num  0 0 0 0 0 0 0 0 0 0.06 ...
+##  $ re               : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ edu              : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ table            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ conference       : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ charSemicolon    : num  0 0 0.01 0 0 0 0 0 0 0.04 ...
+##  $ charRoundbracket : num  0 0.132 0.143 0.137 0.135 0.223 0.054 0.206 0.271 0.03 ...
+##  $ charSquarebracket: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ charExclamation  : num  0.778 0.372 0.276 0.137 0.135 0 0.164 0 0.181 0.244 ...
+##  $ charDollar       : num  0 0.18 0.184 0 0 0 0.054 0 0.203 0.081 ...
+##  $ charHash         : num  0 0.048 0.01 0 0 0 0 0 0.022 0 ...
+##  $ capitalAve       : num  3.76 5.11 9.82 3.54 3.54 ...
+##  $ capitalLong      : num  61 101 485 40 40 15 4 11 445 43 ...
+##  $ capitalTotal     : num  278 1028 2259 191 191 ...
+##  $ type             : Factor w/ 2 levels &amp;quot;nonspam&amp;quot;,&amp;quot;spam&amp;quot;: 2 2 2 2 2 2 2 2 2 2 ...&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-5&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(spam$type)&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+nonspam
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+spam
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2788
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1813
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-6&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; &lt;redtext&gt;algorithm&lt;/redtext&gt; -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(density(spam$your[spam$type==&amp;quot;nonspam&amp;quot;]),
+     col=&amp;quot;blue&amp;quot;,main=&amp;quot;&amp;quot;,xlab=&amp;quot;Frequency of &amp;#39;your&amp;#39;&amp;quot;)
+lines(density(spam$your[spam$type==&amp;quot;spam&amp;quot;]),col=&amp;quot;red&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;figs/unnamed-chunk-5-1.png&#34; width=&#34;576&#34; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-7&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; &lt;redtext&gt;algorithm&lt;/redtext&gt; -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Our algorithm&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Find a value &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;frequency of ‘your’ &lt;span class=&#34;math inline&#34;&gt;\(&amp;gt;\)&lt;/span&gt; C&lt;/strong&gt; predict “spam”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-8&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; algorithm -&amp;gt; &lt;redtext&gt;parameters&lt;/redtext&gt; -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(density(spam$your[spam$type==&amp;quot;nonspam&amp;quot;]),
+     col=&amp;quot;blue&amp;quot;,main=&amp;quot;&amp;quot;,xlab=&amp;quot;Frequency of &amp;#39;your&amp;#39;&amp;quot;)
+lines(density(spam$your[spam$type==&amp;quot;spam&amp;quot;]),col=&amp;quot;red&amp;quot;)
+abline(v=0.5,col=&amp;quot;black&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;figs/unnamed-chunk-6-1.png&#34; width=&#34;576&#34; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-9&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; &lt;redtext&gt;evaluation&lt;/redtext&gt;
+&lt;/center&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prediction &amp;lt;- ifelse(spam$your &amp;gt; 0.5,&amp;quot;spam&amp;quot;,&amp;quot;nonspam&amp;quot;)
+table(prediction,spam$type)/length(spam$type)&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+nonspam
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+spam
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+nonspam
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.4590306
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.1017170
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+spam
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.1469246
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.2923278
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Accuracy &lt;span class=&#34;math inline&#34;&gt;\(\approx 0.459 + 0.292 = 0.751\)&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bike-sharing&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bike Sharing&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: Can you predict which stations will need to be restocked with bikes at different times of the day?
+&lt;ul&gt;
+&lt;li&gt;How can you use neighborhood characterstics (demographics, economics, proxmity to other stations) and time of day, day of the week, season, weather etc. to predict number of open slots on bike stations?&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;urban-sprawl-environmental-impacts&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Urban Sprawl &amp;amp; Environmental Impacts&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: Can you predict number of bad air quality days from urban form characteristics?
+&lt;ul&gt;
+&lt;li&gt;Can urban landscape metrics and other demographic characteristics predict bad air quality days in a year?&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;urban-form-healthy-behaviours&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Urban Form &amp;amp; Healthy Behaviours&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: How does urban form characteristics relate to healthy outcomes?
+&lt;ul&gt;
+&lt;li&gt;How does street density, intersection density, activity density etc. impact residents’ healthy behaviours (healthy food consumption, exercise etc.)?&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;energy-conservation-mortgage-risks&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Energy Conservation &amp;amp; Mortgage Risks&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: Should we reward households with conservation proclivities with a break on mortgage interest rates?
+&lt;ul&gt;
+&lt;li&gt;Is the choice to buy energy star appliances and houses in infill urban areas correlated with lower default/prepayment rate?&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mode-choice&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Mode Choice&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: Can we predict household transportation mode choice?
+&lt;ul&gt;
+&lt;li&gt;Given the weather, cost of travel, cost of parking etc. what is the likelihood that a household will choose to drive vs. taking public transit.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;experimental-design&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Experimental Design&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/studydesign.png height = &#39;200&#39;/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=center src=./figs/cross_validation.png height=&#39;300&#39; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;k-nearest-neighbor&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;K Nearest Neighbor&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/knnClassification.png height = &#39;400&#39;/&gt;&lt;/p&gt;
+&lt;div id=&#34;footnote-httpsen.wikipedia.orgwikik-nearest_neighbors_algorithm&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;.footnote[ &lt;a href=&#34;https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm&#34; class=&#34;uri&#34;&gt;https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm&lt;/a&gt;]&lt;/h2&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;logistic-regression-misnomer&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Logistic Regression (Misnomer)&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/logisticregression.png height = &#39;400&#39;/&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;http://dataaspirant.com/2017/03/02/how-logistic-regression-model-works/&#34; class=&#34;uri&#34;&gt;http://dataaspirant.com/2017/03/02/how-logistic-regression-model-works/&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;trees&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Trees&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/regressiontree.gif height = &#39;400&#39;/&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://www.techemergence.com/what-is-machine-learning/&#34; class=&#34;uri&#34;&gt;https://www.techemergence.com/what-is-machine-learning/&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;trees-1&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Trees&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/obamatree.png height = &#39;600&#39;/&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://nyti.ms/2QRnQxI&#34; class=&#34;uri&#34;&gt;https://nyti.ms/2QRnQxI&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;forests-ensembles&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Forests (Ensembles)&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/forests.png height=400&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;http://www.robots.ox.ac.uk/~az/lectures/ml/lect5.pdf&#34; class=&#34;uri&#34;&gt;http://www.robots.ox.ac.uk/~az/lectures/ml/lect5.pdf&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;and-lots-more&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;And lots more…&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/caretmodels.png height=700&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;class: right, bottom, inverse&lt;/p&gt;
+&lt;div id=&#34;some-terminology&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Some Terminology&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ensembling&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Ensembling&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ensembling2.png height=350&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://quantdare.com/what-is-the-difference-between-bagging-and-boosting/&#34; class=&#34;uri&#34;&gt;https://quantdare.com/what-is-the-difference-between-bagging-and-boosting/&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bootstrap-aggregating-bagging&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bootstrap aggregating (bagging)&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Resample cases and recalculate predictions&lt;/li&gt;
+&lt;li&gt;Average or majority vote&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img class=center src=./figs/bagging.png height=400&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[
+list()]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;boosting&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Boosting&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create a model&lt;/li&gt;
+&lt;li&gt;Focus on the errors of the model and create another model&lt;/li&gt;
+&lt;li&gt;Continue this process until no improvement occurs&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img class=center src=./figs/boosted-trees-process.png height=400&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://blog.bigml.com/2017/03/14/introduction-to-boosted-trees/&#34; class=&#34;uri&#34;&gt;https://blog.bigml.com/2017/03/14/introduction-to-boosted-trees/&lt;/a&gt;]&lt;/p&gt;
+&lt;table style=&#34;width:6%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;# Boosting Explained&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;img class=center src=./figs/boosting1.png height=500&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;.footnote[&lt;a href=&#34;https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d&#34; class=&#34;uri&#34;&gt;https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d&lt;/a&gt;]&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;boosting-explained&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Boosting Explained&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/boosting2.png height=500&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d&#34; class=&#34;uri&#34;&gt;https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d&lt;/a&gt;]&lt;/p&gt;
+&lt;table style=&#34;width:6%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;## Basic terms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;In general, &lt;strong&gt;Positive&lt;/strong&gt; = identified and &lt;strong&gt;negative&lt;/strong&gt; = rejected. Therefore:&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;True positive&lt;/strong&gt; (TP) = correctly identified (e.g. Real buildings identified as buildings by the model.)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;False positive&lt;/strong&gt; (FP) = incorrectly identified (e.g. Real non-buildings identified as buildings)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;True negative&lt;/strong&gt; (TN) = correctly rejected (e.g. Real non-buildings identified as non-buildings by the model)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;False negative&lt;/strong&gt; (FN) = incorrectly rejected (e.g. Real buildings identified as roads by the model)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;a href=&#34;http://en.wikipedia.org/wiki/Sensitivity_and_specificity&#34;&gt;http://en.wikipedia.org/wiki/Sensitivity_and_specificity&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;accuracy-metrics&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Accuracy Metrics&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Mean squared error (or root mean squared error)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Continuous data, sensitive to outliers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Median absolute deviation&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Continuous data, often more robust&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Sensitivity (recall): &lt;span class=&#34;math inline&#34;&gt;\(TP/(TP+FN)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;If you want few missed positives (e.g. identify as many buildings as possible, even if you misidentify some non-buildings as buildings)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Specificity: &lt;span class=&#34;math inline&#34;&gt;\(TN/(TN+FP)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;If you want few negatives called positives (e.g. identify more buildings correctly, even if you miss some true buildings )&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Accuracy &lt;span class=&#34;math inline&#34;&gt;\((TP+TN)/(TP + TN + FP + FN)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Weights false positives/negatives equally&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Concordance&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;One example is &lt;a href=&#34;http://en.wikipedia.org/wiki/Cohen%27s_kappa&#34;&gt;kappa&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Predictive value of a positive (precision): &lt;span class=&#34;math inline&#34;&gt;\(TP/(TP +FP)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;When the prevalance is low (e.g. identify a rare class of a ‘tent city’ in US cities)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table style=&#34;width:6%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;# Conclusion&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;img class=center src=./figs/mlconsiderations.jpg height=500&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;practical-advice&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Practical Advice&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Focus on the importance of the problem&lt;/li&gt;
+&lt;li&gt;Try simple models first&lt;/li&gt;
+&lt;li&gt;Much of machine learning is about trying to create good features (variables); Models are secondary&lt;/li&gt;
+&lt;li&gt;Scale the features to have similar values (sale price in millions, sq.ft in 1000s don’t work well)&lt;/li&gt;
+&lt;li&gt;Ideally you want these features to be minimally correlated&lt;/li&gt;
+&lt;li&gt;Some algorithms requires lots of training data. Focus on creating good labelled data. Share it with others&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

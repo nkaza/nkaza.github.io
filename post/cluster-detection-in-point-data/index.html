@@ -1,0 +1,1928 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Spatial cluster detection." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/cluster-detection-in-point-data/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/cluster-detection-in-point-data/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/cluster-detection-in-point-data/" />
+  <meta property="og:title" content="Identifying Clusters of Events | Nikhil Kaza" />
+  <meta property="og:description" content="Spatial cluster detection." /><meta property="og:image" content="https://nkaza.github.io/post/cluster-detection-in-point-data/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/cluster-detection-in-point-data/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2018-07-09T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2018-07-09T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/cluster-detection-in-point-data/"
+  },
+  "headline": "Identifying Clusters of Events",
+  
+  "image": [
+    "https://nkaza.github.io/post/cluster-detection-in-point-data/featured.png"
+  ],
+  
+  "datePublished": "2018-07-09T00:00:00Z",
+  "dateModified": "2018-07-09T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Spatial cluster detection."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Identifying Clusters of Events | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="7e2e5969ead9b6d7a69ce7d38b64e067" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Identifying Clusters of Events</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Jul 9, 2018
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    18 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/r/">R</a>, <a href="/category/techniques-short-course/">techniques-short-course</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 748px;">
+  <div style="position: relative">
+    <img src="/post/cluster-detection-in-point-data/featured_hu5da6cf5d219eda44762682c9d260a1b0_749029_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="748" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        
+<script src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/header-attrs/header-attrs.js"></script>
+<script src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/widgetframe-binding/widgetframe.js"></script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this post, I am going to demonstrate some methods that can be used to identify clusters/hotspots. Clusters of points are usually locations where there are higher than expected frequency of incidents happening. These could be clusters of disease incidences, accidents, flood insurance claims, fatalities etc. Identifying where these clusters exists and are emerging is important to take either mitigating or preventative actions.</p>
+</div>
+<div id="acquire-data" class="section level2">
+<h2>Acquire Data</h2>
+<p>We are going to use crime data from <a href="http://data.police.uk">data.police.uk</a> for the greater Manchester Area. The data on this site is published by the Home Office, and is provided by the 43 geographic police forces in England and Wales, the British Transport Police, the Police Service of Northern Ireland and the Ministry of Justice. Most of spatial data boundaries can be acquired either from <a href="https://www.ordnancesurvey.co.uk/opendatadownload/">Ordinance Survey</a> or the <a href="http://webarchive.nationalarchives.gov.uk/20160110200248/http://www.ons.gov.uk/ons/guide-method/geography/products/census/spatial/2011/index.html">Census</a>.</p>
+<p><div class="alert alert-note">
+  <div>
+    <p>After I started creating this tutorial, I found a <a href="http://r-video-tutorial.blogspot.com/2015/05/introductory-point-pattern-analysis-of.html">tutorial by Dr. Fabio Veronesi</a> that is remarkably similar in the illustrative dataset, though the topics covered are slightly different. Check it out!</p></p>
+<p>Since I wrote this tutorial, many have transitioned to using <code>sf</code> objects instead of <code>sp</code> objects. Please adapt as necessary.
+
+  </div>
+</div>
+</p>
+<p>Crime data for Manchester clipped from January 2016 - May 2018 is
+<a href="https://www.dropbox.com/s/vxzpje0pwz6mhwl/monthlydata.zip?dl=0">here</a>. You can also download the LSOA and the boundary file from <a href="https://www.dropbox.com/s/8cabizab939w6jk/BNDfiles.zip?dl=0">here</a>.</p>
+</div>
+<div id="additional-resources" class="section level2">
+<h2>Additional resources</h2>
+<p>I strongly recommend that you read through <a href="https://www.crcpress.com/Spatial-Point-Patterns-Methodology-and-Applications-with-R/Baddeley-Rubak-Turner/p/book/9781482210200">Spatial Point Patterns: Methodology and Applications with R</a> by by Adrian Baddeley, Ege Rubak and Rolf Turner.</p>
+<p>It is also quite useful to peruse the documentation of <a href="https://www.nij.gov/topics/technology/maps/pages/crimestat.aspx">CrimeStat</a> and <a href="https://spatial.uchicago.edu/software">GeoDa</a>.</p>
+</div>
+<div id="requirements" class="section level2">
+<h2>Requirements</h2>
+<p>This requires <a href="http://r-project.org">R</a>, and many libraries including <a href="https://cran.r-project.org/package=spatstat">spatstat</a>,<a href="https://cran.r-project.org/web/packages/spdep/">spdep</a>, <a href="https://cran.r-project.org/web/packages/rgdal">rgdal</a>, <a href="https://cran.r-project.org/package=aspace">aspace</a> and <a href="https://cran.r-project.org/package=leaflet">leaflet</a>. You should install them, as necessary, with <code>install.packages()</code> command.</p>
+</div>
+<div id="caveats" class="section level2">
+<h2>Caveats</h2>
+<p>The crime data, especially the location data, is <a href="https://data.police.uk/about/#anonymisation">anonymised</a> . This poses some problems, as the anonymisation is primarily assigning the point to the center of the street. There may be many crimes on the street that get the same location. To get around this I randomly re-jitter the points by a small <span class="math inline">\(\epsilon\)</span>. The following function is a quick way to introduce noise. This introduction of noise, might be problematic for some applications. You will have to figure out how to deal with the issue of duplicate locations one way or the other.</p>
+<pre class="r"><code>jitter_longlat &lt;- function(coords, km = 1) {
+  n &lt;- dim(coords)[1]
+  length_at_lat &lt;- rep(110.5742727, n) # in kilometers at the equator. Assuming a sphere
+  length_at_long &lt;- cos(coords[,1]* (2 * pi) / 360) * 110.5742727
+  randnumber &lt;- coords
+  randnumber[,2] &lt;- runif(n, min=-1,max=1) * (1/length_at_lat) * km
+  randnumber[,1] &lt;- runif(n, min=-1,max=1) * (1/length_at_long) * km
+  out &lt;- coords
+  out[,1] &lt;- coords[,1] + randnumber[,1]
+  out[,2] &lt;- coords[,2] + randnumber[,2]
+  out &lt;- as.data.frame(out)
+  return(out)
+}
+
+ls()
+# [1] &quot;filename&quot;       &quot;i&quot;              &quot;jitter_longlat&quot; &quot;manchesterbnd&quot; 
+# [5] &quot;manchesterlsoa&quot; &quot;streetcrime&quot;    &quot;subdirs&quot;
+
+streetcrime[,c(&quot;Longitude&quot;, &quot;Latitude&quot;)] &lt;- jitter_longlat(streetcrime[,c(&quot;Longitude&quot;, &quot;Latitude&quot;)], km=.6)
+sum(duplicated(streetcrime[,c(&quot;Longitude&quot;, &quot;Latitude&quot;)]))
+# [1] 0
+
+#Convert it into spatial points data frame
+
+coordinates(streetcrime) &lt;- ~Longitude+Latitude
+streetcrime@data[,c(&quot;Longitude&quot;, &quot;Latitude&quot;)]&lt;- coordinates(streetcrime)
+
+wgs84crs &lt;- CRS(&quot;+proj=longlat +datum=WGS84&quot;)
+proj4string(streetcrime) &lt;- wgs84crs</code></pre>
+</div>
+<div id="visualisation-explorations" class="section level2">
+<h2>Visualisation &amp; Explorations</h2>
+<p>As with any datasets, the first and foremost thing to do is to explore the data to understand its structures, its quirks and what if anything need to be cleaned.</p>
+<pre class="r"><code>theme_set(theme_tufte())
+
+g_street &lt;-  ggplot(streetcrime@data) +
+  geom_bar(aes(x=fct_infreq(Crime_type))) +
+  coord_flip() + 
+  facet_wrap(~year)+
+  labs(x=&#39;Crime Type&#39;, y=&#39;Count&#39;) 
+#table(bicycletheft$Last_outcome_category)
+
+g_street</code></pre>
+<p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>
+library(ggrepel)
+
+k &lt;- streetcrime@data %&gt;% count(Month, fct_infreq(Crime_type), sort = FALSE)
+names(k) &lt;- c(&#39;Month&#39;, &quot;Crime_type&quot;, &quot;n&quot;)
+
+k %&gt;%
+  mutate(label = if_else(Month == max(Month), as.character(Crime_type), NA_character_))%&gt;%
+  ggplot(aes(x=Month, y=n, col= Crime_type))+
+   geom_smooth()+ 
+  scale_colour_discrete(guide = &#39;none&#39;) +
+  geom_label_repel(aes(label = label),
+                   nudge_x = 1,
+                   na.rm = TRUE)</code></pre>
+<p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+<p>The trends should be readily apparent. Violence and Sexual Offences, Public Order crimes have increased significantly, while Anti-social behaviour crimes have declined from 2016 to 2018 Q2. These statistics include the <a href="https://www.theguardian.com/uk-news/manchester-arena-explosion">Manchester Arena bombing in May 2017</a>. One thing to notice though, is how few reported crimes actually result in an outcome. I am not entirely sure, if this a Manchester issue or if it is a general criminal justice issue.</p>
+<p>Also note the mixing of <code>%&gt;%</code> and <code>+</code> in the following code. ggplot uses <code>+</code> to build its graphics, while the rest of the analysis can be done with maggittr’s <code>%&gt;%</code>.</p>
+<pre class="r"><code> g_street_outcome &lt;-  streetcrime@data[!is.na(streetcrime$Last_outcome_category),]%&gt;%
+  ggplot() +
+  geom_bar(aes(x=fct_infreq(Last_outcome_category), y = (..count..)/sum(..count..) * 100)) +
+  coord_flip() + 
+  labs(x=&#39;Outcome&#39;, y=&#39;Percent&#39;) 
+  
+  g_street_outcome</code></pre>
+<p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>It is also illustrative to see the spatial extent and locations of crimes. We return to our standard way of visualising spatial data with Leaflet and basemaps from <a href="https://carto.com/">CartoDB</a>. This allows us to zoom in and pan around the image to explore the data in some detail.</p>
+<p>From now on, for the sake of convenience, I will focus on “Bicycle Thefts” as they are few of them and it is easy for illustration purposes. You are welcome to try other types of crime. Furthermore, I restrict the analysis to thefts in 2016 Q2. We will return to the full series later.</p>
+<pre class="r"><code>bicycletheft &lt;- streetcrime %&gt;% subset(streetcrime$Crime_type == &quot;Bicycle theft&quot;)
+bicycletheftQ2 &lt;- bicycletheft[bicycletheft$Quarter == &quot;2016 Q2&quot;,]
+nrow(bicycletheftQ2)
+# [1] 1151
+
+ map_bicycle &lt;- bicycletheftQ2 %&gt;%
+  leaflet() %&gt;%
+  addProviderTiles(providers$CartoDB.Positron) %&gt;%
+  addMarkers(clusterOptions = markerClusterOptions(),
+             popup = ~as.character(Last_outcome_category), 
+             label = ~as.character(Crime_ID)
+             )
+
+ library(widgetframe)
+frameWidget(map_bicycle)</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-4.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>Mapping the raw data points is not always useful. It is sometimes useful to summarize the data spatially. We can do that either by gridding the extent, aggregating to arbitrary polygonal boundaries or by creating a continuous surface through density estimates. Each has its advantages and disadvantages.</p>
+</div>
+<div id="gridsquadrat-counts" class="section level2">
+<h2>Grids/Quadrat Counts</h2>
+<p>Quadrat counts are simple mechanisms to understand, visualise and test point patterns. It is as simple a overlaying a grid and counting the number of points in the grids. Because grids are of uniform area, the count is a proxy for density and because of the uniform area, unlike choropleth maps, there are no ‘large areas’ to dominate the map. However, the downside is that quadrat counts depends quite heavily on the resolution of the quadrat. To see this see the following code.</p>
+<pre class="r"><code>ra300 &lt;- raster(extent(manchesterbnd), resolution=300, crs=proj4string(manchesterbnd))
+ra300 &lt;- mask(ra300, manchesterbnd)
+ra300 &lt;- projectRaster(ra300, crs = wgs84crs )
+theftcounts300 &lt;- rasterize(coordinates(bicycletheftQ2), ra300, fun=&#39;count&#39;, background=NA)
+p1 &lt;- levelplot(theftcounts300, par.settings = plasmaTheme, margin = list(FUN = &#39;median&#39;), main=&quot;300m quadrats&quot;)
+
+ra1k &lt;- raster(extent(manchesterbnd), resolution=1000, crs=proj4string(manchesterbnd))
+ra1k &lt;- mask(ra1k, manchesterbnd)
+ra1k &lt;- projectRaster(ra1k, crs = wgs84crs )
+theftcounts1k &lt;- rasterize(coordinates(bicycletheftQ2), ra1k, fun=&#39;count&#39;, background=NA)
+p2 &lt;- levelplot(theftcounts1k, par.settings = plasmaTheme, margin = list(FUN = &#39;median&#39;), main=&quot;1km quadrats&quot;)
+
+print(p1, split=c(1, 1, 2, 1), more=TRUE)
+print(p2, split=c(2, 1, 2, 1))</code></pre>
+<p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="arbitary-polygons-zones" class="section level2">
+<h2>Arbitary Polygons/ Zones</h2>
+<p>One of the problems with grids/quadrats is that they are arbitary and different grids resolutions have different outputs (MAUP). The other is that the grids are artificial, in that they do not follow natural or political geographies that may be relevant. They may be relevant for bringing in other data, or assigning responsibility and other administrative reasons. To overcome this, we can also spatially aggregate the data into arbitrary shaped zones or polygons. MAUP does not disappear with polygons, however.</p>
+<p>In this case, we will use the Lower layer Super Output Areas (LSOA). We need to make sure that they are of the same projections, for topological predicates to work. We use the <code>over</code> function from sp library, though one could use <code>[</code> function as well.</p>
+<pre class="r"><code>manchesterlsoa &lt;- spTransform(manchesterlsoa, wgs84crs)
+manchesterlsoa$LSOA11CD &lt;- as.character(manchesterlsoa$LSOA11CD)
+bicyclelsoa &lt;- over(bicycletheftQ2, manchesterlsoa) %&gt;% group_by(LSOA11CD)%&gt;%
+  summarise(crimecount = n())
+lsoa_crime &lt;- merge(manchesterlsoa, bicyclelsoa, by=&quot;LSOA11CD&quot;)
+lsoa_crime@data$crimecount[is.na(lsoa_crime@data$crimecount)] &lt;- 0
+
+m &lt;-  leaflet(lsoa_crime) %&gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &quot;Basemap&quot;,
+                   options = providerTileOptions(minZoom = 9, maxZoom = 13)) %&gt;%
+   addProviderTiles(providers$Stamen.TonerLite, group = &quot;Basemap&quot;,
+                    options = providerTileOptions(minZoom = 9, maxZoom = 13))
+
+Npal &lt;- colorNumeric(
+  palette = &quot;Reds&quot;, n = 5,
+  domain = lsoa_crime$crimecount
+)
+
+m2 &lt;- m %&gt;%
+     addPolygons(color = &quot;#CBC7C6&quot;, weight = 0, smoothFactor = 0.5,
+                 fillOpacity = 0.5,
+             fillColor = Npal(lsoa_crime$crimecount),
+             group = &quot;LSOA&quot;
+             ) %&gt;%
+   addLegend(&quot;topleft&quot;, pal = Npal, values = ~crimecount,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=0, big.mark = &quot;,&quot;, scientific=F), &quot; - &quot;, prettyNum(cuts[-1], digits=0, big.mark=&quot;,&quot;, scientific=F))
+             },
+             title = &quot;Crimes&quot;,
+             opacity = 1
+   ) %&gt;%
+  addLayersControl(
+    overlayGroups = c(&quot;LSOA&quot;, &#39;Basemap&#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+
+frameWidget(m2)</code></pre>
+<div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-6.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>It should be relatively obvious what the issues of a choropleth maps are. Small LSOAs that have high concentrations of crimes are not readily visible, even when they are important. Color is a terrible way to represent the order; it is quite non-intuitive. One is almost better off looking at the table and identifying the top few LSOA’s that have high number of crimes.</p>
+<pre class="r"><code>head(bicyclelsoa[order(-bicyclelsoa$crimecount),], n=15)
+# # A tibble: 15 × 2
+#    LSOA11CD  crimecount
+#    &lt;chr&gt;          &lt;int&gt;
+#  1 E01033658         54
+#  2 E01033653         37
+#  3 E01033677         28
+#  4 E01033664         24
+#  5 E01005948         16
+#  6 E01005209         13
+#  7 E01005062         11
+#  8 E01033656         11
+#  9 E01033662         10
+# 10 E01033669         10
+# 11 E01005212          9
+# 12 E01032687          9
+# 13 E01005108          8
+# 14 E01032906          8
+# 15 E01006349          7</code></pre>
+<p>Other issues include the binning of the data into different color introduces visual bias. Depending on the cuts, the maps are different. Analogously different boundaries for the zones/polygons produce radically different maps.</p>
+</div>
+<div id="kernel-density-heat-maps" class="section level2">
+<h2>Kernel Density/ Heat Maps</h2>
+<p>Kernel density estimation (KDE) is a non-parametric way to estimate the probability density function of a random variable. It is a data smoothing problem based on a finite data sample. The standard KDE in 2-dimensions uses a bivariate normal distribution to estimate. We can visualise it using ggplot’s <code>geom_density2d</code> and <code>stat_density2d</code> directly.</p>
+<p><div class="alert alert-warning">
+  <div>
+    Note that <code>ggmap</code> works with Google to identify locations and download basemaps. Often these requirements change. Please refer to the release notes and documentation of Google APIs and ggmap, if the following code does not work.
+  </div>
+</div>
+</p>
+<pre class="r"><code>library(ggmap)
+
+manchester &lt;- get_stamenmap(bbox = bbox(manchesterlsoa), zoom = 10, maptype= &quot;toner-lite&quot;)
+
+ggmap(manchester) + geom_density2d(data = bicycletheftQ2@data, aes(x = Longitude, y = Latitude), size = 0.3) + 
+  stat_density2d(data = bicycletheftQ2@data, aes(x = Longitude, y = Latitude, fill = ..level.., alpha = ..level..), size=0.01, bins = 16, geom = &quot;polygon&quot;) +
+  scale_fill_gradient(low = &quot;green&quot;, high = &quot;red&quot;, guide=&quot;none&quot;) + 
+    scale_alpha(range = c(0, 0.3), guide = &quot;none&quot;)</code></pre>
+<p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Usually, Gaussian kernels are not all that great. There would be times, when bandwidths need to be changed or kernel forms need to be changed. R provides numerous ways to do this. In particular, check out <code>density</code> in spatstat package or <a href="https://cran.r-project.org/web/packages/spatialkernel/"><code>spatialkernel</code></a> package or use <a href="https://gis.stackexchange.com/questions/150141/r-spatial-kernel-density-estimation">SAGA GIS from R</a>.
+One could also use spatstat package, however, this requires creating a separate data structure that spatstat can understand.</p>
+<pre class="r"><code>bicycletheftQ2 &lt;- spTransform(bicycletheftQ2, CRS(proj4string(manchesterbnd)))
+bicycletheftQ2.ppp &lt;- ppp(x=bicycletheftQ2@coords[,1],y=bicycletheftQ2@coords[,2],as.owin(manchesterbnd))
+summary(bicycletheftQ2.ppp)
+# Planar point pattern:  1151 points
+# Average intensity 9.02051e-07 points per square unit
+# 
+# Coordinates are given to 2 decimal places
+# i.e. rounded to the nearest multiple of 0.01 units
+# 
+# Window: polygonal boundary
+# single connected closed polygon with 13669 vertices
+# enclosing rectangle: [351662.6, 406087.2] x [381165.4, 421037.7] units
+#                      (54420 x 39870 units)
+# Window area = 1275980000 square units
+# Fraction of frame area: 0.588
+plot(density(bicycletheftQ2.ppp))</code></pre>
+<p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+The default kernel is Gaussian in spatstat. We can define arbitrary kernel shapes using a pixel image. See <code>?density.ppp</code>. We can also use a <code>focal</code> or <code>focalWeight</code> functions to calculate local smoothed counts in the raster package.</p>
+<p><div class="alert alert-warning">
+  <div>
+    Local intensity is not the same as kernel density. Kernel density is an estimate of probability, which means that it is non-negative and should sum to 1. Local intensity is simply a measure of neigborhood density (count of points in the neigborhood). The values produced by these methods will be different, but visual interpretations for most purposes, should be similar. Also note that intensity calculations in spatstat uses area, whose units depend on the coordinate system used.
+  </div>
+</div>
+</p>
+</div>
+<div id="global-clustering" class="section level2">
+<h2>Global Clustering</h2>
+<p>Global clustering is a way of determining if points are significantly different from the Complete Spatial Randomness or if there is a spatial stucture to it. We can estimate the level of global clustering using clark-evans test or Ripley’s K-function or nearest neighbor distance function G or empty space function F. In general, global clustering metrics is not useful to planners working on a local scale, therefore I am ignoring it here. You are referred to Baddeley et.al excellent practical book or <a href="https://www.amazon.com/Statistics-Spatial-Wiley-Classics-Library/dp/1119114616">Cressie’s classic book</a></p>
+</div>
+<div id="local-clustering" class="section level2">
+<h2>Local Clustering</h2>
+<p>Extracting local clusters of points is lot more complicated due to the issues of multiple testing and the presence of noise. The simplest way, widely accepted, is to aggregate the points to zones and estimate if the values are spatially autocorrelated using Moran’s I statistic.</p>
+<div id="local-morans-i-statistic" class="section level3">
+<h3>Local Moran’s I statistic</h3>
+<p>The local spatial statistic Moran’s I is calculated for each zone based on the spatial weights object used. The values returned include a Z-value, and may be used as a diagnostic tool. The statistic is:</p>
+<p><span class="math inline">\(I_i = \frac{(x_i-\bar{x})}{{∑_{k=1}^{n}(x_k-\bar{x})^2}/(n-1)}{∑_{j=1}^{n}w_{ij}(x_j-\bar{x})}\)</span></p>
+<p>, and its expectation and variance are given in Anselin (1995).</p>
+<pre class="r"><code>library(spdep)
+
+lsoa_crime_tmp &lt;- lsoa_crime@data
+row.names(lsoa_crime_tmp) &lt;- sapply(slot(lsoa_crime, &quot;polygons&quot;), function(x) slot(x, &quot;ID&quot;)) 
+
+lsoa_crime &lt;- rgeos::gMakeValid(lsoa_crime, byid=T) # Fix invalid geometries
+lsoa_crime  &lt;- SpatialPolygonsDataFrame(lsoa_crime, lsoa_crime_tmp)
+
+lsoa_nb &lt;- poly2nb(lsoa_crime)  #queen&#39;s neighborhood
+(lsoa_nb_w &lt;- nb2listw(lsoa_nb)) #convert to listw object
+# Characteristics of weights list object:
+# Neighbour list object:
+# Number of regions: 1740 
+# Number of nonzero links: 10402 
+# Percentage nonzero weights: 0.3435725 
+# Average number of links: 5.978161 
+# 
+# Weights style: W 
+# Weights constants summary:
+#      n      nn   S0       S1       S2
+# W 1740 3027600 1740 607.6169 7209.152
+lsoa_crime$s_crimecount &lt;- scale(lsoa_crime$crimecount)  #Scale and Center the variable of interst
+lsoa_crime$lag_scrimecount &lt;- lag.listw(lsoa_nb_w, lsoa_crime$s_crimecount) #Create lagged variable
+
+p&lt;-ggplot(lsoa_crime@data, aes(x=s_crimecount, y=lag_scrimecount)) +
+  geom_point() +
+  coord_fixed() +  
+  geom_vline(xintercept = 0) + geom_hline(yintercept = 0)  + 
+  labs(x=&quot;Bicycle Thefts (standardised)&quot;, y=&quot;Spatially Lagged Bicycle Thefts (standardised)&quot;)
+p</code></pre>
+<p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>
+lsoa_moran &lt;- localmoran(lsoa_crime@data$crimecount, lsoa_nb_w)  #calculate the local moran&#39;s I
+
+nrow(lsoa_moran[lsoa_moran[,5] &lt;= 0.05,]) #Count the number of zones that are significant.
+# [1] 71
+
+lsoa_crime@data  &lt;- lsoa_crime@data %&gt;%
+    plyr::mutate(sig_char =
+            dplyr::case_when(lsoa_moran[,5] &lt;=.05 &amp; s_crimecount&gt;0 &amp; lag_scrimecount&gt;0     ~ &quot;High-High&quot;,
+                      lsoa_moran[,5] &lt;=.05 &amp; s_crimecount&gt;0 &amp; lag_scrimecount&lt;0  ~ &quot;High-Low&quot;,
+                      lsoa_moran[,5] &lt;=.05 &amp; s_crimecount&lt;0 &amp; lag_scrimecount&gt;0  ~ &quot;Low-High&quot;,
+                      lsoa_moran[,5] &lt;=.05 &amp; s_crimecount&lt;0 &amp; lag_scrimecount&lt;0  ~ &quot;Low-Low&quot;,
+                      TRUE                     ~ &quot;Not Significant&quot;
+            )) 
+
+lsoa_crime@data$sig_char &lt;- as.factor(lsoa_crime@data$sig_char)
+summary(lsoa_crime@data$sig_char) # Check to see if the refactorisation worked ok.
+#       High-High        Low-High Not Significant 
+#              66               5            1669</code></pre>
+<p>Since we know that there are only one category of significant autocorrelation, we will just use two colors (Red and White) to visualise. However, in general case, we are usually interested in both High-High and High-Low clusters, i.e. zones that have high values surrounded by high values and zones that have high values surrounded by low values.</p>
+<pre class="r"><code>
+Fpal &lt;- colorFactor(c(&quot;#EE0000&quot;, &quot;#FFFFFF&quot;), lsoa_crime@data$sig_char)
+
+m3 &lt;- m %&gt;%
+     addPolygons(color = &quot;#CBC7C6&quot;, weight = .5, smoothFactor = 0.5,
+                 fillOpacity = 0.7,
+             fillColor = Fpal(lsoa_crime@data$sig_char),
+             group = &quot;LSOA&quot;
+             ) %&gt;%
+   addLegend(&quot;topleft&quot;, pal = Fpal, values = ~lsoa_crime@data$sig_char,
+             title = &quot;Bicycle Thefts (Significant Clusters)&quot;,
+             opacity = 1
+   ) %&gt;%
+  addLayersControl(
+    overlayGroups = c(&quot;LSOA&quot;, &#39;Basemap&#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+
+frameWidget(m3)</code></pre>
+<div id="htmlwidget-3" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-11.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>Few points to note here.</p>
+<ol style="list-style-type: decimal">
+<li><p>The geography and zone size matters quite a bit. Changing the LSOA to a grid of arbitrary size changes the statistics and locations of the clusters. Instead of LSOA, if you use census output area (OA) or Middle Layer output area (MSOA) the results will be different. Try this as an exercise.</p></li>
+<li><p>The weight matrix matters quite a bit as well. In this exercise, the weights are built from queen continguity of zones and are row standardised (default). There are any number of other formulations that we could have used and may be more appropriate for specific use cases. In particular, see <code>dnearneigh</code>, <code>knearneigh</code>, <code>poly2nb</code>, <code>graphneigh</code> in the <code>spdep</code> package.</p></li>
+<li><p>The presence of NAs in the variable of interest, throws off the calculations. Care should be taken to adjust NA especially when using neighbours. In some cases, NAs can be turned to 0s. In others, it is not appropriate. In any case, care should be taken about the neighbour lists, when the observations are dropped from the analysis.</p></li>
+<li><p>Finally and more importantly, this cluster analysis does not account for the underlying population at risk. It may very well be the case that the clusters we are observing are an artefact of underlying population distribution. This can be easily rectified by using the density/propensity of bike thefts instead of the raw counts. The choice of a denominator (population, employees, number of bicycles etc.) is arbitrary and should be externally justified. I leave this as an exercise.</p></li>
+</ol>
+</div>
+</div>
+<div id="using-dbscan-or-optics" class="section level2">
+<h2>Using DBSCAN or Optics</h2>
+<p>If we do not need statistically significant clusters, we can use one of the more popular clustering algorithms in Unsupervised classification called Density Based Spatial Clustering of Applications with Noise (DBSCAN). DBSCAN was detailed by <a href="https://rdcu.be/3i8O">Ester et.al</a> in 1996 and received the “Test of Time” award in 2014.</p>
+<p>The algorithm uses two parameters:
+- <span class="math inline">\(\epsilon\)</span> (eps) is the radius of our neighbourhoods around a data point <span class="math inline">\(P\)</span>.
+- <span class="math inline">\(minPts\)</span> is the minimum number of data points we want in a neighborhood to define a cluster.</p>
+<div class="figure">
+<img src="img/DBSCAN-Illustration.svg" width="400" alt="" />
+<p class="caption">Illustration of DBSCAN algorithm, from <a href="https://commons.wikimedia.org/wiki/File:DBSCAN-Illustration.svg" class="uri">https://commons.wikimedia.org/wiki/File:DBSCAN-Illustration.svg</a></p>
+</div>
+<p>Once these parameters are defined, the algorithm divides the data points into three points:</p>
+<ul>
+<li><code>Core points</code>. A point <span class="math inline">\(P\)</span> is a core point if at least <span class="math inline">\(minPts\)</span> points are within distance <span class="math inline">\(\epsilon\)</span> .</li>
+<li><code>Border points</code>. A point <span class="math inline">\(Q\)</span> is border point for <span class="math inline">\(P\)</span> if there is a path <span class="math inline">\(P_1\)</span>, …, <span class="math inline">\(P_n\)</span> with <span class="math inline">\(P_1\)</span> = <span class="math inline">\(P\)</span> and <span class="math inline">\(P_n\)</span> = <span class="math inline">\(Q\)</span>, where each <span class="math inline">\(P_{i+1}\)</span>is directly reachable from <span class="math inline">\(P_i\)</span> (all the points on the path must be core points, with the possible exception of <span class="math inline">\(P\)</span>).</li>
+<li><code>Outliers</code>. All points not reachable from any other point are outliers.</li>
+</ul>
+<p>The steps in DBSCAN are simple after defining the previous steps:</p>
+<ul>
+<li>Pick at random a point which is not assigned to a cluster and calculate its <span class="math inline">\(\epsilon\)</span>-neighborhood. If there are atleast <span class="math inline">\(minPoints\)</span> in the neighborhood, mark it a core point and a cluster; otherwise, mark it as outlier.</li>
+<li>Once all core points are found, start expanding that to include border points.</li>
+<li>Repeat these steps until all the points are either assigned to a cluster or to an outlier.</li>
+</ul>
+<p>The parameters are key and significantly affect the results. One heuristic to detrmine <span class="math inline">\(\epsilon\)</span> is to look at the kink in the dist plot of k-nearest neighbors. The intutition is that, at the kink, each points starts having a lot of neighbors. <span class="math inline">\(k\)</span> is usually dimension of the data + 1, in our case is 3. This is also the <span class="math inline">\(minPts\)</span>. Other values are possible depending on the external criteria.</p>
+<p>We will use dbscan library instead of the dbscan in fpc library.</p>
+<pre class="r"><code>library(dbscan)
+bicycletheftQ2 &lt;- bicycletheftQ2 %&gt;% spTransform(wgs84crs) # Doing this for visualisation using leaflet. Non-WGS84 CRS is more complicated with leaflet.
+kNNdistplot(bicycletheftQ2@data[,c(&#39;Longitude&#39;, &#39;Latitude&#39;)], k = 5)
+abline(h=.012, col=&#39;red&#39;)</code></pre>
+<p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>DBscan is relatively quick as evidenced by the code below.</p>
+<pre class="r"><code>db_clusters_bicycletheft&lt;- dbscan(bicycletheftQ2@data[,c(&#39;Longitude&#39;, &#39;Latitude&#39;)], eps=0.012, minPts=5, borderPoints = TRUE)
+print(db_clusters_bicycletheft)
+# DBSCAN clustering for 1151 objects.
+# Parameters: eps = 0.012, minPts = 5
+# The clustering contains 21 cluster(s) and 143 noise points.
+# 
+#   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19 
+# 143  10  20  10 663   9  63   8  21   3   9  31  12  54  10  14  24  17   6   9 
+#  20  21 
+#   8   7 
+# 
+# Available fields: cluster, eps, minPts
+
+bicycletheftQ2@data$dbscan_cluster &lt;- db_clusters_bicycletheft$cluster</code></pre>
+<p>21 clusters of points are identified with about 12% of the points are not assigned to a cluster (noise).
+We can construct a concavehull around these points to identify the cluster boundaries and visualise them.</p>
+<pre class="r"><code>
+library(concaveman)
+library(sf)
+
+clusterpolys &lt;- bicycletheftQ2 %&gt;% st_as_sf() %&gt;% 
+  split(bicycletheftQ2@data$dbscan_cluster) %&gt;%
+  lapply(concaveman, concavity=3) %&gt;%
+  lapply(as_Spatial)
+
+clusterpolys &lt;- lapply(2:length(clusterpolys), function(x){spChFIDs(clusterpolys[[x]],names(clusterpolys)[x])}) %&gt;%
+  lapply(function(x){x@polygons[[1]]}) %&gt;%
+  SpatialPolygons
+
+clusterpolys &lt;- SpatialPolygonsDataFrame(clusterpolys, data=data.frame(ID=row.names(clusterpolys)))
+
+library(RColorBrewer)  
+
+factpal &lt;- colorFactor(brewer.pal(nrow(clusterpolys),&quot;Set3&quot;), clusterpolys$ID)
+
+
+map_bicycle2 &lt;- clusterpolys %&gt;% 
+  leaflet() %&gt;%
+  addProviderTiles(providers$CartoDB.Positron) %&gt;%
+  addPolygons(color = ~factpal(clusterpolys$ID), weight = 5, smoothFactor = 0.5,
+              opacity = 1,
+              fillColor = ~factpal(clusterpolys$ID), fillOpacity = .5,
+              highlightOptions = highlightOptions(color = &quot;green&quot;, weight = 2, bringToFront = TRUE)
+  )%&gt;%
+  addCircles(data=bicycletheftQ2, weight = 3, radius=40, 
+             color=~~factpal(clusterpolys$ID), stroke = TRUE, fillOpacity = 0.8)
+
+frameWidget(map_bicycle2)</code></pre>
+<div id="htmlwidget-4" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-14.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>Few points to note here.</p>
+<ol style="list-style-type: decimal">
+<li><p>DBSCAN is quite popular and the advantage is that we do not need to define the number of clusters unlike k-means or Partition around Medoids. However, it is very sensitive to the parameters.</p></li>
+<li><p>There is no generative model that DBSCAN uses. So the clusters idenitified could be spurious depending on underlying variation in the population distribution.</p></li>
+<li><p>If the density of the clusters vary, DBSCAN is less likely to identify them.</p></li>
+<li><p>Extensions for anisotropic neighborhoods can be found and may be more useful than a spherical neighborhood.</p></li>
+<li><p>DBSCAN can be relatively easily expanded to space-time cluster detection. The distance in time should appropriately be scaled to match Euclidean distance in space. dbscan can take a precomputed distance object, so the implemenation is relatively straightforward. I leave this as an exercise.</p></li>
+</ol>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>From all the visualisations, it should be apparent that the results are dependent on what analyses you pick. There is no right way to proceed with the analyses, but mostly conventions and acceptability in the field determine the choice of the analytical method. These soft skills and external justifications are as important, if not more, than using the cutting-edge algorithms and methods. These skills come from experience and practise and is contingent on time and place.</p>
+<p>In these analyses, we have ignored the time dimension. We also ignored many other methods and techniques that are more prevalent in other fields (e.g.scan statistics in epidemiology. See <a href="https://dx.doi.org/10.1177/0042098013484540">Kaza et.al (2013)</a> for an application to planning.)It is worth noting that the absence of observations do not matter as much in the above analyses, but could be quite important. It is also important to understand the representational assumptions. For example, crime is represented as a point, though it could have happened at an address whose buildings might have different areas in space. Such abstractions have to be justified for particular analytical purposes. Nonetheless, it is useful to keep abreast of various techniques that might help identify clusters of observed points, so that we can deliberate how resources can be prioritised and directed.</p>
+</div>
+<div id="accomplishments" class="section level2">
+<h2>Accomplishments</h2>
+<ul>
+<li>Reading point data into R. Constructing a point pattern for use with spatstat</li>
+<li>Vector data operations (Reproject, Buffer)</li>
+<li>Point-in-Polygon Operations</li>
+<li>Spatial kernel density estimation</li>
+<li>Visualising spatial data in R</li>
+<li>Exploratory spatial data analysis</li>
+<li>Spatial clustering using DBSCAN</li>
+<li>Neighborhood weight matrices</li>
+<li>Local spatial autocorrelation</li>
+</ul>
+</div>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/new-urban-analytics/">new-urban-analytics</a>
+  
+  <a class="badge badge-light" href="/tag/spatial-statistics/">spatial-statistics</a>
+  
+  <a class="badge badge-light" href="/tag/machine-learning/">machine-learning</a>
+  
+  <a class="badge badge-light" href="/tag/unsupervised-classification/">unsupervised-classification</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/cluster-detection-in-point-data/&amp;text=Identifying%20Clusters%20of%20Events" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/cluster-detection-in-point-data/&amp;t=Identifying%20Clusters%20of%20Events" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Identifying%20Clusters%20of%20Events&amp;body=https://nkaza.github.io/post/cluster-detection-in-point-data/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/cluster-detection-in-point-data/&amp;title=Identifying%20Clusters%20of%20Events" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Identifying%20Clusters%20of%20Events%20https://nkaza.github.io/post/cluster-detection-in-point-data/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/cluster-detection-in-point-data/&amp;title=Identifying%20Clusters%20of%20Events" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/project/smartwater-iot/">Smart Water Management and Internet of Things</a></li>
+      
+      <li><a href="/post/scraping-web-for-data/">Scraping web for data</a></li>
+      
+      <li><a href="/teaching/techniques-politics-short-course/">Techniques &amp; Politics of New Urban Analytics</a></li>
+      
+      <li><a href="/slides/machinelearning/ml_slides/">Machine Learning for Urban Analytics</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

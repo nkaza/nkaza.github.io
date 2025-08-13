@@ -1,0 +1,1719 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction This post was last updated on 2025-08-07
+Large Language Models (LLMs) represent a class of artificial intelligence systems that have fundamentally transformed natural language processing and generation. These neural networks, trained on vast corpora of text data, demonstrate remarkable capabilities in mimicking the understanding context, generating coherent(ish) responses, and performing complex reasoning tasks across diverse domains." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/" />
+  <meta property="og:title" content="Possibilities and Pitfalls of Large Language Models. | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction This post was last updated on 2025-08-07
+Large Language Models (LLMs) represent a class of artificial intelligence systems that have fundamentally transformed natural language processing and generation. These neural networks, trained on vast corpora of text data, demonstrate remarkable capabilities in mimicking the understanding context, generating coherent(ish) responses, and performing complex reasoning tasks across diverse domains." /><meta property="og:image" content="https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/featured.jpg" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/featured.jpg" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2025-07-31T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2025-07-31T08:32:29-04:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/"
+  },
+  "headline": "Possibilities and Pitfalls of Large Language Models.",
+  
+  "image": [
+    "https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/featured.jpg"
+  ],
+  
+  "datePublished": "2025-07-31T00:00:00Z",
+  "dateModified": "2025-07-31T08:32:29-04:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction This post was last updated on 2025-08-07\nLarge Language Models (LLMs) represent a class of artificial intelligence systems that have fundamentally transformed natural language processing and generation. These neural networks, trained on vast corpora of text data, demonstrate remarkable capabilities in mimicking the understanding context, generating coherent(ish) responses, and performing complex reasoning tasks across diverse domains."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Possibilities and Pitfalls of Large Language Models. | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="874b838145f372b145b6d2d8854d8574" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Possibilities and Pitfalls of Large Language Models.</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Jul 31, 2025
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    12 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/llm/">llm</a>, <a href="/category/data-munging/">data-munging</a>, <a href="/category/r/">R</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 464px;">
+  <div style="position: relative">
+    <img src="/post/possibilities-and-pitfalls-of-large-language-models/featured_hue55c08f1c0d0b0397d401aad1f8c0e1a_31213_720x2500_fit_q75_h2_lanczos.webp" width="720" height="464" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This post was last updated on 2025-08-07</p>
+<p>Large Language Models (LLMs) represent a class of artificial intelligence systems that have fundamentally transformed natural language processing and generation. These neural networks, trained on vast corpora of text data, demonstrate remarkable capabilities in mimicking the understanding context, generating coherent(ish) responses, and performing complex reasoning tasks across diverse domains.</p>
+<p>At their core, most modern LLMs are built upon the <strong>transformer architecture</strong>, introduced in the seminal paper <a href="https://arxiv.org/abs/1706.03762">“Attention Is All You Need”</a> by Vaswani et al. in 2017. The transformer’s key innovation lies in its self-attention mechanism, which allows the model to weigh the importance of different words in a sequence when processing each token. This parallel processing capability offers significant computational advantages over previous sequential architectures like RNNs and LSTMs.</p>
+<p><img src="images/Transformers.png" />
+(Generated by Gemini)</p>
+<p>The transformer consists of encoder and decoder blocks, each containing multi-head self-attention layers and feed-forward networks. However, most contemporary LLMs adopt variations of this base architecture, leading to distinct model families with different strengths and applications.</p>
+<p>LLM development typically follows a multi-stage process. <strong>Pre-training</strong> involves unsupervised learning on massive text corpora, where models learn to predict next tokens and develop broad linguistic understanding. This is why many of the models are really bad at langauges other than English. <strong>Fine-tuning</strong> adapts pre-trained models to specific tasks or domains through supervised learning on curated datasets.</p>
+<div id="architectural-variations" class="section level3">
+<h3>Architectural Variations</h3>
+<p><strong>Encoder-only models</strong>, such as <a href="https://arxiv.org/abs/1810.04805">BERT</a> (Bidirectional Encoder Representations from Transformers), excel at understanding and encoding text representations. These models process input bidirectionally, making them particularly effective for tasks like sentiment analysis, question answering, and text classification where understanding context from both directions is crucial.</p>
+<p><strong>Decoder-only models</strong> represent the dominant paradigm for generative LLMs. Models like <a href="https://openai.com/research/language-unsupervised">GPT</a> (Generative Pre-trained Transformer), <a href="https://www.anthropic.com/claude">Claude</a>, and <a href="https://arxiv.org/abs/2302.13971">LLaMA</a> use causal self-attention, processing text autoregressively from left to right. This architecture proves highly effective for text generation, completion, and conversational AI applications.</p>
+<p><strong>Encoder-decoder models</strong>, including <a href="https://arxiv.org/abs/1910.10683">T5</a> (Text-to-Text Transfer Transformer) and <a href="https://arxiv.org/abs/1910.13461">BART</a>, combine both components and excel at sequence-to-sequence tasks like translation, summarization, and text transformation.</p>
+</div>
+<div id="scale-and-emergent-capabilities" class="section level3">
+<h3>Scale and Emergent Capabilities</h3>
+<p>The “large” in Large Language Models refers to their unprecedented scale across multiple dimensions: parameter count, training data volume, and computational requirements. Modern LLMs contain billions to trillions of parameters, with models like <a href="https://arxiv.org/abs/2303.08774">GPT-4</a> and <a href="https://arxiv.org/abs/2204.02311">PaLM</a> demonstrating that increased scale often leads to emergent capabilities not present in smaller models.</p>
+<p>These emergent properties include where models can adapt to new tasks with minimal examples, chain-of-thought reasoning for complex problem-solving, and cross-modal understanding when trained on multimodal data. The scaling hypothesis, which I do not subscribe to, suggests that many AI capabilities may emerge naturally from increased model size and training data, though this relationship isn’t always predictable.</p>
+</div>
+</div>
+<div id="use-case" class="section level2">
+<h2>Use Case</h2>
+<p>LLMs have found applications across a wide range of domains and in particular for planning purposes they can be used for extracting data from unstructured texts. In this tutorial, I am going to demonstrate it on an example dataset scraped from the <a href="https://starw1.ncuc.gov/NCUC/page/Dockets/portal.aspx">North Carolina Utilities Commission website</a>.</p>
+<p>“Pursuant to G.S. 62-110.1(g), any person who seeks to construct an electric generating facility in North Carolina, and is exempt from the requirement to obtain a certificate of public convenience and necessity, is required to file this [ROPC] form and a notice of completion of the construction of the facility.”</p>
+<p>Small scale (&lt;1 MW) solar power plants (rooftop or ground mounted) fall under this category. This <a href="https://www.dropbox.com/scl/fi/nreu2frrsqw1soqbk1y6b/dockets_fileurls_unique.csv?rlkey=xz3xa33c8he5es3qd1hdkk5fn&amp;dl=0">dataset</a> consists of all the unique records for ROPC until mid May 2024. Note that these do not necessarily mean that the plant is completed or operational.</p>
+<pre class="r"><code>library(tidyverse)
+library(here)
+
+ropc_data &lt;- here(&quot;tutorials_datasets&quot;, &quot;llms&quot;, &quot;dockets_fileurls_unique.csv&quot;) %&gt;%
+  read_csv(show_col_types = FALSE) %&gt;%
+  mutate(across(everything(), as.character))
+
+set.seed(123)  # For reproducibility
+test_data &lt;- ropc_data %&gt;%
+  sample_n(5)
+
+test_data$Description
+# [1] &quot;ROPC for 0.00609MW Solar Located at 7145 Streamhaven Drive, Harrisburg, NC 28075 in Cabarrus County\nFiles:&quot;
+# [2] &quot;ROPC for 5.2kW Solar Located at 179 Lars Lane, Garner, NC 27529 in Johnston County\nFiles:&quot;                 
+# [3] &quot;ROPC for 10.85kW Solar System Located at 8804 Amerjack Ct. Raleigh, NC 27603 in Wake County\nFiles:&quot;        
+# [4] &quot;ROPC for 10.88 kW Solar Located at 46 Sunnyfield Ct Benson NC 27504 in Johnston County\nFiles:&quot;             
+# [5] &quot;Amended ROPC\nFiles:&quot;</code></pre>
+<p>Notice that the description column in the dataset contains unstructured text that describes the solar power plant including the street address information that can be used for <a href="https://nkaza.github.io/post/matching-messy-texts/">geocoding</a>. The goal is to extract structured information from this text using a Large Language Model (LLM). We will first try to do this with an Open Source and free model called <a href="https://ollama.com/">Ollama</a> and then with a commercial model called <a href="https://www.anthropic.com/claude">Anthropic’s Claude</a>.</p>
+<div id="using-local-llms" class="section level3">
+<h3>Using Local LLMs</h3>
+<p>Ollama is a platform that allows you to run large language models locally on your machine. It provides a simple command-line interface to download and run models, making it easy to experiment with LLMs without needing an internet connection or API keys.</p>
+<p>To use Ollama, you need to install it on your machine. You can find installation instructions on the <a href="https://ollama.com/docs/installation">Ollama website</a>. Once installed and running, you can download models using the <code>ollmar</code> package. For example, to download the <code>Llama 3.2 model</code>, you would run:</p>
+<pre class="r"><code>library(ollamar)
+ollamar::pull(&quot;llama3.2&quot;)</code></pre>
+<p>You can see all the models you have downloaded locally by using <code>list_models()</code></p>
+<pre class="r"><code>ollamar::list_models()
+#              name    size parameter_size quantization_level            modified
+# 1 llama3.1:latest  4.9 GB           8.0B             Q4_K_M 2025-07-30T13:43:47
+# 2 llama3.2:latest    2 GB           3.2B             Q4_K_M 2025-07-30T14:02:07
+# 3 llama3.3:latest 42.5 GB          70.6B             Q4_K_M 2025-07-30T13:33:53</code></pre>
+<p><div class="alert alert-note">
+  <div>
+    Notice that llama 3.3 is substantially larger than llama 3.2, and thus requires more memory to run.
+  </div>
+</div>
+</p>
+<p>Once the model is downloaded, you can interact with it using the <code>ellmer</code> package in R. The <code>ellmer</code> package provides a convenient interface for interacting with various LLMs, including both open-source and commercial models. It allows you to send prompts to the models and receive structured responses.</p>
+<p>First initialise the model.</p>
+<pre class="r"><code>library(ellmer)
+library(jsonlite)
+
+ollama_chat &lt;- chat_ollama(
+  model = &quot;llama3.2&quot;,
+  system_prompt = &quot;You are an expert at extracting structured information from unstructured text. Always return valid JSON.&quot;,
+)</code></pre>
+</div>
+<div id="prompt-engineering" class="section level3">
+<h3>Prompt Engineering</h3>
+<p>Prompt engineering has emerged as a critical skill for effectively leveraging LLMs, involving the strategic design and refinement of input instructions to elicit desired model behaviours and outputs. The quality and structure of prompts significantly influence model performance.</p>
+<p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/7wizt0K4EBA" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+</p>
+<p>Key rules of thumb:</p>
+<ul>
+<li>Be explicit and specific in your instructions rather than relying on implicit understanding</li>
+<li>Provide concrete examples of desired outputs when possible (few-shot prompting)</li>
+<li>Breaking complex tasks into smaller, sequential steps to enable clearer reasoning.</li>
+<li>Assign specific roles or personas when relevant (“act as a data scientist analysing…”), and iterate on your prompts based on initial outputs.</li>
+<li>Test your prompts across different scenarios and edge cases to ensure robustness, as small changes in wording can sometimes produce dramatically different results from the same model.</li>
+</ul>
+<pre class="r"><code>
+extraction_prompt &lt;- &quot;
+Extract the following information from the given text and return ONLY valid JSON, no markdown:
+
+{
+  \&quot;street_address\&quot;: \&quot;extracted street address or null\&quot;,
+  \&quot;city\&quot;: \&quot;extracted city or null\&quot;, 
+  \&quot;state\&quot;: \&quot;extracted state abbreviation or null\&quot;,
+  \&quot;zip_code\&quot;: \&quot;extracted ZIP code or null\&quot;,
+  \&quot;capacity\&quot;: \&quot;extracted capacity along with power units in W, kiloWatts (KW), MegaWatts (MW) or null. \&quot;
+  \&quot;type\&quot;: \&quot;AC or DC or null\&quot;
+
+}
+
+Rules:
+- Only extract information that is clearly present
+- Return null for missing information. Do not make up values
+- Ensure valid JSON format
+- No text outside the JSON response
+
+Text to analyze: &quot;
+</code></pre>
+<p>Let’s try and extract data for one of the records in the dataset.</p>
+<pre class="r"><code>
+full_prompt &lt;- paste0(extraction_prompt, test_data$Description[1])
+
+
+response &lt;- tryCatch({
+    ollama_chat$chat(full_prompt, echo = FALSE)
+  }, error = function(e) {
+    message(&quot;Error: &quot;, e$message)
+    return(NULL)
+  })
+
+
+  parsed_response &lt;- tryCatch({
+    fromJSON(response) %&gt;% 
+      map(~ ifelse(is.null(.x), NA, .x))
+  }, error = function(e) {
+    list(street_address = NA, city = NA, state = NA, zip_code = NA, capacity = NA, type = NA)
+  }) %&gt;%
+    as_tibble()
+  
+print(cbind(Docket_Name = test_data$Docket_Name[1], parsed_response))
+#                            Docket_Name         street_address       city state
+# 1 a2527260-ba3c-48a4-b511-75cd95455530 7145 Streamhaven Drive Harrisburg    NC
+#   zip_code capacity type
+# 1    28075       NA   AC</code></pre>
+<hr />
+<p><strong>Exercise:</strong></p>
+<ul>
+<li>Rerun this code multiple times and see if you get the same results. If not, why do you think that is?</li>
+<li>Re-engineer the prompt to extract the capacity in kiloWatts (kW) only and perform any necessary conversions.</li>
+<li>Figure out why is it necessary to convert the NULLs to NAs. What happens when you don’t?</li>
+<li>Change the model to Llama 3.1 and see if you get the same results. If not, why do you think that is? What about Llama 3.3? Does it work? If not, why do you think that is?</li>
+</ul>
+<hr />
+<p>It is more straightforward to extract structured information using <code>ellmer</code> without resorting to <code>jsonlite</code>. But first we need to define the structure of the data we want to extract. This is done using the <code>type_object</code> function from <code>ellmer</code>.</p>
+<pre class="r"><code>
+type_solar &lt;- type_object(street_address = type_string(required = FALSE), city = type_string(required = FALSE), 
+                          state = type_string(&quot;2 letter US state abbreviation&quot;, required = FALSE), zip_code = type_string(&quot;5 digit US ZIP code&quot;, required = FALSE), 
+                          capacity = type_string(&quot;in any power units such as W, KW or MW&quot;, required = FALSE), capacity_type = type_string(&quot;AC or DC&quot;, required = FALSE))
+
+
+ollama_chat$chat_structured(full_prompt, type = type_solar) %&gt;%
+  as_tibble() %&gt;%
+  print()
+# # A tibble: 1 × 6
+#   street_address         city       state zip_code capacity capacity_type
+#   &lt;chr&gt;                  &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;        
+# 1 7145 Streamhaven Drive Harrisburg NC    28075    &quot;&quot;       DC</code></pre>
+<p><div class="alert alert-note">
+  <div>
+    </p>
+<p>Note that the model does not recognise the <code>capacity_type</code> as AC or DC. It does not understand the notion of types of electricity and their designations. In the previous code chunks, it hallucinated the value as AC, even though the text did not specify it and we explictly asked it not to hallucinate. This is a <em>very</em> common problem with LLMs. You should treat the output from LLMs with extreme caution.</p>
+<p>
+  </div>
+</div>
+</p>
+<hr />
+<p><strong>Exercise:</strong>
+* Rewrite the code to extract the data for 100 random records in the dataset. How long does it take?</p>
+<hr />
+</div>
+<div id="commercial-models" class="section level3">
+<h3>Commercial Models</h3>
+<p>To use commercial LLMs such as Claude or GPT, you need to acquire API keys from the respective providers. These models often provide more advanced capabilities and better performance than open-source models, but they come with associated costs. You can set the API key in your R environment using the <code>Sys.setenv()</code> function. For example, to set the API key for Anthropic’s Claude, you would do:</p>
+<pre class="r"><code>Sys.setenv(ANTHROPIC_API_KEY = &quot;.......&quot;) # Replace with your actual API key</code></pre>
+<p><div class="alert alert-warning">
+  <div>
+    </p>
+<p>Commercial LLMs such as Claude, and GPT require you to pay for them. Please acquire your own API keys. You should expect to pay for the API calls you make. Thus, this post only uses very small dataset. Expect to spend some money if you want to follow along.</p>
+<p>
+  </div>
+</div>
+</p>
+<p>The process then in very similar to using Ollama. You first need to initialise the model with the <code>ellmer</code> package.</p>
+<pre class="r"><code>claude_chat &lt;- chat_anthropic(
+  model = &quot;claude-3-5-sonnet-20241022&quot;,  # or &quot;claude-3-opus-20240229&quot;, &quot;claude-3-haiku-20240307&quot;
+  api_key = Sys.getenv(&quot;ANTHROPIC_API_KEY&quot;),
+  system_prompt = &quot;You are an expert at extracting structured information from unstructured text. Always return valid JSON.&quot;,
+  params = list(max_tokens = 1000,temperature = 0.1)  # Low temperature for consistent extraction
+)</code></pre>
+<p>Fortunately, with Claude you can do batch processing of prompts, which is very useful for large datasets. The <code>batch_chat_structured</code> function allows you to send multiple prompts at once and receive structured responses in a single call.</p>
+<pre class="r"><code>prompts_ropc &lt;- map(test_data$Description, function(s){paste0(extraction_prompt, s)})
+
+batch_chat_structured(claude_chat, 
+                      prompts_ropc, 
+                      wait = TRUE, 
+                      type = type_solar, 
+                      path = &#39;solar.json&#39;, 
+                      include_cost = TRUE)
+
+# Description:df [5 × 7]
+# street_address	city	state	zip_code	capacity	capacity_type	cost
+# 7145 Streamhaven Drive	Harrisburg	NC	28075	0.00609MW	NA	0.003840
+# 179 Lars Lane	Garner	NC	27529	5.2KW	NA	0.003759
+# 8804 Amerjack Ct	Raleigh	NC	27603	10.85KW	NA	0.003870
+# 46 Sunnyfield Ct	Benson	NC	27504	10.88 kW	NA	0.003843
+# NA	NA	NA	NA	NA	NA	0.003201
+5 rows
+</code></pre>
+<hr />
+<p><strong>Exercise:</strong></p>
+<ul>
+<li>Compare the differences in the output between Ollama and Claude. Can you generalise?</li>
+<li>Try a different model like chat_mistral() or chat_gemini() and see if you get the same results. If not, why do you think that is?</li>
+</ul>
+<hr />
+</div>
+<div id="more-complicated-chunks" class="section level3">
+<h3>More complicated chunks</h3>
+<p>There is no reason to presume that LLMs can only read and interpret simple texts. You can use to extract structured information from more complicated texts such as tables, or even pdfs with varying degrees of efficiency. Let’s try Llama on a small subset of <a href="https://www.dropbox.com/scl/fo/7phnvvdbwwxkfkqz7vdk5/AApenea-EDXSWnQ1uk7zZRU?rlkey=fj2izokc8c0g9c7nnql8altpk&amp;dl=0">pdfs</a> that include actual ROPC submissions.</p>
+<pre class="r"><code>paths = here(&quot;tutorials_datasets&quot;, &quot;llms&quot;, &quot;pdfs&quot;) %&gt;%
+  list.files(full.names = T)
+
+extraction_prompt3 &lt;- &quot;
+Extract the following information in each of the pdf files and return ONLY valid JSON, no markdown:
+
+{
+  \&quot;owner_type\&quot;: \&quot;Individual or Corportation or Partnership or null\&quot;,
+  \&quot;agent\&quot;: \&quot;extracted agent name or null\&quot;,
+  \&quot;agent_business_address\&quot;: \&quot;extracted address or null\&quot;, 
+  \&quot;site_address\&quot;: \&quot;extracted E911 street address or null\&quot;,
+  \&quot;gps_coords\&quot;: \&quot;GPS coordinates or null\&quot;,
+  \&quot;capacity\&quot;: \&quot;extracted capacity along with power units in W, kiloWatts (KW), MegaWatts (MW) or null. \&quot;
+  \&quot;annual_sales\&quot;: \&quot;extracted projected annual sales or null\&quot;
+
+}
+
+Rules:
+- Only extract information that is clearly present
+- Return null for missing information. Do not make up values
+- Ensure valid JSON format
+- Be thorough - check the entire document for relevant information
+&quot;
+
+claude_chat$chat(extraction_prompt3, content_pdf_file(paths[1]), echo =FALSE) %&gt;%
+                   fromJSON() %&gt;%
+                        map(~ ifelse(is.null(.x), NA, .x)) %&gt;%
+                   as_tibble()
+
+# # A tibble: 1 × 7
+#  owner_type agent                agent_business_address             site_address gps_coords capacity annual_sales
+#  &lt;chr&gt;      &lt;chr&gt;                &lt;chr&gt;                              &lt;chr&gt;        &lt;lgl&gt;      &lt;chr&gt;    &lt;lgl&gt;       
+#1 Individual Nexus Energy Systems 10964 Richardson Road, Ashland, V… 101 Bunker … NA         4.93 kW… NA    
+</code></pre>
+<hr />
+<p><strong>Exercise:</strong></p>
+<ul>
+<li>Do this for all the pdfs in the folder. How long does it take? How much does it cost?</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>The emergence of LLMs has fundamentally transformed the landscape of data extraction from unstructured sources. Where traditional approaches relied on rigid patterns, complex rules, and brittle parsing logic, LLMs bring contextual understanding, semantic awareness, and remarkable adaptability to the challenge of converting messy, real-world text into clean, actionable data.</p>
+<p>However, these are not without challenges. The non-deterministic nature of LLMs means that outputs may vary between runs, requiring careful validation and quality control processes. This poses serious problems for reproducibility. In addition, costs can accumulate quickly with large-scale operations, particularly when using cloud-based APIs. Privacy and security concerns demand thoughtful consideration, especially when processing sensitive documents. And while LLMs are remarkably capable, they are not infallible—human oversight remains essential for critical applications.</p>
+<p>The most successful implementations combine the strengths of LLMs with complementary technologies: using traditional preprocessing to clean and structure input data, implementing robust validation pipelines to catch errors, and designing human-in-the-loop workflows for quality assurance.</p>
+</div>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/&amp;text=Possibilities%20and%20Pitfalls%20of%20Large%20Language%20Models." target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/&amp;t=Possibilities%20and%20Pitfalls%20of%20Large%20Language%20Models." target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Possibilities%20and%20Pitfalls%20of%20Large%20Language%20Models.&amp;body=https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/&amp;title=Possibilities%20and%20Pitfalls%20of%20Large%20Language%20Models." target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Possibilities%20and%20Pitfalls%20of%20Large%20Language%20Models.%20https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/&amp;title=Possibilities%20and%20Pitfalls%20of%20Large%20Language%20Models." target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

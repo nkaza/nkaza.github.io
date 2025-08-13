@@ -1,0 +1,2068 @@
+---
+title: "Introduction to Urban Analytics with R"
+author: "Nihil Kaza"
+date: April 20, 2023
+format: 
+ revealjs:
+    footer: "[nkaza.github.io](https://nkaza.github.io)&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Slides derived from Meghan Hall'spresentation](https://github.com/meghall06/neair)"
+    theme: [moon,../custom.scss]
+    preview-links: auto
+    chalkboard: 
+      boardmarker-width: 5
+from: markdown+emoji
+#prefer-html: true
+execute:
+  echo: true
+---
+
+## Urban Analytics
+
+<br/>
+
+Harmonising and analysing data from
+
+::: incremental
+-   stationary sensors :traffic_light:
+-   mobile sensors
+    -   ground :earth_africa:
+    -   areal :airplane:
+-   administrative :scroll:
+-   video :movie_camera:
+:::
+
+. . .
+
+in the service of urban sustainability, resilience, health ...
+
+## Today's plan
+
+<br/>
+
+::: incremental
+1.  What is R? What is Rstudio?
+2.  What is tidyverse?
+3.  Basic functions for manipulating data
+4.  Using R effectively
+5.  More data manipulation
+6.  A peek at next week
+:::
+
+# What is R? What is Rstudio ?
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+## What is R?
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br> <br> <br> <br>
+
+::: {style="text-align: center"}
+R is an open-source ([**free**]{style="color:#cc0000"}!) scripting language for working with data.
+
+<br> It started out as a statistical analysis language but is [so much more now]{style="color:#cc0000"}.
+:::
+
+## Getting R & Rstudio
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br/> <br/> <br/>
+
+You need the R [language](https://cloud.r-project.org/) <br/> <br/>
+
+. . .
+
+And also the [Integrated Development Environment](https://www.rstudio.com/products/rstudio/download/#download)
+
+## Navigating RStudio
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: {.absolute top="10%" left="0" width="1031" height="529"}
+::: {style="text-align: center"}
+![](imgs/RStudio1.png)
+:::
+:::
+
+::: {.absolute top="66%" left="55%"}
+::: {style="color: #cc0000"}
+project files are here. <br> Visualisations show up here
+:::
+:::
+
+. . .
+
+::: {.absolute top="28%" left="70%"}
+::: {style="color: #cc0000"}
+imported data shows up here
+:::
+:::
+
+. . .
+
+::: {.absolute top="50%" left="10%"}
+::: {style="color: #cc0000"}
+code *can* go here
+:::
+:::
+
+## Navigating RStudio
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: {.absolute top="10%" left="0" width="1031" height="529"}
+::: {style="text-align: center"}
+![](./imgs/RStudio2.png)
+:::
+:::
+
+::: {.absolute top="66%" left="55%"}
+::: {style="color: #cc0000"}
+project files are here
+:::
+:::
+
+::: {.absolute top="28%" left="70%"}
+::: {style="color: #cc0000"}
+imported data shows up here
+:::
+:::
+
+::: {.absolute top="35%" left="25%"}
+::: {style="color: #cc0000"}
+code can also<br>go here
+:::
+:::
+
+# What is tidyverse?
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+## Using R with tidyverse
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: columns
+::: {.column width="50%"}
+<br> <br> You use R via *packages*
+:::
+
+::: fragment
+<br/> ...which contain *functions*
+:::
+
+::: fragment
+<br> ...which are just *verbs*
+:::
+:::
+
+::: {.column width="50%"}
+::: fragment
+![](imgs/tidyverse.png){.absolute top="70" left="530" width="500"} <br>
+:::
+:::
+
+. . .
+
+Tidyverse is a collection of R packages designed to work around a [common philosophy](https://cran.r-project.org/web/packages/tidyverse/vignettes/manifesto.html).
+
+## Best way to learn the tidyverse
+
+![](imgs/r4ds_cover.jpg){fig-align="center"}
+
+http://r4ds.had.co.nz/
+
+## Rectangular Data
+
+![](imgs/tidy-1.png){fig-align="center"}
+
+## Rectangular Data
+
+![](imgs/tidy-1.png){fig-align="center"}
+
+::: incremental
+-   Put each dataset in a tibble.
+-   Put each variable in a column.
+-   Each column should be a data type (integer, boolean, date, character etc.)
+-   Each row is 'nominally' independent of another row
+-   Each column is 'nominally' independent of another column
+:::
+
+## Today's data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: {.column width="30%"}
+![](imgs/GettyImages-1241061959.webp){height="300"}
+:::
+
+::: {.column width="30%"}
+::: {layout-nrow="2"}
+![](imgs/aqm1.png){height="300"} ![](imgs/aqi_mini-1200x675.png)
+:::
+:::
+
+::: {.column width="30%"}
+![](imgs/purpleair-device2x.jpeg){height="300"}
+:::
+
+::: {style="font-size: 0.50em"}
+Real Time AQI is published by the [Shanghai Environmental Monitoring Center (SEMC)](http://www.semc.com.cn/aqi/).
+:::
+
+## Today's data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(here)
+library(kableExtra)
+library(explore)
+AQI_tbl <- read_csv(here("wk1_intro/data/AQI.csv"), locale = locale(encoding = "GBK"))
+stations_tbl <- read_csv(here("wk1_intro/data/Station.csv"), locale = locale(encoding = "GBK"))
+opts <- options(knitr.kable.NA = "")
+library(knitr)
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  lines <- options$output.lines
+  if (is.null(lines)) {
+    return(hook_output(x, options))  # pass to default hook
+  }
+  x <- unlist(strsplit(x, "\n"))
+  more <- "..."
+  if (length(lines)==1) {        # first n lines
+    if (length(x) > lines) {
+      # truncate the output, but add ....
+      x <- c(head(x, lines), more)
+    }
+  } else {
+    x <- c(more, x[lines], more)
+  }
+  # paste these lines together
+  x <- paste(c(x, ""), collapse = "\n")
+  hook_output(x, options)
+})
+```
+
+::: {style="text-align: center"}
+`AQI_tbl`
+:::
+
+<br>
+
+::: {style="font-size: 0.75em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% head(6)) 
+```
+:::
+
+Contains `r nrow(AQI_tbl)` observations with `r ncol(AQI_tbl)` variables.
+
+## Today's data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: {style="text-align: center"}
+`stations_tbl`
+:::
+
+<br>
+
+::: {style="font-size: 0.40em"}
+```{r}
+#| echo: false
+knitr::kable(stations_tbl %>% head(3)) %>%
+    kable_styling(full_width = F, bootstrap_options = c("condensed"))
+```
+:::
+
+Contains `r nrow(stations_tbl)` observations with `r ncol(stations_tbl)` variables.
+
+## Today's data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: columns
+::: {.column width="50%"}
+::: {style="text-align: center"}
+`AQI_tbl`
+:::
+
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>%
+    describe %>%
+    select(-c(na, min, mean, max)) %>%
+    knitr::kable() %>%
+    kable_styling(full_width = F) %>%
+    column_spec(2, background = "yellow") 
+```
+:::
+:::
+
+::: {.column width="50%"}
+::: {style="text-align: center"}
+`stations_tbl`
+:::
+
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+
+stations_tbl %>%
+    describe %>%
+    select(-c(na, min, mean, max)) %>%
+    knitr::kable() %>%
+    kable_styling(full_width = F) %>%
+    row_spec(c(2,8,9,11,12), background = "green") %>%
+    column_spec(2, background = "yellow") 
+
+```
+:::
+:::
+:::
+
+## Today's data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+#| echo: false
+
+library(sf)
+library(tmap)
+library(widgetframe)
+
+tmap_mode("view")
+
+m1 <- 
+stations_tbl %>%
+    filter(!(is.na(LON)) & !is.na(LAT)) %>%
+    st_as_sf(coords = c("LON", "LAT"), crs = 4326) %>%
+    tm_shape() +
+    tm_dots(size = .5) +
+    tm_basemap(leaflet::providers$CartoDB.Positron)
+
+tmap_leaflet(m1)
+
+```
+
+## Today's data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+![](imgs/datamodel.png){fig-align="center"}
+
+## Useful operators & keyboard shortcuts
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br> <br>
+
+::: columns
+::: {.column width="15%"}
+::: {style="font-size: 1.75em; text-align: center"}
+`<-`
+:::
+:::
+
+::: {.column width="30%"}
+::: {style="font-size: 1.5em; text-align: center"}
+"assign to"
+:::
+:::
+
+::: {.column width="55%"}
+-   `Opt + -` (Mac)
+-   `Alt + -` (Windows/linux)
+:::
+:::
+
+. . .
+
+::: columns
+::: {.column width="15%"}
+::: {style="font-size: 1.75em; text-align: center"}
+`%>%`
+:::
+:::
+
+::: {.column width="30%"}
+::: {style="font-size: 1.5em; text-align: center"}
+"and then"
+:::
+:::
+
+::: {.column width="55%"}
+-   `Cmd + shift + m` (Mac)
+-   `Cntrl + shift + m` (Windows/Linux)
+:::
+:::
+
+## Syntax of a function
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+<br>
+
+`function(object, argument(s))`
+
+<br>
+
+. . .
+
+is the same as
+
+<br>
+
+`object %>%`
+
+    `function(argument(s))`
+
+## Read external data
+
+<br>
+
+::: columns
+::: {.column width="70%"}
+```{r}
+#| eval: false
+AQI_tbl <- read_csv("wk1_intro/data/AQI.csv", 
+                    locale = locale(encoding = "GBK")
+                    )
+```
+
+is the same as
+
+```{r}
+#| eval: false
+AQI_tbl <- "wk1_intro/data/AQI.csv" %>%
+             read_csv(locale = locale(encoding = "GBK"))
+                    
+```
+:::
+
+::: {.column width="30%"}
+::: {style="text-align: center"}
+`AQI_tbl`
+:::
+
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% head(6))
+```
+:::
+:::
+:::
+
+# Basic data manipulation
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+## Common functions
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br> `mutate` creates new columns (aka variables) or modify existing columns
+
+`filter` keeps or discards rows (aka observations)
+
+`select` keeps or discards columns
+
+`arrange` sorts data set by certain variable(s)
+
+`count` tallies data set by certain variable(s)
+
+`group_by`/`summarize` aggregates data ([pivot tables]{style="color:#cc0000"}!)
+
+`str_*` functions work easily with text
+
+`ymd*` functions work easily for date/time
+
+## Mutate
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+`mutate` can modify existing columns
+
+<br>
+
+::: columns
+::: {.column width="60%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  mutate(TIME = lubridate::ymd_hm(TIME))
+```
+
+::: fragment
+::: {style="font-size: 0.50em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>% 
+  mutate(TIME = lubridate::ymd_hm(TIME)) %>%
+  head(4) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed")
+```
+:::
+:::
+:::
+
+::: {.column width="40%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>% 
+  mutate(TIME = lubridate::ymd_hm(TIME)) %>%
+    describe() %>%
+    select(variable, type) %>%
+    knitr::kable() %>%
+    kable_styling(bootstrap_options = "condensed") %>%
+    row_spec(1, color = "yellow")
+
+```
+:::
+:::
+:::
+:::
+
+## Mutate
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+can create new variables <br> the pipe `%>%` chains multiple functions together <br>
+
+::: columns
+::: {.column width="70%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  mutate(TIME = lubridate::ymd_hm(TIME)) %>%
+  mutate(month_of_obs = month(TIME, label = T))
+```
+
+::: fragment
+::: {style="font-size: 0.6em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>% 
+  mutate(TIME = lubridate::ymd_hm(TIME)) %>%
+  mutate(month_of_obs = month(TIME, label = T)) %>%
+  select(TIME, month_of_obs, SITEID, AQI) %>%
+  head(4) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F) %>%
+  column_spec(2, background = 'yellow')
+```
+:::
+:::
+:::
+
+::: {.column width="30%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>% 
+  mutate(TIME = lubridate::ymd_hm(TIME)) %>%
+    mutate(month_of_obs = month(TIME, label = T)) %>%
+    describe() %>%
+    select(variable, type) %>%
+    knitr::kable() %>%
+    kable_styling(bootstrap_options = "condensed") %>%
+    row_spec(7, background = "yellow")
+
+
+
+```
+:::
+:::
+:::
+:::
+
+## A digression into factors
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+Factors are categorical variables. <br> Sometimes what show up as characters or numbers should be factors
+
+::: columns
+::: {.column width="60%"}
+```{r}
+#| eval: false
+
+AQI_tbl %>%
+    mutate(GRADE = factor(
+        GRADE,
+        levels = 1:6,
+        labels = c(
+            "Excellent",
+            "Good",
+            "Lightly Polluted",
+            "Moderately Polluted",
+            "Heavily Polluted",
+            "Extermely Polluted"
+        )
+    ))
+```
+:::
+
+::: {.column width="40%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>%
+    mutate(GRADE = factor(
+        GRADE,
+        levels = 1:6,
+        labels = c(
+            "Excellent",
+            "Good",
+            "Lightly Polluted",
+            "Moderately Polluted",
+            "Heavily Polluted",
+            "Extermely Polluted"
+        )
+    ))%>%
+    select(TIME, AQI, GRADE)%>%
+    head(4) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = "condensed") %>%
+   column_spec(3, background = "yellow")
+
+
+```
+:::
+:::
+:::
+:::
+
+## Mutate
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+with`&` (AND), `|` (OR) there is enormous flexibility
+
+<br>
+
+::: columns
+::: {.column width="70%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  mutate(TIME = lubridate::ymd_hm(TIME)) %>%
+  mutate(month_of_obs = month(TIME)) %>%
+  mutate(season = case_when(
+       month_of_obs >= 3 & month_of_obs < 6 ~ "spring",
+       month_of_obs >=6 & month_of_obs < 9 ~ "summer",
+       month_of_obs >=9 & month_of_obs < 12 ~ "autumn",
+       month_of_obs = 12 | month_of_obs <3 ~ "winter",
+       .default = "NA"
+        )
+         )
+```
+:::
+
+::: {.column width="30%"}
+::: fragment
+::: {style="font-size: 0.35em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>% 
+  mutate(TIME = lubridate::ymd_hm(TIME)) %>%
+  mutate(month_of_obs = month(TIME)) %>%
+  mutate(season = case_when(
+       month_of_obs >= 3 & month_of_obs < 6 ~ "spring",
+       month_of_obs >=6 & month_of_obs < 9 ~ "summer",
+       month_of_obs >=9 & month_of_obs < 12 ~ "autumn",
+       month_of_obs = 12 | month_of_obs <3 ~ "winter",
+       .default = "NA"
+        )
+         ) %>%
+    select(TIME, month_of_obs, season) %>%
+    head(4) %>%
+      kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F) %>%
+  column_spec(2, background = 'yellow') %>%
+  column_spec(3, background = 'green')
+
+```
+:::
+:::
+:::
+:::
+
+## Filter
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+`filter` keeps or discards rows (aka observations)
+
+the `==` operator tests for equality
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  filter(SITEID == 209)
+```
+
+::: {style="font-size: 0.50em"}
+Notice that 209 (numeric) is not "209" (character) in the code.
+:::
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% filter(SITEID == 209) %>% head(6))
+```
+:::
+:::
+:::
+:::
+
+## Filter
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  filter(SITEID == 209 & 
+           GRADE == "2")
+```
+
+is the same as
+
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  filter(SITEID == 209) %>%
+  filter(GRADE == "2")
+```
+
+::: {style="font-size: 0.50em"}
+Why is 2 in `" "` but not 209?
+:::
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% 
+  filter(SITEID == 209 & 
+           GRADE == "2") %>% head(6))
+```
+:::
+:::
+:::
+:::
+
+## Filter
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+the `%in%` operator allows for multiple options in a list
+
+<br>
+
+::: columns
+::: {.column width="60%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  filter(SITEID %in% c(201, 207, 193))
+```
+:::
+
+::: {.column width="40%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% 
+  filter(SITEID %in% c(201, 207, 193)) %>% head(6))
+```
+:::
+:::
+:::
+:::
+
+## Select
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+`select` keeps or discards columns (aka variables)
+
+<br>
+
+::: columns
+::: {.column width="60%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  select(TIME, SITEID, AQI, GRADE)
+```
+:::
+
+::: {.column width="40%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% 
+  select(TIME, SITEID, AQI, GRADE) %>% head(6))
+```
+:::
+:::
+:::
+:::
+
+## Select
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+can drop columns with -`column`
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  select(-PPITEMID)
+```
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% 
+  select(-PPITEMID) %>% head(6))
+```
+:::
+:::
+:::
+:::
+
+## Select
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+the pipe `%>%` chains multiple functions together
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  select(-PPITEMID) %>% 
+  filter(GRADE == "2") %>%
+  filter(SITEID == 209)
+```
+
+is the same as
+
+```{r}
+#| eval: false
+
+filter(filter(select(AQI_tbl, -PPITEMID),GRADE == "2"),SITEID == 209)
+
+```
+
+is the same as
+
+```{r}
+#| eval: false
+temp_1 <- select(AQI_tbl, -PPITEMID)
+temp_2 <- filter(temp1, GRADE == "2")
+
+temp_2 %>% 
+    filter(SITEID == 209)
+rm(temp_1, temp_2)
+```
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% 
+  select(-PPITEMID) %>% 
+  filter(GRADE == "2") %>%
+  filter(SITEID == 209) %>% head(6)) %>%
+    kable_styling() %>%
+    column_spec(c(2,4), background = "yellow")
+```
+:::
+:::
+:::
+:::
+
+## Arrange
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+`arrange` sorts the dataset by certain variable(s)
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  mutate(TIME = ymd_hm(TIME)) %>%
+  arrange(TIME)
+```
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>% 
+  mutate(TIME = ymd_hm(TIME)) %>%
+    select(-PPITEMID) %>%
+  arrange(TIME) %>%
+    head(6) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = "condensed") %>%
+    column_spec(1, background = "yellow")
+```
+:::
+:::
+:::
+:::
+
+## Arrange
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+use `desc` to reverse the sort
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  mutate(TIME = ymd_hm(TIME)) %>%
+  arrange(desc(TIME))
+```
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+
+AQI_tbl %>% 
+ select(-PPITEMID) %>%
+  mutate(TIME = ymd_hm(TIME)) %>%
+  arrange(desc(TIME)) %>%
+    head(6) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = "condensed", full_width = F) %>%
+    column_spec(1, background = "yellow")
+```
+:::
+:::
+:::
+:::
+
+## Arrange
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+can sort by multiple variables
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  arrange(SITEID, TIME)
+```
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% 
+  arrange(SITEID, TIME) %>% head(6)) %>%
+    column_spec(1, background = "yellow") %>%
+    column_spec(2, background = "green")
+```
+:::
+:::
+:::
+:::
+
+## Count
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+`count` tallies data set by certain variable(s) (very useful for familiarizing yourself with data)
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  count(GRADE)
+```
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% 
+  count(GRADE) %>% head(6))
+```
+:::
+:::
+:::
+:::
+
+## Count
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+can use `sort = TRUE` to order results
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  count(GRADE, sort = TRUE)
+```
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+knitr::kable(AQI_tbl %>% 
+  count(GRADE, sort = TRUE))
+```
+:::
+:::
+:::
+:::
+
+## Group by / summarize
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+`group_by`/`summarize` aggregates data ([pivot tables]{style="color:#cc0000"}!)
+
+`group_by()` identifies the grouping variable(s) and `summarize()` specifies the aggregation
+
+<br>
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| eval: false
+AQI_tbl <-
+    AQI_tbl %>% 
+  mutate(SITEID = as.character(SITEID))%>%
+  mutate(AQI = as.numeric(AQI))# Why do we need to do this?
+
+AQI_tbl %>% 
+  group_by(SITEID) %>%
+  summarise(
+      min_AQI = min(AQI, na.rm = T),
+      max_AQI = max(AQI, na.rm=T))
+```
+:::
+
+::: {.column width="50%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+AQI_tbl <-
+    AQI_tbl %>% 
+  mutate(SITEID = as.character(SITEID))%>%
+  mutate(AQI = as.numeric(AQI))
+ 
+AQI_tbl %>%
+  group_by(SITEID) %>%
+  summarise(
+      min_AQI = min(AQI, na.rm = T),
+      max_AQI = max(AQI, na.rm=T)) %>%
+    head(6) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = 'condensed')
+```
+:::
+:::
+:::
+:::
+
+## Group by / summarize
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+More complicated summary is easy with piping and other functions such as `max`, `min`, `sum`, `n`
+
+::: columns
+::: {.column width="60%"}
+```{r}
+#| eval: false
+AQI_tbl %>% 
+  mutate(time_date = date(TIME))%>%
+  group_by(SITEID, time_date) %>%
+  summarise(max_AQI_day = max(AQI, na.rm=T)) %>%
+  ungroup() %>%
+  mutate(bad_airq_day = ifelse(max_AQI_day>100, 1, 0)) %>%
+  select(SITEID, bad_airq_day) %>%
+  group_by(SITEID) %>%
+  summarize(count_bad_airq_days = sum(bad_airq_day))
+ 
+   
+```
+:::
+
+::: {.column width="40%"}
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+AQI_tbl %>% 
+  mutate(time_date = date(TIME))%>%
+  group_by(SITEID, time_date) %>%
+  summarise(max_AQI_day = max(AQI, na.rm=T)) %>%
+  ungroup() %>%
+  mutate(bad_airq_day = ifelse(max_AQI_day>100, 1, 0)) %>%
+  select(SITEID, bad_airq_day) %>%
+  group_by(SITEID) %>%
+  summarize(count_bad_airq_days = sum(bad_airq_day)) %>%
+  select(SITEID, count_bad_airq_days) %>%
+    head(6) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = 'condensed')
+```
+:::
+:::
+:::
+:::
+
+# Using R effectively
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+## Working in RStudio
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: {.absolute top="10%" left="0" width="1031" height="529"}
+::: {style="text-align: center"}
+![](imgs/RStudio2.png)
+:::
+:::
+
+::: {.absolute top="66%" left="55%"}
+::: {style="color: #cc0000"}
+project files are here
+:::
+:::
+
+::: {.absolute top="28%" left="70%"}
+::: {style="color: #cc0000"}
+imported data shows up here
+:::
+:::
+
+::: {.absolute top="35%" left="25%"}
+::: {style="color: #cc0000"}
+code can also<br>go here
+:::
+:::
+
+## Working in RStudio
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: columns
+::: {.column width="50%"}
+**Typing in the console**
+
+-   think of it like a post-it: useful for quick notes but disposable
+
+-   actions are saved but code is not
+
+-   one chunk of code is run at a time (`Return`)
+:::
+
+::: {.column width="50%"}
+::: fragment
+**Typing in a code file**
+
+-   script files have a `.R` extension
+
+-   code is saved and sections of any size can be run (`Cmd + Return`)
+
+-   do \~95% of your typing in a code file instead of the console!
+:::
+:::
+:::
+
+## Working with packages
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+packages need to be installed on each computer you use
+
+```{r}
+#| eval: false
+# only need to do this once (per computer)
+install.packages("tidyverse")
+```
+
+<br>
+
+::: fragment
+packages need to be loaded/attached with `library()` at the beginning of every session
+
+```{r}
+#| eval: false
+# always put the necessary packages at the top of a code file
+library(tidyverse)
+```
+:::
+
+<br>
+
+::: fragment
+can access help files by typing `??tidyverse` or `?mutate` in the console
+:::
+
+## Organizing with projects
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+[**highly**]{style="color: #cc0000"} recommend using *projects* to stay organized
+
+<br>
+
+keeps code files and data files together, allowing for easier file path navigation and better reproducible work habits
+
+. . .
+
+<br>
+
+`File -> New Project`
+
+<br>
+
+more guidance: [here](https://support.rstudio.com/hc/en-us/articles/200526207-Using-RStudio-Projects) and [here](https://r4ds.had.co.nz/workflow-projects.html#rstudio-projects)
+
+## Organizing with projects
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: {.absolute top="10%" left="0" width="1031" height="529"}
+::: {style="text-align: center"}
+![](imgs/RStudio2.png)
+:::
+:::
+
+::: {.absolute top="66%" left="55%"}
+::: {style="color: #cc0000"}
+project files are here
+:::
+:::
+
+::: {.absolute top="28%" left="70%"}
+::: {style="color: #cc0000"}
+imported data shows up here
+:::
+:::
+
+::: {.absolute top="35%" left="25%"}
+::: {style="color: #cc0000"}
+code can also<br>go here
+:::
+:::
+
+## Organizing with projects {#directory_structure}
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+```         
+.
+└── my_awesome_project
+    ├── my_awesome_project.Rproj
+    ├── run_analyses.R 
+    ├── src
+        ├── 01_first_script.R
+        └── 02_second_script.R
+    ├── R 
+        ├── useful_function_1.R
+        └── useful_function_2.R
+    ├── writing
+        ├── 01_chapter.Rmd
+    ├── output
+    ├── data
+        ├── raw
+        └── temp
+        └── processed
+   └──README.md
+    
+    
+```
+
+## Always here
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+[Jenny Bryan](https://jennybryan.org/) once said
+
+```         
+    If the first line of your R script is
+
+    setwd("C:\Users\jenny\path\that\only\I\have")
+
+    I will come into your office and SET YOUR COMPUTER ON FIRE 🔥.
+    
+    
+
+    If the first line of your R script is
+
+    rm(list = ls())
+
+    I will come into your office and SET YOUR COMPUTER ON FIRE 🔥.
+```
+
+I will happily supply her the matches and fuel
+
+## Always here
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+instead use the `here` function in the here package
+
+```{r}
+#| eval: false
+library(here)
+AQI_tbl <- here("data", "raw", "AQI.csv") %>%
+    read_csv()
+```
+
+`here` converts the file path to
+
+```{r}
+#| echo: false
+
+here("data", "raw", "AQI.csv") 
+```
+
+-   which allows me to change computers, Operating Systems etc.
+-   don't have to worry about "/" or "\\"
+
+## Ask for help!
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+-   use `?` - help
+-   use `??` - help.search
+
+```{r}
+#| eval: false
+?mutate
+```
+
+![](imgs/mutate_help.png){fig-align="right" width="408"}
+
+## Ask for help!
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: {layout-ncol="2"}
+![](imgs/SO_cartoon_1.png){width="548"}
+
+![](imgs/SO_cartoon_2.jpg){width="506"}
+:::
+
+## Ask for help! (Not like this)
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+
+
+> I am importing fairly large csv's (2 - 3 million rows). When I import these using read_csv, it fails. Anyone know why? 
+
+
+This question is missing the key information required to reproduce and troubleshoot the problem:
+
+-       How is the datafile being imported delimited(csv(comma-delimited), other)?
+-       What operating system is involved(Linux, Windows)? What locale?
+-       What version of R running? What functions and libraries are being used?
+-       The post does not provide an example of the R code, with the data that led to the problem
+
+
+# Working with the data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+## Importing data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+1.  Create and name a [Project](organizing-with-projects) in Rstudio.
+2.  Create the [specified directory structure](#directory_structure) in explorer/finder
+3.  Download the `AQI.csv` and `stations.csv` to the `data/raw/` subdirectory
+4.  Create a `01_my_first_script.R` with in the src subdirectory and open it in Rstudio
+
+## Importing data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+Type the following code into the R file and run it.
+
+```{r}
+#| eval: false
+library(here)
+library(tidyverse)
+
+AQI_tbl <- here("data", "raw", "AQI.csv") %>%
+    read_csv()
+stations_tbl <- here("data", "raw", "stations.csv") %>%
+    read_csv()
+```
+
+![](imgs/importdata.png){fig-align="center" width="392"}
+
+## Importing data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+If needed, use `read_excel` from the [readxl](https://readxl.tidyverse.org/) package to read Excel files
+
+```{r}
+#| eval: false
+library(readxl)
+AQI_tbl <- here("data", "raw", "AQI.xlsx") %>%
+    read_excel(sheet = "2")
+```
+
+## Analysis Tasks
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 6]{style="opacity:0.25"}
+:::
+:::
+
+::: {style="font-size: 0.8em"}
+Find all outlier observations in AQI
+
+-   Which stations are likely to have these?
+
+-   Which month/season these outliers are likely to occur?
+
+-   Do these outliers occur in the morning, afternoon or in the evening?
+
+-   Does the definition of outlier matter?
+
+For each station
+
+-   Calculate the daily, weekly, monthly, seasonal summaries (mean, median, std. dev etc.)
+
+-   How does temporal aggregation affect the air quality story?
+:::
+
+# More data manipulation
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+## Joining data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+R has many useful functions for handling [relational data]{style="color: #cc0000"}
+
+all you need is at least one [key variable]{style="color: #cc0000"} that connects data sets
+
+`left_join` is most common, but there are [more](https://r4ds.had.co.nz/relational-data.html)
+
+::: {layout-nrow="2"}
+![](imgs/left-join_1.gif){height="300"} ![](imgs/left-join-2.gif){height="300"}
+:::
+
+## Joining data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+#| eval: false
+
+stations_tbl <- stations_tbl %>%
+      mutate(SITEID = as.character(SITEID))
+# Why do we need to do this?
+
+
+AQI_tbl %>% 
+  left_join(stations_tbl,
+            by = c("SITEID" = "SITEID"))
+```
+
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+
+stations_tbl <- stations_tbl %>%
+      mutate(SITEID = as.character(SITEID))
+
+
+AQI_tbl %>% 
+  left_join(stations_tbl,
+            by = c("SITEID" = "SITEID")) %>%
+    head(4) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = 'condensed')
+```
+:::
+:::
+
+## Joining data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+`right_join` is all rows in y, all columns in x and y.
+
+![](imgs/right-join.gif){fig-align="center" height="300"}
+
+## Joining data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+`inner_join` is rows with matching values in x and y, and all columns from x and y.
+
+![](imgs/inner-join.gif){fig-align="center" height="300"}
+
+## Joining data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+`semi_join` is rows with matching values in x and y, and only columns in x
+
+![](imgs/semi-join.gif){fig-align="center" height="300"}
+
+## Joining data
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+`full_join` returns all rows and all columns from both x and y.
+
+![](imgs/full-join.gif){fig-align="center" height="300"}
+
+## Manipulating Strings
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+`str_*` are various useful functions when paired with regular expressions.
+
+```{r}
+#| eval: false
+
+stations_tbl %>%
+    mutate(street_number = str_extract(ADDRESS, "[0-9]+"))
+    
+```
+
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+stations_tbl %>%
+    mutate(street_number = str_extract(ADDRESS, "[0-9]+"))%>%
+    select(SITEID, ADDRESS, street_number ) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = 'condensed') %>%
+    column_spec(3, background = "yellow")
+```
+:::
+:::
+
+## Manipulating Strings
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+#| eval: false
+
+stations_tbl %>%
+    mutate(count_numbers = str_count(ADDRESS, "[0-9]"))
+    
+```
+
+::: fragment
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+stations_tbl %>%
+    mutate(count_numbers = str_count(ADDRESS, "[0-9]"))%>%
+    select(SITEID, ADDRESS, count_numbers ) %>%
+    kable() %>%
+    kable_styling(bootstrap_options = 'condensed') %>%
+    column_spec(3, background = "yellow")
+```
+:::
+:::
+
+## Regular Expressions
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5 [6]{style="opacity:0.25"}
+:::
+:::
+
+Practise with https://regexone.com/
+
+::: {style="font-size: 0.8em"}
+-   
+
+    ```         
+       [abc]   Only a, b, or c
+    ```
+
+-   
+
+    ```         
+       [^abc]  Not a, b, nor c
+    ```
+
+-   
+
+    ```         
+       [a-z]   Characters a to z
+    ```
+
+-   
+
+    ```         
+       [0-9]   Numbers 0 to 9
+    ```
+
+-   
+
+    ```         
+       \w  Any Alphanumeric character
+    ```
+
+-   
+
+    ```         
+      \W  Any Non-alphanumeric character
+    ```
+
+-   
+
+    ```         
+       {m}     m Repetitions
+    ```
+
+-   
+
+    ```         
+       {m,n}   m to n Repetitions
+    ```
+
+-   
+
+    ```         
+       *   Zero or more repetitions
+    ```
+
+-   
+
+    ```         
+       +   One or more repetitions
+    ```
+
+-   
+
+    ```         
+       ?   Optional character
+    ```
+:::
+
+## A peek at next week
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4 5]{style="opacity:0.25"} 6
+:::
+:::
+
+::: {style="font-size: 0.45em"}
+```{r}
+#| echo: false
+library(ggplot2)
+
+AQI_tbl %>%
+    mutate(month = month(TIME, label=T)) %>%
+    mutate(AQI = as.numeric(AQI)) %>%
+    ggplot()+
+    geom_violin(aes(y=AQI, x=month)) +
+    facet_wrap(~SITEID)
+
+```
+:::
+
+:::
+
+## A peek at next week
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4 5]{style="opacity:0.25"} 6
+:::
+:::
+
+```{r}
+#| echo: false
+
+stations_tbl<-
+stations_tbl %>% 
+    select(SITEID, LON, LAT) 
+
+tmap_mode("view")
+
+m2 <- 
+AQI_tbl %>%
+    mutate(month_of_obs = month(TIME, label=T)) %>%
+    mutate(AQI = as.numeric(AQI))  %>%
+    group_by(SITEID, month_of_obs) %>%
+    summarise(max_AQI = median(AQI, na.rm=T)) %>%
+    filter(month_of_obs %in% c('Jul', 'Jan')) %>%
+    right_join(stations_tbl, by="SITEID") %>%
+    st_as_sf(coords = c("LON", "LAT"), crs = 4326) %>%
+    tm_shape() +
+    tm_dots(size = "max_AQI") +
+    tm_facets(by = "month_of_obs", ncol=2)
+
+m2
+
+```
+
+# Thank You!

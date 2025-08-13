@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>slides | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/tag/slides/</link>
+      <atom:link href="https://nkaza.github.io/tag/slides/index.xml" rel="self" type="application/rss+xml" />
+    <description>slides</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>slides</title>
+      <link>https://nkaza.github.io/tag/slides/</link>
+    </image>
+    
+    <item>
+      <title>Machine Learning for Urban Analytics</title>
+      <link>https://nkaza.github.io/slides/machinelearning/ml_slides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/slides/machinelearning/ml_slides/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;class: right, bottom&lt;/p&gt;
+&lt;div id=&#34;machine-learning-for-urban-analytics&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Machine Learning for Urban Analytics&lt;/h2&gt;
+&lt;div id=&#34;nikhil-kaza&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Nikhil Kaza&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div id=&#34;department-of-city-regional-planning-university-of-north-carolina-at-chapel-hill&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Department of City &amp;amp; Regional Planning &lt;br /&gt; University of North Carolina at Chapel Hill&lt;/h5&gt;
+&lt;div id=&#34;updated-2022-01-22&#34; class=&#34;section level6&#34;&gt;
+&lt;h6&gt;updated: 2022-01-22&lt;/h6&gt;
+&lt;table style=&#34;width:6%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;# What is Machine Learning ?&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;img src=&#34;figs/ML_what.jpg&#34; width=&#34;360&#34; /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-purpose-of-machine-learning&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The purpose of Machine Learning&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Mostly for Prediction…
+&lt;ul&gt;
+&lt;li&gt;Classification (Categories of objects e.g. spam/not spam; median strip /side walk/road, default/ prepayment / Current)&lt;/li&gt;
+&lt;li&gt;Regression (Continous variables, e.g. volume of water consumption/ energy use )
+&lt;ul&gt;
+&lt;li&gt;Not the same as statistical inference such as linear regression.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;### OK. What kinds of prediction?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Local governments: Traffic congestion&lt;/li&gt;
+&lt;li&gt;Google: What ads to show&lt;/li&gt;
+&lt;li&gt;Amazon: What products to buy&lt;/li&gt;
+&lt;li&gt;Insurance: Risk based on prior claims&lt;/li&gt;
+&lt;li&gt;UNC: Sakai use to identify students in need of intervention.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;different-terms&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Different Terms&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Prediction&lt;/li&gt;
+&lt;li&gt;Projection&lt;/li&gt;
+&lt;li&gt;Forecast&lt;/li&gt;
+&lt;li&gt;Scenarios&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;what-do-you-think-the-differences-are&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What do you think the differences are?&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;figs/sunspots.png&#34; width=&#34;1200&#34; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-central-dogma-of-prediction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The central dogma of prediction&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;figs/centraldogma.png&#34; width=&#34;678&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;components-of-a-predictor&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Components of a predictor&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+&lt;redtext&gt;question&lt;/redtext&gt; -&amp;gt; input data -&amp;gt; features -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Start with a general question&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Can I automatically detect emails that are SPAM that are not?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Make it concrete&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Can I use quantitative characteristics of the emails to classify them as SPAM/HAM?&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-1&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; &lt;redtext&gt;input data &lt;/redtext&gt; -&amp;gt; features -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;img class=center src=./figs/spamR.png height=&#39;400&#39; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://rss.acs.unt.edu/Rdoc/library/kernlab/html/spam.html&#34;&gt;http://rss.acs.unt.edu/Rdoc/library/kernlab/html/spam.html&lt;/a&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-2&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; &lt;redtext&gt;features&lt;/redtext&gt; -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;
+Dear Jeff,&lt;/p&gt;
+&lt;p&gt;Can you send me your address so I can send you the invitation?&lt;/p&gt;
+&lt;p&gt;Thanks,&lt;/p&gt;
+&lt;p&gt;Ben
+&lt;/b&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-3&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; &lt;redtext&gt;features&lt;/redtext&gt; -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;&lt;/p&gt;
+&lt;p&gt;Dear Jeff,&lt;/p&gt;
+&lt;p&gt;Can &lt;rt&gt;you&lt;/rt&gt; send me your address so I can send &lt;rt&gt;you&lt;/rt&gt; the invitation?&lt;/p&gt;
+&lt;p&gt;Thanks,&lt;/p&gt;
+&lt;p&gt;Ben
+&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;Frequency of you &lt;span class=&#34;math inline&#34;&gt;\(= 2/17 = 0.118\)&lt;/span&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-4&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; &lt;redtext&gt;features&lt;/redtext&gt; -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(kernlab)
+data(spam)
+str(spam)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;#39;data.frame&amp;#39;:    4601 obs. of  58 variables:
+##  $ make             : num  0 0.21 0.06 0 0 0 0 0 0.15 0.06 ...
+##  $ address          : num  0.64 0.28 0 0 0 0 0 0 0 0.12 ...
+##  $ all              : num  0.64 0.5 0.71 0 0 0 0 0 0.46 0.77 ...
+##  $ num3d            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ our              : num  0.32 0.14 1.23 0.63 0.63 1.85 1.92 1.88 0.61 0.19 ...
+##  $ over             : num  0 0.28 0.19 0 0 0 0 0 0 0.32 ...
+##  $ remove           : num  0 0.21 0.19 0.31 0.31 0 0 0 0.3 0.38 ...
+##  $ internet         : num  0 0.07 0.12 0.63 0.63 1.85 0 1.88 0 0 ...
+##  $ order            : num  0 0 0.64 0.31 0.31 0 0 0 0.92 0.06 ...
+##  $ mail             : num  0 0.94 0.25 0.63 0.63 0 0.64 0 0.76 0 ...
+##  $ receive          : num  0 0.21 0.38 0.31 0.31 0 0.96 0 0.76 0 ...
+##  $ will             : num  0.64 0.79 0.45 0.31 0.31 0 1.28 0 0.92 0.64 ...
+##  $ people           : num  0 0.65 0.12 0.31 0.31 0 0 0 0 0.25 ...
+##  $ report           : num  0 0.21 0 0 0 0 0 0 0 0 ...
+##  $ addresses        : num  0 0.14 1.75 0 0 0 0 0 0 0.12 ...
+##  $ free             : num  0.32 0.14 0.06 0.31 0.31 0 0.96 0 0 0 ...
+##  $ business         : num  0 0.07 0.06 0 0 0 0 0 0 0 ...
+##  $ email            : num  1.29 0.28 1.03 0 0 0 0.32 0 0.15 0.12 ...
+##  $ you              : num  1.93 3.47 1.36 3.18 3.18 0 3.85 0 1.23 1.67 ...
+##  $ credit           : num  0 0 0.32 0 0 0 0 0 3.53 0.06 ...
+##  $ your             : num  0.96 1.59 0.51 0.31 0.31 0 0.64 0 2 0.71 ...
+##  $ font             : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num000           : num  0 0.43 1.16 0 0 0 0 0 0 0.19 ...
+##  $ money            : num  0 0.43 0.06 0 0 0 0 0 0.15 0 ...
+##  $ hp               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ hpl              : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ george           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num650           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ lab              : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ labs             : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ telnet           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num857           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ data             : num  0 0 0 0 0 0 0 0 0.15 0 ...
+##  $ num415           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num85            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ technology       : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num1999          : num  0 0.07 0 0 0 0 0 0 0 0 ...
+##  $ parts            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ pm               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ direct           : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ cs               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ meeting          : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ original         : num  0 0 0.12 0 0 0 0 0 0.3 0 ...
+##  $ project          : num  0 0 0 0 0 0 0 0 0 0.06 ...
+##  $ re               : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ edu              : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ table            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ conference       : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ charSemicolon    : num  0 0 0.01 0 0 0 0 0 0 0.04 ...
+##  $ charRoundbracket : num  0 0.132 0.143 0.137 0.135 0.223 0.054 0.206 0.271 0.03 ...
+##  $ charSquarebracket: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ charExclamation  : num  0.778 0.372 0.276 0.137 0.135 0 0.164 0 0.181 0.244 ...
+##  $ charDollar       : num  0 0.18 0.184 0 0 0 0.054 0 0.203 0.081 ...
+##  $ charHash         : num  0 0.048 0.01 0 0 0 0 0 0.022 0 ...
+##  $ capitalAve       : num  3.76 5.11 9.82 3.54 3.54 ...
+##  $ capitalLong      : num  61 101 485 40 40 15 4 11 445 43 ...
+##  $ capitalTotal     : num  278 1028 2259 191 191 ...
+##  $ type             : Factor w/ 2 levels &amp;quot;nonspam&amp;quot;,&amp;quot;spam&amp;quot;: 2 2 2 2 2 2 2 2 2 2 ...&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-5&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(spam$type)&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+nonspam
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+spam
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2788
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1813
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-6&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; &lt;redtext&gt;algorithm&lt;/redtext&gt; -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(density(spam$your[spam$type==&amp;quot;nonspam&amp;quot;]),
+     col=&amp;quot;blue&amp;quot;,main=&amp;quot;&amp;quot;,xlab=&amp;quot;Frequency of &amp;#39;your&amp;#39;&amp;quot;)
+lines(density(spam$your[spam$type==&amp;quot;spam&amp;quot;]),col=&amp;quot;red&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;figs/unnamed-chunk-5-1.png&#34; width=&#34;576&#34; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-7&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; &lt;redtext&gt;algorithm&lt;/redtext&gt; -&amp;gt; parameters -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;p&gt;&lt;/br&gt;&lt;/br&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Our algorithm&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Find a value &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;frequency of ‘your’ &lt;span class=&#34;math inline&#34;&gt;\(&amp;gt;\)&lt;/span&gt; C&lt;/strong&gt; predict “spam”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-8&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; algorithm -&amp;gt; &lt;redtext&gt;parameters&lt;/redtext&gt; -&amp;gt; evaluation
+&lt;/center&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(density(spam$your[spam$type==&amp;quot;nonspam&amp;quot;]),
+     col=&amp;quot;blue&amp;quot;,main=&amp;quot;&amp;quot;,xlab=&amp;quot;Frequency of &amp;#39;your&amp;#39;&amp;quot;)
+lines(density(spam$your[spam$type==&amp;quot;spam&amp;quot;]),col=&amp;quot;red&amp;quot;)
+abline(v=0.5,col=&amp;quot;black&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;figs/unnamed-chunk-6-1.png&#34; width=&#34;576&#34; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spam-example-9&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;SPAM Example&lt;/h1&gt;
+&lt;center&gt;
+question -&amp;gt; input data -&amp;gt; features -&amp;gt; algorithm -&amp;gt; parameters -&amp;gt; &lt;redtext&gt;evaluation&lt;/redtext&gt;
+&lt;/center&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prediction &amp;lt;- ifelse(spam$your &amp;gt; 0.5,&amp;quot;spam&amp;quot;,&amp;quot;nonspam&amp;quot;)
+table(prediction,spam$type)/length(spam$type)&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+nonspam
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+spam
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+nonspam
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.4590306
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.1017170
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+spam
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.1469246
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.2923278
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Accuracy &lt;span class=&#34;math inline&#34;&gt;\(\approx 0.459 + 0.292 = 0.751\)&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bike-sharing&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bike Sharing&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: Can you predict which stations will need to be restocked with bikes at different times of the day?
+&lt;ul&gt;
+&lt;li&gt;How can you use neighborhood characterstics (demographics, economics, proxmity to other stations) and time of day, day of the week, season, weather etc. to predict number of open slots on bike stations?&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;urban-sprawl-environmental-impacts&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Urban Sprawl &amp;amp; Environmental Impacts&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: Can you predict number of bad air quality days from urban form characteristics?
+&lt;ul&gt;
+&lt;li&gt;Can urban landscape metrics and other demographic characteristics predict bad air quality days in a year?&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;urban-form-healthy-behaviours&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Urban Form &amp;amp; Healthy Behaviours&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: How does urban form characteristics relate to healthy outcomes?
+&lt;ul&gt;
+&lt;li&gt;How does street density, intersection density, activity density etc. impact residents’ healthy behaviours (healthy food consumption, exercise etc.)?&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;energy-conservation-mortgage-risks&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Energy Conservation &amp;amp; Mortgage Risks&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: Should we reward households with conservation proclivities with a break on mortgage interest rates?
+&lt;ul&gt;
+&lt;li&gt;Is the choice to buy energy star appliances and houses in infill urban areas correlated with lower default/prepayment rate?&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mode-choice&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Mode Choice&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;General Q: Can we predict household transportation mode choice?
+&lt;ul&gt;
+&lt;li&gt;Given the weather, cost of travel, cost of parking etc. what is the likelihood that a household will choose to drive vs. taking public transit.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ML_process.png height=&#39;350&#39; /&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;experimental-design&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Experimental Design&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/studydesign.png height = &#39;200&#39;/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=center src=./figs/cross_validation.png height=&#39;300&#39; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;k-nearest-neighbor&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;K Nearest Neighbor&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/knnClassification.png height = &#39;400&#39;/&gt;&lt;/p&gt;
+&lt;div id=&#34;footnote-httpsen.wikipedia.orgwikik-nearest_neighbors_algorithm&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;.footnote[ &lt;a href=&#34;https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm&#34; class=&#34;uri&#34;&gt;https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm&lt;/a&gt;]&lt;/h2&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;logistic-regression-misnomer&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Logistic Regression (Misnomer)&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/logisticregression.png height = &#39;400&#39;/&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;http://dataaspirant.com/2017/03/02/how-logistic-regression-model-works/&#34; class=&#34;uri&#34;&gt;http://dataaspirant.com/2017/03/02/how-logistic-regression-model-works/&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;trees&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Trees&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/regressiontree.gif height = &#39;400&#39;/&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://www.techemergence.com/what-is-machine-learning/&#34; class=&#34;uri&#34;&gt;https://www.techemergence.com/what-is-machine-learning/&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;trees-1&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Trees&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/obamatree.png height = &#39;600&#39;/&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://nyti.ms/2QRnQxI&#34; class=&#34;uri&#34;&gt;https://nyti.ms/2QRnQxI&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;forests-ensembles&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Forests (Ensembles)&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/forests.png height=400&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;http://www.robots.ox.ac.uk/~az/lectures/ml/lect5.pdf&#34; class=&#34;uri&#34;&gt;http://www.robots.ox.ac.uk/~az/lectures/ml/lect5.pdf&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;and-lots-more&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;And lots more…&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/caretmodels.png height=700&gt;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;class: right, bottom, inverse&lt;/p&gt;
+&lt;div id=&#34;some-terminology&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Some Terminology&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ensembling&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Ensembling&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/ensembling2.png height=350&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://quantdare.com/what-is-the-difference-between-bagging-and-boosting/&#34; class=&#34;uri&#34;&gt;https://quantdare.com/what-is-the-difference-between-bagging-and-boosting/&lt;/a&gt;]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bootstrap-aggregating-bagging&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bootstrap aggregating (bagging)&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Resample cases and recalculate predictions&lt;/li&gt;
+&lt;li&gt;Average or majority vote&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img class=center src=./figs/bagging.png height=400&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[
+list()]&lt;/p&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;boosting&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Boosting&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create a model&lt;/li&gt;
+&lt;li&gt;Focus on the errors of the model and create another model&lt;/li&gt;
+&lt;li&gt;Continue this process until no improvement occurs&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img class=center src=./figs/boosted-trees-process.png height=400&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://blog.bigml.com/2017/03/14/introduction-to-boosted-trees/&#34; class=&#34;uri&#34;&gt;https://blog.bigml.com/2017/03/14/introduction-to-boosted-trees/&lt;/a&gt;]&lt;/p&gt;
+&lt;table style=&#34;width:6%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;# Boosting Explained&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;img class=center src=./figs/boosting1.png height=500&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;.footnote[&lt;a href=&#34;https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d&#34; class=&#34;uri&#34;&gt;https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d&lt;/a&gt;]&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;boosting-explained&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Boosting Explained&lt;/h1&gt;
+&lt;p&gt;&lt;img class=center src=./figs/boosting2.png height=500&gt;&lt;/p&gt;
+&lt;p&gt;.footnote[&lt;a href=&#34;https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d&#34; class=&#34;uri&#34;&gt;https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d&lt;/a&gt;]&lt;/p&gt;
+&lt;table style=&#34;width:6%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;## Basic terms&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;In general, &lt;strong&gt;Positive&lt;/strong&gt; = identified and &lt;strong&gt;negative&lt;/strong&gt; = rejected. Therefore:&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;True positive&lt;/strong&gt; (TP) = correctly identified (e.g. Real buildings identified as buildings by the model.)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;False positive&lt;/strong&gt; (FP) = incorrectly identified (e.g. Real non-buildings identified as buildings)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;strong&gt;True negative&lt;/strong&gt; (TN) = correctly rejected (e.g. Real non-buildings identified as non-buildings by the model)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;strong&gt;False negative&lt;/strong&gt; (FN) = incorrectly rejected (e.g. Real buildings identified as roads by the model)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;a href=&#34;http://en.wikipedia.org/wiki/Sensitivity_and_specificity&#34;&gt;http://en.wikipedia.org/wiki/Sensitivity_and_specificity&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;accuracy-metrics&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Accuracy Metrics&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Mean squared error (or root mean squared error)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Continuous data, sensitive to outliers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Median absolute deviation&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Continuous data, often more robust&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Sensitivity (recall): &lt;span class=&#34;math inline&#34;&gt;\(TP/(TP+FN)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;If you want few missed positives (e.g. identify as many buildings as possible, even if you misidentify some non-buildings as buildings)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Specificity: &lt;span class=&#34;math inline&#34;&gt;\(TN/(TN+FP)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;If you want few negatives called positives (e.g. identify more buildings correctly, even if you miss some true buildings )&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Accuracy &lt;span class=&#34;math inline&#34;&gt;\((TP+TN)/(TP + TN + FP + FN)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Weights false positives/negatives equally&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Concordance&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;One example is &lt;a href=&#34;http://en.wikipedia.org/wiki/Cohen%27s_kappa&#34;&gt;kappa&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Predictive value of a positive (precision): &lt;span class=&#34;math inline&#34;&gt;\(TP/(TP +FP)\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;When the prevalance is low (e.g. identify a rare class of a ‘tent city’ in US cities)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table style=&#34;width:6%;&#34;&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;5%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;# Conclusion&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;&lt;img class=center src=./figs/mlconsiderations.jpg height=500&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div id=&#34;practical-advice&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Practical Advice&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Focus on the importance of the problem&lt;/li&gt;
+&lt;li&gt;Try simple models first&lt;/li&gt;
+&lt;li&gt;Much of machine learning is about trying to create good features (variables); Models are secondary&lt;/li&gt;
+&lt;li&gt;Scale the features to have similar values (sale price in millions, sq.ft in 1000s don’t work well)&lt;/li&gt;
+&lt;li&gt;Ideally you want these features to be minimally correlated&lt;/li&gt;
+&lt;li&gt;Some algorithms requires lots of training data. Focus on creating good labelled data. Share it with others&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

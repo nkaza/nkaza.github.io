@@ -1,0 +1,1548 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Network Coreness Index can be used to measure the structure of regional economy identified through a commuting network" />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/" />
+  <meta property="og:title" content="Regional Employment Structure Using Labor Market Centrality Index | Nikhil Kaza" />
+  <meta property="og:description" content="Network Coreness Index can be used to measure the structure of regional economy identified through a commuting network" /><meta property="og:image" content="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/featured.jpg" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/featured.jpg" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2019-08-24T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2019-08-24T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/"
+  },
+  "headline": "Regional Employment Structure Using Labor Market Centrality Index",
+  
+  "image": [
+    "https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/featured.jpg"
+  ],
+  
+  "datePublished": "2019-08-24T00:00:00Z",
+  "dateModified": "2019-08-24T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Network Coreness Index can be used to measure the structure of regional economy identified through a commuting network"
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Regional Employment Structure Using Labor Market Centrality Index | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="c4e72297e179410b4a412659f0611008" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Regional Employment Structure Using Labor Market Centrality Index</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Aug 24, 2019
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    8 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/new-urban-analytics/">new-urban-analytics</a>, <a href="/category/regional-science/">regional-science</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 480px; max-height: 480px;">
+  <div style="position: relative">
+    <img src="/post/regional-employment-structure-using-labor-market-centrality-index/featured_hud3f906394e33c42b903908d2e33c2bfb_24446_720x2500_fit_q75_h2_lanczos.webp" width="480" height="480" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        
+<script src="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/header-attrs/header-attrs.js"></script>
+<script src="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/widgetframe-binding/widgetframe.js"></script>
+
+
+<p>This post is based on joint work with <a href="https://www.linkedin.com/in/dr-katherine-nesse">Dr. Kate Nesse</a>, and is <a href="/publication/kaza-2019-aa">published in the Internation Regional Science Review</a>.</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Office of Managment and Budget (OMB) identifies Core Based Statistical Areas (CBSA) as collections of counties. These CBSA can be Metropolitan (MSA) or Micropolitan <span class="math inline">\(\mu\)</span>SA based on the population of the ‘core’ (<span class="math inline">\(\ge\)</span> 50,000 or not). Within these Statistical Areas, counties can either be Central (contain all or a substantial portion of the urbanised area) or Outlying (employment interchange measure with the Central counties above 25%). In other words, the centrality of the county is defined by the urban population attributes of the county rather than its relative location in the commuting network, whereas Outlying defined in relation to the Central counties. In 2015, a vast majority of the counties within CBSA are considered Central; only 29% of the counties are Peripheral/Outlying. This is even more stark within <span class="math inline">\(\mu\)</span>SAs where only 14% are considered Peripheral. CBSAs are predominantly dominated by the Central counties; they account for 92.5% of the CBSA population. These Central counties are crucial to the delineation of these statistical regions and encompass the economic core of the country.</p>
+<p>Table 1 Types of CBSAs and Counties in Conterminous United States. Source: OMB (2015)</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>County Type</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CBSA Type</td>
+<td>Central</td>
+<td>Outlying</td>
+<td>Total</td>
+</tr>
+<tr class="even">
+<td>MSA</td>
+<td>785</td>
+<td>451</td>
+<td>1,236</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\mu\)</span>SA</td>
+<td>569</td>
+<td>94</td>
+<td>663</td>
+</tr>
+<tr class="even">
+<td>Total</td>
+<td>1,354</td>
+<td>545</td>
+<td>1,899</td>
+</tr>
+</tbody>
+</table>
+<p>These definitions are built upon the assumption that a labor market is built around a central node. While this may have been the case historically, with our increasingly complex cities and multiplicity of transportation networks, contemporary cities have much more complex labor market networks and regional structures. In this work, we examine if a different approach to defining the core would affect our understanding of the economic geography of metropolitan United States. In particular, we are interested in understanding how the positionality of the nodes in the network illuminates our understanding of the regions.</p>
+</div>
+<div id="labor-market-centrality-index" class="section level2">
+<h2>Labor Market Centrality Index</h2>
+<p>A k–core of an unweighted simple binary graph is its subgraph where all the nodes have at least degree <span class="math inline">\(k\)</span>. This subgraph is obtained by iteratively removing nodes from the network whose degree is less than k until a stable set of vertices with the minimum degree is reached. A node in a network has a coreness index <span class="math inline">\(k\)</span>, if it belongs to a <span class="math inline">\(k\)</span>–core but not a <span class="math inline">\(k+1\)</span>–core.</p>
+<p>This can be generalized to a directed network by focusing on the indegree; i.e. a <span class="math inline">\(k\)</span>–core is the subgraph, where all nodes have an in-degree <span class="math inline">\(k\)</span>. We can also generalize this concept to a weighted graph by using <span class="math inline">\(s\)</span>–core decomposition, where degree of the vertex is replaced by strength of the vertices (Eidsaa and Almaas 2013). If, the edge weight between nodes <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> is denoted by a non-negative <span class="math inline">\(w_{ij}\)</span>, then the strength of the vertex <span class="math inline">\(i\)</span>$is defined as</p>
+<p><span class="math display">\[ s_i = \sum_{j \in N_i^-} w_{ij} \]</span></p>
+<p>where <span class="math inline">\(N_i^-\)</span> is the in-neighborhood of <span class="math inline">\(i\)</span> . The <span class="math inline">\(s\)</span>-core is a subgraph where the nodes have at least strength <span class="math inline">\(s\)</span>. As long as <span class="math inline">\(w_{ij} \in Z^+\)</span>, we can replace an edge in the graph with <span class="math inline">\(w_{ij}\)</span> multi-edges, and the decomposition of the graph by strength and degree are equivalent. We call this coreness index, the labor market centrality index when applied to commuting networks.</p>
+<div class="figure">
+<img src="img/illustration.jpg" alt="" />
+<p class="caption">Illustration of network decomposition into core and periphery. Vertices are sized based on in-degree.</p>
+</div>
+<p>The s–core decomposition is illustrated in the above figure for directed graph with multiple edges including loops. The entire graph in the figure is part of 0-core. Nodes A and F have in-degree 0, and therefore are not part of the 1-core of the graph (subgraph induced by nodes B, C, D, E, G). Thus, the coreness of A and F is 0. In that 1-core of the subgraph, nodes D and G have in-degree 1. While they are not part of the 2-core of the graph, deleting them also renders B ineligible for 2-core. Thus, the coreness index of nodes B, D and G is 1. This process continues, till all nodes are assigned a coreness index. The vertices in the top 10 percentile of the index is classified as <strong>strong core</strong> and in the upper quartile, but not in the upper decile as <strong>weak core</strong>. The rest are periphery.</p>
+<p>We use the 2011–2015 <a href="https://www2.census.gov/programs-surveys/demo/tables/metro-micro/2015/commuting-flows-2015/table1.xlsx">county-to-county commuting flow data</a> from the American Community Survey. For the sake of exposition, we limit our analysis to the conterminous United States consisting of 3,109 counties. 134,869 pairs of counties have non-zero commuters, representing 1.4% of the possible links; the network is relatively sparse, a testament to the continuing importance of geographic distance for economic integration. These links represent 142.5 million commuters, of which 72% commuted within the same county. When the above coreness index is computed on this dataset, we call it <strong>Labor Market Centrality Index</strong>.</p>
+</div>
+<div id="core-periphery-structure-of-the-united-states" class="section level2">
+<h2>Core &amp; Periphery Structure of the United States</h2>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-1.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>The Labor Market Centrality Index based on 2015 ACS commuting data (logrithmically transformed) is above for the conterminous United States. The results point to tightly connected large cores in the Northeastern United States that span Boston to Washington, D.C.; in Florida around Miami and Tampa; in Southern California around Los Angeles; and in Northern California around San Francisco (see Figure 2). As can be expected, there are also numerous other smaller cores around Miami, Atlanta, Chicago, Detroit, Seattle, Denver and other cities.</p>
+<p><img src="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/figure-html/unnamed-chunk-2-1.png" width="1152" /></p>
+<p>280 counties are classified as Strong Core and 471 are classified as Weak Core. The rest are in the peripheral (see above maps). There are 92 distinct geographical clusters of Strong Core counties (defined by queen contiguity), with the biggest one comprising of 109 counties stretching from Portland, Maine to Northern Virginia. The second biggest cluster is the 28-county collection in California, from San Diego to Santa Rosa. The rest of the geographic clusters are comprised of 1 to 7 counties, with 65% of them being a single county. With the inclusion of weak core counties, the number of geographic clusters to increases to 108: 23 of the clusters are a collection of weak and strong core counties; 49 of the clusters are only comprised of weak core counties.</p>
+<p>There is one county (Sullivan, New York) that is not part any CBSA but belongs to a strong core. 11 outlying counties, as defined by OMB, belong to strong core. Similarly, two counties in New York, and one each in Connecticut, Pennsylvania and North Dakota are part of <span class="math inline">\(\mu\)</span>SAs, but are part of strong core. More importantly, 638 central counties (OMB characterization) are not part of strong or weak core (see above maps). While these counties have urban populations above the thresholds specified, they have fewer commuters both to other nodes as well as to themselves, implying a comparatively weak local and regional economy. These disagreements in classifications provide a productive starting point to analyze the role of ‘small’ non-urban counties in the regional economy as well as large urban counties that are experiencing economic stagnation and decline.</p>
+</div>
+<div id="why-bother" class="section level2">
+<h2>Why Bother?</h2>
+<p>To see why this classification may be more useful, it is illustrative to see changes in the employment pre and post-recession in different types of counties (See figure below). While the Weak Core counties grew (in terms of number of jobs) roughly at the same rate as the Strong Core counties pre-recession (2001-2008), the recovery in the post-recession has been twice as strong in the Strong Core counties in the post-recession. The recovery seems to have bypassed the Periphery counties; while they grew at a healthy 3% before the recession, they contracted by 0.5% after the recession. In part, these numbers can be explained due the spatial sorting of specializations and the changing nature of the economy. However, these distinctions are not as stark, if we use the Central and Outlying distinctions of OMB. Central counties (on average) marginally grew faster compared to Outlying counties (1.6% vs. 0.63%) during the post-recession, even while they had similar growth rates pre-recession (6.75 vs. 6.45). However, Central counties with MSA significantly outpaced Central counties within µSA in post-recession recovery (4.3% vs. -0.84%). This, together with the specialization in service industries indicates that it is not the population size of the county that is related to the economy but rather its place in the regional network. We do not make any claims as to the causal relationship between the position in the network and the economic growth.</p>
+<p><img src="https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>There are many ways to understand human settlements. In this paper, we looked at the regional structure from a network perspective. We found that how a county functions within the network of human settlement across the continental US is based on population and economic activity. Our typology reflects economic dimensions in addition to population and density.</p>
+<p>Metropolitan regions are formed around economic activity and therefore reflect economic centers but existing typologies do not characterize the strength and nature of the regional economy well. Focusing on the role of the county in the network through commute patterns illuminates not just how central a county is in the labor market but also broadly demonstrates the strength of the economy. This is independent of the size of the population. Although there is some relationship between the size of the population and the size of the economy, there were some small counties with a lot of commute flows and large counties that had very little commuting. Categorizing counties based on their function in the network of human settlements is a useful way to understand the integration of population and economy. It shares some similarities with other typologies focused on commuting flows. However, it has the unique feature of reflecting the economic strength of the region in a more dynamic way than other categorization and indices.</p>
+</div>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/research/">research</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/&amp;text=Regional%20Employment%20Structure%20Using%20Labor%20Market%20Centrality%20Index" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/&amp;t=Regional%20Employment%20Structure%20Using%20Labor%20Market%20Centrality%20Index" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Regional%20Employment%20Structure%20Using%20Labor%20Market%20Centrality%20Index&amp;body=https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/&amp;title=Regional%20Employment%20Structure%20Using%20Labor%20Market%20Centrality%20Index" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Regional%20Employment%20Structure%20Using%20Labor%20Market%20Centrality%20Index%20https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/&amp;title=Regional%20Employment%20Structure%20Using%20Labor%20Market%20Centrality%20Index" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/identifying-employment-centers/">Identifying Employment Centers</a></li>
+      
+      <li><a href="/post/a-compactness-index-for-urban-patterns/">A compactness index for urban patterns</a></li>
+      
+      <li><a href="/post/transportation-energy-consumption/">Transportation Energy Consumption in the US</a></li>
+      
+      <li><a href="/post/spatial-regression-discontinuity-design-setup/">Spatial Regression Discontinuity Design Setup</a></li>
+      
+      <li><a href="/post/using-network-ananlysis-to-identify-clusters-of-deprivation/">Regions of Deprivation</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

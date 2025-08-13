@@ -1,0 +1,766 @@
+---
+title: "Introduction to R"
+author: "Nihil Kaza"
+date: Aug 17, 2024
+format: 
+ revealjs:
+    footer: "[nkaza.github.io](https://nkaza.github.io)&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Style from Meghan Hall](https://github.com/meghall06/neair)"
+    theme: [moon,../custom.scss]
+    preview-links: auto
+    chalkboard: 
+      boardmarker-width: 5
+from: markdown+emoji
+#prefer-html: true
+execute:
+  echo: true
+  results: true
+---
+
+## Agenda
+
+```{r}
+#| echo: false
+
+opts <- options(knitr.kable.NA = "")
+library(knitr)
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  lines <- options$output.lines
+  if (is.null(lines)) {
+    return(hook_output(x, options))  # pass to default hook
+  }
+  x <- unlist(strsplit(x, "\n"))
+  more <- "..."
+  if (length(lines)==1) {        # first n lines
+    if (length(x) > lines) {
+      # truncate the output, but add ....
+      x <- c(head(x, lines), more)
+    }
+  } else {
+    x <- c(more, x[lines], more)
+  }
+  # paste these lines together
+  x <- paste(c(x, ""), collapse = "\n")
+  hook_output(x, options)
+})
+```
+
+<br/>
+
+::: incremental
+1. Working with R & Rstudio
+1. R Basics
+1. Built-in Functions
+1. Working with Vectors
+1. Sneak Peak
+
+:::
+
+# What is R? What is Rstudio ?
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+## What is R?
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+<br> <br> <br> <br>
+
+::: {style="text-align: center"}
+R is an open-source ([**free**]{style="color:#cc0000"}!) scripting language for working with data.
+
+<br> It started out as a statistical analysis language but is [so much more now]{style="color:#cc0000"}.
+:::
+
+## Getting R & Rstudio
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+<br/> <br/> <br/>
+
+You need the R [language](https://cloud.r-project.org/) <br/> <br/>
+
+. . .
+
+And also the [Integrated Development Environment](https://www.rstudio.com/products/rstudio/download/#download)
+
+## Navigating RStudio
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+::: {.absolute top="10%" left="0" width="1031" height="529"}
+::: {style="text-align: center"}
+![](imgs/RStudio1.png)
+:::
+:::
+
+::: {.absolute top="66%" left="55%"}
+::: {style="color: #cc0000"}
+project files are here. <br> Visualisations show up here
+:::
+:::
+
+. . .
+
+::: {.absolute top="28%" left="70%"}
+::: {style="color: #cc0000"}
+imported data shows up here
+:::
+:::
+
+. . .
+
+::: {.absolute top="50%" left="10%"}
+::: {style="color: #cc0000"}
+code *can* go here
+:::
+:::
+
+## Navigating RStudio
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+::: {.absolute top="10%" left="0" width="1031" height="529"}
+::: {style="text-align: center"}
+![](./imgs/RStudio2.png)
+:::
+:::
+
+::: {.absolute top="66%" left="55%"}
+::: {style="color: #cc0000"}
+project files are here
+:::
+:::
+
+::: {.absolute top="28%" left="70%"}
+::: {style="color: #cc0000"}
+imported data shows up here
+:::
+:::
+
+::: {.absolute top="35%" left="25%"}
+::: {style="color: #cc0000"}
+code can also<br>go here
+:::
+:::
+
+## Organizing with projects
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+<br>
+
+**highly recommend** nay [**require**]{style="color: #cc0000"}  using *projects* to stay organized
+
+<br>
+
+keeps code files and data files together, allowing for easier file path navigation and better reproducible work habits
+
+. . .
+
+<br>
+
+`File -> New Project`
+
+<br>
+
+more guidance: [here](https://support.rstudio.com/hc/en-us/articles/200526207-Using-RStudio-Projects) and [here](https://r4ds.had.co.nz/workflow-projects.html#rstudio-projects)
+
+## Organizing with projects
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+::: {.absolute top="10%" left="0" width="1031" height="529"}
+::: {style="text-align: center"}
+![](imgs/RStudio2.png)
+:::
+:::
+
+::: {.absolute top="66%" left="55%"}
+::: {style="color: #cc0000"}
+project files are here
+:::
+:::
+
+::: {.absolute top="28%" left="70%"}
+::: {style="color: #cc0000"}
+imported data shows up here
+:::
+:::
+
+::: {.absolute top="35%" left="25%"}
+::: {style="color: #cc0000"}
+code can also<br>go here
+:::
+:::
+
+## Organizing with projects {#directory_structure}
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```         
+.
+└── my_awesome_project
+    ├── my_awesome_project.Rproj
+    ├── data
+        ├── raw
+        └── temp
+        └── processed
+    ├── src
+        ├── 01_first_script.R
+        └── 02_second_script.R
+    ├── R 
+        ├── useful_function_1.R
+        └── useful_function_2.R
+    ├── writing
+        ├── 01_chapter.Rmd
+    ├── output
+
+   └──README.md
+    
+    
+```
+
+## Organizing with projects 
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+1 [2 3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+#| eval: false
+# create directory called 'data'
+dir.create("data")
+
+# create subdirectory raw in the data directory
+dir.create("data/raw")
+
+# create subdirectory processed in the data directory
+dir.create("data/processed")
+
+# list the files and directories
+list.files(recursive = TRUE, include.dirs = TRUE)
+
+# [1] "data"  "data/raw" "data/processed"  "my_awesome_project.Rproj"
+```
+
+
+# [Exercise 1](https://nkaza.github.io/intro2Rbook/exercise-1-getting-to-know-r-and-rstudio-1.html)
+
+
+# R Basics
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+
+## Tentative steps
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+::: {.absolute top="10%" left="0" width="1031" height="529"}
+::: {style="text-align: center"}
+![](imgs/RStudio1.png)
+:::
+:::
+
+::: {.absolute top="66%" left="55%"}
+::: {style="color: #cc0000"}
+project files are here. <br> Visualisations show up here
+:::
+:::
+
+
+
+::: {.absolute top="28%" left="70%"}
+::: {style="color: #cc0000"}
+imported data shows up here
+:::
+:::
+
+
+
+::: {.absolute top="50%" left="10%"}
+::: {style="color: #cc0000"}
+code *can* go here
+:::
+:::
+
+
+## Tentative steps
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r}
+#| echo: true
+
+2 + 2
+
+sin(pi/2)
+
+log10(3)
+
+log(3)
+
+sqrt(4)
+
+4^2
+
+exp(4)
+
+
+```
+
+## Assign to an object
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+`<-` is the assignment operator^[In many instances, you can use `=` instead of `<-`.]
+
+```{r}
+my_obj <- 48
+
+my_obj
+
+my_obj <- exp(4) * sin(2)^3
+
+my_obj
+
+my_obj <- (exp(4)*sin(2))^3
+
+my_obj
+
+my_obj <- "test"
+
+my_obj
+```
+
+
+## Manipulate objects
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r, error=TRUE}
+my_obj1 <- 48
+
+my_obj1
+
+my_obj2 <- exp(4) * sin(2)^3
+
+my_obj2
+
+my_obj3 <- my_obj1 + my_obj2
+
+my_obj3
+
+my_obj4  <- "test"
+
+my_obj5 <- my_obj3 + my_obj4
+
+```
+ Google is your friend to decipher this error!
+ 
+ 
+## Objects may be modified
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1]{style="opacity:0.25"} 2 [3 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r error=TRUE}
+
+my_obj4 
+
+my_obj4 <- my_obj3
+
+my_obj4
+
+my_obj5 <- my_obj3 + no_obj
+
+my_obj5
+```
+
+Pay attention to the errors!
+
+
+
+ 
+# Built-in Functions
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [ 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+
+## Functions
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [ 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r results = TRUE}
+my_vec <- c(2, 3, 1, 6, 4, 3, 3, 7)
+my_vec
+length(my_vec)
+mean(my_vec)
+sd(my_vec)
+my_vec[5]
+```
+
+- `c` is built-in R function. short for concatenate
+- Likewise `length`, `mean`, `sd`, `[` are other built-in functions in R.
+
+
+## Anatomy of Functions
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [ 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+
+- Functions can be broken down into three components: arguments (formals), body, and environment.
+
+```{r results = TRUE}
+formals(sd) # What arguments can you pass to the function `sd`
+
+body(sd)
+
+environment(sd)
+
+```
+
+
+
+## Anatomy of Functions
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [ 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+- Functions are objects, just as vectors are objects. Be very careful!
+
+```{r results = TRUE}
+sd(my_vec)
+
+sd <- function(x){x^2}
+
+sd
+
+sd(my_vec)
+
+stats::sd(my_vec)
+
+sd <- 8
+
+sd
+
+sd(my_vec)
+```
+
+
+## Getting Help
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [ 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+
+
+```{r eval=FALSE}
+?mean
+```
+
+![](imgs/meanhelp.png)
+
+
+## Ask for help!
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [ 4 5 ]{style="opacity:0.25"}
+:::
+:::
+
+::: {layout-ncol="2"}
+![](imgs/SO_cartoon_1.png){width="548"}
+
+![](imgs/SO_cartoon_2.jpg){width="506"}
+:::
+
+## Help Me Help You!
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2]{style="opacity:0.25"} 3 [4 5 6]{style="opacity:0.25"}
+:::
+:::
+![](imgs/cuise.webp){width="200"}
+
+
+> I am importing fairly large csv's (2 - 3 million rows). When I import these using read_csv, it fails. Anyone know why?
+
+This question is missing the key information required to reproduce and troubleshoot the problem:
+
+-   
+
+    ```         
+      How is the datafile being imported delimited(csv(comma-delimited), other)?
+    ```
+
+-   
+
+    ```         
+      What operating system is involved (e.g. Linux, Windows)? What locale?
+    ```
+
+-   
+
+    ```         
+      What version of R running? What functions and libraries are being used?
+    ```
+
+-   
+
+    ```         
+      The post does not provide an example of the R code, with the data that led to the problem
+    ```
+
+# Working with Vectors
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+## Extract Elements from Vectors
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+- `[` is very useful extractor function.
+- Do not confuse with `(`.
+- Extract based on position
+
+```{r results=TRUE}
+my_vec
+
+my_vec[3]
+
+my_vec[c(3,5,7)]
+```
+
+## Extract Elements from Vectors
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r results=TRUE}
+
+my_vec
+
+my_vec > 4
+my_vec[my_vec > 4]
+
+# this is same as
+my_vec[c(FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,TRUE)]
+
+my_vec[my_vec >= 4]        # values greater or equal to 4
+my_vec[my_vec == 4]        # values equal to 4
+my_vec[my_vec != 4]         # values not equal to 4
+
+
+```
+
+
+## Replace Element(s)
+
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r results=TRUE}
+my_vec[4] <- 500
+my_vec
+my_vec[c(6, 7)] <- 100
+my_vec
+my_vec[my_vec <= 4] <- 1000
+my_vec
+
+```
+
+## Ordering Vectors
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r results=TRUE}
+vec_sort <- sort(my_vec)
+vec_sort
+
+vec_sort2 <- sort(my_vec, decreasing = TRUE)
+vec_sort2
+
+
+height <- c(180, 155, 160, 167, 181)
+p.names <- c("Joanna", "Charlotte", "Helen", "Karen", "Amy")
+height_ord <- order(height)
+height_ord
+p.names[height_ord]
+
+
+```
+
+## Vectorisation
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5 ]{style="opacity:0.25"}
+:::
+:::
+
+```{r results=TRUE}
+
+my_vec * 5
+
+my_vec3 <- c(17, 15, 13, 19, 11, 0)
+my_vec + my_vec3
+
+```
+
+Beware though of recycling
+
+```{r results=TRUE}
+my_vec4 <- c(5,10)
+
+my_vec + my_vec4
+```
+
+## Beware of Missing Data
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5]{style="opacity:0.25"}
+:::
+:::
+
+```{r results=TRUE}
+temp  <- c(7.2, NA, 7.1, 6.9, 6.5, 5.8, 5.8, 5.5, NA, 5.5)
+temp
+mean(temp)
+mean(temp, na.rm = TRUE)
+```
+
+## Everything Printed is not True
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3]{style="opacity:0.25"} 4 [5]{style="opacity:0.25"}
+:::
+:::
+
+```{r results=TRUE}
+sd_temp <- sd(temp, na.rm = TRUE)
+sd_temp
+
+sd_temp == 0.719995
+
+options(digits = 10)
+sd_temp
+
+options(digits = 20)
+sd_temp
+```
+
+# [Exercise 2](https://nkaza.github.io/intro2Rbook/exercise-2-basic-r-operations-1.html)
+
+
+# Sneak Peak
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5
+:::
+:::
+
+## Rectangular Data
+::: {.absolute top="0" left="100%"}
+::: sectionhead
+[1 2 3 4]{style="opacity:0.25"} 5
+:::
+:::
+
+![](imgs/tidy-1.png){fig-align="center"}
+
+# Thank You!

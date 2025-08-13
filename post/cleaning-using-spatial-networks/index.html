@@ -1,0 +1,1840 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction Some transportation networks are intuitive to understand as networks. We can easily visualize intersections as nodes and roadways as edges in a road network." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/cleaning-using-spatial-networks/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/cleaning-using-spatial-networks/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/cleaning-using-spatial-networks/" />
+  <meta property="og:title" content="Cleaning Spatial Networks | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction Some transportation networks are intuitive to understand as networks. We can easily visualize intersections as nodes and roadways as edges in a road network." /><meta property="og:image" content="https://nkaza.github.io/post/cleaning-using-spatial-networks/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/cleaning-using-spatial-networks/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2022-10-26T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2022-10-26T14:09:33-04:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/cleaning-using-spatial-networks/"
+  },
+  "headline": "Cleaning Spatial Networks",
+  
+  "image": [
+    "https://nkaza.github.io/post/cleaning-using-spatial-networks/featured.png"
+  ],
+  
+  "datePublished": "2022-10-26T00:00:00Z",
+  "dateModified": "2022-10-26T14:09:33-04:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction Some transportation networks are intuitive to understand as networks. We can easily visualize intersections as nodes and roadways as edges in a road network."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Cleaning Spatial Networks | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="c4012cbe25ad5fdbf9dd85b696b3142d" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Cleaning Spatial Networks</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Oct 26, 2022
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    11 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/transportation/">transportation</a>, <a href="/category/new-urban-analytics/">new-urban-analytics</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 583px;">
+  <div style="position: relative">
+    <img src="/post/cleaning-using-spatial-networks/featured_hu09772fe0a9cddc5a7727cd4cef58af3f_814313_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="583" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js"></script>
+<h2 id="introduction">Introduction</h2>
+<p>Some transportation networks are intuitive to understand as networks. We can easily visualize intersections as nodes and roadways as edges in a road network. A network analysis approach helps in understanding complex behaviour of systems such as transportation networks that would not be possible with other types of analyses that look at individual components as separate entities. Understanding the relationships between various components such as different types of roadways (highways, side walks, residential roads) and how they induce events likes traffic jams requires a relational systemic perspective that is not fully provided with statistical or spatial analysis on their own. Spatial networks preserves the spatial properties while allowing exploration of relations between entities represented as points, lines and polygons.</p>
+<p>While it is fairly easy to extract road networks from geospatial databases such as OpenStreetMap, using such data for network analysis isn’t so straightforward. Road network information are inherently messy because of complexities in roads and information associated with roads and transportation. In this tutorial, we will learn how to clean spatial networks in R. We take an example of a network of walkable streets in Downtown Carrboro in North Carolina.</p>
+<p>We will use <code>sfnetworks</code> package. The package bridges network analysis functionalities of the <code>tidygraph</code> package with the spatial analysis functionalities of the <code>sf</code> package.</p>
+<p>As of writing this tutorial, <code>sfnetworks</code> has recently been removed from CRAN, the peer-reviewed repository for R packages. We can use <code>remotes</code> packages to install the package from Github.</p>
+<pre><code class="language-r">install.packages(&quot;remotes&quot;)
+remotes::install_github(&quot;luukvdmeer/sfnetworks&quot;)
+</code></pre>
+<pre><code class="language-r">library(osmdata)
+library(tidyverse)
+library(sf)
+library(igraph)
+library(tidygraph)
+library(sfnetworks)
+library(tmap)
+library(dbscan)
+library(widgetframe)
+</code></pre>
+<h2 id="downloading-data--sanity-checks">Downloading Data &amp; Sanity Checks</h2>
+<p>Previously we have used “osmdata” package to download restaurants from OpenStreetMap using Overpass Query. Let’s use the same package to download all walkable ways in Downtown Carrboro. The key-value pairs used are not exhaustive. There maybe others that are relevant.</p>
+<pre><code class="language-r">we_foot &lt;- opq(&quot;Downtown Carrboro, North Carolina&quot;) %&gt;% 
+  add_osm_feature(key = &quot;highway&quot;, value = c(&quot;bridleway&quot;,&quot;corridor&quot;, &quot;elevator&quot;, &quot;footway&quot;, &quot;living_street&quot;, &quot;path&quot;, &quot;pedestrian&quot;, &quot;primary&quot;, &quot;primary_link&quot;, &quot;residential&quot;, &quot;secondary&quot;, &quot;secondary_link&quot;, &quot;service&quot;, &quot;steps&quot;, &quot;tertiary&quot;, &quot;tertiary_link&quot;, &quot;track&quot;, &quot;unclassified&quot;))%&gt;% 
+  osmdata_sf() #convert to sf
+</code></pre>
+<p>We will look at the columns, and a summary of the components of the spatial object</p>
+<pre><code class="language-r">names(we_foot)
+</code></pre>
+<pre><code>## [1] &quot;bbox&quot;              &quot;overpass_call&quot;     &quot;meta&quot;             
+## [4] &quot;osm_points&quot;        &quot;osm_lines&quot;         &quot;osm_polygons&quot;     
+## [7] &quot;osm_multilines&quot;    &quot;osm_multipolygons&quot;
+</code></pre>
+<pre><code class="language-r">we_foot
+</code></pre>
+<pre><code>## Object of class 'osmdata' with:
+##                  $bbox : 35.8899859,-79.0952611,35.9299859,-79.0552611
+##         $overpass_call : The call submitted to the overpass API
+##                  $meta : metadata including timestamp and version numbers
+##            $osm_points : 'sf' Simple Features Collection with 17707 points
+##             $osm_lines : 'sf' Simple Features Collection with 2793 linestrings
+##          $osm_polygons : 'sf' Simple Features Collection with 44 polygons
+##        $osm_multilines : NULL
+##     $osm_multipolygons : NULL
+</code></pre>
+<p>We can see that there are points, lines and polygons but no multi-lines and multipolygons. First we need to change polygons to lines. We do not need to worry about the points. The points are the points that make up the lines and polygons.</p>
+<p>We can look at the location of those polygons.</p>
+<pre><code class="language-r">we_foot$osm_polygons %&gt;% 
+  st_geometry() %&gt;% 
+  plot()
+</code></pre>
+<img src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-5-1.png" width="768" />
+<p>We are only considering points and lines for this spatial network analysis. We can cast the polygons to lines.</p>
+<pre><code class="language-r"># cast polygons to lines
+poly_to_lines &lt;- st_cast(we_foot$osm_polygons, &quot;LINESTRING&quot;)
+</code></pre>
+<pre><code>## Warning in st_cast.sf(we_foot$osm_polygons, &quot;LINESTRING&quot;): repeating attributes
+## for all sub-geometries for which they may not be constant
+</code></pre>
+<pre><code class="language-r"># bind all lines together
+we_foot_lines &lt;- bind_rows(we_foot$osm_lines, poly_to_lines)
+</code></pre>
+<pre><code class="language-r"># plot it
+we_foot_lines %&gt;% 
+  st_geometry() %&gt;% 
+  plot()
+</code></pre>
+<img src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-7-1.png" width="768" />
+<h2 id="cleaning-the-network">Cleaning the Network</h2>
+<p>Mathematically a network/graph is a collection of links and nodes. For many applications, what really matters is the connections and relationships among these links and nodes, but not the spatial attributes these links and nodes. In other words, topological relationships are more important than spatial relationships. See for example, the Input Output matrix of various industries, or social network of different individuals or networks of neurons in brain.</p>
+<p>However, in spatial networks, the location of the roads and street intersection matter. Furthermore, the representation of streets as lines (straight, or multilines, curved roads), their directionality (one-way, two-way), the precision (e.g. dangling, snaps), crossings (at grade, overpass etc.), road type (limited access, pedestrian etc.) all matter for how we construct what are links and which nodes (intersections) are relevant.</p>
+<p>Much of the analysis is trying to figure out appropriate ways to clean the street network data so that only relevant nodes and links are kept in the graph. Because the road networks are different in different parts of the world, it is hard to come up with a consistent set of rules that will work everywhere.</p>
+<p>Some of the key cleaning steps are demonstrated in the <a href="https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html" target="_blank" rel="noopener">sfnetwork vigenttes</a>.</p>
+<p>Here are some common issues and rules we often use with street/road networks. As with everything, these are not exhaustive.</p>
+<ul>
+<li>
+<p>Curved Roads or road with multiple segments (e.g. change in directions) that have the same ID are not considered intersecting.</p>
+</li>
+<li>
+<p>End nodes (e.g. cul-de-sacs) do not contribute to walkability and should be ignored in street intersection density calculations. Because these nodes have degree 1 (only one edge is incident on them), we can filter them relatively easily after the fact.</p>
+</li>
+<li>
+<p>When a network is constructed, nodes are constructed from shared endpoints. However, sometimes, road may overlap and share some interior points resulting in a missing node. Often this is because they are overpasses or underpasses, but sometimes they are mapping errors. To rectify these mapping errors we can use to_spatial_subdivision().</p>
+</li>
+<li>
+<p>Roads that continue in the same direction but have different IDs (or names) will often be coded as different roads. However, the intersection of these two roads should be considered a false node. We can eliminate them in two different ways.</p>
+</li>
+<li>
+<p>They have degree 2. So we can try and filter them out after the fact. However, there might be instances where degree 2 nodes might be true intersections, such as the intersection at te lower triangle in the example (why?). Exercise caution.</p>
+</li>
+<li>
+<p>We can apply to_spatial_smooth to remove these pseudonodes. This function iteratively smooths pseudo nodes, and after each removal concatenates the linestring geometries of the two affected edges together into a new, single linestring geometry.</p>
+</li>
+<li>
+<p>Often we want to simplify the topology of the network, by reducing the complex intersection structures into a single node you might want to reduce such complex intersection structures into a single node, but still maintaining the connectivity of the network.</p>
+</li>
+</ul>
+<p>Some of the key cleaning steps in networks are demonstrated in the <a href="https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html" target="_blank" rel="noopener">sfnetwork vigenttes</a>.
+The following figure illustrates some common issues encountered in the spatial datasets that need to be accounted for.</p>
+<img src="img/cleaning_networks.jpg" width="862" />
+<h3 id="conversion-of-spatial-data-to-spatial-network">Conversion of spatial data to spatial network</h3>
+<p>We can convert the spatial object to spatial network using <code>as_sfnetwork</code> function</p>
+<pre><code class="language-r">foot_net &lt;- as_sfnetwork(we_foot_lines, directed = FALSE)
+plot(foot_net)
+</code></pre>
+<img src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-9-1.png" width="768" />
+<p>We can make the nodes less prominent from default settings while visualizing.</p>
+<pre><code class="language-r">plot(st_geometry(foot_net, &quot;edges&quot;), lwd = 1)
+plot(st_geometry(foot_net, &quot;nodes&quot;), pch = 5, cex = .2, add = TRUE)
+</code></pre>
+<img src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-10-1.png" width="768" />
+Often it is useful to have an interactive map to zoom and pan into the data to understand the different cleaning operations that may be required.
+<pre><code class="language-r">tmap_mode(&quot;view&quot;) # set to interactive mode
+</code></pre>
+<pre><code>## tmap mode set to interactive viewing
+</code></pre>
+<pre><code class="language-r">m1 &lt;- 
+tm_tiles(&quot;CartoDB.Positron&quot;) +
+  tm_shape(st_as_sf(foot_net, &quot;edges&quot;)) +
+  tm_lines(col = &quot;highway&quot;, palette = &quot;Accent&quot;, colorNA = &quot;red&quot;) +
+  tm_shape(st_as_sf(foot_net, &quot;nodes&quot;)) +
+  tm_dots() +
+  tm_view(set.zoom.limits = c(15,18))
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-11.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<h3 id="removing-multiple-edges-and-loops">Removing multiple edges and loops</h3>
+<p>Multiple edges are more than one edges that connect the same two nodes. Loops are edges that connect a point to itself. We can filter them out using off-the-shelf functions. Use caution, this may or may not be desirable.</p>
+<pre><code class="language-r">foot_simple = foot_net %&gt;%
+  activate(&quot;edges&quot;) %&gt;%
+  arrange(edge_length()) %&gt;%
+  filter(!edge_is_multiple()) %&gt;%
+  filter(!edge_is_loop())
+
+removed_edges &lt;-st_as_sf(foot_net, &quot;edges&quot;) %&gt;% st_geometry() %&gt;%
+  setdiff(st_as_sf(foot_simple, &quot;edges&quot;)%&gt;%st_geometry()) %&gt;% 
+  st_as_sf()
+
+plot(st_geometry(foot_simple, &quot;edges&quot;), lwd = 1)
+plot(st_geometry(foot_simple, &quot;nodes&quot;), pch = 5, cex = .2, add = TRUE)
+plot(st_geometry(removed_edges), lwd = 1, col ='red', add =T)
+</code></pre>
+<img src="https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-12-1.png" width="768" />
+<h3 id="subdivision--smoothing">Subdivision &amp; Smoothing</h3>
+<p>Some edges have interior nodes that are connected to other edges. We need to divide such edges. “to_spatial_subdivision” is the function we use.</p>
+<p>On the other hand, there will be nodes that only connect two edges. Those nodes are not critical and can be removed. For that we use, “to_spatial smooth.”</p>
+<pre><code class="language-r">vcount(foot_simple) # Vertex/Node Count
+</code></pre>
+<pre><code>## [1] 4092
+</code></pre>
+<pre><code class="language-r">ecount(foot_simple) # Edge Count
+</code></pre>
+<pre><code>## [1] 2778
+</code></pre>
+<pre><code class="language-r">foot_simple_subdivision &lt;- convert(foot_simple, to_spatial_subdivision)
+</code></pre>
+<pre><code>## Warning: to_spatial_subdivision assumes attributes are constant over geometries
+</code></pre>
+<pre><code class="language-r">vcount(foot_simple_subdivision)
+</code></pre>
+<pre><code>## [1] 4808
+</code></pre>
+<pre><code class="language-r">ecount(foot_simple_subdivision)
+</code></pre>
+<pre><code>## [1] 6175
+</code></pre>
+<pre><code class="language-r">foot_simple_smooth &lt;- convert(foot_simple_subdivision, to_spatial_smooth)
+vcount(foot_simple_smooth)
+</code></pre>
+<pre><code>## [1] 4171
+</code></pre>
+<pre><code class="language-r">ecount(foot_simple_smooth)
+</code></pre>
+<pre><code>## [1] 5538
+</code></pre>
+<p>We can see the changes in the number of nodes and edges each cleaning (spatial morphing) operation did. Visualise the removed nodes in the following way.</p>
+<pre><code class="language-r"># We only care about the geometry so we ignore other attributes.
+removed_nodes &lt;-
+  st_as_sf(foot_simple, &quot;nodes&quot;) %&gt;% st_geometry() %&gt;%
+  setdiff(st_as_sf(foot_simple_smooth, &quot;nodes&quot;)%&gt;%st_geometry()) %&gt;% 
+  st_as_sf()
+
+added_nodes &lt;-  st_as_sf(foot_simple_subdivision, &quot;nodes&quot;) %&gt;% st_geometry() %&gt;%
+  setdiff(st_as_sf(foot_simple, &quot;nodes&quot;)%&gt;%st_geometry()) %&gt;% 
+  st_as_sf()
+
+
+
+m1 &lt;-
+tm_tiles(&quot;CartoDB.Positron&quot;) +
+  tm_shape(st_as_sf(foot_simple_smooth, &quot;nodes&quot;)) +
+  tm_dots(size = .01)+
+  tm_shape(st_as_sf(foot_simple_smooth, &quot;edges&quot;)) +
+  tm_lines()+
+  tm_shape(removed_nodes)+
+  tm_dots(col = 'red', size = .03, legend.show = T) +
+  tm_shape(added_nodes) +
+  tm_dots(col = 'green', size = .03, legend.show = T) +
+  tm_view(set.zoom.limits = c(15,18))
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-14.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>The examples above present only simple cleaning operations. There will undoubtedly be others. We should look closely for what cleaning operations are required.</p>
+<h3 id="disconnected-components">Disconnected components</h3>
+<p>One of the problem we can see are isolated sets of nodes and edges that are disconnected from the main network. These are largely because of</p>
+<ul>
+<li>mapping errors,</li>
+<li>issues around precision of the coordinates</li>
+<li>Nodes belonging to roads/links that are not selected in the query (motorways e.g.)</li>
+<li>other anomalies</li>
+</ul>
+<pre><code class="language-r">components(foot_simple_smooth)$no
+</code></pre>
+<pre><code>## [1] 50
+</code></pre>
+<pre><code class="language-r">components(foot_simple_smooth)$csize
+</code></pre>
+<pre><code>##  [1] 4035    4    2    5    2    8    2    2    4    4    2    2    2    2    2
+## [16]    2    2    2    2    2    2    2    2    6    2    2    2    2    2    2
+## [31]    2    4    2    2   11    2    2    2    2    2    2    2    2   10    2
+## [46]    2    2    2    2    2
+</code></pre>
+<p>In this network, there are 50 components and first component has most of the nodes (4035). Let’s visualise these disconnected components.</p>
+<pre><code class="language-r">disconnected_components &lt;- foot_simple_smooth %&gt;%
+  activate('nodes')%&gt;%
+  filter(components(foot_simple_smooth)$membership &gt; 1)
+  
+
+m1 &lt;-
+tm_tiles(&quot;CartoDB.Positron&quot;) +
+  tm_shape(st_as_sf(foot_simple_smooth, 'edges')) +
+  tm_lines()+
+  tm_shape(st_as_sf(disconnected_components, &quot;nodes&quot;)) +
+  tm_dots(col = 'red')+
+  tm_shape(st_as_sf(disconnected_components, &quot;edges&quot;)) +
+  tm_lines(col = 'red') +
+  tm_view(set.zoom.limits = c(15,18))
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-3" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-16.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>In this particular instance, they are mostly minor and often can be ignored. In other instances, ignoring them would cause analytical difficulties.</p>
+<pre><code class="language-r">foot_smooth_connected &lt;- foot_simple_smooth %&gt;%
+  activate('nodes')%&gt;%
+  filter(components(foot_simple_smooth)$membership == 1)
+</code></pre>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Instead of ignoring the disconnected components, you can try and snap some of the nodes of the disconnected components to the main network. This might involve finding the closest node/s of the disconnected component to an edge in the main network. You might have to give explicit instructions about which of the nodes are candidates for snapping. (Hint: <a href="https://stackoverflow.com/questions/51292952/snap-a-point-to-the-closest-point-on-a-line-segment-using-sf" target="_blank" rel="noopener">This post</a> may be useful.</li>
+</ul>
+<hr>
+<h3 id="simplifying-intersections-by-contracting-nodes">Simplifying intersections by contracting nodes</h3>
+<p>Intersections in OpenStreetMap are often represented by a collection of several nodes. For the purposes of a network analysis, treating an intersection as one node is usually sufficient. We do that by contracting nearby nodes that are connected into one node.</p>
+<p>First, we cluster nearby nodes using the DBSCAN algorithm. We have to choose the right epsilon value that represents the nearness required for nodes to belong to a single cluster. We contracted the nodes that belong to a single cluster using “to_spatial_contracted” function. It is important the the nodes are not only sufficiently near but also connected, checked using tidygraph’s “group_components” function by creating an additional variable.</p>
+<pre><code class="language-r">node_coords = foot_smooth_connected %&gt;%
+  activate(&quot;nodes&quot;) %&gt;%
+  st_coordinates()
+
+#0.004
+clusters = dbscan(node_coords, eps = 0.0001, minPts = 1)$cluster
+
+unique(clusters) %&gt;% 
+  head()
+</code></pre>
+<pre><code>## [1] 1 2 3 4 5 6
+</code></pre>
+<pre><code class="language-r">clustered = foot_smooth_connected %&gt;%
+  activate(&quot;nodes&quot;) %&gt;%
+  mutate(cls = clusters)
+
+clustered = clustered %&gt;%
+  mutate(cmp = group_components())
+
+foot_connected_contracted = convert(
+  clustered,
+  to_spatial_contracted,
+  cls, cmp,
+  simplify = TRUE
+)
+</code></pre>
+<p>The number of edges and nodes provides a simple sanity check. We do not want the number of nodes to have reduced by a lot unless we have a large number of intersections with redundant nodes.</p>
+<pre><code class="language-r">ecount(foot_connected_contracted)
+</code></pre>
+<pre><code>## [1] 3809
+</code></pre>
+<pre><code class="language-r">vcount(foot_connected_contracted)
+</code></pre>
+<pre><code>## [1] 2949
+</code></pre>
+<pre><code class="language-r">removed_nodes &lt;-
+  st_as_sf(foot_smooth_connected, &quot;nodes&quot;) %&gt;% st_geometry() %&gt;%
+  setdiff(st_as_sf(foot_connected_contracted, &quot;nodes&quot;)%&gt;%st_geometry()) %&gt;% 
+  st_as_sf()
+
+added_nodes &lt;- st_as_sf(foot_connected_contracted, &quot;nodes&quot;) %&gt;% st_geometry() %&gt;%
+  setdiff(st_as_sf(foot_smooth_connected, &quot;nodes&quot;)%&gt;%st_geometry()) %&gt;% 
+  st_as_sf()
+
+m1 &lt;- 
+tm_tiles(&quot;CartoDB.Positron&quot;) +
+  tm_shape(st_as_sf(foot_connected_contracted, &quot;nodes&quot;)) +
+  tm_dots()+
+  tm_shape(st_as_sf(foot_connected_contracted, &quot;edges&quot;)) +
+  tm_lines()+
+  tm_shape(removed_nodes)+
+  tm_dots(col = 'red', size = .01) +
+  tm_shape(added_nodes)+
+  tm_dots(col='green', size = .02) +
+  tm_view(set.zoom.limits = c(15,18))
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-4" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4">{"x":{"url":"index.en_files/figure-html//widgets/widget_unnamed-chunk-19.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<hr>
+<p><strong>Exercise</strong></p>
+<p>Explore the following:</p>
+<ul>
+<li>What does the epsilon value mean? How is it used in the DBSCAN algorithm?</li>
+<li>Try different epsilon values and see the impact of changes on the network.</li>
+<li>Identify other potential issues related to cleaning the network by looking closer at different areas in the map and explore how you can address them.</li>
+</ul>
+<hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>As you may surmised much of this cleaning is an art rather than a precise steps you can follow. As with anything, the analytical choices dictate the final network you will end up with. These choices matter for the analysis of the network, sometimes in small ways and some other times in large ways.</p>
+<h2 id="other-resources">Other Resources</h2>
+<p>This tutorial borrows heavily from the following resources. You can refer them for more detailed coverage in specific issues discussed here.</p>
+<ul>
+<li>
+<p><a href="https://geospatial-community.netlify.app/post/2022-03-31-spatial-networks/" target="_blank" rel="noopener">Introduction to tidy spatial networks</a></p>
+</li>
+<li>
+<p><a href="https://nkaza.github.io/post/intersection-density-from-osm-using-qgis-r/" target="_blank" rel="noopener">Intersection Density From OSM using QGIS &amp; R</a></p>
+</li>
+<li>
+<p><a href="https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html" target="_blank" rel="noopener">Network pre-processing and cleaning</a></p>
+</li>
+</ul>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#downloading-data--sanity-checks">Downloading Data &amp; Sanity Checks</a></li>
+    <li><a href="#cleaning-the-network">Cleaning the Network</a>
+      <ul>
+        <li><a href="#conversion-of-spatial-data-to-spatial-network">Conversion of spatial data to spatial network</a></li>
+        <li><a href="#removing-multiple-edges-and-loops">Removing multiple edges and loops</a></li>
+        <li><a href="#subdivision--smoothing">Subdivision &amp; Smoothing</a></li>
+        <li><a href="#disconnected-components">Disconnected components</a></li>
+        <li><a href="#simplifying-intersections-by-contracting-nodes">Simplifying intersections by contracting nodes</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#other-resources">Other Resources</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/r/">R</a>
+  
+  <a class="badge badge-light" href="/tag/teaching/">teaching</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/cleaning-using-spatial-networks/&amp;text=Cleaning%20Spatial%20Networks" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/cleaning-using-spatial-networks/&amp;t=Cleaning%20Spatial%20Networks" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Cleaning%20Spatial%20Networks&amp;body=https://nkaza.github.io/post/cleaning-using-spatial-networks/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/cleaning-using-spatial-networks/&amp;title=Cleaning%20Spatial%20Networks" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Cleaning%20Spatial%20Networks%20https://nkaza.github.io/post/cleaning-using-spatial-networks/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/cleaning-using-spatial-networks/&amp;title=Cleaning%20Spatial%20Networks" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
+      
+      <li><a href="/post/exploratory-data-analysis-and-visualisation/">Exploratory Data Analysis and Visualisation</a></li>
+      
+      <li><a href="/post/intersection-density-from-osm-using-qgis-r/">Intersection Density From OSM using QGIS &amp; R</a></li>
+      
+      <li><a href="/post/analysing-free-form-text/">Analysing Free Form Text</a></li>
+      
+      <li><a href="/post/matching-messy-texts/">Matching Messy Texts</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

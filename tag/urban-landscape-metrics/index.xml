@@ -1,0 +1,1354 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>urban-landscape-metrics | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/tag/urban-landscape-metrics/</link>
+      <atom:link href="https://nkaza.github.io/tag/urban-landscape-metrics/index.xml" rel="self" type="application/rss+xml" />
+    <description>urban-landscape-metrics</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Thu, 12 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>urban-landscape-metrics</title>
+      <link>https://nkaza.github.io/tag/urban-landscape-metrics/</link>
+    </image>
+    
+    <item>
+      <title>Urban Morphology &amp; Landscape Metrics</title>
+      <link>https://nkaza.github.io/post/urban-morphology-landscape-metrics/</link>
+      <pubDate>Thu, 12 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/urban-morphology-landscape-metrics/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/lightable/lightable.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;style type=&#34;text/css&#34;&gt;
+pre &gt; code.sourceCode { white-space: pre; position: relative; }
+pre &gt; code.sourceCode &gt; span { display: inline-block; line-height: 1.25; }
+pre &gt; code.sourceCode &gt; span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode &gt; span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre &gt; code.sourceCode { white-space: pre-wrap; }
+pre &gt; code.sourceCode &gt; span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code &gt; span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code &gt; span &gt; a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre &gt; code.sourceCode &gt; span &gt; a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+&lt;/style&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In this post, I am going to show how to characterise urban form using urban landscape metrics.
+Landscape metrics are relatively common on ecology to understand the configuration and composition of natural landscapes. Their application to urban landscape is relatively novel, though is becoming more widespread.&lt;/p&gt;
+&lt;p&gt;Most of the methods and results are discussed in &lt;a href=&#34;https://nkaza.github.io/publication/kaza_changing_2013/&#34;&gt;Kaza (2013)&lt;/a&gt; and &lt;a href=&#34;https://nkaza.github.io/publication/kazawpyo/&#34;&gt;McCarty &amp;amp; Kaza (2015)&lt;/a&gt;. Please refer to those articles.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requirements&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Requirements&lt;/h2&gt;
+&lt;p&gt;This requires &lt;a href=&#34;http://r-project.org&#34;&gt;R&lt;/a&gt;, the many libraries including &lt;a href=&#34;https://cran.r-project.org/web/packages/raster/&#34;&gt;raster&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/web/packages/raster/&#34;&gt;terra&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/package=mmand&#34;&gt;mmand&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/web/packages/landscapemetrics/index.html&#34;&gt;landscapemetrics&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I strongly recommend that you read through &lt;a href=&#34;http://rspatial.org/index.html&#34;&gt;R spatial&lt;/a&gt; by &lt;a href=&#34;https://desp.ucdavis.edu/people/robert-j-hijmans&#34;&gt;Robert Hijmans&lt;/a&gt;, the author of the &lt;code&gt;raster&lt;/code&gt; and &lt;code&gt;terra&lt;/code&gt; packages. &lt;code&gt;terra&lt;/code&gt; is a newer implementation of &lt;code&gt;raster&lt;/code&gt;. Usually it is faster, but it does not have all the functionality of &lt;code&gt;raster&lt;/code&gt;. So I am going to switch between the two as necessary.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acquire-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acquire data&lt;/h2&gt;
+&lt;p&gt;I am going to use a &lt;a href=&#34;https://www.dropbox.com/s/pbx180gw420g03l/Archive.zip?dl=0&#34;&gt;small section&lt;/a&gt; of the &lt;a href=&#34;https://www.mrlc.gov/nlcd11_data.php&#34;&gt;US National Land Cover Dataset for 2011&lt;/a&gt; from United States Geological Survey. You are welcome to use any categorical raster data. If you are interested in automatically downloading the data with the script try &lt;code&gt;FedData&lt;/code&gt; package from github.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;explore-the-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Explore the data&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;raster::raster&lt;/code&gt; creates a raster object, while &lt;code&gt;terra::rast&lt;/code&gt; creates as SpatRaster object. Both packages have &lt;code&gt;writeRaster&lt;/code&gt; function, but I strongly recommend using the &lt;code&gt;terra&lt;/code&gt; implementation, by using &lt;code&gt;terra::writeRaster&lt;/code&gt;. In fact, it is a good idea to append the package name when dealing with rasters, especially since &lt;code&gt;select&lt;/code&gt; in rasters conflict with &lt;code&gt;select&lt;/code&gt; in &lt;code&gt;dplyr&lt;/code&gt;. Jakub Nowosad’s &lt;a href=&#34;https://geocompr.github.io/post/2021/spatial-classes-conversion/&#34;&gt;blog&lt;/a&gt; explains how to convert between various classes of objects.&lt;/p&gt;
+&lt;p&gt;It is also useful to learn about the differences between rasterLayers, rasterStack and rasterBrick, if you are using &lt;code&gt;raster&lt;/code&gt; package. &lt;code&gt;terra&lt;/code&gt; on the other hand, only has a single class &lt;code&gt;spatRaster&lt;/code&gt; and you can append layers using the traditional &lt;code&gt;c&lt;/code&gt; function.&lt;/p&gt;
+&lt;p&gt;Initialise the packages and read them into R along with the raster.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb1&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb1-1&#34;&gt;&lt;a href=&#34;#cb1-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;library&lt;/span&gt;(raster)&lt;/span&gt;
+&lt;span id=&#34;cb1-2&#34;&gt;&lt;a href=&#34;#cb1-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;library&lt;/span&gt;(rasterVis)&lt;/span&gt;
+&lt;span id=&#34;cb1-3&#34;&gt;&lt;a href=&#34;#cb1-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;library&lt;/span&gt;(sf)&lt;/span&gt;
+&lt;span id=&#34;cb1-4&#34;&gt;&lt;a href=&#34;#cb1-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;library&lt;/span&gt;(tidyverse)&lt;/span&gt;
+&lt;span id=&#34;cb1-5&#34;&gt;&lt;a href=&#34;#cb1-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb1-6&#34;&gt;&lt;a href=&#34;#cb1-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;lc &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;here&lt;/span&gt;(&lt;span class=&#34;st&#34;&gt;&amp;quot;tutorials_datasets&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;&amp;quot;lmetrics&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;&amp;quot;c11_37063.img&amp;quot;&lt;/span&gt;) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;   raster&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;raster&lt;/span&gt;() &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; raster&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;ratify&lt;/span&gt;()&lt;/span&gt;
+&lt;span id=&#34;cb1-7&#34;&gt;&lt;a href=&#34;#cb1-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb1-8&#34;&gt;&lt;a href=&#34;#cb1-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;nlcd_class &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;read_csv&lt;/span&gt;(&lt;span class=&#34;fu&#34;&gt;here&lt;/span&gt;(&lt;span class=&#34;st&#34;&gt;&amp;quot;tutorials_datasets&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;&amp;quot;lmetrics&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;&amp;quot;legend_csv.csv&amp;quot;&lt;/span&gt;) , &lt;span class=&#34;at&#34;&gt;col_types =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;#39;iccc_&amp;#39;&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb1-9&#34;&gt;&lt;a href=&#34;#cb1-9&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb1-10&#34;&gt;&lt;a href=&#34;#cb1-10&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;rat &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;levels&lt;/span&gt;(lc)[[&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;]] &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;merge&lt;/span&gt;(nlcd_class, &lt;span class=&#34;at&#34;&gt;by.x=&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;&amp;quot;ID&amp;quot;&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;by.y=&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;&amp;quot;Value&amp;quot;&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb1-11&#34;&gt;&lt;a href=&#34;#cb1-11&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb1-12&#34;&gt;&lt;a href=&#34;#cb1-12&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;levels&lt;/span&gt;(lc) &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; rat&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The land cover is assigned to the object &lt;code&gt;lc&lt;/code&gt;. I prepared it so that it is a categorical raster with the right colors in the colortable. See attributes below.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb2&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb2-1&#34;&gt;&lt;a href=&#34;#cb2-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;lc&lt;/span&gt;
+&lt;span id=&#34;cb2-2&#34;&gt;&lt;a href=&#34;#cb2-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# class      : RasterLayer &lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-3&#34;&gt;&lt;a href=&#34;#cb2-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# dimensions : 1483, 892, 1322836  (nrow, ncol, ncell)&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-4&#34;&gt;&lt;a href=&#34;#cb2-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# resolution : 30, 30  (x, y)&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-5&#34;&gt;&lt;a href=&#34;#cb2-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# extent     : 1510215, 1536975, 1558875, 1603365  (xmin, xmax, ymin, ymax)&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-6&#34;&gt;&lt;a href=&#34;#cb2-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# crs        : +proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs &lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-7&#34;&gt;&lt;a href=&#34;#cb2-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# source     : c11_37063.img &lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-8&#34;&gt;&lt;a href=&#34;#cb2-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# names      : Layer_1 &lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-9&#34;&gt;&lt;a href=&#34;#cb2-9&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# values     : 11, 95  (min, max)&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-10&#34;&gt;&lt;a href=&#34;#cb2-10&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# attributes :&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-11&#34;&gt;&lt;a href=&#34;#cb2-11&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#        ID    Class               Classification colortable&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-12&#34;&gt;&lt;a href=&#34;#cb2-12&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  from: 11    Water                   Open Water    #5475A8&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb2-13&#34;&gt;&lt;a href=&#34;#cb2-13&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#   to : 95 Wetlands Emergent Herbaceous Wetlands    #64B3D5&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Here is the frequency table of counts of cells in various categories and visualisation of the raster.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb3&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb3-1&#34;&gt;&lt;a href=&#34;#cb3-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;freq&lt;/span&gt;(lc)&lt;/span&gt;
+&lt;span id=&#34;cb3-2&#34;&gt;&lt;a href=&#34;#cb3-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#       value  count&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-3&#34;&gt;&lt;a href=&#34;#cb3-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [1,]    11  25218&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-4&#34;&gt;&lt;a href=&#34;#cb3-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [2,]    21 170495&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-5&#34;&gt;&lt;a href=&#34;#cb3-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [3,]    22  74482&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-6&#34;&gt;&lt;a href=&#34;#cb3-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [4,]    23  42961&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-7&#34;&gt;&lt;a href=&#34;#cb3-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [5,]    24  10213&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-8&#34;&gt;&lt;a href=&#34;#cb3-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [6,]    31   1214&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-9&#34;&gt;&lt;a href=&#34;#cb3-9&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [7,]    41 222663&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-10&#34;&gt;&lt;a href=&#34;#cb3-10&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [8,]    42 109305&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-11&#34;&gt;&lt;a href=&#34;#cb3-11&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  [9,]    43  30740&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-12&#34;&gt;&lt;a href=&#34;#cb3-12&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [10,]    52  16259&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-13&#34;&gt;&lt;a href=&#34;#cb3-13&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [11,]    71  37211&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-14&#34;&gt;&lt;a href=&#34;#cb3-14&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [12,]    81  68416&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-15&#34;&gt;&lt;a href=&#34;#cb3-15&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [13,]    82   4926&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-16&#34;&gt;&lt;a href=&#34;#cb3-16&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [14,]    90  41920&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-17&#34;&gt;&lt;a href=&#34;#cb3-17&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [15,]    95   1180&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-18&#34;&gt;&lt;a href=&#34;#cb3-18&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [16,]    NA 465633&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-19&#34;&gt;&lt;a href=&#34;#cb3-19&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb3-20&#34;&gt;&lt;a href=&#34;#cb3-20&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;rasterVis&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;levelplot&lt;/span&gt;(lc, &lt;span class=&#34;at&#34;&gt;att=&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;&amp;quot;Classification&amp;quot;&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;ylab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;xlab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;scales=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;), &lt;span class=&#34;at&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;)),  &lt;span class=&#34;at&#34;&gt;col.regions=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;levels&lt;/span&gt;(lc)[[&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;]]&lt;span class=&#34;sc&#34;&gt;$&lt;/span&gt;colortable, &lt;span class=&#34;at&#34;&gt;main=&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;&amp;quot;2011 Land Cover&amp;quot;&lt;/span&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;analyse-the-raster&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Analyse the raster&lt;/h2&gt;
+&lt;p&gt;Select the categories that are urban, These are Values &lt;code&gt;21,22,23,24&lt;/code&gt; and set them to 1. Set the rest to 0. Another alternative is &lt;code&gt;reclassify&lt;/code&gt; function from the &lt;code&gt;raster&lt;/code&gt; package to achieve the same output&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb4&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb4-1&#34;&gt;&lt;a href=&#34;#cb4-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_lc &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;calc&lt;/span&gt;(lc, &lt;span class=&#34;at&#34;&gt;fun =&lt;/span&gt; &lt;span class=&#34;cf&#34;&gt;function&lt;/span&gt;(x){&lt;span class=&#34;fu&#34;&gt;ifelse&lt;/span&gt;(x&lt;span class=&#34;sc&#34;&gt;&amp;gt;=&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;21&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;amp;&lt;/span&gt; x&lt;span class=&#34;sc&#34;&gt;&amp;lt;=&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;24&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;0&lt;/span&gt;)})&lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; ratify&lt;/span&gt;
+&lt;span id=&#34;cb4-2&#34;&gt;&lt;a href=&#34;#cb4-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;freq&lt;/span&gt;(urb_lc)&lt;/span&gt;
+&lt;span id=&#34;cb4-3&#34;&gt;&lt;a href=&#34;#cb4-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#      value  count&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb4-4&#34;&gt;&lt;a href=&#34;#cb4-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [1,]     0 559052&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb4-5&#34;&gt;&lt;a href=&#34;#cb4-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [2,]     1 298151&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb4-6&#34;&gt;&lt;a href=&#34;#cb4-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [3,]    NA 465633&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb4-7&#34;&gt;&lt;a href=&#34;#cb4-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;(p &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;levelplot&lt;/span&gt;(urb_lc, &lt;span class=&#34;at&#34;&gt;att=&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;&amp;quot;ID&amp;quot;&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;ylab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;xlab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;main =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;Urban Land Cover&amp;quot;&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;colorkey=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;scales=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;), &lt;span class=&#34;at&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;))))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Here is an approach using &lt;code&gt;terra&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb5&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb5-1&#34;&gt;&lt;a href=&#34;#cb5-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;library&lt;/span&gt;(terra)&lt;/span&gt;
+&lt;span id=&#34;cb5-2&#34;&gt;&lt;a href=&#34;#cb5-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;lc_terra &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; terra&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;rast&lt;/span&gt;(lc)&lt;/span&gt;
+&lt;span id=&#34;cb5-3&#34;&gt;&lt;a href=&#34;#cb5-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_lc_terra &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; terra&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;ifel&lt;/span&gt;(lc_terra&lt;span class=&#34;sc&#34;&gt;&amp;gt;=&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;21&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;amp;&lt;/span&gt; lc_terra&lt;span class=&#34;sc&#34;&gt;&amp;lt;=&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;24&lt;/span&gt;,&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;,&lt;span class=&#34;dv&#34;&gt;0&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb5-4&#34;&gt;&lt;a href=&#34;#cb5-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;plot&lt;/span&gt;(urb_lc_terra)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;
+Often it becomes necessary to remove temporary files that &lt;code&gt;terra&lt;/code&gt; has written to the disk because you are running out of space. Using the following function, usually solves the problem.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb6&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb6-1&#34;&gt;&lt;a href=&#34;#cb6-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;tmpFiles&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;remove =&lt;/span&gt; F)&lt;/span&gt;
+&lt;span id=&#34;cb6-2&#34;&gt;&lt;a href=&#34;#cb6-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# character(0)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;/p&gt;
+&lt;p&gt;Otherwise explicitly, specify file.names in each terra functions and manually delete them when you don’t need them. This is a better option.&lt;/p&gt;
+&lt;p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;Now construct the urban patches from the urban raster. For this you need &lt;code&gt;landscapemetrics&lt;/code&gt; library.
+The requirements to calculate meaningful landscape metrics are:
+- The distance units of your projection are meter, as the package converts units internally and returns results in either meters, square meters or hectares. For more information see the help file of each function.
+- The raster is categorical and the classes are integers (0,1….n)&lt;/p&gt;
+&lt;p&gt;A naive urban landscape metrics are ready to be calculated from the binary image after checking for the landscape.&lt;/p&gt;
+&lt;p&gt;For the sake of brevity, I am only checking the area metrics. I am going to ignore patches of class 0 (background).&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb7&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb7-1&#34;&gt;&lt;a href=&#34;#cb7-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;devtools&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;install_github&lt;/span&gt;(&lt;span class=&#34;st&#34;&gt;&amp;quot;r-spatialecology/landscapemetrics&amp;quot;&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb7-2&#34;&gt;&lt;a href=&#34;#cb7-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;library&lt;/span&gt;(landscapemetrics)&lt;/span&gt;
+&lt;span id=&#34;cb7-3&#34;&gt;&lt;a href=&#34;#cb7-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;library&lt;/span&gt;(skimr)&lt;/span&gt;
+&lt;span id=&#34;cb7-4&#34;&gt;&lt;a href=&#34;#cb7-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-5&#34;&gt;&lt;a href=&#34;#cb7-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;options_landscapemetrics&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;to_disk =&lt;/span&gt; &lt;span class=&#34;cn&#34;&gt;TRUE&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb7-6&#34;&gt;&lt;a href=&#34;#cb7-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;check_landscape&lt;/span&gt;(urb_lc_terra)&lt;/span&gt;
+&lt;span id=&#34;cb7-7&#34;&gt;&lt;a href=&#34;#cb7-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#   layer       crs units   class n_classes OK&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-8&#34;&gt;&lt;a href=&#34;#cb7-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# 1     1 projected     m integer         2  ✔&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-9&#34;&gt;&lt;a href=&#34;#cb7-9&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-10&#34;&gt;&lt;a href=&#34;#cb7-10&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;naivemetrics1 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;calculate_lsm&lt;/span&gt;(&lt;span class=&#34;fu&#34;&gt;as.factor&lt;/span&gt;(urb_lc_terra), &lt;span class=&#34;at&#34;&gt;what =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;lsm_p_area&amp;quot;&lt;/span&gt;)  &lt;/span&gt;
+&lt;span id=&#34;cb7-11&#34;&gt;&lt;a href=&#34;#cb7-11&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;naivemetrics1  &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;filter&lt;/span&gt;(class&lt;span class=&#34;sc&#34;&gt;==&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;arrange&lt;/span&gt;(&lt;span class=&#34;fu&#34;&gt;desc&lt;/span&gt;(value))&lt;/span&gt;
+&lt;span id=&#34;cb7-12&#34;&gt;&lt;a href=&#34;#cb7-12&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# # A tibble: 400 × 6&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-13&#34;&gt;&lt;a href=&#34;#cb7-13&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#    layer level class    id metric   value&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-14&#34;&gt;&lt;a href=&#34;#cb7-14&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;    &amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-15&#34;&gt;&lt;a href=&#34;#cb7-15&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  1     1 patch     1   728 area   25261. &lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-16&#34;&gt;&lt;a href=&#34;#cb7-16&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  2     1 patch     1   865 area     506. &lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-17&#34;&gt;&lt;a href=&#34;#cb7-17&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  3     1 patch     1  1077 area     163. &lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-18&#34;&gt;&lt;a href=&#34;#cb7-18&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  4     1 patch     1   956 area     106. &lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-19&#34;&gt;&lt;a href=&#34;#cb7-19&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  5     1 patch     1   736 area      36.4&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-20&#34;&gt;&lt;a href=&#34;#cb7-20&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  6     1 patch     1  1119 area      22.3&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-21&#34;&gt;&lt;a href=&#34;#cb7-21&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  7     1 patch     1  1066 area      18.4&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-22&#34;&gt;&lt;a href=&#34;#cb7-22&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  8     1 patch     1   936 area      18.3&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-23&#34;&gt;&lt;a href=&#34;#cb7-23&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  9     1 patch     1   993 area      17.7&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-24&#34;&gt;&lt;a href=&#34;#cb7-24&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# 10     1 patch     1   746 area      16.1&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb7-25&#34;&gt;&lt;a href=&#34;#cb7-25&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# # … with 390 more rows&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    &lt;/p&gt;
+&lt;p&gt;There is a bug in the patch labels in landscapemetrics package before version 1.5.5. If you are getting wrong resutls, please check to make sure that you have the most up to date version from github.&lt;/p&gt;
+&lt;p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;The area of the cells in one of the patches is substantially larger than the next largest patch. This means most of urban area in this raster is connected and forms a single patch, even though visually we can see distinct neighbourhoods. Most of these urban areas are connected through roads. These roads should not technically should not count towards urban area characteristics. To do this problem, we will have to use a &lt;a href=&#34;%22./datasets/Highways.zip%22&#34;&gt;Highways vector file&lt;/a&gt; an remove them from the raster. To read the vector file and to do some vector operations, we need &lt;code&gt;rgdal&lt;/code&gt;, &lt;code&gt;sp&lt;/code&gt; and &lt;code&gt;rgeos&lt;/code&gt; libraries. Load them and modify the path suitably to read the Highway file.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb8&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb8-1&#34;&gt;&lt;a href=&#34;#cb8-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;library&lt;/span&gt;(sf)&lt;/span&gt;
+&lt;span id=&#34;cb8-2&#34;&gt;&lt;a href=&#34;#cb8-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb8-3&#34;&gt;&lt;a href=&#34;#cb8-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb8-4&#34;&gt;&lt;a href=&#34;#cb8-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;highways &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;here&lt;/span&gt;(&lt;span class=&#34;st&#34;&gt;&amp;quot;tutorials_datasets&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;&amp;quot;lmetrics&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;&amp;quot;Highways.shp&amp;quot;&lt;/span&gt;) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb8-5&#34;&gt;&lt;a href=&#34;#cb8-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;              &lt;span class=&#34;fu&#34;&gt;read_sf&lt;/span&gt;()&lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;st_transform&lt;/span&gt;(&lt;span class=&#34;fu&#34;&gt;crs&lt;/span&gt;(urb_lc_terra))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The highways and the lc objects have different projections and coordinate systems. We need to align them if we can do any operations. Visualise them by styling the width of the line using &lt;code&gt;lwd&lt;/code&gt; parameter. Note that &lt;code&gt;Width&lt;/code&gt; attribute is a factor and therefore numerical operations are not permitted. We need to convert it to numerical value before styling the lines.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb9&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb9-1&#34;&gt;&lt;a href=&#34;#cb9-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb9-2&#34;&gt;&lt;a href=&#34;#cb9-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;p &lt;span class=&#34;sc&#34;&gt;+&lt;/span&gt; latticeExtra&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;layer&lt;/span&gt;(&lt;span class=&#34;fu&#34;&gt;sp.lines&lt;/span&gt;(highways &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;as&lt;/span&gt;(&lt;span class=&#34;st&#34;&gt;&amp;quot;Spatial&amp;quot;&lt;/span&gt;), &lt;span class=&#34;at&#34;&gt;lwd=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;as.numeric&lt;/span&gt;(highways&lt;span class=&#34;sc&#34;&gt;$&lt;/span&gt;Width)&lt;span class=&#34;sc&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;24&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;col=&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;&amp;#39;red&amp;#39;&lt;/span&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Buffer the highways with a specified width.I am using the NCDOT guidelines that 4 lane highways have 150-300ft of Right of Way. So assuming 65 ft per lane (20m), we get&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb10&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb10-1&#34;&gt;&lt;a href=&#34;#cb10-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb10-2&#34;&gt;&lt;a href=&#34;#cb10-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb10-3&#34;&gt;&lt;a href=&#34;#cb10-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb10-4&#34;&gt;&lt;a href=&#34;#cb10-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;highways &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; highways &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;/span&gt;
+&lt;span id=&#34;cb10-5&#34;&gt;&lt;a href=&#34;#cb10-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;           &lt;span class=&#34;fu&#34;&gt;filter&lt;/span&gt;(&lt;span class=&#34;sc&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;is.na&lt;/span&gt;(LANES)) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb10-6&#34;&gt;&lt;a href=&#34;#cb10-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;           &lt;span class=&#34;fu&#34;&gt;mutate&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;width_m =&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;as.numeric&lt;/span&gt;(LANES) &lt;span class=&#34;sc&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;dv&#34;&gt;20&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb10-7&#34;&gt;&lt;a href=&#34;#cb10-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb10-8&#34;&gt;&lt;a href=&#34;#cb10-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;highways_buffer &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;st_buffer&lt;/span&gt;(highways, &lt;span class=&#34;at&#34;&gt;dist=&lt;/span&gt;highways&lt;span class=&#34;sc&#34;&gt;$&lt;/span&gt;width_m)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now extract the cell numbers that overlap with the buffer and set those values to 0.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb11&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb11-1&#34;&gt;&lt;a href=&#34;#cb11-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;v &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; terra&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;extract&lt;/span&gt;(urb_lc_terra, &lt;span class=&#34;fu&#34;&gt;vect&lt;/span&gt;(highways_buffer), &lt;span class=&#34;at&#34;&gt;cells=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;TRUE&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;touches=&lt;/span&gt;T)&lt;/span&gt;
+&lt;span id=&#34;cb11-2&#34;&gt;&lt;a href=&#34;#cb11-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_lc2 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; urb_lc_terra&lt;/span&gt;
+&lt;span id=&#34;cb11-3&#34;&gt;&lt;a href=&#34;#cb11-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_lc2[v&lt;span class=&#34;sc&#34;&gt;$&lt;/span&gt;cell] &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;dv&#34;&gt;0&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb11-4&#34;&gt;&lt;a href=&#34;#cb11-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;p2 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;levelplot&lt;/span&gt;(urb_lc2, &lt;span class=&#34;at&#34;&gt;ylab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;xlab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;main=&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;&amp;quot;Urban (Highways Removed)&amp;quot;&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;colorkey=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;margin =&lt;/span&gt; &lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;scales=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;), &lt;span class=&#34;at&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;)))&lt;/span&gt;
+&lt;span id=&#34;cb11-5&#34;&gt;&lt;a href=&#34;#cb11-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;print&lt;/span&gt;(p, &lt;span class=&#34;at&#34;&gt;split=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;c&lt;/span&gt;(&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;2&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;), &lt;span class=&#34;at&#34;&gt;more=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;TRUE&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb11-6&#34;&gt;&lt;a href=&#34;#cb11-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;print&lt;/span&gt;(p2, &lt;span class=&#34;at&#34;&gt;split=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;c&lt;/span&gt;(&lt;span class=&#34;dv&#34;&gt;2&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;2&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb12&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb12-1&#34;&gt;&lt;a href=&#34;#cb12-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;metrics2 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;calculate_lsm&lt;/span&gt;(urb_lc2, &lt;span class=&#34;at&#34;&gt;what =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;lsm_p_area&amp;quot;&lt;/span&gt;) &lt;/span&gt;
+&lt;span id=&#34;cb12-2&#34;&gt;&lt;a href=&#34;#cb12-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;metrics2  &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;arrange&lt;/span&gt;(&lt;span class=&#34;fu&#34;&gt;desc&lt;/span&gt;(value))&lt;/span&gt;
+&lt;span id=&#34;cb12-3&#34;&gt;&lt;a href=&#34;#cb12-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# # A tibble: 2,471 × 6&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-4&#34;&gt;&lt;a href=&#34;#cb12-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#    layer level class    id metric  value&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-5&#34;&gt;&lt;a href=&#34;#cb12-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-6&#34;&gt;&lt;a href=&#34;#cb12-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  1     1 patch     0     1 area   59735.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-7&#34;&gt;&lt;a href=&#34;#cb12-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  2     1 patch     1   930 area    1018.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-8&#34;&gt;&lt;a href=&#34;#cb12-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  3     1 patch     1  1150 area     779.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-9&#34;&gt;&lt;a href=&#34;#cb12-9&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  4     1 patch     1   780 area     454.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-10&#34;&gt;&lt;a href=&#34;#cb12-10&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  5     1 patch     1   844 area     452.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-11&#34;&gt;&lt;a href=&#34;#cb12-11&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  6     1 patch     1  1394 area     349.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-12&#34;&gt;&lt;a href=&#34;#cb12-12&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  7     1 patch     1  1088 area     322.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-13&#34;&gt;&lt;a href=&#34;#cb12-13&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  8     1 patch     1  1377 area     305.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-14&#34;&gt;&lt;a href=&#34;#cb12-14&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#  9     1 patch     1   920 area     280.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-15&#34;&gt;&lt;a href=&#34;#cb12-15&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# 10     1 patch     1  1283 area     277.&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb12-16&#34;&gt;&lt;a href=&#34;#cb12-16&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# # … with 2,461 more rows&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The before picture is on the left and the after is on the right. We can now see some improvement, but it is not great. This because the vectorfiles are not perfectly aligned with the raster files and therefore any overlay operations leave a significant number of small &lt;em&gt;error&lt;/em&gt; patches.To deal with this we need to turn to morphological operations borrowed from Image Processing literature.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Repeat the exercise with highways object as “sp” and raster objects. See the performance differential.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-digression-into-morphological-operations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A digression into morphological operations&lt;/h2&gt;
+&lt;p&gt;There are four basic operations. I will go through them one by one. But first we need to convert the raster into a matrix that the library &lt;code&gt;mmand&lt;/code&gt; can process.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb13&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb13-1&#34;&gt;&lt;a href=&#34;#cb13-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;require&lt;/span&gt;(mmand)&lt;/span&gt;
+&lt;span id=&#34;cb13-2&#34;&gt;&lt;a href=&#34;#cb13-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_mat &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;as.matrix&lt;/span&gt;(urb_lc2)&lt;/span&gt;
+&lt;span id=&#34;cb13-3&#34;&gt;&lt;a href=&#34;#cb13-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_lc3 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; urb_lc2&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div id=&#34;structuring-elements&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Structuring elements&lt;/h3&gt;
+&lt;p&gt;Morphological operations require something called a structuring element that probes the image.
+&lt;img src=&#34;img/morph-probing.jpg&#34; style=&#34;width:100.0%;height:100.0%&#34; alt=&#34;Borrowed from https://www.cs.auckland.ac.nz/courses/compsci773s1c/lectures/ImageProcessing-html/topic4.htm&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Structuring elements can be of any dimension But usually they are of odd because it is easier to locate the center. For this exercise, I am using a structuring element of a 3x3 matrix of 1s. If you want a fancy structuring element like a cross, create a binary image with 0s and 1s such as k2 below.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb14&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb14-1&#34;&gt;&lt;a href=&#34;#cb14-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;(k &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;matrix&lt;/span&gt;(&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;,&lt;span class=&#34;at&#34;&gt;nrow=&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;3&lt;/span&gt;,&lt;span class=&#34;at&#34;&gt;ncol=&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;3&lt;/span&gt;))&lt;/span&gt;
+&lt;span id=&#34;cb14-2&#34;&gt;&lt;a href=&#34;#cb14-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#      [,1] [,2] [,3]&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb14-3&#34;&gt;&lt;a href=&#34;#cb14-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [1,]    1    1    1&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb14-4&#34;&gt;&lt;a href=&#34;#cb14-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [2,]    1    1    1&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb14-5&#34;&gt;&lt;a href=&#34;#cb14-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [3,]    1    1    1&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb14-6&#34;&gt;&lt;a href=&#34;#cb14-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;k2 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; k&lt;/span&gt;
+&lt;span id=&#34;cb14-7&#34;&gt;&lt;a href=&#34;#cb14-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;k2[&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;,&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;] &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; k2[&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;,&lt;span class=&#34;dv&#34;&gt;3&lt;/span&gt;] &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; k2[&lt;span class=&#34;dv&#34;&gt;3&lt;/span&gt;,&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;] &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; k2[&lt;span class=&#34;dv&#34;&gt;3&lt;/span&gt;,&lt;span class=&#34;dv&#34;&gt;3&lt;/span&gt;]&lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;dv&#34;&gt;0&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb14-8&#34;&gt;&lt;a href=&#34;#cb14-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;k2&lt;/span&gt;
+&lt;span id=&#34;cb14-9&#34;&gt;&lt;a href=&#34;#cb14-9&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#      [,1] [,2] [,3]&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb14-10&#34;&gt;&lt;a href=&#34;#cb14-10&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [1,]    0    1    0&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb14-11&#34;&gt;&lt;a href=&#34;#cb14-11&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [2,]    1    1    1&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb14-12&#34;&gt;&lt;a href=&#34;#cb14-12&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# [3,]    0    1    0&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;erosion&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Erosion&lt;/h3&gt;
+&lt;p&gt;The erosion of a binary image &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; by a structuring element &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; (denoted &lt;span class=&#34;math inline&#34;&gt;\(A \ominus S\)&lt;/span&gt;) produces a new binary image &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; of the dimensions of &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt;, with 1s in the locations, where the structuring element &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; ‘fits’ &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt;. i.e. If the center of &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; is placed on &lt;span class=&#34;math inline&#34;&gt;\((x,y)\)&lt;/span&gt; of &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; and if 1s of the structuring element also correspond to the 1s of &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt;, then &lt;span class=&#34;math inline&#34;&gt;\((x,y)\)&lt;/span&gt; of B is rendered 1 otherwise 0. See the effect of erosion on the image below&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb15&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb15-1&#34;&gt;&lt;a href=&#34;#cb15-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_mat2 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;erode&lt;/span&gt;(urb_mat, k)&lt;/span&gt;
+&lt;span id=&#34;cb15-2&#34;&gt;&lt;a href=&#34;#cb15-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_mat2[&lt;span class=&#34;sc&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;is.finite&lt;/span&gt;(urb_mat2)] &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;cn&#34;&gt;NA&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb15-3&#34;&gt;&lt;a href=&#34;#cb15-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_lc3[] &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; urb_mat2&lt;/span&gt;
+&lt;span id=&#34;cb15-4&#34;&gt;&lt;a href=&#34;#cb15-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_lc3 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; urb_lc3 &lt;/span&gt;
+&lt;span id=&#34;cb15-5&#34;&gt;&lt;a href=&#34;#cb15-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;p3 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;levelplot&lt;/span&gt;(urb_lc3, &lt;span class=&#34;at&#34;&gt;ylab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;xlab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;main =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;Erosion (k)&amp;quot;&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;colorkey=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;margin =&lt;/span&gt; &lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;scales=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;), &lt;span class=&#34;at&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;)))&lt;/span&gt;
+&lt;span id=&#34;cb15-6&#34;&gt;&lt;a href=&#34;#cb15-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;print&lt;/span&gt;(p2, &lt;span class=&#34;at&#34;&gt;split=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;c&lt;/span&gt;(&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;2&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;), &lt;span class=&#34;at&#34;&gt;more=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;TRUE&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb15-7&#34;&gt;&lt;a href=&#34;#cb15-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;print&lt;/span&gt;(p3, &lt;span class=&#34;at&#34;&gt;split=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;c&lt;/span&gt;(&lt;span class=&#34;dv&#34;&gt;2&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;2&lt;/span&gt;, &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dilation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Dilation&lt;/h3&gt;
+&lt;p&gt;The dilation of a binary image &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; by a structuring element &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; (denoted &lt;span class=&#34;math inline&#34;&gt;\(A \oplus S\)&lt;/span&gt;) produces a new binary image &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; of the dimensions of &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt;, with 1s in the locations, where the structuring element &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; ‘hits’ &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt;. i.e. If the center of &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; is placed on &lt;span class=&#34;math inline&#34;&gt;\((x,y)\)&lt;/span&gt; of &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; and if 1s of the structuring element also correspond at least some of the 1s of &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt;, then &lt;span class=&#34;math inline&#34;&gt;\((x,y)\)&lt;/span&gt; of B is rendered 1 otherwise 0. Dilation has the opposite effect to erosion – it adds a layer of pixels to both the inner and outer boundaries of regions. See the effect of dilation on the original image below.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb16&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb16-1&#34;&gt;&lt;a href=&#34;#cb16-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_mat2 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;dilate&lt;/span&gt;(urb_mat, k)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;closing&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Closing&lt;/h3&gt;
+&lt;p&gt;Closing is simply dilation followed by erosion: &lt;span class=&#34;math inline&#34;&gt;\(A \bullet S = (A \oplus S) \ominus S\)&lt;/span&gt;. Closing is so called because it can fill holes in the regions while keeping the initial region sizes. You can see the effect of closing compared to the original image below.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb17&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb17-1&#34;&gt;&lt;a href=&#34;#cb17-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_mat2 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;closing&lt;/span&gt;(urb_mat, k)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;opening&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Opening&lt;/h3&gt;
+&lt;p&gt;Opening is simply erosion followed by dilation: &lt;span class=&#34;math inline&#34;&gt;\(A \circ S = (A \ominus S) \oplus S\)&lt;/span&gt;. Opening is so called because it can open up a gap between objects connected by a thin bridge of pixels. Any regions that have survived the erosion are restored to their original size by the dilation. You can see the effect of opening compared to the original image below&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb18&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb18-1&#34;&gt;&lt;a href=&#34;#cb18-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_mat2 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;opening&lt;/span&gt;(urb_mat, k)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-20-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;From the above experiments, it should be obvious that opening gives us the best option for urban landscape metrics. Experiment with other structuring elements.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-21-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;landscape-metrics&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Landscape metrics&lt;/h2&gt;
+&lt;p&gt;Now we are ready to create some metrics. Let’s create some metrics for each patch. Some of the key metrics are &lt;code&gt;area&lt;/code&gt; (area of the patch) and &lt;code&gt;core areaindex&lt;/code&gt; (area after eliminating edges). You can use these to further threshold the patches that might be too small to matter.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb19&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb19-1&#34;&gt;&lt;a href=&#34;#cb19-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;check_landscape&lt;/span&gt;(urb_lc3)&lt;/span&gt;
+&lt;span id=&#34;cb19-2&#34;&gt;&lt;a href=&#34;#cb19-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;#   layer       crs units   class n_classes OK&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb19-3&#34;&gt;&lt;a href=&#34;#cb19-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;co&#34;&gt;# 1     1 projected     m integer         2  ✔&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb19-4&#34;&gt;&lt;a href=&#34;#cb19-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;ps.data &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;calculate_lsm&lt;/span&gt;(urb_lc3, &lt;span class=&#34;at&#34;&gt;level =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;patch&amp;quot;&lt;/span&gt;)  &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;filter&lt;/span&gt;(class&lt;span class=&#34;sc&#34;&gt;==&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt; )&lt;/span&gt;
+&lt;span id=&#34;cb19-5&#34;&gt;&lt;a href=&#34;#cb19-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb19-6&#34;&gt;&lt;a href=&#34;#cb19-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;ps.data  &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;/span&gt;
+&lt;span id=&#34;cb19-7&#34;&gt;&lt;a href=&#34;#cb19-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;  &lt;span class=&#34;fu&#34;&gt;pivot_wider&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;names_from =&lt;/span&gt; metric, &lt;span class=&#34;at&#34;&gt;values_from =&lt;/span&gt; value) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb19-8&#34;&gt;&lt;a href=&#34;#cb19-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;  &lt;span class=&#34;fu&#34;&gt;skim&lt;/span&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;table style=&#34;width: auto;&#34; class=&#34;table table-condensed&#34;&gt;
+&lt;caption&gt;
+&lt;span id=&#34;tab:unnamed-chunk-22&#34;&gt;Table 1: &lt;/span&gt;Data summary
+&lt;/caption&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Name
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Piped data
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Number of rows
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1194
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Number of columns
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+16
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+_______________________
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Column type frequency:
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+character
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+numeric
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+15
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+________________________
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+Group variables
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+None
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: character&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+skim_variable
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+n_missing
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+complete_rate
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+min
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+max
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+empty
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+n_unique
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+whitespace
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+level
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: numeric&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+skim_variable
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+n_missing
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+complete_rate
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+mean
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+sd
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+p0
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+p25
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+p50
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+p75
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+p100
+&lt;/th&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+hist
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+layer
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▁▁▇▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+class
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▁▁▇▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+id
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+754.50
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+344.82
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+158.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+456.25
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+754.50
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1052.75
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1351.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▇▇▇▇
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+area
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+13.58
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+52.31
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.09
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.36
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.08
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+4.93
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+984.60
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▁▁▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+cai
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+24.30
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+28.92
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+48.80
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+91.12
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▂▂▂▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+circle
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.61
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.12
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.27
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.53
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.62
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.69
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.93
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▁▃▇▅▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+contig
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.54
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.26
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.25
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.56
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.79
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.97
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▁▇▃▅▆
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+core
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+10.38
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+44.52
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.09
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+2.34
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+825.66
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▁▁▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+enn
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+156.90
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+166.39
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+60.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+67.08
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+120.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+152.97
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1615.55
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▁▁▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+frac
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.06
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.04
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.04
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.05
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.07
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.22
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▆▂▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+gyrate
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+97.64
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+142.60
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+27.36
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+45.17
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+98.52
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1577.77
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▁▁▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+ncore
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.58
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.66
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▁▁▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+para
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.05
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.03
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.02
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.05
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.08
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.13
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▆▃▇▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+perim
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1561.21
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+3720.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+120.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+300.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+540.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1200.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+74040.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▁▁▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+shape
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.39
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+0.42
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.00
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.15
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.25
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+1.43
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+5.90
+&lt;/td&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+▇▁▁▁▁
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb20&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb20-1&#34;&gt;&lt;a href=&#34;#cb20-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb20-2&#34;&gt;&lt;a href=&#34;#cb20-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;ggplot&lt;/span&gt;(ps.data)&lt;span class=&#34;sc&#34;&gt;+&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb20-3&#34;&gt;&lt;a href=&#34;#cb20-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;  &lt;span class=&#34;fu&#34;&gt;geom_histogram&lt;/span&gt;(&lt;span class=&#34;fu&#34;&gt;aes&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;x=&lt;/span&gt;value)) &lt;span class=&#34;sc&#34;&gt;+&lt;/span&gt; &lt;/span&gt;
+&lt;span id=&#34;cb20-4&#34;&gt;&lt;a href=&#34;#cb20-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;  &lt;span class=&#34;fu&#34;&gt;facet_wrap&lt;/span&gt;(&lt;span class=&#34;sc&#34;&gt;~&lt;/span&gt;metric, &lt;span class=&#34;at&#34;&gt;scales=&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;&amp;quot;free&amp;quot;&lt;/span&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-22-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It seems to me there are still some really small patches as evidenced the left skews of the distributions in area, core area index (cai) and right skew in the perim.area.ratio. We can use a combination of thresholds on these indices to remove some ‘error’ patches that might skew our urban indices. I choose, core area index &lt;span class=&#34;math inline&#34;&gt;\(=\)&lt;/span&gt; 0 or area less than $&amp;lt;=$0.5ha arbitrarily based on the histogram. Let’s first calculate the class statistics without the modification and then do it with the modification.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb21&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb21-1&#34;&gt;&lt;a href=&#34;#cb21-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb21-2&#34;&gt;&lt;a href=&#34;#cb21-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;ignore_patches &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; ps.data  &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;/span&gt;
+&lt;span id=&#34;cb21-3&#34;&gt;&lt;a href=&#34;#cb21-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;               &lt;span class=&#34;fu&#34;&gt;pivot_wider&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;names_from =&lt;/span&gt; metric, &lt;span class=&#34;at&#34;&gt;values_from =&lt;/span&gt; value) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; &lt;/span&gt;
+&lt;span id=&#34;cb21-4&#34;&gt;&lt;a href=&#34;#cb21-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;               &lt;span class=&#34;fu&#34;&gt;filter&lt;/span&gt;(area&lt;span class=&#34;sc&#34;&gt;&amp;lt;&lt;/span&gt;.&lt;span class=&#34;dv&#34;&gt;5&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;|&lt;/span&gt; cai&lt;span class=&#34;sc&#34;&gt;==&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;0&lt;/span&gt;) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb21-5&#34;&gt;&lt;a href=&#34;#cb21-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;                &lt;span class=&#34;fu&#34;&gt;pull&lt;/span&gt;(&lt;span class=&#34;st&#34;&gt;&amp;#39;id&amp;#39;&lt;/span&gt;)&lt;/span&gt;
+&lt;span id=&#34;cb21-6&#34;&gt;&lt;a href=&#34;#cb21-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb21-7&#34;&gt;&lt;a href=&#34;#cb21-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;ignore_raster &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;sc&#34;&gt;-&lt;/span&gt;(&lt;span class=&#34;fu&#34;&gt;get_patches&lt;/span&gt;(urb_lc3, &lt;span class=&#34;at&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;dv&#34;&gt;1&lt;/span&gt;)&lt;span class=&#34;sc&#34;&gt;$&lt;/span&gt;layer&lt;span class=&#34;sc&#34;&gt;$&lt;/span&gt;class_1 &lt;span class=&#34;sc&#34;&gt;%in%&lt;/span&gt; ignore_patches) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt; rast&lt;/span&gt;
+&lt;span id=&#34;cb21-8&#34;&gt;&lt;a href=&#34;#cb21-8&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb21-9&#34;&gt;&lt;a href=&#34;#cb21-9&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_lc4 &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; ignore_raster &lt;span class=&#34;sc&#34;&gt;*&lt;/span&gt; urb_lc3&lt;/span&gt;
+&lt;span id=&#34;cb21-10&#34;&gt;&lt;a href=&#34;#cb21-10&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb21-11&#34;&gt;&lt;a href=&#34;#cb21-11&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;span class=&#34;fu&#34;&gt;levelplot&lt;/span&gt;(urb_lc4, &lt;span class=&#34;at&#34;&gt;ylab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;xlab=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;NULL&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;main =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;Removed Small Patches&amp;quot;&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;colorkey=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;margin =&lt;/span&gt; &lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;scales=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;), &lt;span class=&#34;at&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;list&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;draw=&lt;/span&gt;&lt;span class=&#34;cn&#34;&gt;FALSE&lt;/span&gt;)))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/index_files/figure-html/unnamed-chunk-23-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Compare the final metrics with the others along the way. I am going to convert the area to sq.km to make things easier to read.&lt;/p&gt;
+&lt;div class=&#34;sourceCode&#34; id=&#34;cb22&#34;&gt;&lt;pre class=&#34;sourceCode r&#34;&gt;&lt;code class=&#34;sourceCode r&#34;&gt;&lt;span id=&#34;cb22-1&#34;&gt;&lt;a href=&#34;#cb22-1&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;&lt;/span&gt;
+&lt;span id=&#34;cb22-2&#34;&gt;&lt;a href=&#34;#cb22-2&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;urb_df &lt;span class=&#34;ot&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;c&lt;/span&gt;(urb_lc_terra, urb_lc2, urb_lc3, urb_lc4) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb22-3&#34;&gt;&lt;a href=&#34;#cb22-3&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;            &lt;span class=&#34;fu&#34;&gt;calculate_lsm&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;level =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;#39;landscape&amp;#39;&lt;/span&gt;, &lt;span class=&#34;at&#34;&gt;type =&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;aggregation metric&amp;quot;&lt;/span&gt;) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb22-4&#34;&gt;&lt;a href=&#34;#cb22-4&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;            &lt;span class=&#34;fu&#34;&gt;mutate&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;layer =&lt;/span&gt; &lt;span class=&#34;fu&#34;&gt;recode&lt;/span&gt;(layer, &lt;span class=&#34;st&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;at&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;`&lt;/span&gt; &lt;span class=&#34;ot&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;Naive&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;at&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;`&lt;/span&gt; &lt;span class=&#34;ot&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;Improv1&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;at&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;`&lt;/span&gt; &lt;span class=&#34;ot&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;Improv2&amp;quot;&lt;/span&gt;, &lt;span class=&#34;st&#34;&gt;`&lt;/span&gt;&lt;span class=&#34;at&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;st&#34;&gt;`&lt;/span&gt; &lt;span class=&#34;ot&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;st&#34;&gt;&amp;quot;Final&amp;quot;&lt;/span&gt;)) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb22-5&#34;&gt;&lt;a href=&#34;#cb22-5&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;            dplyr&lt;span class=&#34;sc&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;fu&#34;&gt;select&lt;/span&gt;(layer, metric, value) &lt;span class=&#34;sc&#34;&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id=&#34;cb22-6&#34;&gt;&lt;a href=&#34;#cb22-6&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;            &lt;span class=&#34;fu&#34;&gt;pivot_wider&lt;/span&gt;(&lt;span class=&#34;at&#34;&gt;names_from =&lt;/span&gt; layer, &lt;span class=&#34;at&#34;&gt;values_from =&lt;/span&gt; value)&lt;/span&gt;
+&lt;span id=&#34;cb22-7&#34;&gt;&lt;a href=&#34;#cb22-7&#34; aria-hidden=&#34;true&#34; tabindex=&#34;-1&#34;&gt;&lt;/a&gt;            &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;table class=&#34;table table-striped&#34; style=&#34;width: auto !important; margin-left: auto; margin-right: auto;&#34;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left;&#34;&gt;
+metric
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Naive
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Improv1
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Improv2
+&lt;/th&gt;
+&lt;th style=&#34;text-align:right;&#34;&gt;
+Final
+&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+ai
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+93.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+95.0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+96.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+96.8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+cohesion
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+99.8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+99.9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+99.9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+99.9
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+contag
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+36.1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+48.2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+52.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+53.5
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+division
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+0.8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+0.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+0.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+0.4
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+enn_cv
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+99.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+102.5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+103.6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+91.7
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+enn_mn
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+113.2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+127.9
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+152.6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+161.4
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+enn_sd
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+112.5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+131.0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+158.1
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+148.0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+iji
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+NA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+NA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+NA
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+NA
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+lsi
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+31.8
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+24.7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+18.2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+16.5
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+mesh
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+14822.7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+46115.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+48010.0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+48414.9
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+np
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+1126.0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+2471.0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+1351.0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+765.0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+pd
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+1.5
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+3.2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+1.7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+1.0
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;&#34;&gt;
+pladj
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+93.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+95.0
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+96.4
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;&#34;&gt;
+96.8
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+split
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+5.2
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+1.7
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+1.6
+&lt;/td&gt;
+&lt;td style=&#34;text-align:right;font-weight: bold;color: white !important;background-color: #D7261E !important;&#34;&gt;
+1.6
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Note that significant changes are observed in highlighted variables. In particular, number of patches change dramatically.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Exercises&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;There are many more improvements possible to these indices. For example,&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What happens when you use a different road network to remove the roads from the raster?&lt;/li&gt;
+&lt;li&gt;Different structuring elements for the morphological operations.&lt;/li&gt;
+&lt;li&gt;Different thresholds on different patch characteristics to remove erroneous urban patches.&lt;/li&gt;
+&lt;li&gt;Instead of treating urban as a single category, what are the results when we treat it as 4 different categories?&lt;/li&gt;
+&lt;li&gt;Perhaps explore more complex landscape metrics by characterising the configuration of urban and non-urban land cover.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;Landscape metrics have been used in ecology for a long time to understand the fragmentation of landscape from a habitat perspective. However, we can use these metrics to understand the urban pattern as well. In particular, we can study if a place is experiencing at-the-edges-fragmentary urbanisation over time or infill-coalescent urbanisation or edge-exapnsion. These help us understand the urban development patterns over time and if any land use policy changes have made any difference in promoting particular forms of urban growth.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

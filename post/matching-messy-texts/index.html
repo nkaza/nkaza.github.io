@@ -1,0 +1,1818 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Using messy text fields to create some structure out of the datasets." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/matching-messy-texts/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/matching-messy-texts/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/matching-messy-texts/" />
+  <meta property="og:title" content="Matching Messy Texts | Nikhil Kaza" />
+  <meta property="og:description" content="Using messy text fields to create some structure out of the datasets." /><meta property="og:image" content="https://nkaza.github.io/post/matching-messy-texts/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/matching-messy-texts/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2020-08-24T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2020-08-24T10:41:18-04:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/matching-messy-texts/"
+  },
+  "headline": "Matching Messy Texts",
+  
+  "image": [
+    "https://nkaza.github.io/post/matching-messy-texts/featured.png"
+  ],
+  
+  "datePublished": "2020-08-24T00:00:00Z",
+  "dateModified": "2020-08-24T10:41:18-04:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Using messy text fields to create some structure out of the datasets."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Matching Messy Texts | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="16c56724db237a7d8228be50d1f47d03" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Matching Messy Texts</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Aug 24, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    14 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/new-urban-analytics/">new-urban-analytics</a>, <a href="/category/data-munging/">data-munging</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 672px;">
+  <div style="position: relative">
+    <img src="/post/matching-messy-texts/featured_hu5ae4231e589da72125e1b2953a4bc700_838465_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="672" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <h1 id="the-problems-of-free-form-text">The Problems of Free Form Text</h1>
+<p>One of the joys of language is that there is an infinite variety of ways in which we can express ourselves. Conventions vary. People are likely to run afoul of grammatical and spelling conventions depending on their background, attention to detail and adherence to convention. This expressive variety becomes a disadvantage for a data analyst who wants to analyse text. Urban datasets frequently contain free form language; names, addresses, surveys, regulations, complaints, tweets, posts, newspaper reports, plans, interviews, ordinances etc. When the text is not standardised and restricted, they pose problems for a data analyst who is trying to reduce and distill the information, often ignoring the context and conventions that the gives meaning to the text. The text is then wrangled, standardised or ignored. In this blog, I will show how one might attempt to wrangle text. I also want to highlight the decisions that the analyst makes that severely distort the meaning and introduce errors.</p>
+<blockquote>
+<p>All clean datasets are alike. But each messy dataset is messy in its own way &mdash; Prener paraphrasing Wickham paraprhasing Tolstoy</p>
+</blockquote>
+<h1 id="data--required-packages">Data &amp; Required Packages</h1>
+<p>The Worker Adjustment and Retraining Notification Act (WARN) requires employers with 100 or more employees (generally not counting those who have worked less than six months in the last 12 months and those who work an average of less than 20 hours a week) to provide at least 60 calendar days advance written notice of a plant closing and mass lay-off affecting 50 or more employees at a single site of employment. In North Carolina, the Department of Commerce is in charge of collecting and archiving the notices.  <a href="https://www.clevelandfed.org/~/media/content/newsroom%20and%20events/publications/working%20papers/2020/wp2003.pdf" target="_blank" rel="noopener">Research</a> by Cleveland Federal Reserve Bank suggests that these notices are useful bellwethers for economic conditions in the state.</p>
+<p>In this blog, I am going to use another business listings dataset from Infogroup called <a href="http://resource.referenceusa.com/available-databases/" target="_blank" rel="noopener">ReferenceUSA</a> to establish additional information about the business that is listed in the WARN database. We are limiting <a href="https://www.dropbox.com/sh/a3eyf8n0u1ynqfn/AADM7S8ufQxlA3W_Y_m_bGmxa?dl=0" target="_blank" rel="noopener">our analysis to Mecklenberg county</a> in North Carolina. ReferenceUSA data for the US can be obtained from UNC library. I obtained the WARN dataset from Cleveland Federal Reserve. Citation for the data is</p>
+<ul>
+<li>Krolikowski, Pawel M. and Kurt G. Lunsford. 2020. “Advance Layoff Notices and Labor Market Forecasting.” Federal Reserve Bank of Cleveland, Working Paper no. 20-03. <a href="https://doi.org/10.26509/frbc-wp-202003" target="_blank" rel="noopener">https://doi.org/10.26509/frbc-wp-202003</a></li>
+</ul>
+<p>In this tutorial, I am going to use <code>stringr</code>, <code>stringdist</code>, <code>postmastr</code> and <code>censusxy</code> packages in addition to other packages in R. <code>postmastr</code> is not yet available on CRAN, but can be installed from github using</p>
+<pre><code>remotes::install_github(&quot;slu-openGIS/postmastr&quot;)
+</code></pre>
+<div class="alert alert-warning">
+  <div>
+    At the time of writing, postmastr is still in beta stages. So it may be buggy. Use it with caution.
+  </div>
+</div>
+<pre><code class="language-r">library(tidyverse)
+library(skimr)
+
+warn &lt;- 
+  here(&quot;tutorials_datasets&quot;, &quot;textmatching&quot;, &quot;WARN_Mecklenburg.csv&quot;) %&gt;% 
+  read_csv()
+
+names(warn)
+#  [1] &quot;county&quot;          &quot;notice_date&quot;     &quot;received_date&quot;   &quot;effective_date&quot; 
+#  [5] &quot;company&quot;         &quot;type&quot;            &quot;number_affected&quot; &quot;zipcode_city&quot;   
+#  [9] &quot;warn_no&quot;         &quot;address&quot;
+</code></pre>
+<h1 id="parsing-the-addresses">Parsing the Addresses</h1>
+<p>Most geocoders expect an address that is properly standardised (e.g. South - S, Bvld - Boulevard ) and spelling errors corrected. This is important as user entered text about addresses rely on personal and local convention rather than standardisation.</p>
+<div class="alert alert-warning">
+  <div>
+    The following sections refer to addresses within the US, following its conventions. While some of the methods will transfer to other locations, use caution to interpret and adapt .
+  </div>
+</div>
+<p>postmastr works by following the <em>precise sequence</em> of the following steps.</p>
+<h2 id="preparation">Preparation</h2>
+<p>First there is a need to create a unique ID for unique addresses, so that only unique addresses are parsed.
+A quick look at the address column reveals that it has newlines <code>\n</code> in some of the entries. Let&rsquo;s replace it with a space. We are going to use <a href="https://rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf" target="_blank" rel="noopener">Regular Expressions</a> to search and replace.</p>
+<p>In the following code, I am replacing all the diacritics, e.g.ř, ü, é, è by transliterating to Latin alphabet. This is not strictly necessary but is useful to remember that some place names are in Spanish in the US. Some databases store the diacritics and some don&rsquo;t. Apologies to speakers of other languages.</p>
+<p>It is always a good idea to have one case. We are going to use the upper case.</p>
+<pre><code class="language-r">warn &lt;- warn %&gt;%
+        mutate(address = str_replace_all(address, &quot;[[:space:]]&quot;, &quot; &quot;),
+               address = stringi::stri_trans_general(address, &quot;Latin-ASCII&quot;),
+               address = str_remove_all(address, &quot;[[:punct:]]&quot;),
+               address = str_to_upper(address)
+               
+               ) 
+</code></pre>
+<pre><code class="language-r">library(postmastr)
+warn &lt;- pm_identify(warn, var = &quot;address&quot;)
+warn_min &lt;- pm_prep(warn, var = &quot;address&quot;, type ='street') # There do not seem to be any addresses that are based on intersections. So we are using the type=street.
+nrow(warn)
+# [1] 111
+nrow(warn_min)
+# [1] 91
+</code></pre>
+<p>You should notice the difference in the number of rows. 20 observations are dropped.</p>
+<h2 id="extract-zipcodes-and-states">Extract Zipcodes and States</h2>
+<p>Zipcodes come in two formats. A 5 digit variety and 5-4 digit variety. <code>pm_postal_parse</code> is able to parse both types, though in this instance only 5 digit codes are present.</p>
+<pre><code class="language-r">warn_min &lt;- pm_postal_parse(warn_min)
+</code></pre>
+<p>In this instance only state present in the dataset is NC. First we need to create a dictonary in case NC is spelled out in different ways such as NORTH CAROLINA or NC or N CAROLINA. Fortunately, this dataset only contains NC. If not, use <code>pm_append</code> to add different instances of the state name to the dictionary.</p>
+<pre><code class="language-r">ncDict &lt;- pm_dictionary(locale = &quot;us&quot;, type = &quot;state&quot;, filter = &quot;NC&quot;, case = &quot;upper&quot;)
+ncDict
+# # A tibble: 2 × 2
+#   state.output state.input   
+#   &lt;chr&gt;        &lt;chr&gt;         
+# 1 NC           NC            
+# 2 NC           NORTH CAROLINA
+
+(warn_min &lt;- pm_state_parse(warn_min, dict=ncDict))
+# # A tibble: 91 × 4
+#    pm.uid pm.address                          pm.state pm.zip
+#     &lt;int&gt; &lt;chr&gt;                               &lt;chr&gt;    &lt;chr&gt; 
+#  1      1 895 WEST TRADE STREET CHARLOTTE     NC       28202 
+#  2      2 5501 JOSH BIRMINGAHM PKWY CHARLOTTE NC       28208 
+#  3      3 4800 HANGAR ROAD CHARLOTTE          NC       28208 
+#  4      4 5020 HANGAR ROAD CHARLOTTE          NC       28208 
+#  5      5 4716 YORKMONT ROAD CHARLOTTE        NC       28208 
+#  6      6 5501 JOSH BIRMINGHAM PKWY CHARLOTTE NC       28208 
+#  7      7 5000 HANGAR ROAD CHARLOTTE          NC       28208 
+#  8      8 100 WEST TRADE STREET CHARLOTTE     NC       28202 
+#  9      9 5501 CARNEGIE BLVD CHARLOTTE        NC       28209 
+# 10     10 2200 REXFORD ROAD CHARLOTTE         NC       28211 
+# # … with 81 more rows
+</code></pre>
+<pre><code class="language-r">ncCityDict &lt;- pm_dictionary(locale = &quot;us&quot;, type = &quot;city&quot;, filter = &quot;NC&quot;, case = &quot;upper&quot;)
+(warn_min &lt;- pm_city_parse(warn_min, dictionary = ncCityDict))
+# # A tibble: 91 × 5
+#    pm.uid pm.address                pm.city   pm.state pm.zip
+#     &lt;int&gt; &lt;chr&gt;                     &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt; 
+#  1      1 895 WEST TRADE STREET     CHARLOTTE NC       28202 
+#  2      2 5501 JOSH BIRMINGAHM PKWY CHARLOTTE NC       28208 
+#  3      3 4800 HANGAR ROAD          CHARLOTTE NC       28208 
+#  4      4 5020 HANGAR ROAD          CHARLOTTE NC       28208 
+#  5      5 4716 YORKMONT ROAD        CHARLOTTE NC       28208 
+#  6      6 5501 JOSH BIRMINGHAM PKWY CHARLOTTE NC       28208 
+#  7      7 5000 HANGAR ROAD          CHARLOTTE NC       28208 
+#  8      8 100 WEST TRADE STREET     CHARLOTTE NC       28202 
+#  9      9 5501 CARNEGIE BLVD        CHARLOTTE NC       28209 
+# 10     10 2200 REXFORD ROAD         CHARLOTTE NC       28211 
+# # … with 81 more rows
+</code></pre>
+<h2 id="parsing-street-numbers-and-direction">Parsing Street, Numbers and Direction</h2>
+<p>We can use similar functions to parse out the street number.</p>
+<pre><code class="language-r">warn_min &lt;- warn_min %&gt;%
+             pm_house_parse()
+</code></pre>
+<p>Directionality of the street is little of a challenge. North could mean direction or a street name North St. Postmastr has logic already built into it to distinguish these two cases.  By default, postmastr uses dic_us_dir dictionary.</p>
+<pre><code class="language-r">dic_us_dir
+# # A tibble: 20 × 2
+#    dir.output dir.input 
+#    &lt;chr&gt;      &lt;chr&gt;     
+#  1 E          E         
+#  2 E          East      
+#  3 N          N         
+#  4 N          North     
+#  5 NE         NE        
+#  6 NE         Northeast 
+#  7 NE         North East
+#  8 NW         NW        
+#  9 NW         Northwest 
+# 10 NW         North West
+# 11 S          S         
+# 12 S          South     
+# 13 SE         SE        
+# 14 SE         Southeast 
+# 15 SE         South East
+# 16 SW         SW        
+# 17 SW         Southwest 
+# 18 SW         South West
+# 19 W          W         
+# 20 W          West
+</code></pre>
+<p>We have already converted our strings to upper cases rather than leaving it in the sentence case as dic_us_dir assumes. We will have to modify the dictionary to fit our useccase.</p>
+<pre><code class="language-r">dic_us_dir &lt;- dic_us_dir %&gt;%
+              mutate(dir.input = str_to_upper(dir.input))
+
+
+warn_min &lt;- warn_min %&gt;%  
+             pm_streetDir_parse(dictionary = dic_us_dir) %&gt;%
+             pm_streetSuf_parse() %&gt;%
+             pm_street_parse(ordinal = TRUE, drop = TRUE)
+
+</code></pre>
+<p>Once we have parsed data, we add our parsed data back into the source.</p>
+<pre><code class="language-r">warn_parsed &lt;- pm_replace(warn_min, source = warn) %&gt;%
+               pm_rebuild(output=&quot;short&quot;, keep_parsed = 'yes')
+</code></pre>
+<p>Now that it is straightforward to geocode the addresses using a census geocoder. You can quickly visualise using mapview.</p>
+<pre><code class="language-r">library(censusxy)
+
+warn_sf &lt;- cxy_geocode(warn_parsed, street = &quot;pm.address&quot;, city = &quot;pm.city&quot;, state = &quot;pm.state&quot;, zip = &quot;pm.zip&quot;,
+    output = &quot;full&quot;, class = &quot;sf&quot;, parallel = 4) # You can only use parallel on non-Windows OS and must specify the number of cores that you want to employ for this exercise
+
+library(tmap)
+tmap_mode('view')
+
+m1 &lt;-
+tm_shape(warn_sf)+
+  tm_symbols(col ='red') + 
+  tm_basemap(leaflet::providers$Stamen.TonerHybrid)
+  
+library(widgetframe)
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<p>Notice that only 75 of the unique 90 addresses are geocoded by the geocoder. Using other geocoders in combination might improve the hit rate.</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>
+<p>API calls are notoriously fickle. So this creates a replicability problem. However, you could also do this part locally.  Download the <a href="https://www.nconemap.gov/datasets/nc-master-address-dataset-2014?showData=true" target="_blank" rel="noopener">master list of addresses for North Carolina</a> and match the latitude and longitude with the parsed address fields in the two datasets.</p>
+</li>
+<li>
+<p>Instead of <code>censusxy</code> geocoder package, try <code>tidygeocoder</code>. See if you can improve the hitrate using multiple geocoding services.</p>
+</li>
+</ul>
+<hr>
+<h2 id="matching-names">Matching Names</h2>
+<p>Notice that in WARN data there are no NAICS codes. So it is hard to tell which industry is being affected by these layoffs. Fortunately, another dataset has names and NAICS codes. So just as we matched parsed addresses to latitude an longitude, we can try and match names to NAICS codes. However, names are more idiosyncratic than addresses.</p>
+<p>Here are some rules, I came up using iterative methods. They are not exhaustive nor are they representative of what you might want to with other datasets.</p>
+<pre><code class="language-r">
+
+# I am trying to remove common words in the name that can impact string similarity scores. Add to the list or modify to suit.
+
+removalwords &lt;- c(&quot;CORP&quot;, &quot;CORPORATION&quot;, &quot;SERVICE&quot;, &quot;SERVICES&quot;, &quot;CO&quot;,  &quot;GROUP&quot;, &quot;HOLDINGS&quot;, &quot;MANAGEMENT&quot;, &quot;LTD&quot;, &quot;INC&quot;, &quot;LLC&quot;, &quot;PC&quot;, &quot;PLLC&quot;, &quot;SOLUTIONS&quot;, &quot;COMPANY&quot;, &quot;COMPANIES&quot;, &quot;MANAGEMENT&quot;, &quot;MGMNT&quot;)
+
+placenames &lt;- tigris::places(state=&quot;NC&quot;, progress_bar = FALSE) %&gt;% sf::st_set_geometry(NULL) %&gt;% pull(NAME) %&gt;% toupper()
+
+
+compnames &lt;- warn_parsed %&gt;%
+  select(company, pm.zip) %&gt;%
+  mutate(
+    orig_company = company,
+    company = str_squish(company),  # Removes leading and trailing white spaces
+    company = str_remove_all(company, &quot;\\&amp;[A-Za-z]*;&quot;), # This removes some HTML tags like &amp;quot; &amp;lt; etc.
+    company = str_remove_all(company, &quot;COVID19&quot;), # Removes a special tag
+    company = str_remove_all(company, &quot;\\t|\\n|\\r&quot;),  # This removes newlines and some other returns
+    company = str_remove_all(company, &quot;[[:punct:]]&quot;), # This removes punctuations marks such as `,`, `'`, '?
+    company = str_replace_all(company, &quot;\\.&quot;, &quot;\ &quot;), # This replaces . with a space.
+    company = str_replace(company, &quot;\\D\\B\\A&quot;, &quot;DBA&quot;), #This replaces \D\B\A with DBA
+    company = str_replace_all(company, &quot;\\&lt;U\\+0082\\&gt;&quot;, &quot;E&quot;), #This unicode character &lt;U+0082&gt; is usually meant to be an e in cafes.
+    company = str_to_upper(company), # Convert to upper case.
+    company = str_remove_all(company, paste0(&quot;\\b(&quot;,paste0(removalwords,  collapse=&quot;|&quot;), &quot;)\\b&quot;)), # Remove all the words that are in the list above.
+   company = str_remove_all(company, paste0(&quot;\\b(&quot;,paste0(placenames,  collapse=&quot;|&quot;), &quot;)\\b&quot;)), # Remove place names from the company names. This may not work out well if the company is called for e.g. Charlotte Plastics.
+    name1 = str_split(company, &quot;DBA&quot;, n=2, simplify = T)[,1] %&gt;% str_squish(), #The following two lines split the names of the company at DBA (Doing Business As).
+    name2 = str_split(company, &quot;DBA&quot;, n=2, simplify = T)[,2] %&gt;% str_squish()
+  )
+</code></pre>
+<p>We can make educated guesses about what the NAICS codes for the WARN dataset are going to by searching for some common substrings associated with the industry. For example, sector 72 is Accommodation and Food Services.</p>
+<pre><code class="language-r">compnames &lt;- compnames %&gt;%
+  mutate(NAICS2 = case_when(
+    str_detect(company, &quot;\\bMEDICAl\\b&quot;) ~ &quot;62&quot;,
+    str_detect(company, '\\bAIRLINES\\b') ~ &quot;48&quot;,
+    str_detect(company, '\\bRESTAURANT|RSTRNT\\b') ~ &quot;72&quot;,
+    str_detect(company, '\\bCAFE|BAR\\b') ~ &quot;72&quot;,
+    str_detect(company, &quot;\\bFITNESS\\b&quot;) ~ &quot;71&quot;,
+    TRUE ~ NA_character_
+    
+  )
+  )
+
+</code></pre>
+<p>We still need to find out the NAICS code for 85 companies.</p>
+<h3 id="fuzzy-string-matching">Fuzzy String Matching</h3>
+<p>For the rest of the dataset, we are going to use Reference USA dataset that has names and NAICS codes.</p>
+<pre><code class="language-r">refUSA &lt;- here(&quot;tutorials_datasets&quot;, &quot;textmatching&quot;, &quot;2019_Mecklenburg_RefUSA.csv&quot;) %&gt;% read_csv() %&gt;%
+  mutate(orig_company = company,
+         company = str_to_upper(company),
+         company = str_remove_all(company, &quot;[[:punct:]]&quot;),
+         company = str_replace_all(company, &quot;\\.&quot;, &quot;\ &quot;),
+         company = str_remove_all(company, paste0(&quot;\\b(&quot;,paste0(removalwords,  collapse=&quot;|&quot;), &quot;)\\b&quot;)),
+         company = str_squish(company)
+  ) %&gt;%
+  mutate(NAICS2 = str_sub(primary_naics, start=1, end=2)) %&gt;%
+  filter(company != &quot;&quot;) 
+</code></pre>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Try matching (exact) on names from the WARN dataset to the RefUSA dataset. What is the match rate?</li>
+</ul>
+<hr>
+<p>You will notice that the match rate is on exact match is not great because of various spellings and typos. Thus asking the question what is the row that matches the company name string in RefUSA dataset. So we instead ask a different question. How similar are two strings?  To do that we have to understand the notion of distance between two strings. There are number of such distances. Here are some common ones.</p>
+<ul>
+<li>Levenshtein distance (lv) the minimum number of single-character edits (insertions, deletions or substitutions) required to change one word into the other</li>
+<li>Damerau–Levenshtein (dl) distance is the minimum number of operations (consisting of insertions, deletions or substitutions of a single character, or <em>transposition</em> of two adjacent characters) required to change one word into the other.</li>
+<li>Optimal String Alignment (osa) uses Damerau–Levenshtein distance but each substring may only be edited once.</li>
+<li>Hamming distance (hamming) is the number of positions with same symbol/character in both strings of equal length.</li>
+<li>Longest common substring distance (lcs) is the minimum number of symbols/characters that need to be removed to make the two strings the same.</li>
+<li>Jaro-winker distance (jw) is a distance that is derived from the lengths of two strings, number of shared symbols an their transpositions.</li>
+<li>soundex is distance between two strings when they are translated to phonetic code.</li>
+</ul>
+<p>These are by no means exhaustive. They can even be improved upon (e.g. weighting spelling errors based on keyboard layouts.)</p>
+<p>In the following code, I am going to use a bunch of different string distance algorithms, find the most similar string based on each algorithm and pick the string that is selected by many different algorithms.</p>
+<div class="alert alert-note">
+  <div>
+    This is by no means the only way to do this fuzzy matching or even the most appropriate way. I am demonstrating this here for pedagogical purposes. You should explore alternatives.
+  </div>
+</div>
+<pre><code class="language-r">library(stringdist)
+
+distance_methods&lt;-c('osa', 'dl','lcs','jw', 'soundex')
+
+# While loops are terrible in R it is easy to program them. Better for readability.
+
+for (i in 1:dim(compnames)[1]){
+  # Only focus on the subset of data that we did not already hard code the NAICS
+  if(is.na(compnames$NAICS2[i])){
+    company &lt;- compnames[i,]
+    name1 &lt;- company$name1
+    name2 &lt;- company$name2
+    zcta &lt;- company$pm.zip
+    
+    # Create a target dataset.
+    refusa_select &lt;- refUSA %&gt;% filter(zip_code == zcta)
+    
+    # The following creates a vector of potential candidates (best match based on different algorithms)
+    # In the following, I am using similarity score of 0.75 or higher. Adjust this for tighter or looser matches.
+    
+    closestmatch &lt;-
+      map_int(distance_methods,  # for each distance method
+              possibly(
+                function(x){
+                  name1sim &lt;- stringsim(name1, refusa_select$company, method= x) # Create a string similarity between name1 and refusa name
+                  name2sim &lt;- stringsim(name2, refusa_select$company, method=x)  # Create a string similarity between name2 and refusa name
+                  # Apply a threshold
+                  name1sim &lt;- ifelse(name1sim&lt;0.75, NA, name1sim)
+                  name2sim &lt;- ifelse(name2sim&lt;0.75, NA, name2sim)
+                  # Between name1sim an name2sim, pick the one with the highest score.
+                  k &lt;- pmax(name1sim, name2sim, na.rm=T) %&gt;% which.max()
+                  return(ifelse(length(k)!=0,k,NA_integer_))
+                },
+                NA_integer_
+              )
+      ) %&gt;%
+      .[!is.na(.)]
+    
+    # Of the distance methods, only select the matches that pass the threshold and pick the NAICS code that has the highest frequency. Note that this code does not break ties.i.e. there may be multiple NAICS that potentially picked by multiple algorithms, but this code picks the one that is at the top (possibly ordered)
+    
+    
+    compnames$NAICS2[i]&lt;- 
+      ifelse(length(closestmatch)&gt;0, 
+               refusa_select[closestmatch,] %&gt;%
+               group_by(NAICS2) %&gt;%
+               summarize(no = n()) %&gt;%
+               slice_max(no, n=1, with_ties = FALSE) %&gt;% select(NAICS2) %&gt;% unlist() %&gt;% unname(),
+             NA_character_
+      )
+    
+    rm(name1,name2,zcta,closestmatch)
+  }
+}
+
+</code></pre>
+<p>Of the  111 we are able to determine the NAICS codes for 87 companies, a 78.38 % hit rate. This seems reasonable, for short amount of work.</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Use a different set string distance algorithms, esp ones based on n-grams.</li>
+<li>Instead of selecting strings with maximum similarity, select top 5 similar strings and then pick the string that appears in most of these algorithms.</li>
+<li>What other preprocessing can be done to improve the hit rate?</li>
+<li>Spot check to see if the hits are accurate?</li>
+</ul>
+<hr>
+<h2 id="conclusions">Conclusions</h2>
+<p>As you noticed, a lot of text/string manipulation relies on understanding the linguistic conventions and is an iterative processes. What works in one context may not work in another and you should be prepared to adapt. You will encounter edge cases much more frequently in this type of work, than other kinds of data munging operations. Nonetheless, it is a useful skill to have. In particular, it is useful get familiar with using <a href="https://www.regexbuddy.com/" target="_blank" rel="noopener">Regular Expressions</a> to search for patterns within strings. However, use it judiciously.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li>Silge, Julia, and David Robinson. 2020. Text Mining with R. Sebastapol, CA: O’ Reilly. <a href="https://www.tidytextmining.com/" target="_blank" rel="noopener">https://www.tidytextmining.com/</a>.</li>
+</ul>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#preparation">Preparation</a></li>
+    <li><a href="#extract-zipcodes-and-states">Extract Zipcodes and States</a></li>
+    <li><a href="#parsing-street-numbers-and-direction">Parsing Street, Numbers and Direction</a></li>
+    <li><a href="#matching-names">Matching Names</a>
+      <ul>
+        <li><a href="#fuzzy-string-matching">Fuzzy String Matching</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#additional-resources">Additional Resources</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/r/">R</a>
+  
+  <a class="badge badge-light" href="/tag/teaching/">teaching</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/matching-messy-texts/&amp;text=Matching%20Messy%20Texts" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/matching-messy-texts/&amp;t=Matching%20Messy%20Texts" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Matching%20Messy%20Texts&amp;body=https://nkaza.github.io/post/matching-messy-texts/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/matching-messy-texts/&amp;title=Matching%20Messy%20Texts" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Matching%20Messy%20Texts%20https://nkaza.github.io/post/matching-messy-texts/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/matching-messy-texts/&amp;title=Matching%20Messy%20Texts" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
+      
+      <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
+      
+      <li><a href="/post/exploratory-data-analysis-and-visualisation/">Exploratory Data Analysis and Visualisation</a></li>
+      
+      <li><a href="/post/intersection-density-from-osm-using-qgis-r/">Intersection Density From OSM using QGIS &amp; R</a></li>
+      
+      <li><a href="/post/analysing-free-form-text/">Analysing Free Form Text</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

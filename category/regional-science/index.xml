@@ -1,0 +1,1755 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>regional-science | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/category/regional-science/</link>
+      <atom:link href="https://nkaza.github.io/category/regional-science/index.xml" rel="self" type="application/rss+xml" />
+    <description>regional-science</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Sat, 24 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>regional-science</title>
+      <link>https://nkaza.github.io/category/regional-science/</link>
+    </image>
+    
+    <item>
+      <title>Regional Employment Structure Using Labor Market Centrality Index</title>
+      <link>https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/</link>
+      <pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This post is based on joint work with &lt;a href=&#34;https://www.linkedin.com/in/dr-katherine-nesse&#34;&gt;Dr. Kate Nesse&lt;/a&gt;, and is &lt;a href=&#34;https://nkaza.github.io/publication/kaza-2019-aa&#34;&gt;published in the Internation Regional Science Review&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Office of Managment and Budget (OMB) identifies Core Based Statistical Areas (CBSA) as collections of counties. These CBSA can be Metropolitan (MSA) or Micropolitan &lt;span class=&#34;math inline&#34;&gt;\(\mu\)&lt;/span&gt;SA based on the population of the ‘core’ (&lt;span class=&#34;math inline&#34;&gt;\(\ge\)&lt;/span&gt; 50,000 or not). Within these Statistical Areas, counties can either be Central (contain all or a substantial portion of the urbanised area) or Outlying (employment interchange measure with the Central counties above 25%). In other words, the centrality of the county is defined by the urban population attributes of the county rather than its relative location in the commuting network, whereas Outlying defined in relation to the Central counties. In 2015, a vast majority of the counties within CBSA are considered Central; only 29% of the counties are Peripheral/Outlying. This is even more stark within &lt;span class=&#34;math inline&#34;&gt;\(\mu\)&lt;/span&gt;SAs where only 14% are considered Peripheral. CBSAs are predominantly dominated by the Central counties; they account for 92.5% of the CBSA population. These Central counties are crucial to the delineation of these statistical regions and encompass the economic core of the country.&lt;/p&gt;
+&lt;p&gt;Table 1 Types of CBSAs and Counties in Conterminous United States. Source: OMB (2015)&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;County Type&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;CBSA Type&lt;/td&gt;
+&lt;td&gt;Central&lt;/td&gt;
+&lt;td&gt;Outlying&lt;/td&gt;
+&lt;td&gt;Total&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;MSA&lt;/td&gt;
+&lt;td&gt;785&lt;/td&gt;
+&lt;td&gt;451&lt;/td&gt;
+&lt;td&gt;1,236&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;&lt;span class=&#34;math inline&#34;&gt;\(\mu\)&lt;/span&gt;SA&lt;/td&gt;
+&lt;td&gt;569&lt;/td&gt;
+&lt;td&gt;94&lt;/td&gt;
+&lt;td&gt;663&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Total&lt;/td&gt;
+&lt;td&gt;1,354&lt;/td&gt;
+&lt;td&gt;545&lt;/td&gt;
+&lt;td&gt;1,899&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;These definitions are built upon the assumption that a labor market is built around a central node. While this may have been the case historically, with our increasingly complex cities and multiplicity of transportation networks, contemporary cities have much more complex labor market networks and regional structures. In this work, we examine if a different approach to defining the core would affect our understanding of the economic geography of metropolitan United States. In particular, we are interested in understanding how the positionality of the nodes in the network illuminates our understanding of the regions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;labor-market-centrality-index&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Labor Market Centrality Index&lt;/h2&gt;
+&lt;p&gt;A k–core of an unweighted simple binary graph is its subgraph where all the nodes have at least degree &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt;. This subgraph is obtained by iteratively removing nodes from the network whose degree is less than k until a stable set of vertices with the minimum degree is reached. A node in a network has a coreness index &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt;, if it belongs to a &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt;–core but not a &lt;span class=&#34;math inline&#34;&gt;\(k+1\)&lt;/span&gt;–core.&lt;/p&gt;
+&lt;p&gt;This can be generalized to a directed network by focusing on the indegree; i.e. a &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt;–core is the subgraph, where all nodes have an in-degree &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt;. We can also generalize this concept to a weighted graph by using &lt;span class=&#34;math inline&#34;&gt;\(s\)&lt;/span&gt;–core decomposition, where degree of the vertex is replaced by strength of the vertices (Eidsaa and Almaas 2013). If, the edge weight between nodes &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt; is denoted by a non-negative &lt;span class=&#34;math inline&#34;&gt;\(w_{ij}\)&lt;/span&gt;, then the strength of the vertex &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt;$is defined as&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ s_i = \sum_{j \in N_i^-} w_{ij} \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(N_i^-\)&lt;/span&gt; is the in-neighborhood of &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt; . The &lt;span class=&#34;math inline&#34;&gt;\(s\)&lt;/span&gt;-core is a subgraph where the nodes have at least strength &lt;span class=&#34;math inline&#34;&gt;\(s\)&lt;/span&gt;. As long as &lt;span class=&#34;math inline&#34;&gt;\(w_{ij} \in Z^+\)&lt;/span&gt;, we can replace an edge in the graph with &lt;span class=&#34;math inline&#34;&gt;\(w_{ij}\)&lt;/span&gt; multi-edges, and the decomposition of the graph by strength and degree are equivalent. We call this coreness index, the labor market centrality index when applied to commuting networks.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/illustration.jpg&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Illustration of network decomposition into core and periphery. Vertices are sized based on in-degree.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The s–core decomposition is illustrated in the above figure for directed graph with multiple edges including loops. The entire graph in the figure is part of 0-core. Nodes A and F have in-degree 0, and therefore are not part of the 1-core of the graph (subgraph induced by nodes B, C, D, E, G). Thus, the coreness of A and F is 0. In that 1-core of the subgraph, nodes D and G have in-degree 1. While they are not part of the 2-core of the graph, deleting them also renders B ineligible for 2-core. Thus, the coreness index of nodes B, D and G is 1. This process continues, till all nodes are assigned a coreness index. The vertices in the top 10 percentile of the index is classified as &lt;strong&gt;strong core&lt;/strong&gt; and in the upper quartile, but not in the upper decile as &lt;strong&gt;weak core&lt;/strong&gt;. The rest are periphery.&lt;/p&gt;
+&lt;p&gt;We use the 2011–2015 &lt;a href=&#34;https://www2.census.gov/programs-surveys/demo/tables/metro-micro/2015/commuting-flows-2015/table1.xlsx&#34;&gt;county-to-county commuting flow data&lt;/a&gt; from the American Community Survey. For the sake of exposition, we limit our analysis to the conterminous United States consisting of 3,109 counties. 134,869 pairs of counties have non-zero commuters, representing 1.4% of the possible links; the network is relatively sparse, a testament to the continuing importance of geographic distance for economic integration. These links represent 142.5 million commuters, of which 72% commuted within the same county. When the above coreness index is computed on this dataset, we call it &lt;strong&gt;Labor Market Centrality Index&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;core-periphery-structure-of-the-united-states&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Core &amp;amp; Periphery Structure of the United States&lt;/h2&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-1.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;The Labor Market Centrality Index based on 2015 ACS commuting data (logrithmically transformed) is above for the conterminous United States. The results point to tightly connected large cores in the Northeastern United States that span Boston to Washington, D.C.; in Florida around Miami and Tampa; in Southern California around Los Angeles; and in Northern California around San Francisco (see Figure 2). As can be expected, there are also numerous other smaller cores around Miami, Atlanta, Chicago, Detroit, Seattle, Denver and other cities.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;1152&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;280 counties are classified as Strong Core and 471 are classified as Weak Core. The rest are in the peripheral (see above maps). There are 92 distinct geographical clusters of Strong Core counties (defined by queen contiguity), with the biggest one comprising of 109 counties stretching from Portland, Maine to Northern Virginia. The second biggest cluster is the 28-county collection in California, from San Diego to Santa Rosa. The rest of the geographic clusters are comprised of 1 to 7 counties, with 65% of them being a single county. With the inclusion of weak core counties, the number of geographic clusters to increases to 108: 23 of the clusters are a collection of weak and strong core counties; 49 of the clusters are only comprised of weak core counties.&lt;/p&gt;
+&lt;p&gt;There is one county (Sullivan, New York) that is not part any CBSA but belongs to a strong core. 11 outlying counties, as defined by OMB, belong to strong core. Similarly, two counties in New York, and one each in Connecticut, Pennsylvania and North Dakota are part of &lt;span class=&#34;math inline&#34;&gt;\(\mu\)&lt;/span&gt;SAs, but are part of strong core. More importantly, 638 central counties (OMB characterization) are not part of strong or weak core (see above maps). While these counties have urban populations above the thresholds specified, they have fewer commuters both to other nodes as well as to themselves, implying a comparatively weak local and regional economy. These disagreements in classifications provide a productive starting point to analyze the role of ‘small’ non-urban counties in the regional economy as well as large urban counties that are experiencing economic stagnation and decline.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;why-bother&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Why Bother?&lt;/h2&gt;
+&lt;p&gt;To see why this classification may be more useful, it is illustrative to see changes in the employment pre and post-recession in different types of counties (See figure below). While the Weak Core counties grew (in terms of number of jobs) roughly at the same rate as the Strong Core counties pre-recession (2001-2008), the recovery in the post-recession has been twice as strong in the Strong Core counties in the post-recession. The recovery seems to have bypassed the Periphery counties; while they grew at a healthy 3% before the recession, they contracted by 0.5% after the recession. In part, these numbers can be explained due the spatial sorting of specializations and the changing nature of the economy. However, these distinctions are not as stark, if we use the Central and Outlying distinctions of OMB. Central counties (on average) marginally grew faster compared to Outlying counties (1.6% vs. 0.63%) during the post-recession, even while they had similar growth rates pre-recession (6.75 vs. 6.45). However, Central counties with MSA significantly outpaced Central counties within µSA in post-recession recovery (4.3% vs. -0.84%). This, together with the specialization in service industries indicates that it is not the population size of the county that is related to the economy but rather its place in the regional network. We do not make any claims as to the causal relationship between the position in the network and the economic growth.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/regional-employment-structure-using-labor-market-centrality-index/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;There are many ways to understand human settlements. In this paper, we looked at the regional structure from a network perspective. We found that how a county functions within the network of human settlement across the continental US is based on population and economic activity. Our typology reflects economic dimensions in addition to population and density.&lt;/p&gt;
+&lt;p&gt;Metropolitan regions are formed around economic activity and therefore reflect economic centers but existing typologies do not characterize the strength and nature of the regional economy well. Focusing on the role of the county in the network through commute patterns illuminates not just how central a county is in the labor market but also broadly demonstrates the strength of the economy. This is independent of the size of the population. Although there is some relationship between the size of the population and the size of the economy, there were some small counties with a lot of commute flows and large counties that had very little commuting. Categorizing counties based on their function in the network of human settlements is a useful way to understand the integration of population and economy. It shares some similarities with other typologies focused on commuting flows. However, it has the unique feature of reflecting the economic strength of the region in a more dynamic way than other categorization and indices.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Transportation Energy Consumption in the US</title>
+      <link>https://nkaza.github.io/post/transportation-energy-consumption/</link>
+      <pubDate>Tue, 02 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/transportation-energy-consumption/</guid>
+      <description>&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;In this post, I am going to briefly talk about how the transportation energy consumption varies across United States. Much of the energy in that sector is from liquid fuels and the transmission and distribution network of these fuels have enormous land use and transportation implications. If we were to think about changing the fuel mix of the transportation fleet (say for example making hydrogen fuel cells or electricity more prominent), we need to think through its implications.&lt;/p&gt;
+&lt;p&gt;This work is published as &lt;a href=&#34;https://doi.org/10.1016/j.enpol.2019.111049&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kaza, N. 2020 Urban Form and Transportation Energy Consumption, &lt;em&gt;Energy Policy&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;In the United States (US), the transportation sector consumes about 29% of the total energy in 2017, rising from 23.5% in the 1960s even while the energy efficiency of the economy increased. Much of this energy comes from liquid carbon-based fuels contributing to greenhouse gas emissions and bad air quality. While we know a bit about how much energy is consumed in the transportation sector nationally, we don&amp;rsquo;t really have a grasp on how various local and state policies (incluidng the design, form and function of cities and regions) are affecting transportation energy consumption.&lt;/p&gt;
+&lt;h1 id=&#34;three-components-of-energy-consumption&#34;&gt;Three components of energy consumption&lt;/h1&gt;
+&lt;p&gt;The three main components that explain energy consumption in the sector is the total volume of travel, mode split and average energy efficiencies of the fleet mix.  Volume of travel depends on the distances between origins and destinations, network effects and trip frequencies. Mode split, the transportation mode that trip uses, is dependent on distances that need to be travelled, the availaibility and ease of mode not just for the particular trip, but for subsequent and prior chained trips and trip purposes (e.g. delivery of goods, shuttling kids). The energy efficiency of the fleet mix depends on adoption rates of newer vehicles, organisational/household acquisition rules and procedures and government policies on pollution control mechanisms, tax subsidies, depreciation rules etc.&lt;/p&gt;
+&lt;p&gt;In addition to these complicated mechanisms through which we can influence energy consumption, we should also be mindful of the different components of energy consumption. We need to account for transportation consumption both in freight and in person travel. Light duty vehicles with short wheel bases (passenger cars, vans, SUVs etc.) only accounted for 52% of highway transportation energy in 2016 (Bureau of Transportation Statistics 2018 Table 4.06). Assuming other vehicle types are largely associated with non-household travel, relying simply on household travel underestimates the total energy consumption in the system and the impact of urban form.&lt;/p&gt;
+&lt;h1 id=&#34;sales-in-gas-stations&#34;&gt;Sales in Gas stations&lt;/h1&gt;
+&lt;p&gt;Sub national information is not easily forthcoming for transportation sector. Since we can not simply proxy total energy consumption from VMT derived from household travel surveys, we need an alternative strategy.  Because most of energy is purchased at retail gas stations in the US, we can study the geographic differences in energy consumption, by studying the variation in gas station sales.&lt;/p&gt;
+&lt;p&gt;I use the &lt;a href=&#34;https://www.census.gov/programs-surveys/economic-census/data/tables.2012.html.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;2012 Economic Census&lt;/a&gt; by the US Census Bureau to construct a proxy for transportation energy consumption, by analyzing the sales at gas stations in each county (or equivalent areas) of the United States. The Bureau collects extensive data on businesses every 5 years.  I use the data is reported at a county level for the retail sector (North American Industrial Classification System (NAICS) code 44-45), in particular, the total sales receipts from the gas stations (NAICS 447). Due to confidentiality concerns, data for 344 counties are not reported.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/transportation-energy-consumption/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;From the above map, it should be clear that there are some outliers (e.g. Culberson County, TX for per capita consumption) that might skew our understanding. It is also entirely possible that there might be data quality issues associated with those outliers.&lt;/p&gt;
+&lt;h2 id=&#34;energy-consumption-by-county-character&#34;&gt;Energy Consumption by County Character&lt;/h2&gt;
+&lt;p&gt;Of all the states, Wyoming and North Dakota are among the top of the per capita expenditure in gasoline stations, followed by the states in the Midwest. These states are characterized by low population and vast open spaces. The populous regions in the US, the Northeast and the Pacific are at the bottom of the per capita expenditures. District of Columbia has only $418 expenditures per capita suggesting potential explanations of large commuting population from nearby states (Virginia and Maryland in particular), extensive public transportation infrastructure and high population density.&lt;/p&gt;
+&lt;p&gt;Counties outside metropolitan statistical areas have 41.2% more per capita sales than those within them. While these counties account for only 16.2% of the total population, this suggests that urbanization is associated with lower per capita consumption due to proximity of destinations and increased economic development. Finer urban type classification of the counties from National Center for Health Statistics (NCHS) reveal an even starker pattern. Large central metro counties, on average, have two fifths of the per capita sales of the non-core rural counties. As the urbanization intensifies, per capita consumption decreases (see Table below), even though large and medium metro counties account for more than two-thirds of the total sales.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;County Type&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Annual Sales (Millions)&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Per capita Sales&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Non-core&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;47.3&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;$3,725&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Micropolitan&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;110.1&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;$2,622&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Small Metro&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;190.1&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;$2,400&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Medium Metro&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;333.8&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;$1,975&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Large Fringe Metro&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;363.7&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;$1,775&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Large Central Metro&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1,753.2&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;$1,285&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Of the metropolitan areas Cheyenne, WY, Winchester, VA and Joplin, MO spend more than 4,000 USD per capita in gas stations, suggesting a large variation within urban areas. Corvallis, OR has the least, with both New York, NY and Boulder CO following closely (&amp;lt;1,000 USD per capita). This suggests dense urban environments with high transit amenities may result in lower spending. Metros along the Gulf coast and in states like Arizona and South Carolina exhibit large expenditures.&lt;/p&gt;
+&lt;h1 id=&#34;gas-stations--convenience-stores&#34;&gt;Gas stations &amp;amp; Convenience Stores&lt;/h1&gt;
+&lt;p&gt;In the United States, most gas stations come with convenience stores. It could very well be that some of the sales at the gas stations, come from the non-fuel sales. Unfortunately, it is hard to tease out how much of it is gasoline/diesel sales and from convenience store items. It is also likely that in rural counties, the convenience store sales form larger proportion of the total sales as options may be limited.&lt;/p&gt;
+&lt;p&gt;We can test the effect of the convinence stores by looking at sales from gas stations that do not have conveniences stores and comparing them to those that do. Unfortunately due to privacy restrictions, data for 835 counties are reported in the 2012 census. For this subset of counties, the correlation between sales from all gas stations and those from gas stations without convenience stores is 0.82.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/transportation-energy-consumption/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;The difference between the red and black lines represent the bias in the data introduced by the convenience stores.&lt;/p&gt;
+&lt;h1 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Because transportation, by definition, is highly mobile it is not clear what percentage of the sales in each county can be associated with travel within the county and what is a function of regional travel and transportation throughput. Because highly disaggregated data on sales and locations of gas stations is not readily available, we cannot tease out these effects. Future work involving digital traces of household expenditures, could perhaps be used to elucidate these effects. It is clear that gas station sales are an imperfect measure of transportation energy consumption. But it is a useful one at a subnational scale to understand the geographic variations in energy consumption.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Regions of Deprivation</title>
+      <link>https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/</link>
+      <pubDate>Mon, 24 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/</guid>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;This post was last updated on 2025-08-13&lt;/p&gt;
+&lt;p&gt;In addition to &lt;a href=&#34;https://nkaza.github.io/post/analysing-urban-neworks/&#34;&gt;obvious networks&lt;/a&gt;, we can also use graph theory to think though some non-obvious applications. One place this often crops up in planning is to think about adjacency/proximity as a graph. See my post on &lt;a href=&#34;https://nkaza.github.io/post/identifying-employment-centers/&#34;&gt;employment centers&lt;/a&gt; and paper on &lt;a href=&#34;https://nkaza.github.io/publication/kazamagpie_india/&#34;&gt;delineating areas&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In this post, I will demonstrate how to use networks for other spatial analysis. We can think of polygons as nodes and two nodes are connected if they have a relationship. These relationships can be spatial (e.g. sharing a boundary) or non-spatial (e.g. sharing a common attribute) or a combination of both.&lt;/p&gt;
+&lt;h2 id=&#34;acquire-data&#34;&gt;Acquire data&lt;/h2&gt;
+&lt;p&gt;Much of data acquisition follows the &lt;a href=&#34;https://nkaza.github.io/post/using-tidycensus&#34;&gt;post on tidycensus&lt;/a&gt;. So I won’t repeat much of it, except to provide an uncommented source code below. In this case, I am focusing on both the Carolinas.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;options(tigris_use_cache = TRUE)
+library(tidyverse)
+library(tidycensus)
+library(tigris)
+library(sf)
+library(tmap)
+library(RColorBrewer)
+library(igraph)
+
+
+NC_SC &amp;lt;- c(&#39;37&#39;, &#39;45&#39;) # FIPS code for NC and SC.
+
+### Download  geographies of interest
+
+ctys &amp;lt;- tigris::counties() %&amp;gt;%
+          filter(STATEFP %in% NC_SC) %&amp;gt;%
+          st_transform(4326) %&amp;gt;%
+          select(GEOID, NAME)
+
+
+
+######### Download variables of interest. ###
+
+
+pop &amp;lt;- map_dfr(NC_SC, function(us_state) {
+                          get_decennial(geography = &amp;quot;county&amp;quot;, 
+                                  variables = &amp;quot;P1_001N&amp;quot;,
+                                  state = us_state, 
+                                  geometry = FALSE
+                                  )
+  }) %&amp;gt;%
+  select(GEOID, pop_census = value)
+
+
+# Calculate Poverty Rate by first downloading people below poverty &amp;amp; number of people for whom poverty status is determined.
+# https://www.socialexplorer.com/data/ACS2022_5yr/metadata/?ds=ACS22_5yr&amp;amp;table=B17001
+
+pov &amp;lt;- map_dfr(NC_SC, function(us_state) {
+                          get_acs(geography = &amp;quot;county&amp;quot;, 
+                                  variables = &amp;quot;B17001_002&amp;quot;,  # People below poverty
+                                  summary_var = &#39;B17001_001&#39;, # Denominator
+                                  state = us_state, 
+                                  geometry = FALSE,
+                                  year = 2022)
+  })
+
+
+  
+pov_rate &amp;lt;- pov %&amp;gt;%
+  rename(pop_acs = summary_est,
+         pov_est = estimate) %&amp;gt;%
+  mutate(pov_rate = pov_est/pop_acs) %&amp;gt;%
+  select(GEOID, NAME, pov_est, pop_acs, pov_rate)
+
+### Calculate Unemployment rate ####
+### https://www.socialexplorer.com/data/ACS2022_5yr/metadata/?ds=ACS22_5yr&amp;amp;table=B23001
+### To do that first need to figure out Labor Force ####
+
+
+# Only focusing on Female Unemployment Rate. If you want to use the male ones, please use this commented code
+#lf_m &amp;lt;- paste(&amp;quot;B23001_&amp;quot;, formatC(seq(4,67,7), width=3, flag=&amp;quot;0&amp;quot;), &amp;quot;E&amp;quot;, sep=&amp;quot;&amp;quot;)
+# You may need to add them up to get the total labor force and total unemployed persons.
+
+
+lf_f &amp;lt;- paste(&amp;quot;B23001_&amp;quot;, formatC(seq(90,153,7), width=3, flag=&amp;quot;0&amp;quot;), &amp;quot;E&amp;quot;, sep=&amp;quot;&amp;quot;)
+
+lf &amp;lt;- map_dfr(NC_SC, function(us_state) {
+                          get_acs(geography = &amp;quot;county&amp;quot;, 
+                                  variables = c(lf_f), 
+                                  state = us_state, 
+                                  geometry = FALSE,
+                                  year = 2022)
+  })
+
+
+#unemp_m &amp;lt;- paste(&amp;quot;B23001_&amp;quot;, formatC(seq(8,71,7), width=3, flag=&amp;quot;0&amp;quot;), &amp;quot;E&amp;quot;, sep=&amp;quot;&amp;quot;) # See above comment
+unemp_f &amp;lt;- paste(&amp;quot;B23001_&amp;quot;, formatC(seq(94,157,7), width=3, flag=&amp;quot;0&amp;quot;), &amp;quot;E&amp;quot;, sep=&amp;quot;&amp;quot;)
+
+unemp &amp;lt;- map_dfr(NC_SC, function(us_state) {
+                          get_acs(geography = &amp;quot;county&amp;quot;, 
+                                  variables = c(unemp_f), 
+                                  state = us_state, 
+                                  geometry = FALSE,
+                                  year = 2022)
+  })
+  
+
+lf_t &amp;lt;- lf %&amp;gt;% 
+  group_by(GEOID) %&amp;gt;%
+  summarize(lf_est = sum(estimate, na.rm=T))
+
+unemp_t &amp;lt;- unemp %&amp;gt;% 
+  group_by(GEOID) %&amp;gt;%
+  summarize(unemp_est = sum(estimate, na.rm=T))
+
+unemp_rate &amp;lt;- left_join(lf_t, unemp_t, by=&#39;GEOID&#39;) %&amp;gt;% 
+  filter(lf_est &amp;gt;0) %&amp;gt;%
+  mutate(unemp_rate = unemp_est/lf_est)
+
+df &amp;lt;- left_join(pov_rate, unemp_rate, by=&#39;GEOID&#39;)
+df &amp;lt;- left_join(df, pop, by=c(&#39;GEOID&#39;))
+
+rm(pov, pov_rate, unemp, unemp_rate, lf, lf_t, unemp_t, pop, lf_f, unemp_f)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;spatial-relationships-as-a-graphnetwork&#34;&gt;Spatial Relationships as a Graph/Network&lt;/h2&gt;
+&lt;p&gt;If you have a any relationship between a pair of objects, you can represent it as a graph. Spatial relationships are no different and different types of spatial relationships present different graphs. Recall that if a relationship is present, then the nodes are considered &lt;code&gt;adjacent&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;queen-contiguity&#34;&gt;Queen Contiguity&lt;/h3&gt;
+&lt;p&gt;In the case of spatial data, adjacency &lt;em&gt;can be&lt;/em&gt; defined by sharing a boundary segment (Rook) &lt;em&gt;or&lt;/em&gt; a point (Queen).There are many other types of spatial relationships (e.g. overlaps, contains) that might be of interest.&lt;/p&gt;
+&lt;p&gt;Recall that a graph can be represented as an adjacency matrix where the nodes are both rows and columns. In this case, the adjacency matrix is a binary matrix, where 1 represents adjacency and 0 represents no adjacency. We can use &lt;code&gt;spdep&lt;/code&gt; package to construct the neighbour list for common spatial relationships such as adjacency and distances.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(spdep)
+cty_nb &amp;lt;- poly2nb(ctys, queen=TRUE, row.names = ctys$GEOID) 
+# Construct a neighborhood object
+coords &amp;lt;- st_centroid(ctys, of_largest_polygon = T) %&amp;gt;% st_coordinates()
+plot(st_geometry(ctys), border = &#39;gray&#39;)
+plot(cty_nb, coords, col=&#39;red&#39;, points=F, add=T) # Quickly visualise the graph
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;h3 id=&#34;k-nearest-neighbors&#34;&gt;K-nearest Neighbors&lt;/h3&gt;
+&lt;p&gt;There is no reason to think of adjacency as just sharing a boundary. It could be based on some other criteria. For example, we could think of adjacency as being close in distance. In this case, we could specify three closest neighbours as the adjacency. Note that this is not a symmetric relationship, unlike the queen contiguity.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;cty_knn &amp;lt;- knn2nb(knearneigh(coords, k=3), row.names = ctys$GEOID)
+cty_knn &amp;lt;- make.sym.nb(cty_knn) # Make it symmetric
+
+diff_nb_knn &amp;lt;-diffnb(cty_knn, cty_nb)
+
+# This is an old school way of plotting and arranging them. If you don&#39;t understand it, don&#39;t worry about it. It is used for illustration purposes only
+opar &amp;lt;- par()
+par(mfrow = c(1, 2)) # Create a 1 x 2 plotting matrix
+# The next 2 plots created will be plotted next to each other
+
+plot(st_geometry(ctys),border=&amp;quot;grey&amp;quot;, main = &amp;quot;KNN Graph&amp;quot;)
+plot(cty_knn, coords, col=&#39;black&#39;,points=F, add=T) # Quickly visualise the graph
+
+
+plot(st_geometry(ctys), border=&amp;quot;grey&amp;quot;, main = &#39;Differences between Contiguity (black) and KNN (dashed red)&#39;)
+plot(cty_nb, coords, col=&#39;black&#39;, points=F, add=T) 
+plot(diff_nb_knn, coords, col=&#39;red&#39;, points=F,add=T, lty=2) # Quickly visualise the graph
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+par(opar) # Reset the plotting matrix
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;neighbors-based-on-travel-times-conditioned-on-road-networks&#34;&gt;Neighbors based on travel times conditioned on road networks&lt;/h3&gt;
+&lt;p&gt;We don’t even need to rely on geographic relationships to identify the neighbours. We could use maximum travel times (e.g. say 1.5 hr) as a proxy for adjacency . We could use the road network to calculate travel times between the centroids of the counties. I am not going to explain this code in detail, but it is an example of how to get a quick and dirty travel times using OpenStreetMap data.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+library(dodgr)
+library(osmdata)
+library(osmextract)
+
+#add extra tags for routing
+et = c(&amp;quot;oneway&amp;quot;, &amp;quot;maxspeed&amp;quot;, &amp;quot;lanes&amp;quot;) 
+
+#extract nc, sc road network using osmextract
+
+rds_nc&amp;lt;- oe_get_network(place  = &amp;quot;north carolina&amp;quot;, mode = &amp;quot;driving&amp;quot;, extra_tags = et, quiet =T) %&amp;gt;%
+        filter(highway %in% c(&amp;quot;motorway&amp;quot;, &#39;motorway_link&#39;, &#39;primary&#39;, &#39;primary_link&#39;))
+
+rds_sc&amp;lt;- oe_get_network(place  = &amp;quot;south carolina&amp;quot;, mode = &amp;quot;driving&amp;quot;, extra_tags = et, quiet = T)%&amp;gt;%
+        filter(highway %in% c(&amp;quot;motorway&amp;quot;, &#39;motorway_link&#39;, &#39;primary&#39;, &#39;primary_link&#39;))
+
+rds &amp;lt;- rbind(rds_nc, rds_sc)
+rm(rds_nc, rds_sc)
+
+net &amp;lt;- weight_streetnet (rds, wt_profile = &amp;quot;motorcar&amp;quot;)
+nodes &amp;lt;- st_centroid(ctys, of_largest_polygon = T) %&amp;gt;% 
+          st_coordinates()
+
+traveltimes &amp;lt;- dodgr_times(net, from = nodes, to = nodes)
+rownames(traveltimes) &amp;lt;- ctys$GEOID
+colnames(traveltimes) &amp;lt;- ctys$GEOID
+traveltime_adjacency &amp;lt;- ifelse(traveltimes &amp;gt; 1.5*60*60 | is.na(traveltimes), 0, 1) # 1.5 hours travel time on major roads
+
+
+
+cty_tt &amp;lt;- mat2listw(traveltime_adjacency, style=&amp;quot;B&amp;quot;, zero.policy=TRUE, row.names = ctys$GEOID)
+cty_tt_n &amp;lt;- cty_tt$neighbours
+
+cty_tt_n &amp;lt;- make.sym.nb(cty_tt_n) # Make it symmetric
+
+# Visualise
+
+diff_nb_tt &amp;lt;- diffnb(cty_nb, cty_tt_n)
+diff_nb_tt_knn &amp;lt;- diffnb(cty_knn, cty_tt_n)
+
+opar &amp;lt;- par()
+par(mfrow = c(1, 2)) # Create a 1 x 2 plotting matrix
+# The next 2 plots created will be plotted next to each other
+
+plot(st_geometry(ctys),border=&amp;quot;grey&amp;quot;, main = &amp;quot;Travel Time Adjacency&amp;quot;)
+plot(cty_tt_n, coords, col=&#39;black&#39;, points=T, add=T) # Quickly visualise the graph
+
+
+plot(st_geometry(ctys), border=&amp;quot;grey&amp;quot;, reset = F, main = &#39;Differences between KNN (black) and Travel Time (dashed red)&#39;)
+plot(cty_knn, coords, col=&#39;black&#39;, points=T, add=T) 
+plot(diff_nb_tt_knn, coords, col=&#39;red&#39;, add=T, lty=2) # Quickly visualise the graph
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+
+par(opar) # Reset the plotting matrix
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    Travel times are artifacts of which road network you use, what is the accuracy of the road network, how overpasses and underpasses are represented, how start and end points are snapped to the network etc. At the same time, contiguity is affected by boundary precision errors. You need to be careful with the idiosyncrasies of the data you are using.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h3 id=&#34;neighbour-of-neighbours-of&#34;&gt;Neighbour of Neighbours of…&lt;/h3&gt;
+&lt;p&gt;There is no reason to think that neighbourhood relationship should be of first order. For example, you might be interested in calculating the population of the neighbours of the neighbours. Recall that binary adjacency matrix $ A $ is a representation of paths of length 1 for each vertex. $ A^2 $ is then a representation of number of paths of length 2 and so on. Therefore, $ A^n + A $ is a representation of number of paths of &lt;em&gt;at least&lt;/em&gt; length $ n $ between any two nodes. Thus arbitrarily large order of neighbourhoods can be easily constructed. You can then binarise the matrix to get the adjacency matrix of the second order neighbours.&lt;/p&gt;
+&lt;p&gt;Fortunately, &lt;code&gt;spdep&lt;/code&gt; has a function called &lt;code&gt;nblag&lt;/code&gt; that can help us with this.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+cty_nb2 &amp;lt;- nblag(cty_nb, 2) %&amp;gt;% nblag_cumul # This gives us the second order neighbourhood
+
+
+opar &amp;lt;- par()
+par(mfrow = c(1, 2)) # Create a 1 x 2 plotting matrix
+# The next 2 plots created will be plotted next to each other
+
+plot(st_geometry(ctys),border=&amp;quot;black&amp;quot;, lwd =.1, main = &amp;quot;First Order Neighbours&amp;quot;)
+plot(cty_nb, coords, col=&#39;blue&#39;, points=F, add=T, lwd =.3) # Quickly visualise the graph
+
+
+plot(st_geometry(ctys), border=&amp;quot;black&amp;quot;, reset = F, lwd=.1,main = &#39;Second Order Neighbours&#39;)
+plot(cty_nb2, coords, col=&#39;blue&#39;, points=F, add=T, lwd = .3) 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+par(opar) # Reset the plotting matrix
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    This does not work for travel time adjacency. You can create the second order neighbours, but they don’t mean all the counties that are reachable in 3 hrs travel time. Why?
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;use-of-graphs-for-spatial-analysis&#34;&gt;Use of Graphs for Spatial Analysis&lt;/h2&gt;
+&lt;p&gt;Until now we constructed the network from spatial relationships. Once it is constructed it can be useful for a number of analyses. For example, occasionally, it becomes useful not only to look at attributes of the ‘focal’ geography, but also calculate some notion of aggregate neighbourhood attributes. From this, one could derive if the focal geography is an anomaly or if it is consistent with the neighbourhood trend. This becomes important when figuring out hotspots or clusters in Spatial Statistics.&lt;/p&gt;
+&lt;h3 id=&#34;calculating-neighborhood-attributes&#34;&gt;Calculating Neighborhood Attributes&lt;/h3&gt;
+&lt;p&gt;For the moment, let me restrict attention to calculating neighbourhood level attributes. In this tutorial, I am going to stick with matrix algebra rather than general graph theory (as it is faster). Recall that 1 in a binary adjacency matrix represent the neighbours in a graph. So matrix multiplication with the relevant attribute will automatically yield aggregate neighbourhood attribute, because multiplying every value except the nieghbour’s with 0, results in 0.&lt;/p&gt;
+&lt;p&gt;Say for example, we want to calculate how many people live in the adjacent county. I am going to use travel time adjacency as an example.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(skimr)
+diag(traveltime_adjacency) &amp;lt;- 0 # Set diagonal to 0, so that we don&#39;t count the population of the focal geography.
+
+df &amp;lt;- df %&amp;gt;%
+          arrange(match(GEOID, row.names(traveltime_adjacency))) # Ensure that the order of the rows is the same as the order of the adjacency matrix
+
+df &amp;lt;- df %&amp;gt;%
+      mutate(N_pop_census_tt = drop(traveltime_adjacency  %*% pop_census)) # This gives us the total population of the neighbours. drop converts it from 1 column matrix to a vector.
+                    
+df %&amp;gt;% 
+  select(&amp;quot;pop_census&amp;quot;,&amp;quot;N_pop_census_tt&amp;quot;) %&amp;gt;%
+  skim # see how this shakes out.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Name&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Piped data&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Number of rows&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;146&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Number of columns&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;_______________________&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Column type frequency:&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;numeric&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;________________________&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Group variables&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;None&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;span id=&#34;tab:unnamed-chunk-7&#34;&gt;&lt;/span&gt;Table 1: Data summary&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Variable type: numeric&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;skim_variable&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;n_missing&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;complete_rate&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;mean&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;sd&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;p0&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;p25&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;p50&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;p75&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;p100&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;hist&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;pop_census&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;0&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;106560.4&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;159008.7&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;3245&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;25680.5&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;53084&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;127886.2&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1129410&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;▇▁▁▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;N_pop_census_tt&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;0&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1085306.8&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1309155.6&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;0&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;6030.5&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;458143&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1898918.0&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;4684239&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;▇▂▂▁▁&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What if you use a different neighbourhood relationship, for example, based on the thresholds distances of centroids? What if you used queen contiguity as a neighbourhood relationship? Does it change the neighbourhood values?&lt;/li&gt;
+&lt;li&gt;What is the interpretation, when you do not set the diagonal elements of the adjacency matrix? What impact does it have on calculations of neighbourhood totals?&lt;/li&gt;
+&lt;li&gt;What if you want to calculate the average population of the neighbours instead of the total population of the neighbours?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;It is interesting to note that neighbourhood population has a minimum value 0, even when the minimum value of population is non-zero. This means that there are some counties, that do not have any neighbours. Let’s visualise who they are and see if the road network is contributing to the issue?&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(widgetframe)
+
+island_geoids &amp;lt;- row.names(traveltime_adjacency)[rowSums(traveltime_adjacency) == 0]# This gives us the counties with no neighbours.
+
+
+m1 &amp;lt;-
+  ctys %&amp;gt;%
+  filter(GEOID %in% island_geoids) %&amp;gt;%
+  tm_shape() +
+  tm_fill(col=&#39;red&#39;, alpha =.5) +
+  tm_shape(rds)+
+  tm_lines(col=&#39;grey&#39;) +
+  tm_basemap(&amp;quot;CartoDB.Positron&amp;quot;) +
+  tm_tiles(&amp;quot;CartoDB.PositronOnlyLabels&amp;quot;)
+
+tmap_mode(&amp;quot;plot&amp;quot;) # Need to do this to deal with Github file size issues. Set it to view if you want a html widget.
+#frameWidget(tmap_leaflet(m1))
+m1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;In particular, please pay attention to Brunswick county next to Wilmington. You should expect that it is possible to reach Wilmington (New Hanover) within an 90 min. Why then does this not have any neighbours? Is it the issue with the choice of the network or with the centroid of the county?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Do you have any islands, when you use queen contiguity? What if you use tracts instead of counties?&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;clusters-of-deprivation&#34;&gt;Clusters of Deprivation&lt;/h2&gt;
+&lt;p&gt;Let us now turn our attention to the analysis of deprivation. I will use poverty and female unemployment as proxies for deprivation. I arbitrarily define Deprivation to be a combination of poverty and unemployment. In this instance, I am picking 25% and 10% as thresholds respectively.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+distressed_cty &amp;lt;- df %&amp;gt;%
+                     filter(unemp_rate &amp;gt; .10 | pov_rate &amp;gt; .25)
+
+distressed_cty_shp &amp;lt;- right_join(ctys, distressed_cty, by=&#39;GEOID&#39;)
+
+
+tmap_mode(&amp;quot;view&amp;quot;)
+
+m1 &amp;lt;- tm_basemap(&amp;quot;CartoDB.Positron&amp;quot;)+
+      tm_shape(distressed_cty_shp) +
+      tm_fill(col=&#39;red&#39;, alpha=.5)+
+      tm_tiles(&amp;quot;CartoDB.PositronOnlyLabels&amp;quot;)
+
+
+frameWidget(tmap_leaflet(m1))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-9.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h3 id=&#34;local-outliers&#34;&gt;Local outliers?&lt;/h3&gt;
+&lt;p&gt;There are some instances, you might be interested in figuring out if the focal geography is an outlier compared to its neighbours. For example, the following code would help you identify if the focal geography is has 50% higher population than its neighbours (on average). Let’s use KNN adjacency&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;cty_knn_mat &amp;lt;- nb2mat(cty_knn, zero.policy=TRUE, style=&amp;quot;W&amp;quot;) # W is row standardised,
+cty_knn_mat[1:5, 1:5] # look at the subset of the matrix
+#       37037     37001 37057 45023 37069
+# 37037  0.00 0.3333333     0     0     0
+# 37001  0.25 0.0000000     0     0     0
+# 37057  0.00 0.0000000     0     0     0
+# 45023  0.00 0.0000000     0     0     0
+# 37069  0.00 0.0000000     0     0     0
+
+
+# Now we can calculate the average population of the neighbours
+ctys2 &amp;lt;- df %&amp;gt;%
+      mutate(N_avg_pop_census_knn = drop(cty_knn_mat %*% pop_census)) %&amp;gt;%
+      filter(pop_census &amp;gt; 1.5*N_avg_pop_census_knn) %&amp;gt;%
+      select(&amp;quot;GEOID&amp;quot;, &amp;quot;N_avg_pop_census_knn&amp;quot;, &amp;quot;pop_census&amp;quot;)%&amp;gt;%
+      left_join(ctys, by=&#39;GEOID&#39;) %&amp;gt;%
+      st_as_sf()
+
+m1 &amp;lt;- tm_shape(ctys2) +
+  tm_fill(col=&#39;red&#39;, alpha=.5) +
+  tm_basemap(&amp;quot;CartoDB.Positron&amp;quot;) +
+  tm_tiles(&amp;quot;CartoDB.PositronOnlyLabels&amp;quot;)
+
+frameWidget(tmap_leaflet(m1))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-10.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;div class=&#34;alert alert-important&#34;&gt;
+  &lt;div&gt;
+    Notice that while we specified 3 nearest neighbours some rows (e.g. FIPS 37001) has 0.25 as weight. This implies 4 neighbours. This is because we made the matrix symmetric, because while &lt;code&gt;nearness&lt;/code&gt; is symmetric relationship, &lt;code&gt;nearest&lt;/code&gt; is not.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;spdep&lt;/code&gt; has a function called &lt;code&gt;lag.listw&lt;/code&gt; that can help you identify neighborhood average. Figure out how to use it. Might be helpful when you have a large number of geographies.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Large number of geographies with only a few connectons, might require you to get familiar with sparse matrices. Figure out how to work with them.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;The row standardised weight matrix gives all the neighbours of a focal geography equal weight (1/rowsum of ones). In this occasion, we want to weight the attribute (say unemployment rate) based on a different attribute (say labour force).&lt;/p&gt;
+&lt;p&gt;We take advantage of the element by element multiplication and matrix multiplication to get this.&lt;/p&gt;
+&lt;p&gt;First we create the denominator, which is the sum of all labour force of the neighbours, just as before using matrix multiplication. Then we perform the tricky bit of only counting the labour force each of the neighbours using element by element multiplication. In R, &lt;code&gt;*&lt;/code&gt; is element by element multiplication, where as &lt;code&gt;%*%&lt;/code&gt; is matrix multiplication.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;cty_knn_mat &amp;lt;- nb2mat(cty_knn, zero.policy=TRUE, style=&amp;quot;B&amp;quot;) # Create a binary matrix
+
+denom_lf &amp;lt;- cty_knn_mat %*% df$lf_est # A.v, where A is nxn is a binary adjacency matrix and v is nx1 vector of labour force. Using matrix multiplication here. This gives us the total labour force of the neighbours.
+
+# Recycle the labour force vector to match the dimensions of the adjacency matrix
+temp1 &amp;lt;- rep(df$lf_est, each =nrow(cty_knn_mat)) %&amp;gt;% matrix(ncol=ncol(cty_knn_mat))
+
+temp1[1:5, 1:5] # look at the subset of the matrix
+#       [,1]  [,2]  [,3] [,4]  [,5]
+# [1,] 15936 39393 35012 6995 15120
+# [2,] 15936 39393 35012 6995 15120
+# [3,] 15936 39393 35012 6995 15120
+# [4,] 15936 39393 35012 6995 15120
+# [5,] 15936 39393 35012 6995 15120
+
+numer_lf &amp;lt;-  cty_knn_mat * temp1  
+
+numer_lf[1:5, 1:5] # look at the subset of the matrix
+#       37037 37001 37057 45023 37069
+# 37037     0 39393     0     0     0
+# 37001 15936     0     0     0     0
+# 37057     0     0     0     0     0
+# 45023     0     0     0     0     0
+# 37069     0     0     0     0     0
+
+temp1 &amp;lt;- rep(denom_lf, times =nrow(cty_knn_mat)) %&amp;gt;% matrix(ncol=ncol(cty_knn_mat))
+weight_matrix_lf &amp;lt;- numer_lf/temp1 # This gives us the weighted matrix
+
+# Check to see if it is indeed a weight matrix
+weight_matrix_lf[1:5, 1:5] 
+#            37037     37001 37057 45023 37069
+# 37037 0.00000000 0.4459551     0     0     0
+# 37001 0.08467228 0.0000000     0     0     0
+# 37057 0.00000000 0.0000000     0     0     0
+# 45023 0.00000000 0.0000000     0     0     0
+# 37069 0.00000000 0.0000000     0     0     0
+rowSums(weight_matrix_lf) %&amp;gt;% summary() # should be 1
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#       1       1       1       1       1       1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now it is straightforward to get the labour force weighted unemployment rate of the neighbours&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;df &amp;lt;- df %&amp;gt;%
+      mutate(N_unemp_avg = drop(weight_matrix_lf %*% unemp_rate))
+
+library(tmap)
+
+tmap_mode(&amp;quot;plot&amp;quot;)
+
+cty2 &amp;lt;- df %&amp;gt;%
+      left_join(ctys, by=&#39;GEOID&#39;) %&amp;gt;%
+      st_as_sf()
+
+
+tmap_arrange(
+  tm_shape(cty2) +
+    tm_polygons(&amp;quot;unemp_rate&amp;quot;, 
+                legend.format = list(digits=2),
+                style = &#39;cont&#39;, border.alpha=.2,
+                title = &amp;quot;Female Unemployment Rate&amp;quot;,
+                legend.is.portrait = FALSE),
+  
+  tm_shape(cty2)+
+    tm_polygons(col=&amp;quot;N_unemp_avg&amp;quot;, 
+                legend.format = list(digits=2),
+                style = &#39;cont&#39;, 
+                title = &amp;quot;Neighborhood Unemployment Rate&amp;quot;,
+                legend.is.portrait = FALSE,
+                border.alpha=.2)
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;To figure out local outliers, you might consider counties with sufficiently different unemployment rates than their neighbours. In this case, I am employing an arbitrary threshold of 30% .&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;distressed_cty &amp;lt;- df %&amp;gt;%
+                     filter(unemp_rate &amp;gt; 1.3*N_unemp_avg)
+
+distressed_cty_shp &amp;lt;- right_join(ctys, distressed_cty, by=&#39;GEOID&#39;) %&amp;gt;%
+                       st_as_sf()
+
+
+tmap_mode(&amp;quot;view&amp;quot;)
+
+m1 &amp;lt;- tm_basemap(&amp;quot;CartoDB.Positron&amp;quot;)+
+      tm_shape(distressed_cty_shp) +
+      tm_fill(col=&#39;red&#39;, alpha=.5)+
+      tm_tiles(&amp;quot;CartoDB.PositronOnlyLabels&amp;quot;)
+
+
+frameWidget(tmap_leaflet(m1))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-13.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Repeat this exercise for poverty rate with appropriate variables.&lt;/li&gt;
+&lt;li&gt;Use different neighbourhood relationships and see how it affects the results.&lt;/li&gt;
+&lt;li&gt;All the above simply calculates the neighbourhood values without including values from the focal geography. So it is a doughnut with a hole type smoothing operator. If you want to remove the hole, simply change the diagonal elements of the matrix to 1 in the neighbourhood binary matrix. What happens if you do?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;regionalisation&#34;&gt;Regionalisation&lt;/h2&gt;
+&lt;p&gt;Now that we have identified the distressed areas, we can use any number of clustering techniques to identify clusters of distressed areas. In this case, I will simply identify clusters based on disconnected subgraphs. &lt;code&gt;components&lt;/code&gt; function decomposes the graph in subgraphs, i.e. nodes belong to a subgraph, if there is a path between them. If there is not, they belong to different subgraphs.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+distress_nb &amp;lt;- poly2nb(distressed_cty_shp, 
+                       queen=FALSE, 
+                       row.names = distressed_cty_shp$GEOID) # Construct a neighborhood object
+  
+distressed_graph &amp;lt;- distress_nb %&amp;gt;%  
+  nb2mat(zero.policy=TRUE, style=&amp;quot;B&amp;quot;) %&amp;gt;% # Create a Binary Adjacency Matrix.
+  graph.adjacency(mode=&#39;undirected&#39;, add.rownames=NULL) # construct an undirected graph from the adjacency matrix.
+
+cl &amp;lt;- components(distressed_graph) # This decomposes the graph into connected subgraphs.
+
+distressed_cty_shp &amp;lt;- distressed_cty_shp %&amp;gt;%
+          left_join(as_tibble(cbind(cluster_no = cl$membership,GEOID = names(cl$membership))), by=&#39;GEOID&#39;)
+
+
+### Visualisation
+
+
+pal &amp;lt;- colorRampPalette(brewer.pal(8, &amp;quot;Dark2&amp;quot;))
+numColors &amp;lt;- cl$membership %&amp;gt;% unique() %&amp;gt;% length()
+
+m3&amp;lt;-
+ distressed_cty_shp %&amp;gt;%
+   tm_shape()+
+   tm_fill(&amp;quot;cluster_no&amp;quot;, legend.show = FALSE, palette = pal(numColors))+
+   tm_basemap(&amp;quot;CartoDB.Positron&amp;quot;)+
+   tm_tiles(&amp;quot;CartoDB.PositronOnlyLabels&amp;quot;)
+
+
+frameWidget(tmap_leaflet(m3))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-14.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Now that different counties are assigned to different clusters, we can summarise the poverty rate in different clusters. Within in each component of the graph, we can also identify a community structure if you wish, using techniques from &lt;a href=&#34;https://nkaza.github.io/post/analysing-urban-neworks/&#34;&gt;an earlier post&lt;/a&gt;. I leave these as exercises.&lt;/p&gt;
+&lt;p&gt;In some instances, it may be useful to see if the clusters are stringy’ or if they are ‘blobs’. i.e., if the clusters follow linear features (such as roads, valleys, rivers etc.) or if they adjacency is shared among multiple polygons of the same component. To do this, we could rely on diameter of the graph, which is the longest path between any two nodes in graph. If the graph is stringy, it will have a large diameter.&lt;/p&gt;
+&lt;p&gt;In this instance, we want to compute the diameters of each component separately. (diameter of the graph is $ $, as it is not fully connected. )&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+diameters_of_graphs &amp;lt;-  map_dfr(decompose(distressed_graph), function(x){c(dia =diameter(x))})  
+diameters_of_graphs$cluster_no &amp;lt;- 1:(distressed_graph %&amp;gt;% decompose() %&amp;gt;% length()) %&amp;gt;% as.character()
+
+
+distressed_cty_shp &amp;lt;- left_join(distressed_cty_shp, diameters_of_graphs, by=&#39;cluster_no&#39;)
+
+# Quickly showing the stringy and blobby (real words) distressed regions
+maxdia &amp;lt;- max(distressed_cty_shp$dia,na.rm=T)
+
+m5 &amp;lt;- distressed_cty_shp %&amp;gt;%
+      tm_shape()+
+      tm_fill(col=&#39;dia&#39;,
+                  style=&amp;quot;fixed&amp;quot;,
+                  breaks = c(0,1,4,maxdia),
+                  palette = c(&#39;gray&#39;, &#39;blue&#39;, &#39;red&#39;),
+                  labels = c(&amp;quot;Islands&amp;quot;, &amp;quot;Blobby&amp;quot;, &amp;quot;Stringy&amp;quot;))+
+   tm_basemap(&amp;quot;CartoDB.Positron&amp;quot;)+
+   tm_tiles(&amp;quot;CartoDB.PositronOnlyLabels&amp;quot;)
+
+frameWidget(tmap_leaflet(m5))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-5&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-5&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-15.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Repeat this exercise for local outliers that include both poverty and female unemployment?&lt;/li&gt;
+&lt;li&gt;Limiting your analysis to Metropolitan Areas in Carolinas, what conclusions can you draw about the shape of the clusters?&lt;/li&gt;
+&lt;li&gt;Does limiting your analysis to a single state, affect your results? What if you expand to include Virginia and Georgia?&lt;/li&gt;
+&lt;li&gt;Does changing the unit of analysis matter? Say e.g. instead of the counties, we use tracts for the poverty and unemployment characteristics, how are the conclusions different?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;further-analysis&#34;&gt;Further analysis&lt;/h2&gt;
+&lt;p&gt;Instead of categorising the areas of distress by dichotomising, one could use &lt;code&gt;local Moran&#39;s I&lt;/code&gt; to identify locations high values of a continuous variable (say poverty rate) surrounded by other high values areas (or low value areas) and test their statistical significance. &lt;code&gt;local.moran&lt;/code&gt; is a function in spdep and relies on the neighbourhood graph. I leave this as an exercise.&lt;/p&gt;
+&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;Borrowing some concepts from network analysis, helps us in many analytical tasks with regards to space. Todd BenDor and I &lt;a href=&#34;https://nkaza.github.io/publication/bendor2028vn/&#34;&gt;argued&lt;/a&gt; that in some instances it may be beneficial to think about space as networks for modelling purposes too. Tools from graph theory have been incredibly useful to me in a number of &lt;a href=&#34;https://nkaza.github.io/project/urban-change/&#34;&gt;different projects&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Analysing Urban Neworks</title>
+      <link>https://nkaza.github.io/post/analysing-urban-neworks/</link>
+      <pubDate>Wed, 12 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/analysing-urban-neworks/</guid>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Networks are ubiquitous in a urban systems. The more obvious ones are street, rail and utility networks that undergird the city. However, as planners we also focus on less obvious networks; e.g. social networks of people that allow for community formation, the transactional activity of firms that allow us to identify clusters of firms or industries, the mismatch between job seekers and job locations to better plan for social and physical infrastructure and information flow through organisational linkages during a disaster management process. These are but a few examples of network analysis in the urban domain. The problem definition frames the analytical tools used in the process.&lt;/p&gt;
+&lt;h2 id=&#34;acquire-data&#34;&gt;Acquire Data&lt;/h2&gt;
+&lt;p&gt;Let’s begin by using the bike share data from New York, we are familiar with. We &lt;a href=&#34;https://nkaza.github.io/post/geospatial-data-in-r/&#34;&gt;already did some network analysis&lt;/a&gt; with it (inadvertently). Let’s formalise it.
+Much of the following &lt;a href=&#34;https://www.dropbox.com/s/wbzs2qisfgc2fts/201806-citibike-tripdata.csv?dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;data&lt;/a&gt; cleaning that you should be familiar with now.&lt;/p&gt;
+&lt;h2 id=&#34;key-nodes-in-a-network&#34;&gt;Key nodes in a network&lt;/h2&gt;
+&lt;p&gt;Networks are representation of connections between two nodes. As such bike stations, could be treated a vertex/node and each trip between any two stations could be treated as a link. In another representation, you can treat all stations connected with one another, if they belong to the same company that you can check out and return these bikes and treat the number of trips as weights on that edge; so some edges will have zero weights. In other instances, you may disallow edges that have zero weights, i.e. remove the connection between two stations if there are no trips between them (or number of trips below a threshold).&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyverse)
+library(igraph)
+library(here)
+
+
+tripdata &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;nycbikeshare&amp;quot;, &amp;quot;201806-citibike-tripdata.csv&amp;quot;) %&amp;gt;% read_csv()
+
+tripdata &amp;lt;- rename(tripdata,              #rename column names to get rid of the space
+                   Slat = `start station latitude`,
+                   Slon = `start station longitude`,
+                   Elat = `end station latitude`,
+                   Elon = `end station longitude`,
+                   Sstid = `start station id`,
+                   Estid = `end station id`,
+                   Estname = `end station name`,
+                   Sstname = `start station name`
+                   
+)
+diffdesttrips &amp;lt;- tripdata[tripdata$Estid != tripdata$Sstid, ] # to make sure there are no loops or self-connections. 
+
+
+(trips_graph &amp;lt;- diffdesttrips %&amp;gt;% 
+        select(Sstid,Estid) %&amp;gt;%
+        graph.data.frame(directed = T)) #We are using directed graph because the links have from and to edges. You can choose to ignore them.
+# IGRAPH 2b31606 DN-- 773 1909858 -- 
+# + attr: name (v/c)
+# + edges from 2b31606 (vertex names):
+#  [1] 72-&amp;gt;173  72-&amp;gt;477  72-&amp;gt;457  72-&amp;gt;379  72-&amp;gt;459  72-&amp;gt;446  72-&amp;gt;212  72-&amp;gt;458 
+#  [9] 72-&amp;gt;212  72-&amp;gt;514  72-&amp;gt;514  72-&amp;gt;465  72-&amp;gt;173  72-&amp;gt;524  72-&amp;gt;173  72-&amp;gt;212 
+# [17] 72-&amp;gt;382  72-&amp;gt;462  72-&amp;gt;3141 72-&amp;gt;456  72-&amp;gt;519  72-&amp;gt;328  72-&amp;gt;426  72-&amp;gt;3659
+# [25] 72-&amp;gt;359  72-&amp;gt;525  72-&amp;gt;405  72-&amp;gt;458  72-&amp;gt;457  72-&amp;gt;3163 72-&amp;gt;426  72-&amp;gt;328 
+# [33] 72-&amp;gt;376  72-&amp;gt;3459 72-&amp;gt;304  72-&amp;gt;457  72-&amp;gt;486  72-&amp;gt;527  72-&amp;gt;490  72-&amp;gt;459 
+# [41] 72-&amp;gt;459  72-&amp;gt;3178 72-&amp;gt;3178 72-&amp;gt;515  72-&amp;gt;459  72-&amp;gt;388  72-&amp;gt;500  72-&amp;gt;508 
+# [49] 72-&amp;gt;173  72-&amp;gt;426  72-&amp;gt;368  72-&amp;gt;3258 72-&amp;gt;532  72-&amp;gt;478  72-&amp;gt;514  72-&amp;gt;533 
+# [57] 72-&amp;gt;519  72-&amp;gt;423  72-&amp;gt;3457 72-&amp;gt;525  72-&amp;gt;525  72-&amp;gt;490  72-&amp;gt;529  72-&amp;gt;405 
+# + ... omitted several edges
+
+
+vcount(trips_graph)
+# [1] 773
+ecount(trips_graph)
+# [1] 1909858
+is.directed(trips_graph)
+# [1] TRUE
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can access the vertices and edges using &lt;code&gt;V&lt;/code&gt; and &lt;code&gt;E&lt;/code&gt; functions.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+V(trips_graph) %&amp;gt;% head()
+# + 6/773 vertices, named, from 2b31606:
+# [1] 72  79  82  83  119 120
+E(trips_graph) %&amp;gt;% head()
+# + 6/1909858 edges from 2b31606 (vertex names):
+# [1] 72-&amp;gt;173 72-&amp;gt;477 72-&amp;gt;457 72-&amp;gt;379 72-&amp;gt;459 72-&amp;gt;446
+
+tmp1 &amp;lt;- diffdesttrips %&amp;gt;%
+  group_by(Sstid) %&amp;gt;%
+  summarise(
+    stname = first(Sstname),
+    lon = first(Slon),
+    lat = first(Slat))%&amp;gt;%
+  rename(stid = Sstid)
+
+tmp2 &amp;lt;- diffdesttrips %&amp;gt;%
+  group_by(Estid) %&amp;gt;%
+  summarise(
+    stname = first(Estname),
+    lon = first(Elon),
+    lat = first(Elat)) %&amp;gt;%
+  rename(stid = Estid)
+
+station_locs &amp;lt;- rbind(tmp1, tmp2) %&amp;gt;% unique()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can extract subgraphs for a subset of vertices&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.seed(200) # For reproducibility because of randomisation below
+station_sample &amp;lt;- sample(V(trips_graph), 20)
+sub_trips &amp;lt;- induced_subgraph(trips_graph, station_sample)
+
+
+# plot using ggraph
+library(ggraph)
+ggraph(sub_trips, layout = &#39;kk&#39;) + 
+    geom_edge_fan(show.legend = FALSE) +
+    geom_node_point()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;Note that the graph does not respect the geographic locations. If you want to fix the positions relative to their lat/long coordinates, you should can specify them using layout parameters.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use different layouts (such as star and cricle) to visualise the network.&lt;/li&gt;
+&lt;li&gt;Use different edge attributes to style the edges of the above graph&lt;/li&gt;
+&lt;li&gt;Style the vertices using for e.g. number of incoming trips per day, or their location in different boroughs.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;adjacency-matrix&#34;&gt;Adjacency matrix&lt;/h3&gt;
+&lt;p&gt;One representation of a graph is an adjacency matrix. It is a square matrix used to represent a finite graph. The elements of the matrix indicate whether pairs of vertices are adjacent or not in the graph. Each row and each column represents a single vertex. $ A $ is and adjacency matrix, whose elements $ a_{ij} $ is 0 when vertices/nodes $ i $ and $ j $ are not adjacent. If the graph is undirected and unweighted then $ a_{ij} $ is 1 when they are adjacent. In the case of a directed graph, the matrix is not symmetric. In our case, we have a weighted directed graph with the weights representing the number of trips between two stations. To visualise a portion of this matrix try&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;as_adjacency_matrix(trips_graph)[1:6, 1:6]
+# 6 x 6 sparse Matrix of class &amp;quot;dgCMatrix&amp;quot;
+#     72 79 82 83 119 120
+# 72   .  7  .  .   .   .
+# 79  22  .  3  .   1   .
+# 82   1  3  .  .   .   .
+# 83   .  .  .  .   2  18
+# 119  .  .  1  1   .   1
+# 120  .  .  . 20   .   .
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Adjacency matrix is very important as it allows us to perform matrix operations much more efficiently as we will see in &lt;a href=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/&#34;&gt;other tutorials&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;degrees--their-distribution&#34;&gt;Degrees &amp;amp; their distribution.&lt;/h3&gt;
+&lt;p&gt;Degree of a vertex, in graph theory, refers to the number of edges that has the vertex as one of its ends. An in-degree and out-degree qualifies it, by counting only edges that start and end at the vertex. Degree distributions are important for graphs as they tell us about how connected the graph is and which if any of the vertices are more important than others.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;degree(trips_graph, mode = &#39;out&#39;) %&amp;gt;%
+  as.tibble %&amp;gt;%
+  ggplot()+
+  geom_density(aes(x=value))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+degree.distribution(trips_graph) %&amp;gt;% head() # Check out what the degree.distribution produces and how to interpret the results.
+# [1] 0.000000000 0.003880983 0.005174644 0.002587322 0.001293661 0.001293661
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In particular, you want to look for the outliers in the distribution. For example to find the stations with only end trips but no start trips, i.e stations that are solely destinations&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;V(trips_graph)$name[degree(trips_graph, mode=&amp;quot;out&amp;quot;) == 0 &amp;amp; degree(trips_graph, mode=&amp;quot;in&amp;quot;) &amp;gt; 0]
+#  [1] &amp;quot;3245&amp;quot; &amp;quot;3267&amp;quot; &amp;quot;3275&amp;quot; &amp;quot;3192&amp;quot; &amp;quot;3276&amp;quot; &amp;quot;3184&amp;quot; &amp;quot;3214&amp;quot; &amp;quot;3651&amp;quot; &amp;quot;3198&amp;quot; &amp;quot;3199&amp;quot;
+# [11] &amp;quot;3203&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can also visualise these stations that are popular origins on the map. However, we need to attach the values to the station locations tibble.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+
+tmp &amp;lt;- degree(trips_graph, mode = &#39;out&#39;) %&amp;gt;%
+  as.tibble() %&amp;gt;%
+  rename(Outdegree = value)%&amp;gt;%
+  mutate(stid = V(trips_graph)$name %&amp;gt;% as.numeric()) 
+
+
+station_locs &amp;lt;- station_locs %&amp;gt;% 
+  left_join(tmp, by=&#39;stid&#39;)
+
+
+library(tmap)
+library(sf)
+
+tmap_mode(&amp;quot;view&amp;quot;)
+
+m1 &amp;lt;- 
+station_locs %&amp;gt;% 
+  mutate(outdegree_std = (Outdegree - mean(Outdegree))/sd(Outdegree)) %&amp;gt;%
+  filter(outdegree_std &amp;gt;2) %&amp;gt;% # focusing on the Outliers!
+  st_as_sf(coords = c(&#39;lon&#39;, &#39;lat&#39;), crs=4326) %&amp;gt;%
+  tm_shape()+
+  tm_dots(size = &#39;outdegree_std&#39;, alpha =.5, border.lwd=0)+
+  tm_basemap(leaflet::providers$CartoDB) 
+ 
+
+# Showing the use of leaflet  and fillcolorfor reference 
+ 
+# library(leaflet)
+# 
+#  Npal &amp;lt;- colorNumeric(
+#    palette = &amp;quot;Reds&amp;quot;, n = 5,
+#    domain = station_locs$Outdegree
+#  )
+# 
+#  m1 &amp;lt;- 
+# station_locs %&amp;gt;%
+#     leaflet()  %&amp;gt;%
+#   addProviderTiles(providers$CartoDB.Positron, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
+#    addCircles(
+#      lng = station_locs$lon,
+#      lat = station_locs$lat,
+#      radius = (station_locs$Outdegree - mean(station_locs$Outdegree))/sd(station_locs$Outdegree) * 30,
+#      fillOpacity = .6,
+#     fillColor = Npal(station_locs$Outdegree),
+#      group = &#39;Stations&#39;,
+#      stroke=FALSE
+#    ) %&amp;gt;%
+#   addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~Outdegree,
+#             labFormat = function(type, cuts, p) {
+#               n = length(cuts) 
+#               paste0(prettyNum(cuts[-n], digits=2, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=2, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+#             },
+#             title = &amp;quot;Out degree/Trip Starts&amp;quot;,
+#             opacity = 1
+#   )
+
+library(widgetframe)
+frameWidget(tmap_leaflet(m1))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-7.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;You can also find out which stations are predominantly origin stations and which are predominantly destinations. I use 20% more as a cut off (arbitrary).&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Careful with division. If you have a nodes that are only origins, i.e. in-degree is 0, you will have a division by 0 problem.
+
+V(trips_graph)$name[degree(trips_graph, mode=&amp;quot;out&amp;quot;) / degree(trips_graph, mode=&amp;quot;in&amp;quot;) &amp;gt; 1.2]
+#  [1] &amp;quot;216&amp;quot;  &amp;quot;258&amp;quot;  &amp;quot;266&amp;quot;  &amp;quot;289&amp;quot;  &amp;quot;339&amp;quot;  &amp;quot;356&amp;quot;  &amp;quot;391&amp;quot;  &amp;quot;397&amp;quot;  &amp;quot;399&amp;quot;  &amp;quot;443&amp;quot; 
+# [11] &amp;quot;469&amp;quot;  &amp;quot;3152&amp;quot; &amp;quot;3161&amp;quot; &amp;quot;3164&amp;quot; &amp;quot;3177&amp;quot; &amp;quot;3302&amp;quot; &amp;quot;3316&amp;quot; &amp;quot;3366&amp;quot; &amp;quot;3536&amp;quot; &amp;quot;3539&amp;quot;
+# [21] &amp;quot;3542&amp;quot; &amp;quot;3620&amp;quot; &amp;quot;3623&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Identify the popular origin stations of the trips by different times of the day and day of the week&lt;/li&gt;
+&lt;li&gt;Modify the above code slightly to identify the popular destinations by different times of the day and day of the week.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;other-centrality-measures&#34;&gt;Other centrality measures&lt;/h3&gt;
+&lt;h4 id=&#34;eigen-centrality&#34;&gt;Eigen centrality&lt;/h4&gt;
+&lt;p&gt;If $ A = a_{ij} $ be the adjacency matrix of a graph, where $ a_{ij} = 1 $ when $ i $ and $ j $ nodes are connected, $ 0 $ otherwise. The eigenvector centrality $ x_{i} $ of node $ i $ is given by:&lt;/p&gt;
+&lt;p&gt;$$ x_i = \frac{1}{\lambda} \sum_{k} a_{ki} x_k $$&lt;/p&gt;
+&lt;p&gt;where $ $ is a constant and is the largest eigen value of the adjacency matrix.&lt;/p&gt;
+&lt;p&gt;Intuitively, a node is considered more central/important, if it is connected to large number of highly central/important nodes. So, a node may have a high degree score (i.e. many connections) but a relatively low eigen centrality score if many of those connections are with similarly low-scored nodes.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;station_locs$eigencentrality &amp;lt;- eigen_centrality(trips_graph, directed = T)$vector
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Showing only the stations with large eigen centrality scores.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-10.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h3 id=&#34;page-rank-centrality&#34;&gt;Page rank centrality&lt;/h3&gt;
+&lt;p&gt;Page rank is a version of eigen centrality, made popular by the founders of Google. We can use boxplot in the standard graphics package to identify the outliers. .&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmp  &amp;lt;- page_rank(trips_graph)$vector %&amp;gt;% 
+    boxplot.stats() %&amp;gt;%
+    .[[&amp;quot;out&amp;quot;]] %&amp;gt;% ## Box plot identifies the oultiers, outside the whiskers. The default value is 1.5 outside the box.
+     names() %&amp;gt;% 
+    as.numeric()
+
+station_locs %&amp;gt;% 
+  filter(stid %in% tmp) %&amp;gt;%
+  select(&#39;stname&#39;)
+# # A tibble: 17 × 1
+#    stname                       
+#    &amp;lt;chr&amp;gt;                        
+#  1 Broadway &amp;amp; E 14 St           
+#  2 Christopher St &amp;amp; Greenwich St
+#  3 Carmine St &amp;amp; 6 Ave           
+#  4 Centre St &amp;amp; Chambers St      
+#  5 Broadway &amp;amp; E 22 St           
+#  6 West St &amp;amp; Chambers St        
+#  7 W 21 St &amp;amp; 6 Ave              
+#  8 W 41 St &amp;amp; 8 Ave              
+#  9 8 Ave &amp;amp; W 33 St              
+# 10 W 33 St &amp;amp; 7 Ave              
+# 11 E 17 St &amp;amp; Broadway           
+# 12 Broadway &amp;amp; W 60 St           
+# 13 12 Ave &amp;amp; W 40 St             
+# 14 Pershing Square North        
+# 15 Central Park S &amp;amp; 6 Ave       
+# 16 South End Ave &amp;amp; Liberty St   
+# 17 Kent Ave &amp;amp; N 7 St
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;closeness-centrality&#34;&gt;Closeness centrality&lt;/h4&gt;
+&lt;p&gt;While the above measures of centrality depend on local neighbourhood, we can also take into account the whole graph. For example, if a station can every station within a few hops, then it is considered more central than ones that may have more localised trips within the neighbourhood.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmp &amp;lt;- closeness(trips_graph, mode=&#39;all&#39;) %&amp;gt;% 
+  boxplot.stats() %&amp;gt;%
+  .[[&#39;out&#39;]] %&amp;gt;%
+   names() %&amp;gt;%
+    as.numeric()
+
+station_locs %&amp;gt;% 
+  filter(stid %in% tmp) %&amp;gt;%
+  select(&#39;stname&#39;)
+# # A tibble: 7 × 1
+#   stname                
+#   &amp;lt;chr&amp;gt;                 
+# 1 Paulus Hook           
+# 2 Liberty Light Rail    
+# 3 Heights Elevator      
+# 4 Hamilton Park         
+# 5 Essex Light Rail      
+# 6 Morris Canal          
+# 7 Bike Mechanics at Riis
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;These seems like unusual stations to be outliers in a centrality index (bike mechanics??) and unlike the page rank index. A closer look at the centrality using box plot reveals that these are outliers at the left end of the centrality distribution.&lt;/p&gt;
+&lt;p&gt;There are hundreds of centrality measures out there. Be careful to pick and choose the right ones for your problem. To assist with this, you can use &lt;code&gt;CINNA&lt;/code&gt; (Central Informative Nodes in Network Analysis) package for computing, analysing and comparing centrality measures submitted to CRAN repository.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(CINNA)
+proper_centralities(trips_graph)
+#  [1] &amp;quot;Alpha Centrality&amp;quot;                                
+#  [2] &amp;quot;Bonacich power centralities of positions&amp;quot;        
+#  [3] &amp;quot;Page Rank&amp;quot;                                       
+#  [4] &amp;quot;Average Distance&amp;quot;                                
+#  [5] &amp;quot;Barycenter Centrality&amp;quot;                           
+#  [6] &amp;quot;BottleNeck Centrality&amp;quot;                           
+#  [7] &amp;quot;Centroid value&amp;quot;                                  
+#  [8] &amp;quot;Closeness Centrality (Freeman)&amp;quot;                  
+#  [9] &amp;quot;ClusterRank&amp;quot;                                     
+# [10] &amp;quot;Decay Centrality&amp;quot;                                
+# [11] &amp;quot;Degree Centrality&amp;quot;                               
+# [12] &amp;quot;Diffusion Degree&amp;quot;                                
+# [13] &amp;quot;DMNC - Density of Maximum Neighborhood Component&amp;quot;
+# [14] &amp;quot;Eccentricity Centrality&amp;quot;                         
+# [15] &amp;quot;Harary Centrality&amp;quot;                               
+# [16] &amp;quot;eigenvector centralities&amp;quot;                        
+# [17] &amp;quot;K-core Decomposition&amp;quot;                            
+# [18] &amp;quot;Geodesic K-Path Centrality&amp;quot;                      
+# [19] &amp;quot;Katz Centrality (Katz Status Index)&amp;quot;             
+# [20] &amp;quot;Kleinberg&#39;s authority centrality scores&amp;quot;         
+# [21] &amp;quot;Kleinberg&#39;s hub centrality scores&amp;quot;               
+# [22] &amp;quot;clustering coefficient&amp;quot;                          
+# [23] &amp;quot;Lin Centrality&amp;quot;                                  
+# [24] &amp;quot;Lobby Index (Centrality)&amp;quot;                        
+# [25] &amp;quot;Markov Centrality&amp;quot;                               
+# [26] &amp;quot;Radiality Centrality&amp;quot;                            
+# [27] &amp;quot;Shortest-Paths Betweenness Centrality&amp;quot;           
+# [28] &amp;quot;Current-Flow Closeness Centrality&amp;quot;               
+# [29] &amp;quot;Closeness centrality (Latora)&amp;quot;                   
+# [30] &amp;quot;Communicability Betweenness Centrality&amp;quot;          
+# [31] &amp;quot;Community Centrality&amp;quot;                            
+# [32] &amp;quot;Cross-Clique Connectivity&amp;quot;                       
+# [33] &amp;quot;Entropy Centrality&amp;quot;                              
+# [34] &amp;quot;EPC - Edge Percolated Component&amp;quot;                 
+# [35] &amp;quot;Laplacian Centrality&amp;quot;                            
+# [36] &amp;quot;Leverage Centrality&amp;quot;                             
+# [37] &amp;quot;MNC - Maximum Neighborhood Component&amp;quot;            
+# [38] &amp;quot;Hubbell Index&amp;quot;                                   
+# [39] &amp;quot;Semi Local Centrality&amp;quot;                           
+# [40] &amp;quot;Closeness Vitality&amp;quot;                              
+# [41] &amp;quot;Residual Closeness Centrality&amp;quot;                   
+# [42] &amp;quot;Stress Centrality&amp;quot;                               
+# [43] &amp;quot;Load Centrality&amp;quot;                                 
+# [44] &amp;quot;Flow Betweenness Centrality&amp;quot;                     
+# [45] &amp;quot;Information Centrality&amp;quot;                          
+# [46] &amp;quot;Dangalchev Closeness Centrality&amp;quot;                 
+# [47] &amp;quot;Group Centrality&amp;quot;                                
+# [48] &amp;quot;Harmonic Centrality&amp;quot;                             
+# [49] &amp;quot;Local Bridging Centrality&amp;quot;                       
+# [50] &amp;quot;Wiener Index Centrality&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;community-detection&#34;&gt;Community Detection&lt;/h2&gt;
+&lt;p&gt;Finding a community structure in a network is to identify clusters of nodes that are more strongly connected within the cluster than to nodes outside the cluster. There are many algorithms that identify community structures. Some work on weighted networks and some work on digraphs. In any case it is better to convert multigraph (graph with two nodes having multiple edges) into a simple graph with edge weights, representing the number of trips.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;E(trips_graph)$weight &amp;lt;- 1
+station_graph  &amp;lt;- simplify(trips_graph, edge.attr.comb=&amp;quot;sum&amp;quot;)
+
+ecount(station_graph) == ecount(trips_graph)
+# [1] FALSE
+sum(E(station_graph)$weight) == ecount(trips_graph)
+# [1] TRUE
+all.equal(vcount(station_graph), vcount(trips_graph))
+# [1] TRUE
+
+is.directed(station_graph)
+# [1] TRUE
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Walktrap algorithm finds the communities by random walks in the graph. The intuition is that random walks are more likely to be within a community that across communities.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;wlktrp_mmbr &amp;lt;- data.frame (clstrmm  = cluster_walktrap(station_graph)$membership %&amp;gt;% as.factor, 
+                          stid = V(station_graph)$name %&amp;gt;% as.numeric()
+                          ) %&amp;gt;% as.tibble()
+
+
+wlktrp_mmbr$clstrmm %&amp;gt;% summary()
+#   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15 
+#  80 218 207  61   3 195   1   1   1   1   1   1   1   1   1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It seems like there are 5 distinct and non-trivial clusters of stations ($ n $). You can visualise these results by joining them back to tibbles with location information.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+station_locs &amp;lt;- station_locs %&amp;gt;%
+                inner_join(wlktrp_mmbr, by=&#39;stid&#39;)
+
+library(basemaps)
+library(RColorBrewer)
+numColors &amp;lt;- levels(station_locs$clstrmm) %&amp;gt;% length()
+myColors &amp;lt;- colorRampPalette(brewer.pal(8,&amp;quot;Dark2&amp;quot;))(numColors) # Expanding the number of colors available from 8 
+
+station_locs_shp &amp;lt;- st_as_sf(station_locs, coords = c(&amp;quot;lon&amp;quot;, &#39;lat&#39;), crs = st_crs(4326)) 
+ext &amp;lt;- station_locs_shp %&amp;gt;% st_bbox()
+
+
+  ggplot()+
+      basemap_gglayer(ext, map_type = &#39;light&#39;, map_service = &#39;carto&#39;)+
+      scale_fill_identity()+
+  geom_sf(data = station_locs_shp %&amp;gt;% st_transform(st_crs(3857)),
+          aes(color = clstrmm), alpha = .8)+
+  scale_color_manual(values = myColors)+ 
+     scale_x_continuous(&amp;quot;&amp;quot;, breaks=NULL)+
+   scale_y_continuous(&amp;quot;&amp;quot;, breaks=NULL)+
+  labs(colour = &amp;quot;Communities&amp;quot;, x = NULL, y = NULL) +
+      labs(x=NULL, y=NULL) +
+  theme(axis.line = element_blank(),  # Remove all the extraenous stuff from the plot.
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks.length = unit(0, &amp;quot;pt&amp;quot;), #length of tick marks
+        legend.position = &amp;quot;none&amp;quot;,
+        panel.background = element_blank(),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank(), 
+        plot.margin = unit(c(0,0,0,0),&amp;quot;mm&amp;quot;))
+# Loading basemap &#39;light&#39; from map service &#39;carto&#39;...
+# Using geom_raster() with maxpixels = 263341.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/analysing-urban-neworks/index_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;768&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use tmap instead of ggplot.&lt;/li&gt;
+&lt;li&gt;Do the clusters change if you use a different algorithm?&lt;/li&gt;
+&lt;li&gt;Are the clusters different for customers and subscribers? Men and Women?&lt;/li&gt;
+&lt;li&gt;Are the clusters different at different times of the day? days of the week?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;Network analysis techniques provide a very useful set of tools that we can apply in many contexts in urban analytics. Networks are ubiquitous and the above two are but few of the situations where network tools can be readily applied. They need to be used more, and used judiciously.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spatial Regression Discontinuity Design Setup</title>
+      <link>https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/</link>
+      <pubDate>Sun, 08 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/spatial-regression-discontinuity-design-setup/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+
+&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#point-set-theory-and-the-de-9im-matrix&#34;&gt;Point Set Theory and the DE-9IM Matrix&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;The current gold standard for testing the efficacy of an intervention/program/procedure requires this randomisation of participants to treatment and control. The following video by &lt;a href=&#34;https://www.povertyactionlab.org/&#34;&gt;J-PAL&lt;/a&gt; gives a simple explanation of why this may be the case.&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/Uxqw2Pgm7s8&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;In many cases, randomisation to some program is not feasible. There may be political issues, information leaks and other real world problems that &lt;a href=&#34;http://www.nber.org/papers/t0295&#34;&gt;affect the conclusions&lt;/a&gt; that can be drawn. There are also number of &lt;a href=&#34;https://doi.org/10.1016/j.socscimed.2017.12.005&#34;&gt;theoretical critiques&lt;/a&gt; for randomised controlled trials.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;regression-discontinuity&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Regression Discontinuity&lt;/h2&gt;
+&lt;p&gt;Sometimes it is possible to exploit the sharp discontinuity in program application to see what the effect of the program is at the discontinuity. The key intuition is that at the &lt;strong&gt;a priori&lt;/strong&gt; selected discontinuity, in a small window on either side of the discontinuity, the observations are essentially similar except for the treatment. For example, &lt;a href=&#34;http://dx.doi.org/10.1002/pam.21929&#34;&gt;Ellen, Horn &amp;amp; Schwartz (2016)&lt;/a&gt; test the effect of residential location choices of households, whose oldest child becomes eligible for kindergarten. To do this, they focus on voucher receiving households whose oldest child just met the kindergarten eligibility cut-off date and those who missed the cut-off. The &lt;em&gt;rating variable&lt;/em&gt; in this case is age in years by Sep 1 (or some other date) and &lt;em&gt;cut-point&lt;/em&gt; is 5 years. Because the cut-off is determined independent of the participants in the program and by looking at the effect of vouchers in a local neighborhood around the cut-off, they determined the effect of vouchers on residential mobility.&lt;/p&gt;
+&lt;p&gt;There are multiple ways to conceptualise this design; 1) Discontinuity at the cut-point 2) local randomization at the cut-point. See below images for visualisation. In particular, please pay attention to the boxes around the cut-off that symblolise local neighborhood.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/RDD_before.png&#34; style=&#34;width:50.0%&#34; alt=&#34;Before&#34; /&gt; &lt;img src=&#34;img/RDD_after.png&#34; style=&#34;width:50.0%&#34; alt=&#34;After&#34; /&gt;
+&lt;em&gt;Images adapted from &lt;a href=&#34;https://www.mdrc.org/sites/default/files/RDD%20Guide_Full%20rev%202016_0.pdf&#34;&gt;Jacob et. al (2012)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;spatial-regression-discontinuity&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Spatial Regression Discontinuity&lt;/h2&gt;
+&lt;p&gt;It is relatively straightforward to construct a regression discontinuity when the rating variable is on a real line and cut-point is a point on that line, due to fact that real numbers is a &lt;a href=&#34;http://mathworld.wolfram.com/TotallyOrderedSet.html&#34;&gt;totally ordered set&lt;/a&gt;, in particular, the comparability property w.r.t. &lt;span class=&#34;math inline&#34;&gt;\(\lt\)&lt;/span&gt; holds. However, it is often the case that the discontinuity is a spatial one.&lt;/p&gt;
+&lt;p&gt;For example, a subsidy for rooftop solar is implemented by a city within its jurisdiction, and we want to test if the subsidy increased the adoption of rooftop solar. The idea is parcels and households on both sides of the edge of the jurisdictions are similar and the key difference is the eligibility to the subsidy and therefore comparing the adoption rates among those households will help us identify if the subsidy has any effect.&lt;/p&gt;
+&lt;p&gt;Another example could be the effect of minimum wage regulation on employment levels as studied by &lt;a href=&#34;https://doi.org/10.1162/REST_a_00039&#34;&gt;Dube, Lester and Reich (2010)&lt;/a&gt;. They do not employ a regression discontinuity design, but a matching design, but the intuition still applies. Counties at the state borders are likely to be similar and state policy on minimum wage is the only differentiator and differences in employment trends among these subset of counties (at the border) are an estimate of whether minimum wage policies reduce employment levels or not.&lt;/p&gt;
+&lt;p&gt;Similar design for testing the effect of Clean Cities Coalition (CCC) program on air quality and number of alternative fueling stations in counties within and outside the coalition boundaries can be found in &lt;a href=&#34;http://doi.og/10.1016/j.scitotenv.2016.11.119&#34;&gt;Qiu and Kaza (2016)&lt;/a&gt;. In this study, we not only use the spatial discontinuity of the boundaries but also the temporal discontinuity of when the CCC came into existence.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/ccc.jpg&#34; width=&#34;600&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Illustration of research design in &lt;a href=&#34;http://doi.og/10.1016/j.scitotenv.2016.11.119&#34;&gt;Qiu &amp;amp; Kaza (2016)&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;There are some key differences between standard regression discontinuity and the spatial version. See &lt;a href=&#34;http://doi.og/10.1093/pan/mpu014&#34;&gt;Keele and Titiunik (2015)&lt;/a&gt;. They are 1) different measures of distance from the cutoffs may require different identification assumptions 2) Compound treatments 3) Boundary points at the cut-off have different interpretation.&lt;/p&gt;
+&lt;p&gt;For the most part, I am going to ignore these differences in this post for the sake of illustration. In particular, when polygonal entities (instead of points) are the observations of interest, many of the differences are not that important.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;identifying-relevant-observations-on-either-side-of-the-spatial-discontinuity.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Identifying relevant observations on either side of the spatial discontinuity.&lt;/h2&gt;
+&lt;p&gt;Let us assume that we have a discontinuity at the edge of the metropolitan statistical areas. For the purposes of illustration, I am going to download CBSA and county shapefiles from Census using &lt;code&gt;tigris&lt;/code&gt; package. I am going to restrict my attention to Illinois for the sake of exposition.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+cbsa &amp;lt;- core_based_statistical_areas()
+cty_shp &amp;lt;- counties(state=&amp;quot;il&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#library(rgeos)
+library(sf)
+library(tidyverse)
+library(tigris)
+
+msa &amp;lt;- cbsa[cbsa$LSAD==&amp;quot;M1&amp;quot;,] # Restrict attention only to Metro areas, ignore Micro
+msa_IL &amp;lt;- msa[st_centroid(cty_shp, byid=T),] # Select metros that are in IL. &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    If we used the &lt;strong&gt;“[”&lt;/strong&gt; method using a polygon instead of points it selects MSAs that are also outside IL but are adjacent to IL county boundary files. It does not matter for the illustration, but may be problematic for other work. Hence we are keeping only those MSAs where the IL county centroids are in a MSA.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;There are 102 counties in IL.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-3.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Before running any topology operations, it is always a good idea to check to see if the geometry is valid (e.g. no self-intersections etc.)&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cty_shp[!st_is_valid(cty_shp, byid = TRUE),]
+# Simple feature collection with 0 features and 17 fields
+# Bounding box:  xmin: NA ymin: NA xmax: NA ymax: NA
+# Geodetic CRS:  NAD83
+#  [1] STATEFP  COUNTYFP COUNTYNS GEOID    NAME     NAMELSAD LSAD     CLASSFP 
+#  [9] MTFCC    CSAFP    CBSAFP   METDIVFP FUNCSTAT ALAND    AWATER   INTPTLAT
+# [17] INTPTLON geometry
+# &amp;lt;0 rows&amp;gt; (or 0-length row.names)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Since this returns an empty list, lets proceed to extract all the counties within the MSA and outside MSA and use the TOUCHES relationship with the MSA boundary to extract counties within and outside the MSA. Note the &amp;gt; 0, for the reason that counties can be adjacent to many MSA boundaries.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;msa_ctyID &amp;lt;- cty_shp$CBSAFP %in% msa_IL$CBSAFP
+msa_cty &amp;lt;- cty_shp[msa_ctyID,]
+nonmsa_cty &amp;lt;- cty_shp[!msa_ctyID,]
+treat_cty &amp;lt;- msa_cty[rowSums(st_touches(msa_cty, st_boundary(msa_IL),sparse=F)) &amp;gt; 0,]
+cntrl_cty &amp;lt;- nonmsa_cty[rowSums(st_touches(nonmsa_cty, st_boundary(msa_IL), sparse=F)) &amp;gt; 0,]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is a visual representation.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-6.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Note how Kane and Dupage counties, near Chicago, that are completely within MSA, are not part of the treatment. Nor are Clark and Cumberland near Terra Haute, IN that are outisde MSA but not touching the boundary are not in Controls. It looks like we have achieved the right results.&lt;/p&gt;
+&lt;p&gt;Now that treatment and control groups are formulated at the spatial discontinuity boundary, standard techniques will then be followed to estimate the local treatment effect.&lt;/p&gt;
+&lt;p&gt;A major point to note, however, is the distinction between what is considered ‘local’ around the cutoff in RDD. In the standard case, the local is defined as a neighborhood based on the distance to the rating variable, i.e. rectangle around the cut-off. In the spatial case, the local is defined as any region that is on either side of the discontinuity (at least in this case). In some senses, Touches criterion is also a ‘distance’ metric, if we were to reimagine the regions as network nodes, where two nodes are connected by a link, if they are contigous. The network distance threshold is then 1. One could also imagine a different neighborhood around the discontinuity e.g. all regions within a k-buffer around the discontinuity, or all regions that are continguous of order 2 etc. The choice of this neighborhood is largely arbitrary and based on convention in the field.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;point-set-theory-and-the-de-9im-matrix&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Point Set Theory and the DE-9IM Matrix&lt;/h1&gt;
+&lt;p&gt;Another way of doing this would be to use the function &lt;code&gt;st_relate&lt;/code&gt; in sf or &lt;code&gt;gRelate&lt;/code&gt; in &lt;code&gt;rgeos&lt;/code&gt;. These functions would give the DE-9IM relation for each pair of polygons (e.g. FF2FF1212). Then it is a matter of parsing the code to figure out which ones are exterior and which ones are interior to MSA polygons.&lt;/p&gt;
+&lt;p&gt;It is useful to digress into some topology and &lt;a href=&#34;http://docs.geotools.org/stable/userguide/library/jts/dim9.html&#34;&gt;summarize the relationships and their representations&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We need concepts for interior, exterior and a boundary for various spatial types of points, lines and polygons&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Point: Everything outside the point is in the exterior, no boundary&lt;/li&gt;
+&lt;li&gt;Line: All points along length is interior, boundary is the two end points and exterior is everything outside the line.&lt;/li&gt;
+&lt;li&gt;polygons: Standard definitions apply (see below), however, pay attention to the holes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Relationships between polygons are described as a matrix produced by comparing the intersection of the Interior, Boundary and Exterior properties of both polygons. This comparison referred to as the Dimensionally Extended 9-Intersection Matrix or DE-9IM.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/twopolygons.png&#34; width=&#34;500&#34; height=&#34;500&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Image from &lt;a href=&#34;https://en.wikipedia.org/wiki/DE-9IM&#34;&gt;Wikipedia&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The above figure has the DE-9IM(&lt;em&gt;a&lt;/em&gt;,&lt;em&gt;b&lt;/em&gt;) string code is ‘212101212’, each character corresponding to the dimension of the intersction in the above matrix. Thus the relationship between two spatial entities can be described has string of 9 characters.&lt;/p&gt;
+&lt;p&gt;Consider the following definition of Area/Area overlap:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;OVERLAP&lt;/th&gt;
+&lt;th&gt;Interior&lt;/th&gt;
+&lt;th&gt;Boundary&lt;/th&gt;
+&lt;th&gt;Exterior&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Interior&lt;/td&gt;
+&lt;td&gt;T&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;td&gt;T&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Boundary&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Exterior&lt;/td&gt;
+&lt;td&gt;T&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;td&gt;*&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Where T is dimension &lt;span class=&#34;math inline&#34;&gt;\(\ge\)&lt;/span&gt; 0, F is &lt;span class=&#34;math inline&#34;&gt;\(\neg\)&lt;/span&gt; T and * is any. So the binary representation for overlap is “T*T***T**”. Interpretation is that interiors of the two areas intersect, exteriors of the two areas intersect and atleast exterior of region &lt;em&gt;a&lt;/em&gt; (row) intersects with interior of region &lt;em&gt;b&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Another relevant relationship for this post is is TOUCHES, whose binary representation is “F***T****”, i.e. interiors do not intersect, but boundaries do (when &lt;em&gt;a&lt;/em&gt; and &lt;em&gt;b&lt;/em&gt; are not points).&lt;/p&gt;
+&lt;p&gt;So to return to our example to get control and treatment counties we can exploit these patterns. Counties at the edge of the MSA but are within it, intersect on the interior and the boundary but the no intersection among the exterior and the boundary. Counties at the edge of MSA that are outside the MSA, have intersection of the interior of the county and exterior of the MSA, boundaries of of the MSA and counties, and no intersection between interiors.&lt;/p&gt;
+&lt;p&gt;We will also exploit the feature that counties belong to a single MSA but could be exterior to multiple MSA. To account for that in the control observations, we simply exclude the observations that are already selected as treatment in the prior step.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+msaId2 &amp;lt;- rowSums(st_relate(cty_shp, msa_IL, pattern=&amp;quot;T*F*TF***&amp;quot;, sparse = F)) &amp;gt; 0
+treat_cty2 &amp;lt;- cty_shp[msaId2,] #Interiors and boundaries intersect, exteriors and interior does not and neither does boundary and exterior.
+cntrl_cty2 &amp;lt;- cty_shp[rowSums(st_relate(cty_shp, msa_IL, pattern=&amp;quot;F*T*T****&amp;quot;, sparse =F)) &amp;gt; 0 &amp;amp; !msaId2,] #Interiors do not intersect, boundaries intersect, exteriors of MSA and interior of county intersects. Also ignore the ones that are already selected into treatment.
+all.equal(treat_cty, treat_cty2)
+# [1] TRUE
+all.equal(cntrl_cty, cntrl_cty2)
+# [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;limitations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;There are many limitations of RD designs and the some of those limitations translate to spatial discontinuity designs. But there are three chief limitations, we should pay attention to.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Apriori determination/Endogeneity: It is mostly not true that the discontinuity is exogenous and determined &lt;em&gt;a priori&lt;/em&gt;. For example, the MSA boundaries are largely determined by economic activity and inclusion in an MSA is usually correlated with the variable we are seeking to observe. Thus in many situations, it will not be possible to over come these limitations. One way to validate the results is to change the spatial discontinuity (by buffering outwards and inwards for example) and see if there is an observed effect of the ‘real’ boundary.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Fuzzy boundaries and Errors: Spatial operations are notoriously susceptible to boundary errors. Just as on real line, machine tolerances and representations of numbers trip up &lt;span class=&#34;math inline&#34;&gt;\(\lt\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(=\)&lt;/span&gt; operators, errors at the boundary lines, accuracy and scale crucially determine whether the topological relations are identified or not (especially &lt;code&gt;st_relate&lt;/code&gt;). To see this issue in the example in the post, download and rerun the analysis with cartographic boundary files, e.g. using tigris download command &lt;code&gt;counties(state=&#34;IL&#34;, cb=TRUE)&lt;/code&gt; etc. One can overcome this by considering all the polygons within the bounding box or &lt;span class=&#34;math inline&#34;&gt;\(\epsilon\)&lt;/span&gt; distance between the boundaries.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exchangeability: Exchangeability is an assumption that states that assignment of observations to the treatment condition is random, in other words, control regions could potentially be treatment regions. This is often a problem, if there are dramatic differences between regions within and outside the spatial discontinuity. For example, notice that we paid no attention to the size of the county in our analyses and if counties within MSA are smaller (on popultion, area, economic activity etc.) than outside MSA then there is a violation of exchangeability assumption. This assumption is often violated, so special attention should be paid to the descriptives.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;All in all spatial regression discontinuity is becoming increasingly popular method to evaluate the effect of various programs, especially in a political system that is federated and the jurisdictional boundaries often serve as spatial discontinuity. While care should be paid to the analysis and the assumptions, it is a useful tool.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Identifying Employment Centers</title>
+      <link>https://nkaza.github.io/post/identifying-employment-centers/</link>
+      <pubDate>Wed, 04 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/identifying-employment-centers/</guid>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;p&gt;In this post, I am going to show the techniques behind identifying centers. Centers are defined collections of contiguous high value (e.g. employment, opportunity, activity etc.) locations. This is related to, but different from using autocorrelation statistics such as Local Indicators of Spatial Autocorrelation. The methods described in this post draw from &lt;a href=&#34;https://doi.org/10.1006/juec.2001.2228&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;McMillen (2001)&lt;/a&gt; and &lt;a href=&#34;https://doi.org/10.1016/0166-0462%2891%2990032-I&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Giuliano &amp;amp; Small (1991)&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
+&lt;p&gt;This requires &lt;a href=&#34;http://r-project.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt;, and many libraries including &lt;a href=&#34;https://cran.r-project.org/web/packages/igraph/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;igraph&lt;/a&gt;,&lt;a href=&#34;https://cran.r-project.org/web/packages/spdep/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;spdep&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/web/packages/rgdal&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;rgdal&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/package=tigris&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;tigris&lt;/a&gt; &lt;a href=&#34;https://cran.r-project.org/package=locfit&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;locfit&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/package=leaflet&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;leaflet&lt;/a&gt;. You should install them, as necessary, with &lt;code&gt;install.packages()&lt;/code&gt; command.&lt;/p&gt;
+&lt;p&gt;Most of the methods and results are discussed in &lt;a href=&#34;https://nkaza.github.io/publication/kazaedq/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Hartley, Kaza &amp;amp; Lester (2016)&lt;/a&gt; and &lt;a href=&#34;https://nkaza.github.io/publication/lesterkazamcadam2018&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Lester, Kaza &amp;amp; McAdam (in review)&lt;/a&gt;. Please refer to those articles.&lt;/p&gt;
+&lt;h2 id=&#34;additional-resources&#34;&gt;Additional resources&lt;/h2&gt;
+&lt;p&gt;I strongly recommend that you read through some of the tutorials on using &lt;a href=&#34;http://www.nickeubank.com/gis-in-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R for GIS&lt;/a&gt;. You should have &lt;a href=&#34;http://www.asdar-book.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Applied Spatial Data Analysis in R&lt;/a&gt; by Bivand et.al in your library.&lt;/p&gt;
+&lt;h2 id=&#34;acquire-data&#34;&gt;Acquire data&lt;/h2&gt;
+&lt;p&gt;The data I will use in this exercise will be downloaded directly from Census. For this work, we will use the Work Area Characteristics files from Local Origin Destination Employment Statistics (LODES). &lt;a href=&#34;https://lehd.ces.census.gov/data/lodes/LODES7/LODESTechDoc7.3.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;LODES&lt;/a&gt; is a synthetic data set that provides, if not spatially accurate, distributionally consistent annual employment information as well as commuting information. We will restrict our attention to the Kentucky. Let’s download and set up the data.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+library(data.table)
+library(rgdal)
+library(spdep)
+library(rgeos)
+library(igraph)
+library(ggplot2)
+library(tigris)
+library(tidyverse)
+library(sf)
+
+state &amp;lt;- &amp;quot;ky&amp;quot;
+baseurl &amp;lt;- &#39;http://lehd.ces.census.gov/data/lodes/LODES7/&#39;
+years &amp;lt;- as.character(2015)
+wac_file &amp;lt;- NULL
+for (year in years){
+  filename &amp;lt;- paste(state, &amp;quot;_wac_S000_JT00_&amp;quot;, year, &amp;quot;.csv.gz&amp;quot;, sep=&amp;quot;&amp;quot; ) #State, S000-Total Number of jobs , JT00,- All jobs
+  url &amp;lt;- paste(baseurl, state, &amp;quot;/wac/&amp;quot;, filename, sep=&amp;quot;&amp;quot; )
+  if(!file.exists(filename)){download.file(url, filename, mode=&#39;wb&#39;)}
+  wac_file[[year]] &amp;lt;- data.table(read.csv(filename, colClasses = c(&#39;character&#39;, rep(&#39;integer&#39;,51), &#39;character&#39;))) ##based on the documentation of the classes
+wac_file &amp;lt;- rbindlist(wac_file, idcol=&amp;quot;Year&amp;quot;, use.names = TRUE)
+}
+
+ky_tr &amp;lt;- tracts(&amp;quot;Kentucky&amp;quot;, year=2010, progress_bar =FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    I am using &lt;code&gt;read.csv&lt;/code&gt; only because I am using a much faster &lt;code&gt;data.table&lt;/code&gt; package for illustration purposes. The code can be easily adapted to &lt;code&gt;tibbles&lt;/code&gt; using &lt;code&gt;read_csv&lt;/code&gt;.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;data-preparation--exploration&#34;&gt;Data preparation &amp;amp; exploration&lt;/h2&gt;
+&lt;p&gt;The data set is at a block level. This level of geography is far too fine (28,996 blocks) for our analyses. Lets aggregate it up to census tracts. Since blocks are nested within the tract, all we need to do is to trim the GEOID and aggregate the data.table to the trimmed GEOID.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;wac_file$w_geocode_tr &amp;lt;- substr(wac_file$w_geocode, 1,11) #trim GEOID to 11. Trim it to 12 if Blockgroups are needed
+setkey(wac_file, w_geocode_tr, Year)
+cols = sapply(wac_file, is.numeric)  #identify the columns where summation can be applied.
+cols = names(cols)[cols]
+wac_file_tr &amp;lt;- wac_file[,lapply(.SD, sum), .SDcols = cols, by=list(w_geocode_tr, Year)] # Aggregate the columns to tract ids.
+
+#C000 is the column that contains the numbers for total jobs.
+summary(wac_file_tr$C000)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     1.0   250.5   763.5  1646.8  1950.5 57291.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We have now a manageable number of geographic units (1,112 tracts). The summary statistics look pretty skewed. It is useful to visualise the inequality of the distribution. We can use Lorenz curve for this. We need the &lt;code&gt;ineq&lt;/code&gt; package for this.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(ineq)
+ plot(Lc(wac_file_tr$C000), xlab=&amp;quot;Cumulative % of tracts&amp;quot;, ylab=&amp;quot;Cumulative % of Jobs&amp;quot;)
+ abline(v =.5, lty=2, col=&#39;blue&#39;)
+ abline(h=.09, lty=2, col=&#39;blue&#39;)
+ abline(v=.9, lty=2, col=&#39;red&#39;)
+ abline(h=.53, lty=2, col=&#39;red&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/identifying-employment-centers/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;768&#34; /&gt;
+The bottom 50% of the tracts only contribute to less than 10% of the total employment, while the top 10% of the tracts contribute to more than 45% of employment. About 11% of tracts have less than 100 jobs. This shows that jobs are pretty well concentrated in particular centers.
+&lt;p&gt;We can visualise the spatial distribution of jobs. We already used &lt;code&gt;tigris&lt;/code&gt; to download and load the polygons, and &lt;code&gt;leaflet&lt;/code&gt; to visualise the information. Tigris is a convenience package that automatically downloads TIGER files from Census for particular geography. Visualising complicated geography is problematic, so we will use a polygon simplifier &lt;a href=&#34;https://bost.ocks.org/mike/simplify/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Visvasalingam algorithm&lt;/a&gt; to simplify the boundaries. As long as the topology is preserved, we don’t loose much for this analysis.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+##Simplify shape for display and analysis. As long as the topology is preserved, complicated boundaries are not necessary for this purpose.
+library(rmapshaper)
+ky_tr_simple &amp;lt;- rmapshaper::ms_simplify(ky_tr)
+c(object.size(ky_tr), object.size(ky_tr_simple))
+# [1] 20041168  2299040
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Merge the spatial polygons with the WAC file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_tr_simple &amp;lt;-  ky_tr_simple %&amp;gt;% 
+                  left_join(wac_file_tr[Year==year, .(w_geocode_tr, C000),], by = c(&amp;quot;GEOID10&amp;quot;=&amp;quot;w_geocode_tr&amp;quot;))
+
+ky_tr_simple$C000[is.na(ky_tr_simple$C000)] &amp;lt;- 0 #set NAs to 0. This may not be kosher depending on your application.
+ky_tr_simple$empdens &amp;lt;- ky_tr_simple$C000/(ky_tr_simple$ALAND10) * 10^4 #Jobs per ha. ALAND10 is in sq.m
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;visualising-spatial-data&#34;&gt;Visualising spatial data&lt;/h2&gt;
+&lt;p&gt;Let us visualise the spatial distribution of employment. Note the use of Quintile colour cuts. There may be other cuts that are more preferable.&lt;/p&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    The Leaflet package expects all point, line, and shape data to be specified in latitude and longitude using WGS 84 (a.k.a. EPSG:4326). By default, when displaying this data it projects everything to EPSG:3857 and expects that any map tiles are also displayed in EPSG:3857. Other projections are not fully supported. It turns out that Census files are in that coordinate system, however, you may have to pay attention To the projections, when using your own polygon files. See &lt;a href=&#34;https://rstudio.github.io/leaflet/projections.html&#34;&gt;https://rstudio.github.io/leaflet/projections.html&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(leaflet)
+
+ky_tr_simple &amp;lt;- ky_tr_simple %&amp;gt;% sf::st_transform(4326)
+
+m &amp;lt;-  leaflet(ky_tr_simple) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;,
+                   options = providerTileOptions(minZoom = 7, maxZoom = 11)) %&amp;gt;%
+   addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;,
+                    options = providerTileOptions(minZoom = 7, maxZoom = 11)) 
+ 
+
+Qpal &amp;lt;- colorQuantile(
+  palette = &amp;quot;BuPu&amp;quot;, n = 7,
+  domain = ky_tr_simple$C000
+)
+
+
+labels &amp;lt;- sprintf(
+  &amp;quot;Tract #: %s &amp;lt;br/&amp;gt; Jobs: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_tr_simple$GEOID10, ky_tr_simple$C000
+) %&amp;gt;% lapply(htmltools::HTML)
+
+  
+m2 &amp;lt;- m %&amp;gt;%
+     addPolygons(color = &amp;quot;#CBC7C6&amp;quot;, weight = 1, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+             fillColor = Qpal(ky_tr_simple$C000),
+              highlightOptions = highlightOptions(color = &amp;quot;white&amp;quot;, weight = 2, bringToFront = TRUE),
+             label = labels,
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;),
+             group = &amp;quot;Tracts&amp;quot;
+             ) %&amp;gt;%
+   addLegend(&amp;quot;topleft&amp;quot;, pal = Qpal, values = ~C000,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=1, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=1, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+             },
+             title = &amp;quot;Number of Jobs&amp;quot;,
+             opacity = 1
+   ) %&amp;gt;%
+  addLayersControl(
+    overlayGroups = c(&amp;quot;Tracts&amp;quot;, &#39;Basemap&#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+
+library(widgetframe) 
+frameWidget(m2)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-6.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;The problem with choropleth maps is that large spatial areas visually draw attention and skew the perception of the map. See for example, the small tracts in Louisville compared to rural tracts around Bradstown. One way to deal with this issue, is to intensify the color of smaller tracts by normalising employment with some variable (area or per capita) to visualise the spatial distribution better. Sometimes, it is also better to ignore the boundaries. It does not get solve the problem completely.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+Qpal &amp;lt;- colorQuantile(
+  palette = &amp;quot;BuPu&amp;quot;, n = 5,
+  domain = ky_tr_simple$empdens
+)
+
+
+labels &amp;lt;- sprintf(
+  &amp;quot;Tract #: %s &amp;lt;br/&amp;gt; Job Density: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_tr_simple$GEOID10, prettyNum(ky_tr_simple$empdens, digits=2, big.mark = &amp;quot;,&amp;quot;)
+) %&amp;gt;% lapply(htmltools::HTML)
+
+  
+m2 &amp;lt;- m %&amp;gt;%
+     addPolygons(color = &amp;quot;#CBC7C6&amp;quot;, weight = 0, smoothFactor = 0.5,
+              opacity = 1.0, fillOpacity = 0.5,
+             fillColor = Qpal(ky_tr_simple$empdens),
+              highlightOptions = highlightOptions(color = &amp;quot;white&amp;quot;, weight = 2, bringToFront = TRUE),
+             label = labels,
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;),
+             group = &amp;quot;Tracts&amp;quot;
+             ) %&amp;gt;%
+   addLegend(&amp;quot;topleft&amp;quot;, pal = Qpal, values = ~empdens,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=2, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=2, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+             },
+             title = &amp;quot;Employment Density per ha&amp;quot;,
+             opacity = 1
+   ) %&amp;gt;%
+  addLayersControl(
+    overlayGroups = c(&amp;quot;Tracts&amp;quot;, &#39;Basemap&#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+ 
+frameWidget(m2)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-7.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;employment-center-definitions&#34;&gt;Employment center definitions&lt;/h2&gt;
+&lt;p&gt;What counts as an employment center depends on what definition you use. Giuliano &amp;amp; Small use a density floor (~25 jobs per ha) and floor on the total jobs ( at least 10,000 jobs). i.e. an employment center is defined as collection of contiguous geographies whose sum total of employment is more than 10,000 and whose density is more than 25 jobs per ha. Notice that these cutoffs are arbitrary and different values give different results. In this post, I am not going to use this definition, though the code is below.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;subgs &amp;lt;-function(shpfile,dens,emp,mind=25,totemp=10000, wmat=0) {
+  if (identical(wmat,0)) {
+    neighbors &amp;lt;- poly2nb(shpfile,queen=TRUE)
+    wmat &amp;lt;- nb2mat(neighbors,style=&amp;quot;B&amp;quot;,zero.policy=TRUE)
+  }
+  dens &amp;lt;- ifelse(is.na(dens),0,dens)
+  obs &amp;lt;- seq(1:length(dens))
+  densobs &amp;lt;- obs[dens&amp;gt;mind]
+  wmat &amp;lt;- wmat[densobs,densobs]
+  n = nrow(wmat)
+  amat &amp;lt;- matrix(0,nrow=n,ncol=n)
+  amat[row(amat)==col(amat)] &amp;lt;- 1
+  bmat &amp;lt;- wmat
+  wmat1 &amp;lt;- wmat
+  newnum = sum(bmat)
+  cnt = 1
+  while (newnum&amp;gt;0) {
+    amat &amp;lt;- amat+bmat
+    wmat2 &amp;lt;- wmat1%*%wmat
+    bmat &amp;lt;- ifelse(wmat2&amp;gt;0&amp;amp;amat==0,1,0)
+    wmat1 &amp;lt;- wmat2
+    newnum = sum(bmat)
+    cnt = cnt+1
+  }
+  emat &amp;lt;- emp[dens&amp;gt;mind]
+  tmat &amp;lt;- amat%*%emat
+  obsmat &amp;lt;- densobs[tmat&amp;gt;totemp]
+  
+  subemp &amp;lt;- array(0,dim=length(dens))
+  subemp[obsmat] &amp;lt;- tmat[tmat&amp;gt;totemp]
+  subobs &amp;lt;- ifelse(subemp&amp;gt;0,1,0)
+  
+  tab &amp;lt;- tabulate(factor(subemp))
+  numsub = sum(tab&amp;gt;0)-1
+  
+  cat(&amp;quot;Number of Subcenters = &amp;quot;,numsub,&amp;quot;\n&amp;quot;)
+  cat(&amp;quot;Total Employment and Number of Tracts in each Subcenter&amp;quot;,&amp;quot;\n&amp;quot;)
+  print(table(subemp))
+  
+  out &amp;lt;- list(subemp,subobs)
+  names(out) &amp;lt;- c(&amp;quot;subemp&amp;quot;,&amp;quot;subobs&amp;quot;)
+  return(out)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;McMillen, on the other hand, uses a non-parametric method. He fits a employment density surface based on local neighborhood values and predicts the employment density at a location. If the actual employment density is &lt;em&gt;substanially higher&lt;/em&gt; than predicted values then the tract is labelled an employment center. Note the choice of the parameters, &lt;code&gt;window&lt;/code&gt;, (observations that are defined as neighborhood) and the &lt;code&gt;pval&lt;/code&gt; (statistical significance). They are as arbitrary as Giuliano and Small’s parameters, but are more widely accepted.&lt;/p&gt;
+&lt;p&gt;In the later part, we will merge such contiguous tracts. For this section we use &lt;code&gt;locfit&lt;/code&gt; package&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(locfit)
+ #### This is the McMillen&#39;s method for determining the tracts that are significantly different from the neighbours. 
+ subnp &amp;lt;- function(ydens,long,lat,window=.5,pval=.10) {
+   data &amp;lt;- data.frame(ydens,long,lat)
+   names(data) &amp;lt;- c(&amp;quot;ydens&amp;quot;,&amp;quot;long&amp;quot;,&amp;quot;lat&amp;quot;)
+   fit &amp;lt;- locfit(ydens~lp(long,lat,nn=window,deg=1),kern=&amp;quot;tcub&amp;quot;,ev=dat(cv=FALSE),data=data)
+   mat &amp;lt;- predict(fit,se.fit=TRUE,band=&amp;quot;pred&amp;quot;)
+   yhat &amp;lt;- mat$fit
+   sehat &amp;lt;- mat$se.fit
+   upper &amp;lt;- yhat - qnorm(pval/2)*sehat
+   subobs &amp;lt;- ifelse(ydens&amp;gt;upper,1,0)
+   
+   cat(&amp;quot;Number of tracts identified as part of subcenters:  &amp;quot;,sum(subobs),&amp;quot;\n&amp;quot;)
+   out &amp;lt;- list(subobs)
+   names(out) &amp;lt;- c(&amp;quot;subobs&amp;quot;)
+   return(out)
+ }
+
+temp &amp;lt;-  subnp(ky_tr_simple$empdens, ky_tr_simple$INTPTLON10, ky_tr_simple$INTPTLAT10)
+# Number of tracts identified as part of subcenters:   23
+ky_tr_simple$empcenter &amp;lt;- temp$subobs
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;visualise-the-results&#34;&gt;Visualise the results&lt;/h2&gt;
+&lt;p&gt;We use the same code as before, except styling the colors using &lt;code&gt;colorFactor&lt;/code&gt; instead of &lt;code&gt;colorQuantile&lt;/code&gt; to visualise the outputs.&lt;/p&gt;
+&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-10.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;merge-contiguous-tracts-and-aggregate-values&#34;&gt;Merge contiguous tracts and aggregate values&lt;/h2&gt;
+&lt;p&gt;One of the neat tricks that &lt;code&gt;spdep&lt;/code&gt; package allows us to do is to construct a graph from spatial adjacency matrix. Once a graph is created, it is simply a matter of finding the connected components of the graph and then merging based on the component name.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_empc_tr &amp;lt;- ky_tr_simple[ky_tr_simple$empcenter==1,]
+
+g &amp;lt;- ky_empc_tr %&amp;gt;% as(&amp;quot;Spatial&amp;quot;) %&amp;gt;%
+  spdep::poly2nb(queen=T, row.names=ky_empc_tr$GEOID10) %&amp;gt;%
+  spdep::nb2mat(zero.policy=TRUE, style=&amp;quot;B&amp;quot;) %&amp;gt;%
+  igraph::graph_from_adjacency_matrix(mode=&#39;undirected&#39;, add.rownames=&amp;quot;NULL&amp;quot;)
+
+ky_empc_tr$clustermember &amp;lt;- paste0(&amp;quot;C&amp;quot;,igraph::components(g)$membership)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Dissolving polygons is a breeze due to &lt;code&gt;sf&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ky_empc_pt &amp;lt;- 
+    ky_empc_tr %&amp;gt;% 
+      group_by(clustermember) %&amp;gt;%
+      summarise(emp = sum(C000), area = sum(ALAND10)) %&amp;gt;%
+      mutate(empdens = emp/area *10^4) %&amp;gt;% 
+      st_centroid %&amp;gt;%
+      st_as_sf()
+# Warning in st_centroid.sf(.): st_centroid assumes attributes are constant over
+# geometries of x
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We went from 23 tracts to 14 centers due to this merging. Final visualisation could be done using markers, instead of a choropleth plot. The tracts are used for visualisation, only to show the extent.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;labels2 &amp;lt;- sprintf(
+  &amp;quot;Employment Cluster #: %s &amp;lt;br/&amp;gt; Jobs: &amp;lt;strong&amp;gt;%s&amp;lt;/strong&amp;gt;, Density: &amp;lt;strong&amp;gt;%s per ha&amp;lt;/strong&amp;gt;&amp;quot;,
+  ky_empc_pt$clustermember, prettyNum(ky_empc_pt$emp, big.mark = &amp;quot;,&amp;quot;, scientific=F), prettyNum(ky_empc_pt$empdens, digits=2)
+) %&amp;gt;% lapply(htmltools::HTML)
+
+
+
+
+m4 &amp;lt;- leaflet(ky_empc_pt) %&amp;gt;%
+  addTiles() %&amp;gt;%
+  addPolygons(data= ky_empc_tr, weight = 0,fillOpacity = 0.5, fillColor = &#39;red&#39; ) %&amp;gt;%
+  addMarkers(label = ~labels2, 
+             labelOptions = labelOptions(
+               style = list(&amp;quot;font-weight&amp;quot; = &amp;quot;normal&amp;quot;, padding = &amp;quot;3px 8px&amp;quot;),
+               textsize = &amp;quot;15px&amp;quot;,
+               direction = &amp;quot;auto&amp;quot;))
+
+frameWidget(m4)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-13.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h2 id=&#34;further-explorations&#34;&gt;Further explorations&lt;/h2&gt;
+&lt;p&gt;Many improvements and extensions are possible. For example,&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In this post, I only used 2015 employment. But the code is set up to download and run for multiple years with suitable modifications. Have the employment center locations and characteristics changed between 2002 and 2015?&lt;/li&gt;
+&lt;li&gt;It turns out KY has only 14 employment centers through out the state. How does KY fare compared to rest of the US?&lt;/li&gt;
+&lt;li&gt;These centers (23 tracts) only account for 12.95% of the state employment. Yet we saw from the Lorenz cure that that the top 10% (~111 tracts ) have about 45% of employment. So what is happening with the other 88 tracts? Are they dispersed? clustered? Why did not they show up?&lt;/li&gt;
+&lt;li&gt;Based on the above, what improvements can we make to McMillen method?&lt;/li&gt;
+&lt;li&gt;What are the outcomes if we use Giuliano and Small’s method?&lt;/li&gt;
+&lt;li&gt;What are the impacts of different parameters on identification?&lt;/li&gt;
+&lt;li&gt;What is the impact of spatial scale? In this analyses we used Census tracts. Are results dramatically different, if we use block groups or blocks?&lt;/li&gt;
+&lt;li&gt;Is total employment even a relevant indicator for employment centers? Should we be identifying specialised employment centers by industry or occupation?&lt;/li&gt;
+&lt;li&gt;How can be adapt this method to identify other concentrated activities (such as retail etc.)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;accomplishments&#34;&gt;Accomplishments&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Downloading and reading vector data&lt;/li&gt;
+&lt;li&gt;Vector data operations (Union, neighbors)&lt;/li&gt;
+&lt;li&gt;Visualising spatial data with leaflet&lt;/li&gt;
+&lt;li&gt;Switching between spatial and network conceptual frames&lt;/li&gt;
+&lt;li&gt;Local regression with spatial coordinates&lt;/li&gt;
+&lt;li&gt;Spatial outlier detection&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

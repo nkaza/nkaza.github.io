@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>urban-form | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/category/urban-form/</link>
+      <atom:link href="https://nkaza.github.io/category/urban-form/index.xml" rel="self" type="application/rss+xml" />
+    <description>urban-form</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Mon, 01 Aug 2022 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>urban-form</title>
+      <link>https://nkaza.github.io/category/urban-form/</link>
+    </image>
+    
+    <item>
+      <title>Tale of Two Sprawls: Energy planning and challenges for Smart Growth 2.0</title>
+      <link>https://nkaza.github.io/publication/becker-2020/</link>
+      <pubDate>Mon, 01 Aug 2022 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/publication/becker-2020/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Intersection Density From OSM using QGIS &amp; R</title>
+      <link>https://nkaza.github.io/post/intersection-density-from-osm-using-qgis-r/</link>
+      <pubDate>Fri, 21 Jan 2022 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/intersection-density-from-osm-using-qgis-r/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    This post is inspired by &lt;a href=&#34;https://geoffboeing.com/&#34;&gt;Geoff Boeing’s&lt;/a&gt; &lt;a href=&#34;https://geoffboeing.com/2016/11/osmnx-python-street-networks/&#34;&gt;OSMnx&lt;/a&gt; python package. In addition, I drew some notes from &lt;a href=&#34;https://spatialthoughts.com/about/&#34;&gt;Ujaval Gandhi’s&lt;/a&gt; &lt;a href=&#34;https://www.qgistutorials.com/en/docs/3/calculating_intersection_density.html&#34;&gt;QGIS tutorial&lt;/a&gt;.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Often one of the key indicators for measuring walkability of a place is the intersection density of road network. In grid networks, roads intersect at regular intervals and are likely to result in more walkable paths than cul-de-sac patterns. Thus planners often use this metric to to measure urban form (see e.g. &lt;a href=&#34;https://enviroatlas.epa.gov/enviroatlas/DataFactSheets/pdf/Supplemental/PedestrianOrientedStreetIntersectionDensity.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;EPA’s EnviroAtlas&lt;/a&gt;). In this post, I am going to demonstrate how to calculate this measure for any place in the world where &lt;a href=&#34;https://www.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Street Map&lt;/a&gt; has a reasonably detailed and accurate street network.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    I am going to demonstrate how to use QGIS and R together, though there is no real need to use QGIS for this particular task. It could all be done in R. However, there might be some situations where combining the GUI of QGIS and extensive code base and algorithms in R might helpful. Hence this approach.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h3 id=&#34;plugins--packages&#34;&gt;Plugins &amp;amp; Packages&lt;/h3&gt;
+&lt;p&gt;In this post, I am going to use plugins for QGIS called QuickOSM and Processing R Provider. They can be downloaded and installed from &lt;em&gt;&lt;strong&gt;Plugins &amp;gt; Manage and Install Plugins&lt;/strong&gt;&lt;/em&gt;. As of writing, both these plugins are available in the official QGIS repository.&lt;/p&gt;
+&lt;p&gt;You will need to make sure that path to the R executables and R libraries are known to the Processing framework. Please follow the instructions located on the &lt;a href=&#34;https://north-road.github.io/qgis-processing-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;plugin’s website&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Within R, in addition to &lt;code&gt;tidyverse&lt;/code&gt; and &lt;code&gt;sf&lt;/code&gt; suite of packages, we are going to use &lt;code&gt;tidygraph&lt;/code&gt; and &lt;code&gt;sfnetworks&lt;/code&gt;. Please download and install them.&lt;/p&gt;
+&lt;h3 id=&#34;what-is-processing&#34;&gt;What is Processing?&lt;/h3&gt;
+&lt;p&gt;Since QGIS 2.0, the Processing Framework provides an environment within QGIS to run native and third-party algorithms for processing data. For example, you can run powerful hydrological algorithms from GRASS GIS or remote sensing algorithms from Orfeo Toolbox within QGIS. In addition to individual tools, you can also ability to batch process them and create graphical models to build a workflow, e.g. outputs of one algorithm as inputs to another. A good introduction to Processing is from &lt;a href=&#34;https://courses.spatialthoughts.com/advanced-qgis.html#processing-framework&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ujaval’s website&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;download-data-from-osm&#34;&gt;Download Data from OSM&lt;/h2&gt;
+&lt;p&gt;OpenStreetMap (OSM) is a collaborative project to create a free editable geographic database of the world. For the purposes of this tutorial, we are simply going to use the data from this project rather than contributing to it.&lt;/p&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;While the OSM data is comparable to proprietary data sources (e.g.Google Maps and Bing) in its coverage and accuracy, it should be noted that as a collaborative project it has its own unique biases. See for example,&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Das, Maitraye, Brent Hecht, and Darren Gergle. 2019. “The Gendered Geography of Contributions to OpenStreetMap: Complexities in Self-Focus Bias.” In Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems, 1–14. New York, NY, USA: Association for Computing Machinery. &lt;a href=&#34;https://doi.org/10.1145/3290605.3300793&#34;&gt;https://doi.org/10.1145/3290605.3300793&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;In the following short video I demonstrate how to download the street network for Accra, Ghana using the QuickOSM plugin. QuickOSM allows us to download OSM data for small areas. To quickly figure out an extent of a small area, I am going to use the subnational administrative boundaries of Ghana &lt;a href=&#34;https://data.humdata.org/dataset/ghana-administrative-boundaries&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;downloaded from the Humanitarian Data Exchange&lt;/a&gt;. I am primarily focused on &lt;code&gt;Admin Level 2&lt;/code&gt; boundaries. Add them to the project.&lt;/p&gt;
+&lt;p&gt;Once you added the polygons, select some polygons around Accra to specify the extent of the OSM download. Note that, selecting a large area will overwhelm the OSM servers and will not result in an output. Be judicious.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    If you are unable to read the menu items, please turn on HD in the video quality settings for YouTube.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/didMKhLR8_M&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;p&gt;Once you have downloaded and added the road network into QGIS, you are ready to use Processing framework to run an R script that counts the intersections. In the following video I give a quick overview of how you might run it and in the rest of the tutorial, I am going to explain the script in detail.&lt;/p&gt;
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/CbG6x3oTc0A&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;p&gt;The script that is used in the video is the following.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;##QgsProcessingParameterFeatureSource|INPUT|Lines|1
+##Use_Spatial_Subdivision=boolean TRUE
+##Use_Spatial_Smooth=boolean TRUE
+##Use_Spatial_Contraction=boolean FALSE
+##QgsProcessingParameterNumber|EPS|Clustering Parameter (Only used when Contraction is selected) |QgsProcessingParameterNumber.Integer|30
+##Grid_Type=enum literal Fishnet;Hexabin
+
+##intersections=output vector
+##Output_Grid=output vector
+
+
+library(sf)
+library(tidyverse)
+library(tidygraph)
+library(sfnetworks)
+
+net &amp;lt;- INPUT%&amp;gt;%st_as_sf()%&amp;gt;%
+          as_sfnetwork(directed = FALSE)
+
+
+node_coords &amp;lt;- net %&amp;gt;%
+                activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
+                st_coordinates()
+
+node_coords_x_mean &amp;lt;- mean(node_coords[,1], na.rm=T)
+node_coords_y_mean &amp;lt;- mean(node_coords[,2], na.rm=T)
+
+UTMzone &amp;lt;- floor((node_coords_x_mean + 180)/6 %% 60) + 1
+EPSGcode &amp;lt;- ifelse (node_coords_y_mean&amp;gt;=0, 32600+UTMzone, 32700+UTMzone)
+
+
+
+
+if(Use_Spatial_Subdivision){
+    net &amp;lt;- tidygraph::convert(net, to_spatial_subdivision)
+}
+
+
+
+if(Use_Spatial_Smooth){
+    net &amp;lt;- tidygraph::convert(net, to_spatial_smooth)
+}
+
+
+
+if(Use_Spatial_Contraction){
+
+node_coords_proj &amp;lt;- net %&amp;gt;%
+                activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
+                st_transform(EPSGcode) %&amp;gt;%
+                st_coordinates()
+
+clusters = dbscan::dbscan(node_coords_proj, eps = EPS, minPts = 1)$cluster
+
+clustered &amp;lt;- net %&amp;gt;%
+    activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
+    mutate(cls = clusters,
+           cmp = group_components()
+          )
+
+net &amp;lt;- convert(
+    clustered,
+    to_spatial_contracted,
+    cls, cmp
+)
+}
+
+intersections &amp;lt;- net %&amp;gt;%
+    activate(&#39;nodes&#39;) %&amp;gt;%
+    mutate(deg = igraph::degree(.)) %&amp;gt;%
+    filter(deg&amp;gt;=2) %&amp;gt;% 
+    st_as_sf %&amp;gt;%
+    st_transform(EPSGcode)
+
+
+
+
+if(Grid_Type == &amp;quot;Fishnet&amp;quot;){
+area_grid &amp;lt;- st_make_grid(intersections, c(500, 500), what = &amp;quot;polygons&amp;quot;, square = TRUE)
+    } else {
+area_grid &amp;lt;- st_make_grid(intersections, c(500, 500), what = &amp;quot;polygons&amp;quot;, square = FALSE)
+}
+
+
+
+Output_Grid &amp;lt;- st_sf(area_grid) %&amp;gt;%
+  # add grid ID
+  mutate(grid_id = 1:length(lengths(area_grid)))
+
+Output_Grid$n_intersections &amp;lt;- lengths(st_intersects(Output_Grid, intersections)) 
+Output_Grid &amp;lt;- Output_Grid %&amp;gt;% filter(n_intersections&amp;gt;0)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;setting-the-parameters-for-processing&#34;&gt;Setting the Parameters for Processing&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;##QgsProcessingParameterFeatureSource|INPUT|Lines|1
+##Use_Spatial_Subdivision=boolean TRUE
+##Use_Spatial_Smooth=boolean TRUE
+##Use_Spatial_Contraction=boolean FALSE
+##QgsProcessingParameterNumber|EPS|Clustering Parameter (Only used when Contraction is selected) |QgsProcessingParameterNumber.Integer|30
+##Grid_Type=enum literal Fishnet;Hexabin
+
+##intersections=output vector
+##Output_Grid=output vector
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The first part of the script that starts with &lt;code&gt;##&lt;/code&gt; is setting the input and output parameters and variable names for the Processing. It is a little confusing and annoying that while R uses &lt;code&gt;#&lt;/code&gt; to denote a comment, this framework uses &lt;code&gt;##&lt;/code&gt;. Also note that in Markdown &lt;code&gt;#&lt;/code&gt; refers to section heading.&lt;/p&gt;
+&lt;p&gt;I strongly recommend reading the &lt;a href=&#34;https://north-road.github.io/qgis-processing-r/script-syntax/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;script syntax&lt;/a&gt; at the website for the plugin.&lt;/p&gt;
+&lt;p&gt;You can specify the inputs in two different formats&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;variable_name=variable_type [default_value/from_variable]&lt;/li&gt;
+&lt;li&gt;QgsProcessingParameter|name|description|other_parameters_separated_by_pipe&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We use both of types in the above script. For example, &lt;code&gt;QgsProcessingParameterFeatureSource|INPUT|Lines|1&lt;/code&gt; specifies that there will be variable INPUT that will be a vector Line layer; its name on the UI will be “Lines.” If you want any geometry, specify -1, 0 for point, 1 for line, 2 for polygon, 5 for table. I ignored the optional description in this case but used it in the &lt;code&gt;QgsProcessingParameterNumber&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Grid_Type=enum literal Fishnet;Hexabin&lt;/code&gt; and &lt;code&gt;Output_Grid=output vector&lt;/code&gt; uses the second format. &lt;code&gt;Grid_Type&lt;/code&gt; and &lt;code&gt;Output_Grid&lt;/code&gt; are names of the variables and can be referenced in the script.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Output_Grid=output vector&lt;/code&gt; also specifies that &lt;code&gt;Output_Grid&lt;/code&gt; is an output and will be routed back to QGIS.&lt;/p&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    Note the lack of space before and after &lt;code&gt;=&lt;/code&gt;. If you include space, your script will not run.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The part of the code generates the user interface to specify input parameters.&lt;/p&gt;
+&lt;img src=&#34;images/inputbox.png&#34; width=&#34;400&#34; height=&#34;400&#34; /&gt;
+&lt;p&gt;Notice the substitution of &lt;code&gt;_&lt;/code&gt; with &lt;code&gt;\space&lt;/code&gt; in the user interface. However, do not be fooled by it in the script.&lt;/p&gt;
+&lt;h2 id=&#34;converting-a-street-network-into-a-useable-graph&#34;&gt;Converting a Street Network into a Useable Graph&lt;/h2&gt;
+&lt;p&gt;Mathematically a network/graph is a collection of links and nodes. For many applications, what really matters is the connections and relationships among these links and nodes, but not the spatial attributes these links and nodes. In other words, topological relationships are more important than spatial relationships. See for example, the Input Output matrix of various industries, or social network of different individuals or networks of neurons in brain.&lt;/p&gt;
+&lt;p&gt;However, in spatial networks, the location of the roads and street intersection matter. Furthermore, the representation of streets as lines (straight, or multilines, curved roads), their directionality (one-way, two-way), the precision (e.g. dangling, snaps), crossings (at grade, overpass etc.), road type (limited access, pedestrian etc.) all matter for how we construct what are links and which nodes (intersections) are relevant.&lt;/p&gt;
+&lt;p&gt;Much of the analysis is trying to figure out appropriate ways to clean the street network data so that only relevant nodes and links are kept in the graph. Because the road networks are different in different parts of the world, it is hard to come up with a consistent set of rules that will work everywhere. In this script, I am demonstrating some key data cleaning steps that are often needed on a toy network used in the &lt;a href=&#34;https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;code&gt;sfnetworks vignette&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;img src=&#34;images/network_toy.png&#34; width=&#34;400&#34; height=&#34;400&#34; /&gt;
+&lt;p&gt;Here are some common issues and rules we often use. As with everything, these are not exhaustive.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Curved Roads or road with multiple segments (e.g. change in directions) that have the same ID are not considered intersecting.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;End nodes (e.g. cul-de-sacs) do not contribute to walkability and should be ignored in street intersection density calculations. Because these nodes have degree 1 (only one edge is incident on them), we can filter them relatively easily after the fact.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;When a network is constructed, nodes are constructed from shared endpoints. However, sometimes, road may overlap and share some interior points resulting in a missing node. Often this is because they are overpasses or underpasses, but sometimes they are mapping errors. To rectify these mapping errors we can use &lt;code&gt;to_spatial_subdivision()&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;images/subdiv1.png&#34; style=&#34;width:50.0%&#34; /&gt; &lt;img src=&#34;images/subdiv2.png&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Roads that continue in the same direction but have different IDs (or names) will often be coded as different roads. However, the intersection of these two roads should be considered a false node. We can eliminate them in two different ways.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;They have degree 2. So we can try and filter them out after the fact. However, there might be instances where degree 2 nodes might be true intersections, such as the intersection at te lower triangle in the example (why?). Exercise caution.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We can apply &lt;code&gt;to_spatial_smooth&lt;/code&gt; to remove these pseudonodes. This function iteratively smooths pseudo nodes, and after each removal concatenates the linestring geometries of the two affected edges together into a new, single linestring geometry.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;images/smooth1.png&#34; style=&#34;width:50.0%&#34; /&gt; &lt;img src=&#34;images/smooth2.png&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Often we want to simplify the topology of the network, by reducing the complex intersection structures into a single node you might want to reduce such complex intersection structures into a single node, but still maintaining the connectivity of the network.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The function &lt;code&gt;to_spatial_contracted()&lt;/code&gt; contracts groups of nodes based on a given grouping variable. Any grouping variable is permitted, however to spatially contract them, we can use nodes that are within a certain distance from each other. Few things to keep in mind.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Often DBSCAN algorithm is used to create these groups. You should be able to use the algorithm in &lt;code&gt;dbscan&lt;/code&gt; package. This is a very good unsupervised clustering algorithm and it is useful to learn it well and often works well for identifying spatial clusters. However, it is quite dependent on the size of the epsilion neighborhood. &lt;a href=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;See this post for more details&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Be aware of the coordinate systems, projections, and units when specifying the distance. In the above script, we explicitly transformed the projection to a UTM projection that is relevant. The UTM zone is automatically calculated from the Longitude. However, this UTM zone may not be correct in some special instances such as near the poles. See the &lt;a href=&#34;https://gis.stackexchange.com/questions/2561/what-was-the-rationale-for-the-non-standard-utm-zones-near-norway&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;discussion on Stackoverflow&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;When simplifying intersections, it is not only important that the contracted nodes are close to each other in space. They should also be connected. Use &lt;code&gt;tidygraph::group_component&lt;/code&gt; as an additional clustering variable.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;All these are accomplished by the following bit of the code&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;if(Use_Spatial_Contraction){
+
+node_coords_proj &amp;lt;- net %&amp;gt;%
+                activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
+                st_transform(EPSGcode) %&amp;gt;%
+                st_coordinates()
+
+clusters = dbscan::dbscan(node_coords_proj, eps = EPS, minPts = 1)$cluster
+
+clustered &amp;lt;- net %&amp;gt;%
+    activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
+    mutate(cls = clusters,
+           cmp = group_components()
+          )
+
+net &amp;lt;- convert(
+    clustered,
+    to_spatial_contracted,
+    cls, cmp
+)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;images/contracted1.png&#34; style=&#34;width:50.0%&#34; /&gt; &lt;img src=&#34;images/contracted2.png&#34; style=&#34;width:50.0%&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;These are but some of the steps needed to convert convert the streets data to a usable network.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Focus only on pedestrian oriented streets by assuming that large highway intersections are not suitable for walkablity.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Roundabouts pose particular problems for intersections, conceptually and analytically. Figure out appropriate ways to deal with intersections associated with roundabouts.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;calculating-intersection-density&#34;&gt;Calculating Intersection Density&lt;/h2&gt;
+&lt;p&gt;Often it is useful to aggregate the number of intersections to a regular grid (hexagonal or otherwise). Because of the regularity the count of intersections would be proportional to the number of intersections. This step is accomplished by creating a grid using &lt;code&gt;st_make_grid&lt;/code&gt; and &lt;code&gt;st_intersects&lt;/code&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Make the grid size an input variable and see how the visualisations change.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Change the symbology within QGIS to quickly visualise walkable areas and non-walkable areas.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Repeat this entire exercise for various places around the world, (e.g. Cape Town, South Africa Nagano, Japan, and Yangoon, Myanmar) and identify any differences in the ways we should approach the idea of intersection density.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;caveats-and-conclusions&#34;&gt;Caveats and Conclusions&lt;/h2&gt;
+&lt;p&gt;One of the goals of this exercise is to demonstrate how to use open source data for analysis around the world rather than limiting urban analytics to data in the developed world. However, the mental maps of what is relevant and interpretations may color our understanding of what is walkable and what is not or even what is an intersection and what is not. Therefore, we should be mindful of local knowledge and expertise that might help us make critical analytical decisions.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

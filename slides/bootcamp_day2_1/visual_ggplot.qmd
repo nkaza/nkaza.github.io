@@ -1,0 +1,484 @@
+---
+title: "Visualising Data with Grammar of Graphics"
+author: "Nikhil Kaza"
+date: August 18, 2024
+#monofont: 'Source Code Pro'
+keep-tex: false
+prefer-html: true
+format: 
+    revealjs:
+     footer: "[nkaza.github.io](https://nkaza.github.io)&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Theme from Meghan Hall](https://github.com/meghall06/neair)"
+     theme: [moon, ../custom.scss]
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     code-fold: true
+     chalkboard: 
+       boardmarker-width: 5
+#from: markdown+emoji
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Recap from yesterday
+
+-   Installation R/Rstudio
+-   Different data types in rectangular datasets
+-   Used functions from tidyverse packages to explore AQI data
+-   Good data analysis habits
+-   Asking for help.
+-   Joining, mutating, filtering datasets
+
+## Today's plan
+
+- Visualisation principles
+- Grammar of graphics
+- Visualisation with ggplot
+- Advanced techniques
+
+
+# Visualisation Principles
+
+## Focus attention by highlighting
+
+![](imgs/highlight.png){fig-align="center"}
+
+## Focus attention by stripping
+
+![](imgs/energy_demand_forecast_1.png){fig-align="center"}
+
+::: {style="font-size: 0.4em"}
+Source: Zan Armstrong (2021) \@ Observable
+:::
+
+## Order matters
+
+![](imgs/ordermatters.png){fig-align="center"}
+
+::: {style="font-size: 0.4em"}
+Source: Zan Armstrong (2021) \@ Observable
+:::
+
+## Avoid legends
+
+Legends rely on visual association, which is hard.
+
+![](imgs/line_nolegend.png){fig-align="center" width="363"}
+
+::: {style="font-size: 0.4em"}
+Source: https://headwaterseconomics.org/dataviz/west-wide-atlas/
+:::
+
+## Channels - Data
+
+![](imgs/channels_rankings.jpg){fig-align="center" width="800"}
+
+::: {style="font-size: 0.4em"}
+Source: Munzer (2014)
+:::
+
+## Gestalt Principles 
+
+![](imgs/8GestaltPrinciplesofVisualPerception.png)
+
+## Small multiples
+
+![](imgs/small_multiples_1.png){fig-align="center"}
+
+::: {style="font-size: 0.4em"}
+Source: Wilke (2019)
+:::
+
+## Compound figures
+
+![](imgs/onda_1.png){fig-align="center"}
+
+::: {style="font-size: 0.4em"}
+Source: Onda et. al (2020)
+:::
+
+## Spatial is not special
+
+![](imgs/us_hexbin.png){fig-align="center"}
+
+::: {style="font-size: 0.4em"}
+This map shows approximately 3,000 locations of Walmart stores. The hexagon area represents the number of stores in the vicinity, while the color represents the median age of these stores. Older stores are red, and newer stores are blue <br> Source: Mike Bostock \@ Observable https://observablehq.com/@d3/hexbin-map
+:::
+
+## Accuracy is overrated
+
+![](imgs/projections.png){fig-align="center" width="435"}
+
+::: {style="font-size: 0.4em"}
+Source: Deetz and Adams (1921)
+:::
+
+## Precision even more so!
+
+![](imgs/graph-with-columns-4.png){fig-align="center" width="263"}
+
+::: {style="font-size: 0.4em"}
+Source: Few (2017) https://www.perceptualedge.com/blog/?p=2596
+:::
+
+## Resources
+
+::: {layout-ncol="2"}
+![](imgs/wilke_cover.png){fig-align="center" width="431"}
+
+![](imgs/healey_dv-cover-pupress.jpg){fig-align="center" width="451"}
+:::
+
+## Resources
+
+::: {layout-ncol="2"}
+![](imgs/SMTN_2nd_ed_Cover.jpg){fig-align="center" width="436"}
+
+![](imgs/tufte.png){fig-align="center" width="448"}
+
+:::
+
+## Resources
+
+::: {layout-ncol="2"}
+![](imgs/brewer_cover.jpg){fig-align="center" width="427"}
+
+![](imgs/liewithmaps.jpg){fig-align="center" width="373"}
+
+:::
+
+# Grammar of Graphics
+
+## Grammar of Graphics
+
+![](imgs/grammar-of-graphics.png){fig-align="center"}
+
+## ggplot2
+
+![](imgs/ggplot_cover.jpg){fig-align="center" width="388"}
+
+## ggplot2
+
+::: {style="font-size: 0.6em"}
+Source: Healey (2018)
+:::
+
+![](imgs/ggplot_horizontal.png){fig-align="center" width="620"}
+
+## Framework
+
+![](imgs/ggplot_framework.png){fig-align="center"}
+
+## Mapping data (Channels)
+
+Encoding data into visual cues to highlight comparisons
+
+A non-exhaustive list
+
+-   length
+-   position
+-   size
+-   shape
+-   area
+-   angle
+-   colour
+
+# Visualisation with ggplot in R
+
+## Recall the dataset
+
+```{r }
+library(tidyverse)
+library(here)
+# Sys.setlocale("LC_TIME", "en_US.UTF-8") 
+# Uncomment above line, if computer's locale is not in US.
+
+AQI_tbl <- here("data", "raw", "AQI_March_Joint.csv") %>% 
+    read_csv()
+
+AQI_tbl <- AQI_tbl %>% 
+  mutate(date_collected = ymd(date_collected)) %>%
+  mutate(month_of_obs = month(date_collected, label =T)) %>% 
+    mutate(AQI = as.numeric(AQI)) %>%
+    mutate(airquality = case_when(
+           AQI <= 50 ~ "Good",
+           AQI > 50 & AQI <= 100 ~ "Moderate",
+           AQI > 100 & AQI <=  150 ~ "Unhealthy for Sensitive Groups",
+           AQI > 150 & AQI <=  200 ~ "Unhealthy",
+           AQI > 200 & AQI <=  300 ~ "Very Unhealthy",
+           AQI > 300  ~ "Hazardous",
+           .default = "NA")
+           ) %>%
+    mutate(sensor_ID = as.character(sensor_ID),
+           airquality = factor(airquality, levels = c("Good", "Moderate", "Unhealthy for Sensitive Groups", "Unhealthy", "Very Unhealthy", "Hazardous"))
+           )
+    
+```
+
+## Build it by layer
+
+```{r}
+#| code-line-numbers: "2"
+
+AQI_tbl %>%
+    ggplot() 
+
+```
+
+::: {style="font-size: 0.8em"}
+Initialises a ggplot object. Prints nothing.
+:::
+
+## Build it by layer
+
+::: columns
+::: {.column width="60%"}
+```{r}
+#| code-line-numbers: "3"
+
+AQI_tbl %>%
+    ggplot() +
+    geom_point(aes(x=date_collected, y=AQI, color = airquality)) +
+    xlab("Collection Date")
+
+```
+:::
+
+::: {.column width="40%"}
+::: {style="font-size: 0.8em"}
+-   Map date_collected to x scale (position), AQI to y scale (position), airquality to colour scale (hue).
+-   The default `statistic` is identity.
+-   We use these statistics and scales to map on to point geometry
+-   All other aspects of the visualisation have sensible defaults (such as Cartesian coordinates)
+:::
+:::
+:::
+
+## Build it by layer
+
+::: columns
+::: {.column width="60%"}
+```{r}
+#| code-line-numbers: "4-5"
+
+AQI_tbl %>%
+    ggplot() +
+    geom_point(aes(x=date_collected, y=AQI, color = airquality)) +
+    scale_color_brewer(palette = "Set3") +
+    scale_y_log10() +
+    xlab('Collection Date')
+
+```
+:::
+
+::: {.column width="40%"}
+::: {style="font-size: 0.8em"}
+-   Changes the default colour scale to a different palette (only shown for illustration)
+-   Changes the y position scale to log10. (only shown for illustration)
+
+:::
+:::
+:::
+
+## Color Palettes (A digression)
+
+```{r echo=FALSE}
+library(RColorBrewer)
+par(mar=c(3,4,2,2))
+display.brewer.all()
+```
+
+## Color Palettes (A digression)
+
+![](imgs/virdis.png){fig-align="center"}
+
+## Beware of Color Blindness (A digression)
+
+::: columns
+::: {.column width="50%"}
+![Color Scales](imgs/colorscales_left.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+![Green Blindness](imgs/greenblind.png){fig-align="center"}
+:::
+:::
+
+## Beware of Color Blindness (A digression)
+
+::: columns
+::: {.column width="50%"}
+![Color Scales](imgs/colorscales_left.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+![Red Blindness](imgs/redblind.png){fig-align="center"}
+:::
+:::
+
+## Beware of Color Blindness (A digression)
+
+::: columns
+::: {.column width="50%"}
+![Color Scales](imgs/colorscales_left.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+![Blue Blindness](imgs/blueblind.png){fig-align="center"}
+:::
+:::
+
+## Beware of Color Blindness (A digression)
+
+::: columns
+::: {.column width="50%"}
+![Color Scales](imgs/colorscales_left.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+![Desaturated](imgs/desaturated.png){fig-align="center"}
+:::
+:::
+
+## Build it by layer
+
+```{r}
+#| code-line-numbers: "4-7"
+
+AQI_tbl %>%
+    ggplot() +
+    geom_point(aes(x=date_collected, y=AQI, color = airquality)) +
+    geom_hline(yintercept = 100) +
+    geom_hline(yintercept = 150) +
+    geom_hline(yintercept = 200) +
+    geom_hline(yintercept = 300) +
+    xlab('Collection Date')
+
+```
+
+## Build it by layer
+
+```{r}
+#| code-line-numbers: "8"
+
+AQI_tbl %>%
+    ggplot() +
+    geom_point(aes(x=date_collected, y=AQI)) +
+    geom_hline(yintercept = 100) +
+    geom_hline(yintercept = 150) +
+     geom_hline(yintercept = 200) +
+     geom_hline(yintercept = 300) +
+    facet_wrap(~omb, nrow =2)+
+    xlab('Collection Date')
+
+```
+
+
+
+## Experiment with different geoms
+
+```{r}
+#| code-line-numbers: "3"
+
+
+AQI_tbl %>%
+    ggplot() +
+    geom_boxplot(aes(x=date_collected, y = AQI, group = date_collected)) +
+    geom_hline(yintercept = 100) +
+    geom_hline(yintercept = 150) +
+     geom_hline(yintercept = 200) +
+     geom_hline(yintercept = 300) +
+    facet_wrap(~omb, nrow =2)+
+    xlab('Collection Date')
+
+
+```
+
+## Experiment with different geoms
+
+```{r}
+#| code-line-numbers: "3"
+
+AQI_tbl %>%
+    ggplot() +
+    geom_smooth(aes(x=date_collected, y=AQI, group = sensor_ID, color = omb), method = "loess", se = FALSE) +
+    xlab("Collection Date") + ylab("AQI")
+
+```
+
+-   Should the focus be on the average trend?
+
+## Or should it be on the outliers?
+
+```{r}
+#| code-line-numbers: "4, 9-10"
+
+AQI_tbl %>%
+    mutate(week_date = week(date_collected)) %>%
+    group_by(sensor_ID, week_date) %>%
+    mutate(outlier_yn = rstatix::is_outlier(AQI))%>%
+    ungroup()%>%
+    filter(sensor_ID == 36451) %>%
+    ggplot()+
+    geom_smooth(aes(x=date_collected, y=AQI), method = loess, se = FALSE) +
+    geom_point(aes(x=date_collected, y=AQI, color = outlier_yn), size = 2)+
+    scale_color_manual(values=c('gray', 'red'), guide = "none") +
+    labs(title = "sensor ID 36451") +
+    xlab("Collection Date") + ylab("AQI")
+    
+    
+    
+
+```
+
+## Experiment with different mappings
+
+```{r}
+#| code-line-numbers: "4-7"
+
+AQI_tbl %>%
+    filter(sensor_ID == 36451) %>%
+    ggplot() +
+    geom_bar(aes(x=month_of_obs, fill=airquality), 
+             stat = "count", position = "dodge") +
+    scale_fill_viridis_d()+
+    xlab("Month") + ylab("Count")
+
+```
+- Should we be using fill colours?
+
+## Experiment with position
+
+```{r}
+#| code-line-numbers: "5"
+
+AQI_tbl %>%
+    filter(sensor_ID == 36451) %>%
+    ggplot() +
+    geom_bar(aes(x=month_of_obs, fill=airquality), 
+             position = "identity", stat = "count") +
+    scale_fill_brewer(palette = "Set2")+
+    xlab("") + ylab("Count")
+
+```
+
+## Experiment with different mappings
+
+```{r}
+#| code-line-numbers: "5,6"
+
+AQI_tbl %>%
+    mutate(week_date = week(date_collected)) %>%
+    filter(sensor_ID == 36451)  %>%
+    ggplot() +
+    geom_point(aes(x=week_date, shape=airquality), 
+             stat = "count") +
+    xlab("Week #") + ylab("Count")
+
+```
+
+Why is this a bad visualisation? (Hint: Gestalt principles)
+
+# Thank you!

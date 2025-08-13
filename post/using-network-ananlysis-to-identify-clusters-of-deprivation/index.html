@@ -1,0 +1,2125 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Spatial clusters of deprivation and their patterns" />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/" />
+  <meta property="og:title" content="Regions of Deprivation | Nikhil Kaza" />
+  <meta property="og:description" content="Spatial clusters of deprivation and their patterns" /><meta property="og:image" content="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/featured.jpg" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/featured.jpg" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2018-09-24T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2018-09-24T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/"
+  },
+  "headline": "Regions of Deprivation",
+  
+  "image": [
+    "https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/featured.jpg"
+  ],
+  
+  "datePublished": "2018-09-24T00:00:00Z",
+  "dateModified": "2018-09-24T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Spatial clusters of deprivation and their patterns"
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Regions of Deprivation | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="3c8bf07bbc5f2d0eb2260dcf5ff5699d" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Regions of Deprivation</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Sep 24, 2018
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    17 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/equity/">equity</a>, <a href="/category/new-urban-analytics/">new-urban-analytics</a>, <a href="/category/regional-science/">regional-science</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 214px;">
+  <div style="position: relative">
+    <img src="/post/using-network-ananlysis-to-identify-clusters-of-deprivation/featured_hu211eea23c1be75c360a8ca806533b5a5_438425_720x2500_fit_q75_h2_lanczos.webp" width="720" height="214" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/widgetframe-binding/widgetframe.js"></script>
+<h2 id="introduction">Introduction</h2>
+<p>This post was last updated on 2025-08-13</p>
+<p>In addition to <a href="/post/analysing-urban-neworks/">obvious networks</a>, we can also use graph theory to think though some non-obvious applications. One place this often crops up in planning is to think about adjacency/proximity as a graph. See my post on <a href="/post/identifying-employment-centers/">employment centers</a> and paper on <a href="/publication/kazamagpie_india/">delineating areas</a>.</p>
+<p>In this post, I will demonstrate how to use networks for other spatial analysis. We can think of polygons as nodes and two nodes are connected if they have a relationship. These relationships can be spatial (e.g. sharing a boundary) or non-spatial (e.g. sharing a common attribute) or a combination of both.</p>
+<h2 id="acquire-data">Acquire data</h2>
+<p>Much of data acquisition follows the <a href="/post/using-tidycensus">post on tidycensus</a>. So I won’t repeat much of it, except to provide an uncommented source code below. In this case, I am focusing on both the Carolinas.</p>
+<pre><code class="language-r">options(tigris_use_cache = TRUE)
+library(tidyverse)
+library(tidycensus)
+library(tigris)
+library(sf)
+library(tmap)
+library(RColorBrewer)
+library(igraph)
+
+
+NC_SC &lt;- c('37', '45') # FIPS code for NC and SC.
+
+### Download  geographies of interest
+
+ctys &lt;- tigris::counties() %&gt;%
+          filter(STATEFP %in% NC_SC) %&gt;%
+          st_transform(4326) %&gt;%
+          select(GEOID, NAME)
+
+
+
+######### Download variables of interest. ###
+
+
+pop &lt;- map_dfr(NC_SC, function(us_state) {
+                          get_decennial(geography = &quot;county&quot;, 
+                                  variables = &quot;P1_001N&quot;,
+                                  state = us_state, 
+                                  geometry = FALSE
+                                  )
+  }) %&gt;%
+  select(GEOID, pop_census = value)
+
+
+# Calculate Poverty Rate by first downloading people below poverty &amp; number of people for whom poverty status is determined.
+# https://www.socialexplorer.com/data/ACS2022_5yr/metadata/?ds=ACS22_5yr&amp;table=B17001
+
+pov &lt;- map_dfr(NC_SC, function(us_state) {
+                          get_acs(geography = &quot;county&quot;, 
+                                  variables = &quot;B17001_002&quot;,  # People below poverty
+                                  summary_var = 'B17001_001', # Denominator
+                                  state = us_state, 
+                                  geometry = FALSE,
+                                  year = 2022)
+  })
+
+
+  
+pov_rate &lt;- pov %&gt;%
+  rename(pop_acs = summary_est,
+         pov_est = estimate) %&gt;%
+  mutate(pov_rate = pov_est/pop_acs) %&gt;%
+  select(GEOID, NAME, pov_est, pop_acs, pov_rate)
+
+### Calculate Unemployment rate ####
+### https://www.socialexplorer.com/data/ACS2022_5yr/metadata/?ds=ACS22_5yr&amp;table=B23001
+### To do that first need to figure out Labor Force ####
+
+
+# Only focusing on Female Unemployment Rate. If you want to use the male ones, please use this commented code
+#lf_m &lt;- paste(&quot;B23001_&quot;, formatC(seq(4,67,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;)
+# You may need to add them up to get the total labor force and total unemployed persons.
+
+
+lf_f &lt;- paste(&quot;B23001_&quot;, formatC(seq(90,153,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;)
+
+lf &lt;- map_dfr(NC_SC, function(us_state) {
+                          get_acs(geography = &quot;county&quot;, 
+                                  variables = c(lf_f), 
+                                  state = us_state, 
+                                  geometry = FALSE,
+                                  year = 2022)
+  })
+
+
+#unemp_m &lt;- paste(&quot;B23001_&quot;, formatC(seq(8,71,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;) # See above comment
+unemp_f &lt;- paste(&quot;B23001_&quot;, formatC(seq(94,157,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;)
+
+unemp &lt;- map_dfr(NC_SC, function(us_state) {
+                          get_acs(geography = &quot;county&quot;, 
+                                  variables = c(unemp_f), 
+                                  state = us_state, 
+                                  geometry = FALSE,
+                                  year = 2022)
+  })
+  
+
+lf_t &lt;- lf %&gt;% 
+  group_by(GEOID) %&gt;%
+  summarize(lf_est = sum(estimate, na.rm=T))
+
+unemp_t &lt;- unemp %&gt;% 
+  group_by(GEOID) %&gt;%
+  summarize(unemp_est = sum(estimate, na.rm=T))
+
+unemp_rate &lt;- left_join(lf_t, unemp_t, by='GEOID') %&gt;% 
+  filter(lf_est &gt;0) %&gt;%
+  mutate(unemp_rate = unemp_est/lf_est)
+
+df &lt;- left_join(pov_rate, unemp_rate, by='GEOID')
+df &lt;- left_join(df, pop, by=c('GEOID'))
+
+rm(pov, pov_rate, unemp, unemp_rate, lf, lf_t, unemp_t, pop, lf_f, unemp_f)
+</code></pre>
+<h2 id="spatial-relationships-as-a-graphnetwork">Spatial Relationships as a Graph/Network</h2>
+<p>If you have a any relationship between a pair of objects, you can represent it as a graph. Spatial relationships are no different and different types of spatial relationships present different graphs. Recall that if a relationship is present, then the nodes are considered <code>adjacent</code>.</p>
+<h3 id="queen-contiguity">Queen Contiguity</h3>
+<p>In the case of spatial data, adjacency <em>can be</em> defined by sharing a boundary segment (Rook) <em>or</em> a point (Queen).There are many other types of spatial relationships (e.g. overlaps, contains) that might be of interest.</p>
+<p>Recall that a graph can be represented as an adjacency matrix where the nodes are both rows and columns. In this case, the adjacency matrix is a binary matrix, where 1 represents adjacency and 0 represents no adjacency. We can use <code>spdep</code> package to construct the neighbour list for common spatial relationships such as adjacency and distances.</p>
+<pre><code class="language-r">library(spdep)
+cty_nb &lt;- poly2nb(ctys, queen=TRUE, row.names = ctys$GEOID) 
+# Construct a neighborhood object
+coords &lt;- st_centroid(ctys, of_largest_polygon = T) %&gt;% st_coordinates()
+plot(st_geometry(ctys), border = 'gray')
+plot(cty_nb, coords, col='red', points=F, add=T) # Quickly visualise the graph
+</code></pre>
+<img src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-3-1.png" width="768" />
+<h3 id="k-nearest-neighbors">K-nearest Neighbors</h3>
+<p>There is no reason to think of adjacency as just sharing a boundary. It could be based on some other criteria. For example, we could think of adjacency as being close in distance. In this case, we could specify three closest neighbours as the adjacency. Note that this is not a symmetric relationship, unlike the queen contiguity.</p>
+<pre><code class="language-r">cty_knn &lt;- knn2nb(knearneigh(coords, k=3), row.names = ctys$GEOID)
+cty_knn &lt;- make.sym.nb(cty_knn) # Make it symmetric
+
+diff_nb_knn &lt;-diffnb(cty_knn, cty_nb)
+
+# This is an old school way of plotting and arranging them. If you don't understand it, don't worry about it. It is used for illustration purposes only
+opar &lt;- par()
+par(mfrow = c(1, 2)) # Create a 1 x 2 plotting matrix
+# The next 2 plots created will be plotted next to each other
+
+plot(st_geometry(ctys),border=&quot;grey&quot;, main = &quot;KNN Graph&quot;)
+plot(cty_knn, coords, col='black',points=F, add=T) # Quickly visualise the graph
+
+
+plot(st_geometry(ctys), border=&quot;grey&quot;, main = 'Differences between Contiguity (black) and KNN (dashed red)')
+plot(cty_nb, coords, col='black', points=F, add=T) 
+plot(diff_nb_knn, coords, col='red', points=F,add=T, lty=2) # Quickly visualise the graph
+</code></pre>
+<img src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-4-1.png" width="768" />
+<pre><code class="language-r">
+par(opar) # Reset the plotting matrix
+</code></pre>
+<h3 id="neighbors-based-on-travel-times-conditioned-on-road-networks">Neighbors based on travel times conditioned on road networks</h3>
+<p>We don’t even need to rely on geographic relationships to identify the neighbours. We could use maximum travel times (e.g. say 1.5 hr) as a proxy for adjacency . We could use the road network to calculate travel times between the centroids of the counties. I am not going to explain this code in detail, but it is an example of how to get a quick and dirty travel times using OpenStreetMap data.</p>
+<pre><code class="language-r">
+library(dodgr)
+library(osmdata)
+library(osmextract)
+
+#add extra tags for routing
+et = c(&quot;oneway&quot;, &quot;maxspeed&quot;, &quot;lanes&quot;) 
+
+#extract nc, sc road network using osmextract
+
+rds_nc&lt;- oe_get_network(place  = &quot;north carolina&quot;, mode = &quot;driving&quot;, extra_tags = et, quiet =T) %&gt;%
+        filter(highway %in% c(&quot;motorway&quot;, 'motorway_link', 'primary', 'primary_link'))
+
+rds_sc&lt;- oe_get_network(place  = &quot;south carolina&quot;, mode = &quot;driving&quot;, extra_tags = et, quiet = T)%&gt;%
+        filter(highway %in% c(&quot;motorway&quot;, 'motorway_link', 'primary', 'primary_link'))
+
+rds &lt;- rbind(rds_nc, rds_sc)
+rm(rds_nc, rds_sc)
+
+net &lt;- weight_streetnet (rds, wt_profile = &quot;motorcar&quot;)
+nodes &lt;- st_centroid(ctys, of_largest_polygon = T) %&gt;% 
+          st_coordinates()
+
+traveltimes &lt;- dodgr_times(net, from = nodes, to = nodes)
+rownames(traveltimes) &lt;- ctys$GEOID
+colnames(traveltimes) &lt;- ctys$GEOID
+traveltime_adjacency &lt;- ifelse(traveltimes &gt; 1.5*60*60 | is.na(traveltimes), 0, 1) # 1.5 hours travel time on major roads
+
+
+
+cty_tt &lt;- mat2listw(traveltime_adjacency, style=&quot;B&quot;, zero.policy=TRUE, row.names = ctys$GEOID)
+cty_tt_n &lt;- cty_tt$neighbours
+
+cty_tt_n &lt;- make.sym.nb(cty_tt_n) # Make it symmetric
+
+# Visualise
+
+diff_nb_tt &lt;- diffnb(cty_nb, cty_tt_n)
+diff_nb_tt_knn &lt;- diffnb(cty_knn, cty_tt_n)
+
+opar &lt;- par()
+par(mfrow = c(1, 2)) # Create a 1 x 2 plotting matrix
+# The next 2 plots created will be plotted next to each other
+
+plot(st_geometry(ctys),border=&quot;grey&quot;, main = &quot;Travel Time Adjacency&quot;)
+plot(cty_tt_n, coords, col='black', points=T, add=T) # Quickly visualise the graph
+
+
+plot(st_geometry(ctys), border=&quot;grey&quot;, reset = F, main = 'Differences between KNN (black) and Travel Time (dashed red)')
+plot(cty_knn, coords, col='black', points=T, add=T) 
+plot(diff_nb_tt_knn, coords, col='red', add=T, lty=2) # Quickly visualise the graph
+</code></pre>
+<img src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-5-1.png" width="768" />
+<pre><code class="language-r">
+
+par(opar) # Reset the plotting matrix
+</code></pre>
+<div class="alert alert-warning">
+  <div>
+    Travel times are artifacts of which road network you use, what is the accuracy of the road network, how overpasses and underpasses are represented, how start and end points are snapped to the network etc. At the same time, contiguity is affected by boundary precision errors. You need to be careful with the idiosyncrasies of the data you are using.
+  </div>
+</div>
+<h3 id="neighbour-of-neighbours-of">Neighbour of Neighbours of…</h3>
+<p>There is no reason to think that neighbourhood relationship should be of first order. For example, you might be interested in calculating the population of the neighbours of the neighbours. Recall that binary adjacency matrix $ A $ is a representation of paths of length 1 for each vertex. $ A^2 $ is then a representation of number of paths of length 2 and so on. Therefore, $ A^n + A $ is a representation of number of paths of <em>at least</em> length $ n $ between any two nodes. Thus arbitrarily large order of neighbourhoods can be easily constructed. You can then binarise the matrix to get the adjacency matrix of the second order neighbours.</p>
+<p>Fortunately, <code>spdep</code> has a function called <code>nblag</code> that can help us with this.</p>
+<pre><code class="language-r">
+cty_nb2 &lt;- nblag(cty_nb, 2) %&gt;% nblag_cumul # This gives us the second order neighbourhood
+
+
+opar &lt;- par()
+par(mfrow = c(1, 2)) # Create a 1 x 2 plotting matrix
+# The next 2 plots created will be plotted next to each other
+
+plot(st_geometry(ctys),border=&quot;black&quot;, lwd =.1, main = &quot;First Order Neighbours&quot;)
+plot(cty_nb, coords, col='blue', points=F, add=T, lwd =.3) # Quickly visualise the graph
+
+
+plot(st_geometry(ctys), border=&quot;black&quot;, reset = F, lwd=.1,main = 'Second Order Neighbours')
+plot(cty_nb2, coords, col='blue', points=F, add=T, lwd = .3) 
+</code></pre>
+<img src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-6-1.png" width="768" />
+<pre><code class="language-r">
+par(opar) # Reset the plotting matrix
+</code></pre>
+<div class="alert alert-warning">
+  <div>
+    This does not work for travel time adjacency. You can create the second order neighbours, but they don’t mean all the counties that are reachable in 3 hrs travel time. Why?
+  </div>
+</div>
+<h2 id="use-of-graphs-for-spatial-analysis">Use of Graphs for Spatial Analysis</h2>
+<p>Until now we constructed the network from spatial relationships. Once it is constructed it can be useful for a number of analyses. For example, occasionally, it becomes useful not only to look at attributes of the ‘focal’ geography, but also calculate some notion of aggregate neighbourhood attributes. From this, one could derive if the focal geography is an anomaly or if it is consistent with the neighbourhood trend. This becomes important when figuring out hotspots or clusters in Spatial Statistics.</p>
+<h3 id="calculating-neighborhood-attributes">Calculating Neighborhood Attributes</h3>
+<p>For the moment, let me restrict attention to calculating neighbourhood level attributes. In this tutorial, I am going to stick with matrix algebra rather than general graph theory (as it is faster). Recall that 1 in a binary adjacency matrix represent the neighbours in a graph. So matrix multiplication with the relevant attribute will automatically yield aggregate neighbourhood attribute, because multiplying every value except the nieghbour’s with 0, results in 0.</p>
+<p>Say for example, we want to calculate how many people live in the adjacent county. I am going to use travel time adjacency as an example.</p>
+<pre><code class="language-r">library(skimr)
+diag(traveltime_adjacency) &lt;- 0 # Set diagonal to 0, so that we don't count the population of the focal geography.
+
+df &lt;- df %&gt;%
+          arrange(match(GEOID, row.names(traveltime_adjacency))) # Ensure that the order of the rows is the same as the order of the adjacency matrix
+
+df &lt;- df %&gt;%
+      mutate(N_pop_census_tt = drop(traveltime_adjacency  %*% pop_census)) # This gives us the total population of the neighbours. drop converts it from 1 column matrix to a vector.
+                    
+df %&gt;% 
+  select(&quot;pop_census&quot;,&quot;N_pop_census_tt&quot;) %&gt;%
+  skim # see how this shakes out.
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:left"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Name</td>
+<td style="text-align:left">Piped data</td>
+</tr>
+<tr>
+<td style="text-align:left">Number of rows</td>
+<td style="text-align:left">146</td>
+</tr>
+<tr>
+<td style="text-align:left">Number of columns</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">_______________________</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Column type frequency:</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">numeric</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">________________________</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td style="text-align:left">Group variables</td>
+<td style="text-align:left">None</td>
+</tr>
+</tbody>
+</table>
+<p><span id="tab:unnamed-chunk-7"></span>Table 1: Data summary</p>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">skim_variable</th>
+<th style="text-align:right">n_missing</th>
+<th style="text-align:right">complete_rate</th>
+<th style="text-align:right">mean</th>
+<th style="text-align:right">sd</th>
+<th style="text-align:right">p0</th>
+<th style="text-align:right">p25</th>
+<th style="text-align:right">p50</th>
+<th style="text-align:right">p75</th>
+<th style="text-align:right">p100</th>
+<th style="text-align:left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">pop_census</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">106560.4</td>
+<td style="text-align:right">159008.7</td>
+<td style="text-align:right">3245</td>
+<td style="text-align:right">25680.5</td>
+<td style="text-align:right">53084</td>
+<td style="text-align:right">127886.2</td>
+<td style="text-align:right">1129410</td>
+<td style="text-align:left">▇▁▁▁▁</td>
+</tr>
+<tr>
+<td style="text-align:left">N_pop_census_tt</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">1085306.8</td>
+<td style="text-align:right">1309155.6</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">6030.5</td>
+<td style="text-align:right">458143</td>
+<td style="text-align:right">1898918.0</td>
+<td style="text-align:right">4684239</td>
+<td style="text-align:left">▇▂▂▁▁</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>What if you use a different neighbourhood relationship, for example, based on the thresholds distances of centroids? What if you used queen contiguity as a neighbourhood relationship? Does it change the neighbourhood values?</li>
+<li>What is the interpretation, when you do not set the diagonal elements of the adjacency matrix? What impact does it have on calculations of neighbourhood totals?</li>
+<li>What if you want to calculate the average population of the neighbours instead of the total population of the neighbours?</li>
+</ul>
+<hr>
+<p>It is interesting to note that neighbourhood population has a minimum value 0, even when the minimum value of population is non-zero. This means that there are some counties, that do not have any neighbours. Let’s visualise who they are and see if the road network is contributing to the issue?</p>
+<pre><code class="language-r">library(widgetframe)
+
+island_geoids &lt;- row.names(traveltime_adjacency)[rowSums(traveltime_adjacency) == 0]# This gives us the counties with no neighbours.
+
+
+m1 &lt;-
+  ctys %&gt;%
+  filter(GEOID %in% island_geoids) %&gt;%
+  tm_shape() +
+  tm_fill(col='red', alpha =.5) +
+  tm_shape(rds)+
+  tm_lines(col='grey') +
+  tm_basemap(&quot;CartoDB.Positron&quot;) +
+  tm_tiles(&quot;CartoDB.PositronOnlyLabels&quot;)
+
+tmap_mode(&quot;plot&quot;) # Need to do this to deal with Github file size issues. Set it to view if you want a html widget.
+#frameWidget(tmap_leaflet(m1))
+m1
+</code></pre>
+<img src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-8-1.png" width="768" />
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>
+<p>In particular, please pay attention to Brunswick county next to Wilmington. You should expect that it is possible to reach Wilmington (New Hanover) within an 90 min. Why then does this not have any neighbours? Is it the issue with the choice of the network or with the centroid of the county?</p>
+</li>
+<li>
+<p>Do you have any islands, when you use queen contiguity? What if you use tracts instead of counties?</p>
+</li>
+</ul>
+<hr>
+<h2 id="clusters-of-deprivation">Clusters of Deprivation</h2>
+<p>Let us now turn our attention to the analysis of deprivation. I will use poverty and female unemployment as proxies for deprivation. I arbitrarily define Deprivation to be a combination of poverty and unemployment. In this instance, I am picking 25% and 10% as thresholds respectively.</p>
+<pre><code class="language-r">
+distressed_cty &lt;- df %&gt;%
+                     filter(unemp_rate &gt; .10 | pov_rate &gt; .25)
+
+distressed_cty_shp &lt;- right_join(ctys, distressed_cty, by='GEOID')
+
+
+tmap_mode(&quot;view&quot;)
+
+m1 &lt;- tm_basemap(&quot;CartoDB.Positron&quot;)+
+      tm_shape(distressed_cty_shp) +
+      tm_fill(col='red', alpha=.5)+
+      tm_tiles(&quot;CartoDB.PositronOnlyLabels&quot;)
+
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-9.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<h3 id="local-outliers">Local outliers?</h3>
+<p>There are some instances, you might be interested in figuring out if the focal geography is an outlier compared to its neighbours. For example, the following code would help you identify if the focal geography is has 50% higher population than its neighbours (on average). Let’s use KNN adjacency</p>
+<pre><code class="language-r">cty_knn_mat &lt;- nb2mat(cty_knn, zero.policy=TRUE, style=&quot;W&quot;) # W is row standardised,
+cty_knn_mat[1:5, 1:5] # look at the subset of the matrix
+#       37037     37001 37057 45023 37069
+# 37037  0.00 0.3333333     0     0     0
+# 37001  0.25 0.0000000     0     0     0
+# 37057  0.00 0.0000000     0     0     0
+# 45023  0.00 0.0000000     0     0     0
+# 37069  0.00 0.0000000     0     0     0
+
+
+# Now we can calculate the average population of the neighbours
+ctys2 &lt;- df %&gt;%
+      mutate(N_avg_pop_census_knn = drop(cty_knn_mat %*% pop_census)) %&gt;%
+      filter(pop_census &gt; 1.5*N_avg_pop_census_knn) %&gt;%
+      select(&quot;GEOID&quot;, &quot;N_avg_pop_census_knn&quot;, &quot;pop_census&quot;)%&gt;%
+      left_join(ctys, by='GEOID') %&gt;%
+      st_as_sf()
+
+m1 &lt;- tm_shape(ctys2) +
+  tm_fill(col='red', alpha=.5) +
+  tm_basemap(&quot;CartoDB.Positron&quot;) +
+  tm_tiles(&quot;CartoDB.PositronOnlyLabels&quot;)
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-2" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-10.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div class="alert alert-important">
+  <div>
+    Notice that while we specified 3 nearest neighbours some rows (e.g. FIPS 37001) has 0.25 as weight. This implies 4 neighbours. This is because we made the matrix symmetric, because while <code>nearness</code> is symmetric relationship, <code>nearest</code> is not.
+  </div>
+</div>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>
+<p><code>spdep</code> has a function called <code>lag.listw</code> that can help you identify neighborhood average. Figure out how to use it. Might be helpful when you have a large number of geographies.</p>
+</li>
+<li>
+<p>Large number of geographies with only a few connectons, might require you to get familiar with sparse matrices. Figure out how to work with them.</p>
+</li>
+</ul>
+<hr>
+<p>The row standardised weight matrix gives all the neighbours of a focal geography equal weight (1/rowsum of ones). In this occasion, we want to weight the attribute (say unemployment rate) based on a different attribute (say labour force).</p>
+<p>We take advantage of the element by element multiplication and matrix multiplication to get this.</p>
+<p>First we create the denominator, which is the sum of all labour force of the neighbours, just as before using matrix multiplication. Then we perform the tricky bit of only counting the labour force each of the neighbours using element by element multiplication. In R, <code>*</code> is element by element multiplication, where as <code>%*%</code> is matrix multiplication.</p>
+<pre><code class="language-r">cty_knn_mat &lt;- nb2mat(cty_knn, zero.policy=TRUE, style=&quot;B&quot;) # Create a binary matrix
+
+denom_lf &lt;- cty_knn_mat %*% df$lf_est # A.v, where A is nxn is a binary adjacency matrix and v is nx1 vector of labour force. Using matrix multiplication here. This gives us the total labour force of the neighbours.
+
+# Recycle the labour force vector to match the dimensions of the adjacency matrix
+temp1 &lt;- rep(df$lf_est, each =nrow(cty_knn_mat)) %&gt;% matrix(ncol=ncol(cty_knn_mat))
+
+temp1[1:5, 1:5] # look at the subset of the matrix
+#       [,1]  [,2]  [,3] [,4]  [,5]
+# [1,] 15936 39393 35012 6995 15120
+# [2,] 15936 39393 35012 6995 15120
+# [3,] 15936 39393 35012 6995 15120
+# [4,] 15936 39393 35012 6995 15120
+# [5,] 15936 39393 35012 6995 15120
+
+numer_lf &lt;-  cty_knn_mat * temp1  
+
+numer_lf[1:5, 1:5] # look at the subset of the matrix
+#       37037 37001 37057 45023 37069
+# 37037     0 39393     0     0     0
+# 37001 15936     0     0     0     0
+# 37057     0     0     0     0     0
+# 45023     0     0     0     0     0
+# 37069     0     0     0     0     0
+
+temp1 &lt;- rep(denom_lf, times =nrow(cty_knn_mat)) %&gt;% matrix(ncol=ncol(cty_knn_mat))
+weight_matrix_lf &lt;- numer_lf/temp1 # This gives us the weighted matrix
+
+# Check to see if it is indeed a weight matrix
+weight_matrix_lf[1:5, 1:5] 
+#            37037     37001 37057 45023 37069
+# 37037 0.00000000 0.4459551     0     0     0
+# 37001 0.08467228 0.0000000     0     0     0
+# 37057 0.00000000 0.0000000     0     0     0
+# 45023 0.00000000 0.0000000     0     0     0
+# 37069 0.00000000 0.0000000     0     0     0
+rowSums(weight_matrix_lf) %&gt;% summary() # should be 1
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#       1       1       1       1       1       1
+</code></pre>
+<p>Now it is straightforward to get the labour force weighted unemployment rate of the neighbours</p>
+<pre><code class="language-r">df &lt;- df %&gt;%
+      mutate(N_unemp_avg = drop(weight_matrix_lf %*% unemp_rate))
+
+library(tmap)
+
+tmap_mode(&quot;plot&quot;)
+
+cty2 &lt;- df %&gt;%
+      left_join(ctys, by='GEOID') %&gt;%
+      st_as_sf()
+
+
+tmap_arrange(
+  tm_shape(cty2) +
+    tm_polygons(&quot;unemp_rate&quot;, 
+                legend.format = list(digits=2),
+                style = 'cont', border.alpha=.2,
+                title = &quot;Female Unemployment Rate&quot;,
+                legend.is.portrait = FALSE),
+  
+  tm_shape(cty2)+
+    tm_polygons(col=&quot;N_unemp_avg&quot;, 
+                legend.format = list(digits=2),
+                style = 'cont', 
+                title = &quot;Neighborhood Unemployment Rate&quot;,
+                legend.is.portrait = FALSE,
+                border.alpha=.2)
+)
+</code></pre>
+<img src="https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/index_files/figure-html/unnamed-chunk-12-1.png" width="768" />
+<p>To figure out local outliers, you might consider counties with sufficiently different unemployment rates than their neighbours. In this case, I am employing an arbitrary threshold of 30% .</p>
+<pre><code class="language-r">distressed_cty &lt;- df %&gt;%
+                     filter(unemp_rate &gt; 1.3*N_unemp_avg)
+
+distressed_cty_shp &lt;- right_join(ctys, distressed_cty, by='GEOID') %&gt;%
+                       st_as_sf()
+
+
+tmap_mode(&quot;view&quot;)
+
+m1 &lt;- tm_basemap(&quot;CartoDB.Positron&quot;)+
+      tm_shape(distressed_cty_shp) +
+      tm_fill(col='red', alpha=.5)+
+      tm_tiles(&quot;CartoDB.PositronOnlyLabels&quot;)
+
+
+frameWidget(tmap_leaflet(m1))
+</code></pre>
+<div id="htmlwidget-3" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-13.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Repeat this exercise for poverty rate with appropriate variables.</li>
+<li>Use different neighbourhood relationships and see how it affects the results.</li>
+<li>All the above simply calculates the neighbourhood values without including values from the focal geography. So it is a doughnut with a hole type smoothing operator. If you want to remove the hole, simply change the diagonal elements of the matrix to 1 in the neighbourhood binary matrix. What happens if you do?</li>
+</ul>
+<hr>
+<h2 id="regionalisation">Regionalisation</h2>
+<p>Now that we have identified the distressed areas, we can use any number of clustering techniques to identify clusters of distressed areas. In this case, I will simply identify clusters based on disconnected subgraphs. <code>components</code> function decomposes the graph in subgraphs, i.e. nodes belong to a subgraph, if there is a path between them. If there is not, they belong to different subgraphs.</p>
+<pre><code class="language-r">
+distress_nb &lt;- poly2nb(distressed_cty_shp, 
+                       queen=FALSE, 
+                       row.names = distressed_cty_shp$GEOID) # Construct a neighborhood object
+  
+distressed_graph &lt;- distress_nb %&gt;%  
+  nb2mat(zero.policy=TRUE, style=&quot;B&quot;) %&gt;% # Create a Binary Adjacency Matrix.
+  graph.adjacency(mode='undirected', add.rownames=NULL) # construct an undirected graph from the adjacency matrix.
+
+cl &lt;- components(distressed_graph) # This decomposes the graph into connected subgraphs.
+
+distressed_cty_shp &lt;- distressed_cty_shp %&gt;%
+          left_join(as_tibble(cbind(cluster_no = cl$membership,GEOID = names(cl$membership))), by='GEOID')
+
+
+### Visualisation
+
+
+pal &lt;- colorRampPalette(brewer.pal(8, &quot;Dark2&quot;))
+numColors &lt;- cl$membership %&gt;% unique() %&gt;% length()
+
+m3&lt;-
+ distressed_cty_shp %&gt;%
+   tm_shape()+
+   tm_fill(&quot;cluster_no&quot;, legend.show = FALSE, palette = pal(numColors))+
+   tm_basemap(&quot;CartoDB.Positron&quot;)+
+   tm_tiles(&quot;CartoDB.PositronOnlyLabels&quot;)
+
+
+frameWidget(tmap_leaflet(m3))
+</code></pre>
+<div id="htmlwidget-4" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-14.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<p>Now that different counties are assigned to different clusters, we can summarise the poverty rate in different clusters. Within in each component of the graph, we can also identify a community structure if you wish, using techniques from <a href="/post/analysing-urban-neworks/">an earlier post</a>. I leave these as exercises.</p>
+<p>In some instances, it may be useful to see if the clusters are stringy’ or if they are ‘blobs’. i.e., if the clusters follow linear features (such as roads, valleys, rivers etc.) or if they adjacency is shared among multiple polygons of the same component. To do this, we could rely on diameter of the graph, which is the longest path between any two nodes in graph. If the graph is stringy, it will have a large diameter.</p>
+<p>In this instance, we want to compute the diameters of each component separately. (diameter of the graph is $ $, as it is not fully connected. )</p>
+<pre><code class="language-r">
+diameters_of_graphs &lt;-  map_dfr(decompose(distressed_graph), function(x){c(dia =diameter(x))})  
+diameters_of_graphs$cluster_no &lt;- 1:(distressed_graph %&gt;% decompose() %&gt;% length()) %&gt;% as.character()
+
+
+distressed_cty_shp &lt;- left_join(distressed_cty_shp, diameters_of_graphs, by='cluster_no')
+
+# Quickly showing the stringy and blobby (real words) distressed regions
+maxdia &lt;- max(distressed_cty_shp$dia,na.rm=T)
+
+m5 &lt;- distressed_cty_shp %&gt;%
+      tm_shape()+
+      tm_fill(col='dia',
+                  style=&quot;fixed&quot;,
+                  breaks = c(0,1,4,maxdia),
+                  palette = c('gray', 'blue', 'red'),
+                  labels = c(&quot;Islands&quot;, &quot;Blobby&quot;, &quot;Stringy&quot;))+
+   tm_basemap(&quot;CartoDB.Positron&quot;)+
+   tm_tiles(&quot;CartoDB.PositronOnlyLabels&quot;)
+
+frameWidget(tmap_leaflet(m5))
+</code></pre>
+<div id="htmlwidget-5" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-15.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Repeat this exercise for local outliers that include both poverty and female unemployment?</li>
+<li>Limiting your analysis to Metropolitan Areas in Carolinas, what conclusions can you draw about the shape of the clusters?</li>
+<li>Does limiting your analysis to a single state, affect your results? What if you expand to include Virginia and Georgia?</li>
+<li>Does changing the unit of analysis matter? Say e.g. instead of the counties, we use tracts for the poverty and unemployment characteristics, how are the conclusions different?</li>
+</ul>
+<hr>
+<h2 id="further-analysis">Further analysis</h2>
+<p>Instead of categorising the areas of distress by dichotomising, one could use <code>local Moran's I</code> to identify locations high values of a continuous variable (say poverty rate) surrounded by other high values areas (or low value areas) and test their statistical significance. <code>local.moran</code> is a function in spdep and relies on the neighbourhood graph. I leave this as an exercise.</p>
+<h2 id="conclusions">Conclusions</h2>
+<p>Borrowing some concepts from network analysis, helps us in many analytical tasks with regards to space. Todd BenDor and I <a href="/publication/bendor2028vn/">argued</a> that in some instances it may be beneficial to think about space as networks for modelling purposes too. Tools from graph theory have been incredibly useful to me in a number of <a href="/project/urban-change/">different projects</a>.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#acquire-data">Acquire data</a></li>
+    <li><a href="#spatial-relationships-as-a-graphnetwork">Spatial Relationships as a Graph/Network</a>
+      <ul>
+        <li><a href="#queen-contiguity">Queen Contiguity</a></li>
+        <li><a href="#k-nearest-neighbors">K-nearest Neighbors</a></li>
+        <li><a href="#neighbors-based-on-travel-times-conditioned-on-road-networks">Neighbors based on travel times conditioned on road networks</a></li>
+        <li><a href="#neighbour-of-neighbours-of">Neighbour of Neighbours of…</a></li>
+      </ul>
+    </li>
+    <li><a href="#use-of-graphs-for-spatial-analysis">Use of Graphs for Spatial Analysis</a>
+      <ul>
+        <li><a href="#calculating-neighborhood-attributes">Calculating Neighborhood Attributes</a></li>
+      </ul>
+    </li>
+    <li><a href="#clusters-of-deprivation">Clusters of Deprivation</a>
+      <ul>
+        <li><a href="#local-outliers">Local outliers?</a></li>
+      </ul>
+    </li>
+    <li><a href="#regionalisation">Regionalisation</a></li>
+    <li><a href="#further-analysis">Further analysis</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/&amp;text=Regions%20of%20Deprivation" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/&amp;t=Regions%20of%20Deprivation" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Regions%20of%20Deprivation&amp;body=https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/&amp;title=Regions%20of%20Deprivation" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Regions%20of%20Deprivation%20https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/&amp;title=Regions%20of%20Deprivation" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/regional-employment-structure-using-labor-market-centrality-index/">Regional Employment Structure Using Labor Market Centrality Index</a></li>
+      
+      <li><a href="/post/analysing-urban-neworks/">Analysing Urban Neworks</a></li>
+      
+      <li><a href="/post/identifying-employment-centers/">Identifying Employment Centers</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

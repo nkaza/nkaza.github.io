@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>QGIS | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/tag/qgis/</link>
+      <atom:link href="https://nkaza.github.io/tag/qgis/index.xml" rel="self" type="application/rss+xml" />
+    <description>QGIS</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Tue, 31 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>QGIS</title>
+      <link>https://nkaza.github.io/tag/qgis/</link>
+    </image>
+    
+    <item>
+      <title>Starting with QGIS</title>
+      <link>https://nkaza.github.io/post/starting-with-qgis/</link>
+      <pubDate>Tue, 31 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/starting-with-qgis/</guid>
+      <description>&lt;h2 id=&#34;preliminaries&#34;&gt;Preliminaries&lt;/h2&gt;
+&lt;p&gt;Strictly speaking, we won’t use QGIS much in this course. However, there are occasions where it may be useful to use a GIS package with a GUI to quickly visualise spatial data and troubleshoot some issues. ESRI’s products work fine if you are used to them, and you can skip this tutorial. On the other hand, QGIS is not limited to Windows and is free.&lt;/p&gt;
+&lt;p&gt;You should &lt;a href=&#34;https://qgis.org/en/site/forusers/download.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;download and install QGIS&lt;/a&gt; on your computer, with instructions depending on the configuration. Unless you prefer bleeding edge version, I recommend that you install the stable version.&lt;/p&gt;
+&lt;h3 id=&#34;download-data&#34;&gt;Download Data&lt;/h3&gt;
+&lt;p&gt;Download the latest building violations data from &lt;a href=&#34;https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;building violations data&lt;/a&gt; from the Chicago Open Data Portal. For convenience, &lt;a href=&#34;https://www.dropbox.com/s/406dh96rgkgvjf4/Building_Violations.csv?dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a local copy downloaded in 2019 is stored here&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;getting-started-with-qgis&#34;&gt;Getting Started with QGIS&lt;/h2&gt;
+&lt;p&gt;Once you open QGIS, the windows and toolbars that show up depend on your computer configuration. But in general, it should look like the following and you can use the add new layers toolbar to add the downloaded dataset.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/QGIS1.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;Should you have trouble locating the right panels and toolbars explore toggling some of them from the View menu as below.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/QGIS2.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;Because, the building violations are a text delimted file, pick the button to add csv file and select the right paths.&lt;/p&gt;
+&lt;p&gt;Make sure to check the right X and Y coordinates. Longitude is the X coordinate, despite the convention of writing the Latitude first. Please note that Lat/Long are usually in a &lt;a href=&#34;https://mgimond.github.io/Spatial/coordinate-systems.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;coordinate system called WGS84&lt;/a&gt;. Please confirm with the documentation on the data source that this is indeed the case. Otherwise, geographic operations will result in erroneous outputs.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/QGIS3.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;/p&gt;
+&lt;p&gt;Adding this layer, results in adding ~1.6 million points in the city of Chicago, where violations are recorded.&lt;/p&gt;
+&lt;p&gt;One of the key features of a GUI based GIS is to allow for styling of layers. Use the following video to get some sense of how to style the violations layer based on the status of the violation.&lt;/p&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    If the videos appear blurry, your video playback on YouTube might be set too low. Increase the playback resolution to 720p or 1080p in the Settings with in the YouTube player.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/HjsP2b55GWo&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This is a particularly bad example of a map. List out the ways it can be improved.&lt;/li&gt;
+&lt;li&gt;Add other layers to the map and style them, to give some context to Chicago (such as Roads)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;print-composer&#34;&gt;Print Composer&lt;/h2&gt;
+&lt;p&gt;To create a proper map with legend, north arrow and scale, you need to use a print composer. You can use the following video to get started.&lt;/p&gt;
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/55HTbzVfGpg&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;additional-resources&#34;&gt;Additional Resources&lt;/h2&gt;
+&lt;p&gt;There are many resources on the web that will get you familiar with QGIS. If you have some familarity with ESRI products, there are many analogous functions and workflows in QGIS and should be relatively straightforward to figure out.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ujaval Ghandi’s &lt;a href=&#34;http://www.qgistutorials.com/en/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;QGIS tutorials and tips&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;The official &lt;a href=&#34;https://docs.qgis.org/testing/en/docs/training_manual/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;training manual&lt;/a&gt; of QGIS&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

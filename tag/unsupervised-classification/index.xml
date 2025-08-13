@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>unsupervised-classification | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/tag/unsupervised-classification/</link>
+      <atom:link href="https://nkaza.github.io/tag/unsupervised-classification/index.xml" rel="self" type="application/rss+xml" />
+    <description>unsupervised-classification</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Mon, 09 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>unsupervised-classification</title>
+      <link>https://nkaza.github.io/tag/unsupervised-classification/</link>
+    </image>
+    
+    <item>
+      <title>Identifying Clusters of Events</title>
+      <link>https://nkaza.github.io/post/cluster-detection-in-point-data/</link>
+      <pubDate>Mon, 09 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/cluster-detection-in-point-data/</guid>
+      <description>
+&lt;script src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In this post, I am going to demonstrate some methods that can be used to identify clusters/hotspots. Clusters of points are usually locations where there are higher than expected frequency of incidents happening. These could be clusters of disease incidences, accidents, flood insurance claims, fatalities etc. Identifying where these clusters exists and are emerging is important to take either mitigating or preventative actions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;acquire-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Acquire Data&lt;/h2&gt;
+&lt;p&gt;We are going to use crime data from &lt;a href=&#34;http://data.police.uk&#34;&gt;data.police.uk&lt;/a&gt; for the greater Manchester Area. The data on this site is published by the Home Office, and is provided by the 43 geographic police forces in England and Wales, the British Transport Police, the Police Service of Northern Ireland and the Ministry of Justice. Most of spatial data boundaries can be acquired either from &lt;a href=&#34;https://www.ordnancesurvey.co.uk/opendatadownload/&#34;&gt;Ordinance Survey&lt;/a&gt; or the &lt;a href=&#34;http://webarchive.nationalarchives.gov.uk/20160110200248/http://www.ons.gov.uk/ons/guide-method/geography/products/census/spatial/2011/index.html&#34;&gt;Census&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;After I started creating this tutorial, I found a &lt;a href=&#34;http://r-video-tutorial.blogspot.com/2015/05/introductory-point-pattern-analysis-of.html&#34;&gt;tutorial by Dr. Fabio Veronesi&lt;/a&gt; that is remarkably similar in the illustrative dataset, though the topics covered are slightly different. Check it out!&lt;/p&gt;&lt;/p&gt;
+&lt;p&gt;Since I wrote this tutorial, many have transitioned to using &lt;code&gt;sf&lt;/code&gt; objects instead of &lt;code&gt;sp&lt;/code&gt; objects. Please adapt as necessary.
+
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;p&gt;Crime data for Manchester clipped from January 2016 - May 2018 is
+&lt;a href=&#34;https://www.dropbox.com/s/vxzpje0pwz6mhwl/monthlydata.zip?dl=0&#34;&gt;here&lt;/a&gt;. You can also download the LSOA and the boundary file from &lt;a href=&#34;https://www.dropbox.com/s/8cabizab939w6jk/BNDfiles.zip?dl=0&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;additional-resources&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Additional resources&lt;/h2&gt;
+&lt;p&gt;I strongly recommend that you read through &lt;a href=&#34;https://www.crcpress.com/Spatial-Point-Patterns-Methodology-and-Applications-with-R/Baddeley-Rubak-Turner/p/book/9781482210200&#34;&gt;Spatial Point Patterns: Methodology and Applications with R&lt;/a&gt; by by Adrian Baddeley, Ege Rubak and Rolf Turner.&lt;/p&gt;
+&lt;p&gt;It is also quite useful to peruse the documentation of &lt;a href=&#34;https://www.nij.gov/topics/technology/maps/pages/crimestat.aspx&#34;&gt;CrimeStat&lt;/a&gt; and &lt;a href=&#34;https://spatial.uchicago.edu/software&#34;&gt;GeoDa&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requirements&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Requirements&lt;/h2&gt;
+&lt;p&gt;This requires &lt;a href=&#34;http://r-project.org&#34;&gt;R&lt;/a&gt;, and many libraries including &lt;a href=&#34;https://cran.r-project.org/package=spatstat&#34;&gt;spatstat&lt;/a&gt;,&lt;a href=&#34;https://cran.r-project.org/web/packages/spdep/&#34;&gt;spdep&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/web/packages/rgdal&#34;&gt;rgdal&lt;/a&gt;, &lt;a href=&#34;https://cran.r-project.org/package=aspace&#34;&gt;aspace&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/package=leaflet&#34;&gt;leaflet&lt;/a&gt;. You should install them, as necessary, with &lt;code&gt;install.packages()&lt;/code&gt; command.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;caveats&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Caveats&lt;/h2&gt;
+&lt;p&gt;The crime data, especially the location data, is &lt;a href=&#34;https://data.police.uk/about/#anonymisation&#34;&gt;anonymised&lt;/a&gt; . This poses some problems, as the anonymisation is primarily assigning the point to the center of the street. There may be many crimes on the street that get the same location. To get around this I randomly re-jitter the points by a small &lt;span class=&#34;math inline&#34;&gt;\(\epsilon\)&lt;/span&gt;. The following function is a quick way to introduce noise. This introduction of noise, might be problematic for some applications. You will have to figure out how to deal with the issue of duplicate locations one way or the other.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;jitter_longlat &amp;lt;- function(coords, km = 1) {
+  n &amp;lt;- dim(coords)[1]
+  length_at_lat &amp;lt;- rep(110.5742727, n) # in kilometers at the equator. Assuming a sphere
+  length_at_long &amp;lt;- cos(coords[,1]* (2 * pi) / 360) * 110.5742727
+  randnumber &amp;lt;- coords
+  randnumber[,2] &amp;lt;- runif(n, min=-1,max=1) * (1/length_at_lat) * km
+  randnumber[,1] &amp;lt;- runif(n, min=-1,max=1) * (1/length_at_long) * km
+  out &amp;lt;- coords
+  out[,1] &amp;lt;- coords[,1] + randnumber[,1]
+  out[,2] &amp;lt;- coords[,2] + randnumber[,2]
+  out &amp;lt;- as.data.frame(out)
+  return(out)
+}
+
+ls()
+# [1] &amp;quot;filename&amp;quot;       &amp;quot;i&amp;quot;              &amp;quot;jitter_longlat&amp;quot; &amp;quot;manchesterbnd&amp;quot; 
+# [5] &amp;quot;manchesterlsoa&amp;quot; &amp;quot;streetcrime&amp;quot;    &amp;quot;subdirs&amp;quot;
+
+streetcrime[,c(&amp;quot;Longitude&amp;quot;, &amp;quot;Latitude&amp;quot;)] &amp;lt;- jitter_longlat(streetcrime[,c(&amp;quot;Longitude&amp;quot;, &amp;quot;Latitude&amp;quot;)], km=.6)
+sum(duplicated(streetcrime[,c(&amp;quot;Longitude&amp;quot;, &amp;quot;Latitude&amp;quot;)]))
+# [1] 0
+
+#Convert it into spatial points data frame
+
+coordinates(streetcrime) &amp;lt;- ~Longitude+Latitude
+streetcrime@data[,c(&amp;quot;Longitude&amp;quot;, &amp;quot;Latitude&amp;quot;)]&amp;lt;- coordinates(streetcrime)
+
+wgs84crs &amp;lt;- CRS(&amp;quot;+proj=longlat +datum=WGS84&amp;quot;)
+proj4string(streetcrime) &amp;lt;- wgs84crs&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualisation-explorations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Visualisation &amp;amp; Explorations&lt;/h2&gt;
+&lt;p&gt;As with any datasets, the first and foremost thing to do is to explore the data to understand its structures, its quirks and what if anything need to be cleaned.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;theme_set(theme_tufte())
+
+g_street &amp;lt;-  ggplot(streetcrime@data) +
+  geom_bar(aes(x=fct_infreq(Crime_type))) +
+  coord_flip() + 
+  facet_wrap(~year)+
+  labs(x=&amp;#39;Crime Type&amp;#39;, y=&amp;#39;Count&amp;#39;) 
+#table(bicycletheft$Last_outcome_category)
+
+g_street&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+library(ggrepel)
+
+k &amp;lt;- streetcrime@data %&amp;gt;% count(Month, fct_infreq(Crime_type), sort = FALSE)
+names(k) &amp;lt;- c(&amp;#39;Month&amp;#39;, &amp;quot;Crime_type&amp;quot;, &amp;quot;n&amp;quot;)
+
+k %&amp;gt;%
+  mutate(label = if_else(Month == max(Month), as.character(Crime_type), NA_character_))%&amp;gt;%
+  ggplot(aes(x=Month, y=n, col= Crime_type))+
+   geom_smooth()+ 
+  scale_colour_discrete(guide = &amp;#39;none&amp;#39;) +
+  geom_label_repel(aes(label = label),
+                   nudge_x = 1,
+                   na.rm = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-2-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The trends should be readily apparent. Violence and Sexual Offences, Public Order crimes have increased significantly, while Anti-social behaviour crimes have declined from 2016 to 2018 Q2. These statistics include the &lt;a href=&#34;https://www.theguardian.com/uk-news/manchester-arena-explosion&#34;&gt;Manchester Arena bombing in May 2017&lt;/a&gt;. One thing to notice though, is how few reported crimes actually result in an outcome. I am not entirely sure, if this a Manchester issue or if it is a general criminal justice issue.&lt;/p&gt;
+&lt;p&gt;Also note the mixing of &lt;code&gt;%&amp;gt;%&lt;/code&gt; and &lt;code&gt;+&lt;/code&gt; in the following code. ggplot uses &lt;code&gt;+&lt;/code&gt; to build its graphics, while the rest of the analysis can be done with maggittr’s &lt;code&gt;%&amp;gt;%&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt; g_street_outcome &amp;lt;-  streetcrime@data[!is.na(streetcrime$Last_outcome_category),]%&amp;gt;%
+  ggplot() +
+  geom_bar(aes(x=fct_infreq(Last_outcome_category), y = (..count..)/sum(..count..) * 100)) +
+  coord_flip() + 
+  labs(x=&amp;#39;Outcome&amp;#39;, y=&amp;#39;Percent&amp;#39;) 
+  
+  g_street_outcome&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It is also illustrative to see the spatial extent and locations of crimes. We return to our standard way of visualising spatial data with Leaflet and basemaps from &lt;a href=&#34;https://carto.com/&#34;&gt;CartoDB&lt;/a&gt;. This allows us to zoom in and pan around the image to explore the data in some detail.&lt;/p&gt;
+&lt;p&gt;From now on, for the sake of convenience, I will focus on “Bicycle Thefts” as they are few of them and it is easy for illustration purposes. You are welcome to try other types of crime. Furthermore, I restrict the analysis to thefts in 2016 Q2. We will return to the full series later.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicycletheft &amp;lt;- streetcrime %&amp;gt;% subset(streetcrime$Crime_type == &amp;quot;Bicycle theft&amp;quot;)
+bicycletheftQ2 &amp;lt;- bicycletheft[bicycletheft$Quarter == &amp;quot;2016 Q2&amp;quot;,]
+nrow(bicycletheftQ2)
+# [1] 1151
+
+ map_bicycle &amp;lt;- bicycletheftQ2 %&amp;gt;%
+  leaflet() %&amp;gt;%
+  addProviderTiles(providers$CartoDB.Positron) %&amp;gt;%
+  addMarkers(clusterOptions = markerClusterOptions(),
+             popup = ~as.character(Last_outcome_category), 
+             label = ~as.character(Crime_ID)
+             )
+
+ library(widgetframe)
+frameWidget(map_bicycle)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-4.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Mapping the raw data points is not always useful. It is sometimes useful to summarize the data spatially. We can do that either by gridding the extent, aggregating to arbitrary polygonal boundaries or by creating a continuous surface through density estimates. Each has its advantages and disadvantages.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;gridsquadrat-counts&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Grids/Quadrat Counts&lt;/h2&gt;
+&lt;p&gt;Quadrat counts are simple mechanisms to understand, visualise and test point patterns. It is as simple a overlaying a grid and counting the number of points in the grids. Because grids are of uniform area, the count is a proxy for density and because of the uniform area, unlike choropleth maps, there are no ‘large areas’ to dominate the map. However, the downside is that quadrat counts depends quite heavily on the resolution of the quadrat. To see this see the following code.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ra300 &amp;lt;- raster(extent(manchesterbnd), resolution=300, crs=proj4string(manchesterbnd))
+ra300 &amp;lt;- mask(ra300, manchesterbnd)
+ra300 &amp;lt;- projectRaster(ra300, crs = wgs84crs )
+theftcounts300 &amp;lt;- rasterize(coordinates(bicycletheftQ2), ra300, fun=&amp;#39;count&amp;#39;, background=NA)
+p1 &amp;lt;- levelplot(theftcounts300, par.settings = plasmaTheme, margin = list(FUN = &amp;#39;median&amp;#39;), main=&amp;quot;300m quadrats&amp;quot;)
+
+ra1k &amp;lt;- raster(extent(manchesterbnd), resolution=1000, crs=proj4string(manchesterbnd))
+ra1k &amp;lt;- mask(ra1k, manchesterbnd)
+ra1k &amp;lt;- projectRaster(ra1k, crs = wgs84crs )
+theftcounts1k &amp;lt;- rasterize(coordinates(bicycletheftQ2), ra1k, fun=&amp;#39;count&amp;#39;, background=NA)
+p2 &amp;lt;- levelplot(theftcounts1k, par.settings = plasmaTheme, margin = list(FUN = &amp;#39;median&amp;#39;), main=&amp;quot;1km quadrats&amp;quot;)
+
+print(p1, split=c(1, 1, 2, 1), more=TRUE)
+print(p2, split=c(2, 1, 2, 1))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;arbitary-polygons-zones&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Arbitary Polygons/ Zones&lt;/h2&gt;
+&lt;p&gt;One of the problems with grids/quadrats is that they are arbitary and different grids resolutions have different outputs (MAUP). The other is that the grids are artificial, in that they do not follow natural or political geographies that may be relevant. They may be relevant for bringing in other data, or assigning responsibility and other administrative reasons. To overcome this, we can also spatially aggregate the data into arbitrary shaped zones or polygons. MAUP does not disappear with polygons, however.&lt;/p&gt;
+&lt;p&gt;In this case, we will use the Lower layer Super Output Areas (LSOA). We need to make sure that they are of the same projections, for topological predicates to work. We use the &lt;code&gt;over&lt;/code&gt; function from sp library, though one could use &lt;code&gt;[&lt;/code&gt; function as well.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;manchesterlsoa &amp;lt;- spTransform(manchesterlsoa, wgs84crs)
+manchesterlsoa$LSOA11CD &amp;lt;- as.character(manchesterlsoa$LSOA11CD)
+bicyclelsoa &amp;lt;- over(bicycletheftQ2, manchesterlsoa) %&amp;gt;% group_by(LSOA11CD)%&amp;gt;%
+  summarise(crimecount = n())
+lsoa_crime &amp;lt;- merge(manchesterlsoa, bicyclelsoa, by=&amp;quot;LSOA11CD&amp;quot;)
+lsoa_crime@data$crimecount[is.na(lsoa_crime@data$crimecount)] &amp;lt;- 0
+
+m &amp;lt;-  leaflet(lsoa_crime) %&amp;gt;%
+  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;,
+                   options = providerTileOptions(minZoom = 9, maxZoom = 13)) %&amp;gt;%
+   addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;,
+                    options = providerTileOptions(minZoom = 9, maxZoom = 13))
+
+Npal &amp;lt;- colorNumeric(
+  palette = &amp;quot;Reds&amp;quot;, n = 5,
+  domain = lsoa_crime$crimecount
+)
+
+m2 &amp;lt;- m %&amp;gt;%
+     addPolygons(color = &amp;quot;#CBC7C6&amp;quot;, weight = 0, smoothFactor = 0.5,
+                 fillOpacity = 0.5,
+             fillColor = Npal(lsoa_crime$crimecount),
+             group = &amp;quot;LSOA&amp;quot;
+             ) %&amp;gt;%
+   addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~crimecount,
+             labFormat = function(type, cuts, p) {
+               n = length(cuts) 
+             paste0(prettyNum(cuts[-n], digits=0, big.mark = &amp;quot;,&amp;quot;, scientific=F), &amp;quot; - &amp;quot;, prettyNum(cuts[-1], digits=0, big.mark=&amp;quot;,&amp;quot;, scientific=F))
+             },
+             title = &amp;quot;Crimes&amp;quot;,
+             opacity = 1
+   ) %&amp;gt;%
+  addLayersControl(
+    overlayGroups = c(&amp;quot;LSOA&amp;quot;, &amp;#39;Basemap&amp;#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+
+frameWidget(m2)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-6.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;It should be relatively obvious what the issues of a choropleth maps are. Small LSOAs that have high concentrations of crimes are not readily visible, even when they are important. Color is a terrible way to represent the order; it is quite non-intuitive. One is almost better off looking at the table and identifying the top few LSOA’s that have high number of crimes.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;head(bicyclelsoa[order(-bicyclelsoa$crimecount),], n=15)
+# # A tibble: 15 × 2
+#    LSOA11CD  crimecount
+#    &amp;lt;chr&amp;gt;          &amp;lt;int&amp;gt;
+#  1 E01033658         54
+#  2 E01033653         37
+#  3 E01033677         28
+#  4 E01033664         24
+#  5 E01005948         16
+#  6 E01005209         13
+#  7 E01005062         11
+#  8 E01033656         11
+#  9 E01033662         10
+# 10 E01033669         10
+# 11 E01005212          9
+# 12 E01032687          9
+# 13 E01005108          8
+# 14 E01032906          8
+# 15 E01006349          7&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Other issues include the binning of the data into different color introduces visual bias. Depending on the cuts, the maps are different. Analogously different boundaries for the zones/polygons produce radically different maps.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;kernel-density-heat-maps&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Kernel Density/ Heat Maps&lt;/h2&gt;
+&lt;p&gt;Kernel density estimation (KDE) is a non-parametric way to estimate the probability density function of a random variable. It is a data smoothing problem based on a finite data sample. The standard KDE in 2-dimensions uses a bivariate normal distribution to estimate. We can visualise it using ggplot’s &lt;code&gt;geom_density2d&lt;/code&gt; and &lt;code&gt;stat_density2d&lt;/code&gt; directly.&lt;/p&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    Note that &lt;code&gt;ggmap&lt;/code&gt; works with Google to identify locations and download basemaps. Often these requirements change. Please refer to the release notes and documentation of Google APIs and ggmap, if the following code does not work.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggmap)
+
+manchester &amp;lt;- get_stamenmap(bbox = bbox(manchesterlsoa), zoom = 10, maptype= &amp;quot;toner-lite&amp;quot;)
+
+ggmap(manchester) + geom_density2d(data = bicycletheftQ2@data, aes(x = Longitude, y = Latitude), size = 0.3) + 
+  stat_density2d(data = bicycletheftQ2@data, aes(x = Longitude, y = Latitude, fill = ..level.., alpha = ..level..), size=0.01, bins = 16, geom = &amp;quot;polygon&amp;quot;) +
+  scale_fill_gradient(low = &amp;quot;green&amp;quot;, high = &amp;quot;red&amp;quot;, guide=&amp;quot;none&amp;quot;) + 
+    scale_alpha(range = c(0, 0.3), guide = &amp;quot;none&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Usually, Gaussian kernels are not all that great. There would be times, when bandwidths need to be changed or kernel forms need to be changed. R provides numerous ways to do this. In particular, check out &lt;code&gt;density&lt;/code&gt; in spatstat package or &lt;a href=&#34;https://cran.r-project.org/web/packages/spatialkernel/&#34;&gt;&lt;code&gt;spatialkernel&lt;/code&gt;&lt;/a&gt; package or use &lt;a href=&#34;https://gis.stackexchange.com/questions/150141/r-spatial-kernel-density-estimation&#34;&gt;SAGA GIS from R&lt;/a&gt;.
+One could also use spatstat package, however, this requires creating a separate data structure that spatstat can understand.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bicycletheftQ2 &amp;lt;- spTransform(bicycletheftQ2, CRS(proj4string(manchesterbnd)))
+bicycletheftQ2.ppp &amp;lt;- ppp(x=bicycletheftQ2@coords[,1],y=bicycletheftQ2@coords[,2],as.owin(manchesterbnd))
+summary(bicycletheftQ2.ppp)
+# Planar point pattern:  1151 points
+# Average intensity 9.02051e-07 points per square unit
+# 
+# Coordinates are given to 2 decimal places
+# i.e. rounded to the nearest multiple of 0.01 units
+# 
+# Window: polygonal boundary
+# single connected closed polygon with 13669 vertices
+# enclosing rectangle: [351662.6, 406087.2] x [381165.4, 421037.7] units
+#                      (54420 x 39870 units)
+# Window area = 1275980000 square units
+# Fraction of frame area: 0.588
+plot(density(bicycletheftQ2.ppp))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;
+The default kernel is Gaussian in spatstat. We can define arbitrary kernel shapes using a pixel image. See &lt;code&gt;?density.ppp&lt;/code&gt;. We can also use a &lt;code&gt;focal&lt;/code&gt; or &lt;code&gt;focalWeight&lt;/code&gt; functions to calculate local smoothed counts in the raster package.&lt;/p&gt;
+&lt;p&gt;&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    Local intensity is not the same as kernel density. Kernel density is an estimate of probability, which means that it is non-negative and should sum to 1. Local intensity is simply a measure of neigborhood density (count of points in the neigborhood). The values produced by these methods will be different, but visual interpretations for most purposes, should be similar. Also note that intensity calculations in spatstat uses area, whose units depend on the coordinate system used.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;global-clustering&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Global Clustering&lt;/h2&gt;
+&lt;p&gt;Global clustering is a way of determining if points are significantly different from the Complete Spatial Randomness or if there is a spatial stucture to it. We can estimate the level of global clustering using clark-evans test or Ripley’s K-function or nearest neighbor distance function G or empty space function F. In general, global clustering metrics is not useful to planners working on a local scale, therefore I am ignoring it here. You are referred to Baddeley et.al excellent practical book or &lt;a href=&#34;https://www.amazon.com/Statistics-Spatial-Wiley-Classics-Library/dp/1119114616&#34;&gt;Cressie’s classic book&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;local-clustering&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Local Clustering&lt;/h2&gt;
+&lt;p&gt;Extracting local clusters of points is lot more complicated due to the issues of multiple testing and the presence of noise. The simplest way, widely accepted, is to aggregate the points to zones and estimate if the values are spatially autocorrelated using Moran’s I statistic.&lt;/p&gt;
+&lt;div id=&#34;local-morans-i-statistic&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Local Moran’s I statistic&lt;/h3&gt;
+&lt;p&gt;The local spatial statistic Moran’s I is calculated for each zone based on the spatial weights object used. The values returned include a Z-value, and may be used as a diagnostic tool. The statistic is:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(I_i = \frac{(x_i-\bar{x})}{{∑_{k=1}^{n}(x_k-\bar{x})^2}/(n-1)}{∑_{j=1}^{n}w_{ij}(x_j-\bar{x})}\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;, and its expectation and variance are given in Anselin (1995).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(spdep)
+
+lsoa_crime_tmp &amp;lt;- lsoa_crime@data
+row.names(lsoa_crime_tmp) &amp;lt;- sapply(slot(lsoa_crime, &amp;quot;polygons&amp;quot;), function(x) slot(x, &amp;quot;ID&amp;quot;)) 
+
+lsoa_crime &amp;lt;- rgeos::gMakeValid(lsoa_crime, byid=T) # Fix invalid geometries
+lsoa_crime  &amp;lt;- SpatialPolygonsDataFrame(lsoa_crime, lsoa_crime_tmp)
+
+lsoa_nb &amp;lt;- poly2nb(lsoa_crime)  #queen&amp;#39;s neighborhood
+(lsoa_nb_w &amp;lt;- nb2listw(lsoa_nb)) #convert to listw object
+# Characteristics of weights list object:
+# Neighbour list object:
+# Number of regions: 1740 
+# Number of nonzero links: 10402 
+# Percentage nonzero weights: 0.3435725 
+# Average number of links: 5.978161 
+# 
+# Weights style: W 
+# Weights constants summary:
+#      n      nn   S0       S1       S2
+# W 1740 3027600 1740 607.6169 7209.152
+lsoa_crime$s_crimecount &amp;lt;- scale(lsoa_crime$crimecount)  #Scale and Center the variable of interst
+lsoa_crime$lag_scrimecount &amp;lt;- lag.listw(lsoa_nb_w, lsoa_crime$s_crimecount) #Create lagged variable
+
+p&amp;lt;-ggplot(lsoa_crime@data, aes(x=s_crimecount, y=lag_scrimecount)) +
+  geom_point() +
+  coord_fixed() +  
+  geom_vline(xintercept = 0) + geom_hline(yintercept = 0)  + 
+  labs(x=&amp;quot;Bicycle Thefts (standardised)&amp;quot;, y=&amp;quot;Spatially Lagged Bicycle Thefts (standardised)&amp;quot;)
+p&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+lsoa_moran &amp;lt;- localmoran(lsoa_crime@data$crimecount, lsoa_nb_w)  #calculate the local moran&amp;#39;s I
+
+nrow(lsoa_moran[lsoa_moran[,5] &amp;lt;= 0.05,]) #Count the number of zones that are significant.
+# [1] 71
+
+lsoa_crime@data  &amp;lt;- lsoa_crime@data %&amp;gt;%
+    plyr::mutate(sig_char =
+            dplyr::case_when(lsoa_moran[,5] &amp;lt;=.05 &amp;amp; s_crimecount&amp;gt;0 &amp;amp; lag_scrimecount&amp;gt;0     ~ &amp;quot;High-High&amp;quot;,
+                      lsoa_moran[,5] &amp;lt;=.05 &amp;amp; s_crimecount&amp;gt;0 &amp;amp; lag_scrimecount&amp;lt;0  ~ &amp;quot;High-Low&amp;quot;,
+                      lsoa_moran[,5] &amp;lt;=.05 &amp;amp; s_crimecount&amp;lt;0 &amp;amp; lag_scrimecount&amp;gt;0  ~ &amp;quot;Low-High&amp;quot;,
+                      lsoa_moran[,5] &amp;lt;=.05 &amp;amp; s_crimecount&amp;lt;0 &amp;amp; lag_scrimecount&amp;lt;0  ~ &amp;quot;Low-Low&amp;quot;,
+                      TRUE                     ~ &amp;quot;Not Significant&amp;quot;
+            )) 
+
+lsoa_crime@data$sig_char &amp;lt;- as.factor(lsoa_crime@data$sig_char)
+summary(lsoa_crime@data$sig_char) # Check to see if the refactorisation worked ok.
+#       High-High        Low-High Not Significant 
+#              66               5            1669&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Since we know that there are only one category of significant autocorrelation, we will just use two colors (Red and White) to visualise. However, in general case, we are usually interested in both High-High and High-Low clusters, i.e. zones that have high values surrounded by high values and zones that have high values surrounded by low values.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+Fpal &amp;lt;- colorFactor(c(&amp;quot;#EE0000&amp;quot;, &amp;quot;#FFFFFF&amp;quot;), lsoa_crime@data$sig_char)
+
+m3 &amp;lt;- m %&amp;gt;%
+     addPolygons(color = &amp;quot;#CBC7C6&amp;quot;, weight = .5, smoothFactor = 0.5,
+                 fillOpacity = 0.7,
+             fillColor = Fpal(lsoa_crime@data$sig_char),
+             group = &amp;quot;LSOA&amp;quot;
+             ) %&amp;gt;%
+   addLegend(&amp;quot;topleft&amp;quot;, pal = Fpal, values = ~lsoa_crime@data$sig_char,
+             title = &amp;quot;Bicycle Thefts (Significant Clusters)&amp;quot;,
+             opacity = 1
+   ) %&amp;gt;%
+  addLayersControl(
+    overlayGroups = c(&amp;quot;LSOA&amp;quot;, &amp;#39;Basemap&amp;#39;),
+    options = layersControlOptions(collapsed = FALSE)
+      )
+
+frameWidget(m3)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-11.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Few points to note here.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The geography and zone size matters quite a bit. Changing the LSOA to a grid of arbitrary size changes the statistics and locations of the clusters. Instead of LSOA, if you use census output area (OA) or Middle Layer output area (MSOA) the results will be different. Try this as an exercise.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The weight matrix matters quite a bit as well. In this exercise, the weights are built from queen continguity of zones and are row standardised (default). There are any number of other formulations that we could have used and may be more appropriate for specific use cases. In particular, see &lt;code&gt;dnearneigh&lt;/code&gt;, &lt;code&gt;knearneigh&lt;/code&gt;, &lt;code&gt;poly2nb&lt;/code&gt;, &lt;code&gt;graphneigh&lt;/code&gt; in the &lt;code&gt;spdep&lt;/code&gt; package.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The presence of NAs in the variable of interest, throws off the calculations. Care should be taken to adjust NA especially when using neighbours. In some cases, NAs can be turned to 0s. In others, it is not appropriate. In any case, care should be taken about the neighbour lists, when the observations are dropped from the analysis.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Finally and more importantly, this cluster analysis does not account for the underlying population at risk. It may very well be the case that the clusters we are observing are an artefact of underlying population distribution. This can be easily rectified by using the density/propensity of bike thefts instead of the raw counts. The choice of a denominator (population, employees, number of bicycles etc.) is arbitrary and should be externally justified. I leave this as an exercise.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-dbscan-or-optics&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Using DBSCAN or Optics&lt;/h2&gt;
+&lt;p&gt;If we do not need statistically significant clusters, we can use one of the more popular clustering algorithms in Unsupervised classification called Density Based Spatial Clustering of Applications with Noise (DBSCAN). DBSCAN was detailed by &lt;a href=&#34;https://rdcu.be/3i8O&#34;&gt;Ester et.al&lt;/a&gt; in 1996 and received the “Test of Time” award in 2014.&lt;/p&gt;
+&lt;p&gt;The algorithm uses two parameters:
+- &lt;span class=&#34;math inline&#34;&gt;\(\epsilon\)&lt;/span&gt; (eps) is the radius of our neighbourhoods around a data point &lt;span class=&#34;math inline&#34;&gt;\(P\)&lt;/span&gt;.
+- &lt;span class=&#34;math inline&#34;&gt;\(minPts\)&lt;/span&gt; is the minimum number of data points we want in a neighborhood to define a cluster.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;img/DBSCAN-Illustration.svg&#34; width=&#34;400&#34; alt=&#34;&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Illustration of DBSCAN algorithm, from &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:DBSCAN-Illustration.svg&#34; class=&#34;uri&#34;&gt;https://commons.wikimedia.org/wiki/File:DBSCAN-Illustration.svg&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Once these parameters are defined, the algorithm divides the data points into three points:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Core points&lt;/code&gt;. A point &lt;span class=&#34;math inline&#34;&gt;\(P\)&lt;/span&gt; is a core point if at least &lt;span class=&#34;math inline&#34;&gt;\(minPts\)&lt;/span&gt; points are within distance &lt;span class=&#34;math inline&#34;&gt;\(\epsilon\)&lt;/span&gt; .&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Border points&lt;/code&gt;. A point &lt;span class=&#34;math inline&#34;&gt;\(Q\)&lt;/span&gt; is border point for &lt;span class=&#34;math inline&#34;&gt;\(P\)&lt;/span&gt; if there is a path &lt;span class=&#34;math inline&#34;&gt;\(P_1\)&lt;/span&gt;, …, &lt;span class=&#34;math inline&#34;&gt;\(P_n\)&lt;/span&gt; with &lt;span class=&#34;math inline&#34;&gt;\(P_1\)&lt;/span&gt; = &lt;span class=&#34;math inline&#34;&gt;\(P\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(P_n\)&lt;/span&gt; = &lt;span class=&#34;math inline&#34;&gt;\(Q\)&lt;/span&gt;, where each &lt;span class=&#34;math inline&#34;&gt;\(P_{i+1}\)&lt;/span&gt;is directly reachable from &lt;span class=&#34;math inline&#34;&gt;\(P_i\)&lt;/span&gt; (all the points on the path must be core points, with the possible exception of &lt;span class=&#34;math inline&#34;&gt;\(P\)&lt;/span&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Outliers&lt;/code&gt;. All points not reachable from any other point are outliers.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The steps in DBSCAN are simple after defining the previous steps:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pick at random a point which is not assigned to a cluster and calculate its &lt;span class=&#34;math inline&#34;&gt;\(\epsilon\)&lt;/span&gt;-neighborhood. If there are atleast &lt;span class=&#34;math inline&#34;&gt;\(minPoints\)&lt;/span&gt; in the neighborhood, mark it a core point and a cluster; otherwise, mark it as outlier.&lt;/li&gt;
+&lt;li&gt;Once all core points are found, start expanding that to include border points.&lt;/li&gt;
+&lt;li&gt;Repeat these steps until all the points are either assigned to a cluster or to an outlier.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The parameters are key and significantly affect the results. One heuristic to detrmine &lt;span class=&#34;math inline&#34;&gt;\(\epsilon\)&lt;/span&gt; is to look at the kink in the dist plot of k-nearest neighbors. The intutition is that, at the kink, each points starts having a lot of neighbors. &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; is usually dimension of the data + 1, in our case is 3. This is also the &lt;span class=&#34;math inline&#34;&gt;\(minPts\)&lt;/span&gt;. Other values are possible depending on the external criteria.&lt;/p&gt;
+&lt;p&gt;We will use dbscan library instead of the dbscan in fpc library.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dbscan)
+bicycletheftQ2 &amp;lt;- bicycletheftQ2 %&amp;gt;% spTransform(wgs84crs) # Doing this for visualisation using leaflet. Non-WGS84 CRS is more complicated with leaflet.
+kNNdistplot(bicycletheftQ2@data[,c(&amp;#39;Longitude&amp;#39;, &amp;#39;Latitude&amp;#39;)], k = 5)
+abline(h=.012, col=&amp;#39;red&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;DBscan is relatively quick as evidenced by the code below.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;db_clusters_bicycletheft&amp;lt;- dbscan(bicycletheftQ2@data[,c(&amp;#39;Longitude&amp;#39;, &amp;#39;Latitude&amp;#39;)], eps=0.012, minPts=5, borderPoints = TRUE)
+print(db_clusters_bicycletheft)
+# DBSCAN clustering for 1151 objects.
+# Parameters: eps = 0.012, minPts = 5
+# The clustering contains 21 cluster(s) and 143 noise points.
+# 
+#   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19 
+# 143  10  20  10 663   9  63   8  21   3   9  31  12  54  10  14  24  17   6   9 
+#  20  21 
+#   8   7 
+# 
+# Available fields: cluster, eps, minPts
+
+bicycletheftQ2@data$dbscan_cluster &amp;lt;- db_clusters_bicycletheft$cluster&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;21 clusters of points are identified with about 12% of the points are not assigned to a cluster (noise).
+We can construct a concavehull around these points to identify the cluster boundaries and visualise them.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;
+library(concaveman)
+library(sf)
+
+clusterpolys &amp;lt;- bicycletheftQ2 %&amp;gt;% st_as_sf() %&amp;gt;% 
+  split(bicycletheftQ2@data$dbscan_cluster) %&amp;gt;%
+  lapply(concaveman, concavity=3) %&amp;gt;%
+  lapply(as_Spatial)
+
+clusterpolys &amp;lt;- lapply(2:length(clusterpolys), function(x){spChFIDs(clusterpolys[[x]],names(clusterpolys)[x])}) %&amp;gt;%
+  lapply(function(x){x@polygons[[1]]}) %&amp;gt;%
+  SpatialPolygons
+
+clusterpolys &amp;lt;- SpatialPolygonsDataFrame(clusterpolys, data=data.frame(ID=row.names(clusterpolys)))
+
+library(RColorBrewer)  
+
+factpal &amp;lt;- colorFactor(brewer.pal(nrow(clusterpolys),&amp;quot;Set3&amp;quot;), clusterpolys$ID)
+
+
+map_bicycle2 &amp;lt;- clusterpolys %&amp;gt;% 
+  leaflet() %&amp;gt;%
+  addProviderTiles(providers$CartoDB.Positron) %&amp;gt;%
+  addPolygons(color = ~factpal(clusterpolys$ID), weight = 5, smoothFactor = 0.5,
+              opacity = 1,
+              fillColor = ~factpal(clusterpolys$ID), fillOpacity = .5,
+              highlightOptions = highlightOptions(color = &amp;quot;green&amp;quot;, weight = 2, bringToFront = TRUE)
+  )%&amp;gt;%
+  addCircles(data=bicycletheftQ2, weight = 3, radius=40, 
+             color=~~factpal(clusterpolys$ID), stroke = TRUE, fillOpacity = 0.8)
+
+frameWidget(map_bicycle2)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-14.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Few points to note here.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;DBSCAN is quite popular and the advantage is that we do not need to define the number of clusters unlike k-means or Partition around Medoids. However, it is very sensitive to the parameters.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;There is no generative model that DBSCAN uses. So the clusters idenitified could be spurious depending on underlying variation in the population distribution.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If the density of the clusters vary, DBSCAN is less likely to identify them.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Extensions for anisotropic neighborhoods can be found and may be more useful than a spherical neighborhood.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;DBSCAN can be relatively easily expanded to space-time cluster detection. The distance in time should appropriately be scaled to match Euclidean distance in space. dbscan can take a precomputed distance object, so the implemenation is relatively straightforward. I leave this as an exercise.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;From all the visualisations, it should be apparent that the results are dependent on what analyses you pick. There is no right way to proceed with the analyses, but mostly conventions and acceptability in the field determine the choice of the analytical method. These soft skills and external justifications are as important, if not more, than using the cutting-edge algorithms and methods. These skills come from experience and practise and is contingent on time and place.&lt;/p&gt;
+&lt;p&gt;In these analyses, we have ignored the time dimension. We also ignored many other methods and techniques that are more prevalent in other fields (e.g.scan statistics in epidemiology. See &lt;a href=&#34;https://dx.doi.org/10.1177/0042098013484540&#34;&gt;Kaza et.al (2013)&lt;/a&gt; for an application to planning.)It is worth noting that the absence of observations do not matter as much in the above analyses, but could be quite important. It is also important to understand the representational assumptions. For example, crime is represented as a point, though it could have happened at an address whose buildings might have different areas in space. Such abstractions have to be justified for particular analytical purposes. Nonetheless, it is useful to keep abreast of various techniques that might help identify clusters of observed points, so that we can deliberate how resources can be prioritised and directed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;accomplishments&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Accomplishments&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Reading point data into R. Constructing a point pattern for use with spatstat&lt;/li&gt;
+&lt;li&gt;Vector data operations (Reproject, Buffer)&lt;/li&gt;
+&lt;li&gt;Point-in-Polygon Operations&lt;/li&gt;
+&lt;li&gt;Spatial kernel density estimation&lt;/li&gt;
+&lt;li&gt;Visualising spatial data in R&lt;/li&gt;
+&lt;li&gt;Exploratory spatial data analysis&lt;/li&gt;
+&lt;li&gt;Spatial clustering using DBSCAN&lt;/li&gt;
+&lt;li&gt;Neighborhood weight matrices&lt;/li&gt;
+&lt;li&gt;Local spatial autocorrelation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
