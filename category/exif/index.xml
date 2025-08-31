@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>exif | Nikhil Kaza</title>
+    <link>https://nkaza.github.io/category/exif/</link>
+      <atom:link href="https://nkaza.github.io/category/exif/index.xml" rel="self" type="application/rss+xml" />
+    <description>exif</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Fri, 29 Aug 2025 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
+      <title>exif</title>
+      <link>https://nkaza.github.io/category/exif/</link>
+    </image>
+    
+    <item>
+      <title>Object Detection Using Pre-trained Neural Network Models</title>
+      <link>https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/</link>
+      <pubDate>Fri, 29 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Object detection allows computers to identify and locate objects &amp;mdash; like cars, people, street furniture &amp;mdash; in images or videos. For urban planners, it offers a way to gather observational data at scale.&lt;/p&gt;
+&lt;p&gt;It can be used in various applications such as&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Traffic and Mobility Studies: Count vehicles, bikes, or pedestrians at intersections to inform signal timing or street design.&lt;/li&gt;
+&lt;li&gt;Public Space Monitoring: Understand how parks, plazas, or transit stops are used throughout the day.&lt;/li&gt;
+&lt;li&gt;Infrastructure Audits: Use aerial or street-level imagery to assess curb usage, sidewalk conditions, or construction activity.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Often these are meant to be supplement human data collection, but come with their own caveats. More on that later.&lt;/p&gt;
+&lt;p&gt;Often object detection uses deep learning, though other computer vision tools are occasionally used. Deep learning is a techniques that uses neural networks that are &amp;lsquo;deep&amp;rsquo; (multiple layers) as opposed to a shallow single layer networks. Neural networks are a type of computer model inspired by how the human brain works &amp;mdash; they learn patterns from data and use that knowledge to make predictions or recognize things.&lt;/p&gt;
+&lt;p&gt;They require enormous amount of training data. One of the most widely used datasets for training these models is the COCO dataset (Common Objects in Context), which contains thousands of labeled images featuring everyday scenes with people, vehicles, animals, and more. Because training a neural network from scratch requires a lot of data and computing power, we often use pretrained models &amp;mdash; models that have already been trained on datasets like COCO &amp;mdash; and then fine-tune them for specific tasks or environments. This makes it easier and faster to apply object detection in real-world settings, including urban planning, without needing to build everything from the ground up.&lt;/p&gt;
+&lt;p&gt;In this tutorial, we will explore how to use pre-trained neural network models for object detection using R. We will not do any fine tuning as this is meant as an illustration.&lt;/p&gt;
+&lt;h2 id=&#34;data&#34;&gt;Data&lt;/h2&gt;
+&lt;p&gt;For this tutorial, we will use street-level images from &lt;a href=&#34;https://www.dropbox.com/scl/fi/u5t26kwi8t52c16r04qso/geotagged.zip?rlkey=zszxeyd0tdrwubjatwbjhwn3e&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Rio de Janeiro, Brazil&lt;/a&gt;, available through &lt;a href=&#34;https://kartaview.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kartaview&lt;/a&gt; is an open-source platform for collecting and sharing street-level imagery, similar to Google Street View but built by a global community. It allows users to upload images captured from smartphones or dash cams, which can then be used for mapping, navigation, and research. You can download the images and unzip them into your &lt;code&gt;InputData&lt;/code&gt; folder.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(here)
+library(magick)
+library(tidyverse)
+
+img_files &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;rio_kartaview_images&amp;quot;, &amp;quot;geotagged&amp;quot;) %&amp;gt;%  #suitably modify the file path
+              list.files(full.names = TRUE, pattern = &amp;quot;\\.jpg$&amp;quot;) # Note the use of regular expressions to only load jpg file paths.
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let&amp;rsquo;s view a few random images first to visually inspect some. I am going to use &lt;code&gt;magick&lt;/code&gt; and &lt;code&gt;cowplot&lt;/code&gt; packages to read and plot the images&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(cowplot)
+
+set.seed(123)
+
+plot_list &amp;lt;- sample(img_files, 10) %&amp;gt;% # Randomly sample 10 image file paths
+                map(function(x) {
+                  image_read(x) %&amp;gt;%  ## This is a function from magick package. Read the image
+                    image_ggplot() + ## This is a function from magick package. Convert the image to a ggplot object
+                    theme_void() ## Note the switch between %&amp;gt;% and +. The former is for chaining functions, the latter is for adding layers to ggplot. This removes the axes and background.
+                })
+      
+plot_grid(plotlist = plot_list, nrow = 2, ncol = 5) #plot_grid is a layout function from cowplot package to arrange multiple ggplot objects in a grid.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/index.en_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;Note the variation in lighting conditions, angles, zoom levels, focus and occlusions. This is typical of street-level imagery and can pose challenges for object detection models. Also note the differences in urban settings such as highway, commercial corridor, vegetation cover etc.&lt;/p&gt;
+&lt;p&gt;In addition to data within the images, it is useful to look at the metadata associated with the images. In the case of images, metadata can include details such as the date and time the photo was taken, camera type, the camera settings used, the geographic location (latitude and longitude) where the image was captured. EXIF (Exchangeable Image File Format) is a standard that stores metadata within image files. This information is automatically recorded by most digital cameras and smartphones and we can use the &lt;code&gt;exiftoolr&lt;/code&gt; package to extract this information. &lt;code&gt;exiftoolr&lt;/code&gt; requires &lt;code&gt;exiftool&lt;/code&gt; to be installed on your computer . You can find instructions &lt;a href=&#34;https://exiftool.org/install.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt; or uncomment appropriate line in the code.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(exiftoolr)
+# install_exiftool() # Uncomment this line if you don&#39;t have exiftool installed already.
+
+img_metadata &amp;lt;- sample(img_files, 10) %&amp;gt;%
+                exif_read() %&amp;gt;%
+                  select(FileName,ImageWidth, ImageHeight, Megapixels, GPSLatitude, GPSLongitude)
+
+head(img_metadata)
+#                                      FileName ImageWidth ImageHeight Megapixels
+# 1           330665659__1308095_016b5_5175.jpg       3072        1728   5.308416
+# 2 1318418389__3645437_4e431_60c0edf80bea9.jpg       3232        2424   7.834368
+# 3           346918433__1323919_5d1ab_1179.jpg       3072        1728   5.308416
+# 4             325991853__1305043_cfec6_97.jpg       3072        1728   5.308416
+# 5 1320102509__3654977_2dea0_60c23cb128f9f.jpg       3840        2160   8.294400
+# 6             204024303__1129811_162e7_50.jpg       2340        4160   9.734400
+#   GPSLatitude GPSLongitude
+# 1   -22.91927    -43.25491
+# 2   -22.86169    -43.30698
+# 3   -22.81576    -43.30089
+# 4   -22.89630    -43.19573
+# 5   -22.97323    -43.39293
+# 6   -22.89879    -43.10323
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    The downloaded Kartaview images did not come with GPS coordinates in the EXIF data. I added them from the separate metadata file that came with the images.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Visualise the locations of all images. Note any patterns you see in the spatial distribution of images. Does the spatial distribution influence any conclusions you might draw about the urban environment?&lt;/li&gt;
+&lt;li&gt;Notice that this particular dataset does not have the heading of the camera. Or the lens height. Or the yaw. Or any number of other settings that affect the captured image. How might these absences influence your analysis downstream?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;object-detection&#34;&gt;Object Detection&lt;/h2&gt;
+&lt;p&gt;Python is generally preferred for object detection due to its extensive support for deep learning and computer vision libraries. Tools like &lt;code&gt;TensorFlow&lt;/code&gt;, &lt;code&gt;PyTorch&lt;/code&gt;, and &lt;code&gt;OpenCV&lt;/code&gt; are actively developed and widely used in the machine learning community, offering pre-trained models, efficient GPU support, and flexible APIs for building and deploying object detection systems. Python also has strong integration with datasets like COCO and platforms for annotation, making it easier to experiment, customize, and scale object detection workflows &amp;mdash; something that R currently lacks in terms of ecosystem and performance for these tasks.&lt;/p&gt;
+&lt;p&gt;We will use &lt;code&gt;reticulate&lt;/code&gt; package to run Python code within R. More importantly, it allows you to use environments created using &lt;code&gt;venv&lt;/code&gt; or &lt;code&gt;conda&lt;/code&gt; directly from R. This is useful because you can create a separate environment for this tutorial and install only the necessary packages without affecting your main R or Python setup.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(reticulate)
+use_condaenv(PATH_TO_CONDA_ENV, required = TRUE) #suitably modify as below
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For this tutorial, I already set up a Python environment.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For Windows use &lt;code&gt;P:\\shared_folder\\conda_envs\\object_detect_win\\object_detection&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;For Mac use &lt;code&gt;~networkdrive/shared_folder/conda_envs/object_detect_mac/object_detection&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;where the &lt;code&gt;~networkdrive&lt;/code&gt; is a mounted network drive on your Mac and &lt;code&gt;P&lt;/code&gt; is the letter that you mapped the network drive to in the Windows. In the lab, this &lt;code&gt;P&lt;/code&gt; drive is automatically mapped to the course network drive.&lt;/p&gt;
+&lt;p&gt;Once the environment is set up, we can load the necessary Python packages and the pre-trained YOLOv10 model. YOLO (You Only Look Once) is a popular object detection algorithm known for its speed and accuracy. YOLOv10 is one of the latest versions, offering improved performance over previous iterations.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+torch &amp;lt;- import(&amp;quot;torch&amp;quot;)
+ultralytics &amp;lt;- import(&amp;quot;ultralytics&amp;quot;)
+model &amp;lt;- ultralytics$YOLO(&amp;quot;yolov10b.pt&amp;quot;)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;All of these python packages above have already been installed in the python environment. You are just importing them into R.&lt;/p&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;Loading the environment and calling the models will take some time depending on the network speed and congestion.&lt;/p&gt;
+&lt;p&gt;If you are impatient and know how to use python, setup the environment yourself on the local drive. The &lt;code&gt;environment.yml&lt;/code&gt; is in the shared folder.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Let&amp;rsquo;s focus on a single photograph.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example_img_path &amp;lt;- img_files[1]
+
+result &amp;lt;- model(source = example_img_path)
+# 
+# image 1/1 N:\Dropbox\website_new\website\tutorials_datasets\rio_kartaview_images\geotagged\1318411189__3645401_74b21_60c0ec1f7c728.jpg: 480x640 1 person, 5 cars, 3 traffic lights, 1 stop sign, 1 handbag, 194.0ms
+# Speed: 2.5ms preprocess, 194.0ms inference, 0.3ms postprocess per image at shape (1, 3, 480, 640)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;str(result)
+# List of 1
+#  $ :ultralytics.engine.results.Results object with attributes:
+# 
+# boxes: ultralytics.engine.results.Boxes object
+# keypoints: None
+# masks: None
+# names: {0: &#39;person&#39;, 1: &#39;bicycle&#39;, 2: &#39;car&#39;, 3: &#39;motorcycle&#39;, 4: &#39;airplane&#39;, 5: &#39;bus&#39;, 6: &#39;train&#39;, 7: &#39;truck&#39;, 8: &#39;boat&#39;, 9: &#39;traffic light&#39;, 10: &#39;fire hydrant&#39;, 11: &#39;stop sign&#39;, 12: &#39;parking meter&#39;, 13: &#39;bench&#39;, 14: &#39;bird&#39;, 15: &#39;cat&#39;, 16: &#39;dog&#39;, 17: &#39;horse&#39;, 18: &#39;sheep&#39;, 19: &#39;cow&#39;, 20: &#39;elephant&#39;, 21: &#39;bear&#39;, 22: &#39;zebra&#39;, 23: &#39;giraffe&#39;, 24: &#39;backpack&#39;, 25: &#39;umbrella&#39;, 26: &#39;handbag&#39;, 27: &#39;tie&#39;, 28: &#39;suitcase&#39;, 29: &#39;frisbee&#39;, 30: &#39;skis&#39;, 31: &#39;snowboard&#39;, 32: &#39;sports ball&#39;, 33: &#39;kite&#39;, 34: &#39;baseball bat&#39;, 35: &#39;baseball glove&#39;, 36: &#39;skateboard&#39;, 37: &#39;surfboard&#39;, 38: &#39;tennis racket&#39;, 39: &#39;bottle&#39;, 40: &#39;wine glass&#39;, 41: &#39;cup&#39;, 42: &#39;fork&#39;, 43: &#39;knife&#39;, 44: &#39;spoon&#39;, 45: &#39;bowl&#39;, 46: &#39;banana&#39;, 47: &#39;apple&#39;, 48: &#39;sandwich&#39;, 49: &#39;orange&#39;, 50: &#39;broccoli&#39;, 51: &#39;carrot&#39;, 52: &#39;hot dog&#39;, 53: &#39;pizza&#39;, 54: &#39;donut&#39;, 55: &#39;cake&#39;, 56: &#39;chair&#39;, 57: &#39;couch&#39;, 58: &#39;potted plant&#39;, 59: &#39;bed&#39;, 60: &#39;dining table&#39;, 61: &#39;toilet&#39;, 62: &#39;tv&#39;, 63: &#39;laptop&#39;, 64: &#39;mouse&#39;, 65: &#39;remote&#39;, 66: &#39;keyboard&#39;, 67: &#39;cell phone&#39;, 68: &#39;microwave&#39;, 69: &#39;oven&#39;, 70: &#39;toaster&#39;, 71: &#39;sink&#39;, 72: &#39;refrigerator&#39;, 73: &#39;book&#39;, 74: &#39;clock&#39;, 75: &#39;vase&#39;, 76: &#39;scissors&#39;, 77: &#39;teddy bear&#39;, 78: &#39;hair drier&#39;, 79: &#39;toothbrush&#39;}
+# obb: None
+# orig_img: array([[[173, 172, 176],
+#         [172, 171, 175],
+#         [171, 170, 174],
+#         ...,
+#         [183, 186, 184],
+#         [182, 185, 183],
+#         [180, 183, 181]],
+# 
+#        [[172, 171, 175],
+#         [172, 171, 175],
+#         [171, 170, 174],
+#         ...,
+#         [183, 186, 184],
+#         [182, 185, 183],
+#         [180, 183, 181]],
+# 
+#        [[171, 170, 174],
+#         [171, 170, 174],
+#         [171, 170, 174],
+#         ...,
+#         [183, 186, 184],
+#         [182, 185, 183],
+#         [181, 184, 182]],
+# 
+#        ...,
+# 
+#        [[ 78,  80,  81],
+#         [ 77,  79,  80],
+#         [ 77,  79,  80],
+#         ...,
+#         [ 71,  76,  77],
+#         [ 80,  85,  86],
+#         [ 89,  94,  95]],
+# 
+#        [[ 77,  79,  80],
+#         [ 78,  80,  81],
+#         [ 79,  81,  82],
+#         ...,
+#         [ 64,  69,  70],
+#         [ 71,  76,  77],
+#         [ 78,  83,  84]],
+# 
+#        [[ 76,  78,  79],
+#         [ 78,  80,  81],
+#         [ 81,  83,  84],
+#         ...,
+#         [ 70,  75,  76],
+#         [ 73,  78,  79],
+#         [ 64,  69,  70]]], shape=(2424, 3232, 3), dtype=uint8)
+# orig_shape: (2424, 3232)
+# path: &#39;N:\\Dropbox\\website_new\\website\\tutorials_datasets\\rio_kartaview_images\\geotagged\\1318411189__3645401_74b21_60c0ec1f7c728.jpg&#39;
+# probs: None
+# save_dir: &#39;runs\\detect\\predict3&#39;
+# speed: {&#39;preprocess&#39;: 2.5243000127375126, &#39;inference&#39;: 193.9829000039026, &#39;postprocess&#39;: 0.2989000058732927}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We notice that the result is a list of lists and the key information is in the first element of the list. To make our lives easier we use the &lt;a href=&#34;https://docs.ultralytics.com/reference/engine/results/#ultralytics.engine.results.Results&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;methods ultralytics&lt;/a&gt; provides to convert to a data frame, especially &lt;code&gt;to_df()&lt;/code&gt;. Others listed there might be useful as well.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+detections &amp;lt;- result[[1]]$to_df()
+
+detections &amp;lt;- detections %&amp;gt;% 
+        filter(confidence &amp;gt; 0.5 ) %&amp;gt;%       # Only select the detections that are above a threshold. This is arbitrary. Play around with this to see what results you get.
+        filter (name %in% c(&#39;person&#39;, &#39;bicycle&#39;, &#39;car&#39;, &#39;motorcycle&#39;, &#39;airplane&#39;, &#39;bus&#39;, &#39;train&#39;, &#39;truck&#39;, &#39;boat&#39;))  # This is a set of classes that seemed pertinent to transportation. 
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let&amp;rsquo;s visualise these.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;glimpse(detections)
+# Rows: 5
+# Columns: 4
+# $ name       &amp;lt;chr&amp;gt; &amp;quot;person&amp;quot;, &amp;quot;car&amp;quot;, &amp;quot;car&amp;quot;, &amp;quot;car&amp;quot;, &amp;quot;car&amp;quot;
+# $ class      &amp;lt;dbl&amp;gt; 0, 2, 2, 2, 2
+# $ confidence &amp;lt;dbl&amp;gt; 0.88537, 0.78528, 0.73780, 0.70800, 0.63851
+# $ box        &amp;lt;list&amp;gt; [1988.412, 1049.375, 2798.399, 2419.963], [351.9287, 2144.3…
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But first recognise that &lt;code&gt;box&lt;/code&gt; is sublist of &lt;code&gt;detections&lt;/code&gt;. And we might as well rename columns&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(magrittr)
+
+detections %&amp;lt;&amp;gt;%
+  mutate(map_dfr(detections$box, as_tibble)) %&amp;gt;%
+  rename(   xmin = x1,
+            ymin = y1,
+            xmax = x2,
+            ymax = y2)
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now we are ready to plot it using ggplot. We just have to readjust the coordinate system that the bounding box represents using the height of the image, since ggplot&amp;rsquo;s coordinate system and every one else&amp;rsquo;s. Few key things to remember.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;ggplot&lt;/th&gt;
+&lt;th&gt;Other Systems&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Origin&lt;/td&gt;
+&lt;td&gt;Bottom-Left&lt;/td&gt;
+&lt;td&gt;Top-Left&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Y-axis direction&lt;/td&gt;
+&lt;td&gt;Increases upwards&lt;/td&gt;
+&lt;td&gt;Increases downwards&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Units&lt;/td&gt;
+&lt;td&gt;data units&lt;/td&gt;
+&lt;td&gt;pixels&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img &amp;lt;- image_read(example_img_path)
+# Get image dimensions for annotation_raster
+img_width &amp;lt;- image_info(img)$width
+img_height &amp;lt;- image_info(img)$height
+
+plot_data &amp;lt;- detections%&amp;gt;%
+  mutate(
+    xmin_ggplot = xmin,
+    xmax_ggplot = xmax,
+    ymin_ggplot = img_height - ymax,  # Flip y-axis for ggplot
+    ymax_ggplot = img_height - ymin
+  )
+
+ggplot() +
+  # Add the image as a background
+  annotation_raster(img, xmin = 0, xmax = img_width, ymin = 0, ymax = img_height) +
+  # Add bounding boxes
+  geom_rect(data = plot_data, aes(xmin = xmin_ggplot, ymin = ymin_ggplot, xmax = xmax_ggplot, ymax = ymax_ggplot, color = name), fill = NA, linewidth = 1) +
+  # Set plot limits to match image dimensions
+  xlim(0, img_width) +
+  ylim(0, img_height) +
+  # Remove axis labels and ticks for a clean image display
+  labs(x = NULL, y = NULL) +
+  theme_void() +
+  coord_fixed(ratio = 1) # Ensure aspect ratio is preserved
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/index.en_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    Notice all the misidentifications with high confidence. This may seriously undermine your results. Furthermore, what is not identified but present in the image?
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;It should be relatively straightforward to count the number of cars and persons in this image&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detections %&amp;gt;%
+  group_by(name) %&amp;gt;%
+  summarise(count = n())
+# # A tibble: 2 × 2
+#   name   count
+#   &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;
+# 1 car        4
+# 2 person     1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Repeat this for another random image in the data set.&lt;/li&gt;
+&lt;li&gt;Write a function to repeat it for 10 images and display the number of cars, persons and bikes in each image.&lt;/li&gt;
+&lt;li&gt;The code as it is written is very brittle and does not account for incorrect outputs, invalid conversions etc. Modify the function to intelligently catch the errors and gracefully fail.&lt;/li&gt;
+&lt;li&gt;Display the number cars and persons in each image in the entire dataset, based on the location of the image.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;While computer vision offers promising applications for planning practice, it remains a tool with significant limitations that planners must carefully consider before implementation. It is crucial to recognize that these techniques frequently struggle with accuracy in real-world conditions—misclassifying objects, failing to detect items in poor lighting or weather, and exhibiting biases based on their training data.&lt;/p&gt;
+&lt;p&gt;The technology&amp;rsquo;s tendency to produce confident-seeming results that mask underlying uncertainties can lead to flawed policy decisions if planners treat automated analyses as truth rather than imperfect interpretations requiring human validation. Moreover, computer vision systems often perform poorly on the nuanced, context-dependent assessments that planning work demands—such as evaluating neighborhood character, assessing building quality, or understanding the social dynamics of public spaces. Privacy concerns, high implementation costs, and the risk of perpetuating existing inequities through biased algorithms further complicate adoption. While computer vision may eventually become a valuable supplementary tool for certain planning tasks, it should be approached with healthy skepticism, robust validation processes, and clear understanding that human judgment, community input.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1734 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction Object detection allows computers to identify and locate objects &mdash; like cars, people, street furniture &mdash; in images or videos. For urban planners, it offers a way to gather observational data at scale." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/" />
+  <meta property="og:title" content="Object Detection Using Pre-trained Neural Network Models | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction Object detection allows computers to identify and locate objects &mdash; like cars, people, street furniture &mdash; in images or videos. For urban planners, it offers a way to gather observational data at scale." /><meta property="og:image" content="https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2025-08-29T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2025-08-30T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/"
+  },
+  "headline": "Object Detection Using Pre-trained Neural Network Models",
+  
+  "image": [
+    "https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/featured.png"
+  ],
+  
+  "datePublished": "2025-08-29T00:00:00Z",
+  "dateModified": "2025-08-30T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction Object detection allows computers to identify and locate objects \u0026mdash; like cars, people, street furniture \u0026mdash; in images or videos. For urban planners, it offers a way to gather observational data at scale."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Object Detection Using Pre-trained Neural Network Models | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="988e9f46fb801a5c3ace5d9d6a99404e" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Object Detection Using Pre-trained Neural Network Models</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Aug 30, 2025
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    12 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/python/">python</a>, <a href="/category/object-detection/">object detection</a>, <a href="/category/r/">R</a>, <a href="/category/exif/">exif</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 720px;">
+  <div style="position: relative">
+    <img src="/post/object-detection-using-pre-trained-neural-network-models/featured_hue7db8e37a1835c856dee6eb13c6ce106_1042649_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <h2 id="introduction">Introduction</h2>
+<p>Object detection allows computers to identify and locate objects &mdash; like cars, people, street furniture &mdash; in images or videos. For urban planners, it offers a way to gather observational data at scale.</p>
+<p>It can be used in various applications such as</p>
+<ul>
+<li>Traffic and Mobility Studies: Count vehicles, bikes, or pedestrians at intersections to inform signal timing or street design.</li>
+<li>Public Space Monitoring: Understand how parks, plazas, or transit stops are used throughout the day.</li>
+<li>Infrastructure Audits: Use aerial or street-level imagery to assess curb usage, sidewalk conditions, or construction activity.</li>
+</ul>
+<p>Often these are meant to be supplement human data collection, but come with their own caveats. More on that later.</p>
+<p>Often object detection uses deep learning, though other computer vision tools are occasionally used. Deep learning is a techniques that uses neural networks that are &lsquo;deep&rsquo; (multiple layers) as opposed to a shallow single layer networks. Neural networks are a type of computer model inspired by how the human brain works &mdash; they learn patterns from data and use that knowledge to make predictions or recognize things.</p>
+<p>They require enormous amount of training data. One of the most widely used datasets for training these models is the COCO dataset (Common Objects in Context), which contains thousands of labeled images featuring everyday scenes with people, vehicles, animals, and more. Because training a neural network from scratch requires a lot of data and computing power, we often use pretrained models &mdash; models that have already been trained on datasets like COCO &mdash; and then fine-tune them for specific tasks or environments. This makes it easier and faster to apply object detection in real-world settings, including urban planning, without needing to build everything from the ground up.</p>
+<p>In this tutorial, we will explore how to use pre-trained neural network models for object detection using R. We will not do any fine tuning as this is meant as an illustration.</p>
+<h2 id="data">Data</h2>
+<p>For this tutorial, we will use street-level images from <a href="https://www.dropbox.com/scl/fi/u5t26kwi8t52c16r04qso/geotagged.zip?rlkey=zszxeyd0tdrwubjatwbjhwn3e&amp;dl=0" target="_blank" rel="noopener">Rio de Janeiro, Brazil</a>, available through <a href="https://kartaview.org/" target="_blank" rel="noopener">Kartaview</a> is an open-source platform for collecting and sharing street-level imagery, similar to Google Street View but built by a global community. It allows users to upload images captured from smartphones or dash cams, which can then be used for mapping, navigation, and research. You can download the images and unzip them into your <code>InputData</code> folder.</p>
+<pre><code class="language-r">library(here)
+library(magick)
+library(tidyverse)
+
+img_files &lt;- here(&quot;tutorials_datasets&quot;, &quot;rio_kartaview_images&quot;, &quot;geotagged&quot;) %&gt;%  #suitably modify the file path
+              list.files(full.names = TRUE, pattern = &quot;\\.jpg$&quot;) # Note the use of regular expressions to only load jpg file paths.
+
+</code></pre>
+<p>Let&rsquo;s view a few random images first to visually inspect some. I am going to use <code>magick</code> and <code>cowplot</code> packages to read and plot the images</p>
+<pre><code class="language-r">library(cowplot)
+
+set.seed(123)
+
+plot_list &lt;- sample(img_files, 10) %&gt;% # Randomly sample 10 image file paths
+                map(function(x) {
+                  image_read(x) %&gt;%  ## This is a function from magick package. Read the image
+                    image_ggplot() + ## This is a function from magick package. Convert the image to a ggplot object
+                    theme_void() ## Note the switch between %&gt;% and +. The former is for chaining functions, the latter is for adding layers to ggplot. This removes the axes and background.
+                })
+      
+plot_grid(plotlist = plot_list, nrow = 2, ncol = 5) #plot_grid is a layout function from cowplot package to arrange multiple ggplot objects in a grid.
+</code></pre>
+<img src="https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/index.en_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<p>Note the variation in lighting conditions, angles, zoom levels, focus and occlusions. This is typical of street-level imagery and can pose challenges for object detection models. Also note the differences in urban settings such as highway, commercial corridor, vegetation cover etc.</p>
+<p>In addition to data within the images, it is useful to look at the metadata associated with the images. In the case of images, metadata can include details such as the date and time the photo was taken, camera type, the camera settings used, the geographic location (latitude and longitude) where the image was captured. EXIF (Exchangeable Image File Format) is a standard that stores metadata within image files. This information is automatically recorded by most digital cameras and smartphones and we can use the <code>exiftoolr</code> package to extract this information. <code>exiftoolr</code> requires <code>exiftool</code> to be installed on your computer . You can find instructions <a href="https://exiftool.org/install.html" target="_blank" rel="noopener">here</a> or uncomment appropriate line in the code.</p>
+<pre><code class="language-r">library(exiftoolr)
+# install_exiftool() # Uncomment this line if you don't have exiftool installed already.
+
+img_metadata &lt;- sample(img_files, 10) %&gt;%
+                exif_read() %&gt;%
+                  select(FileName,ImageWidth, ImageHeight, Megapixels, GPSLatitude, GPSLongitude)
+
+head(img_metadata)
+#                                      FileName ImageWidth ImageHeight Megapixels
+# 1           330665659__1308095_016b5_5175.jpg       3072        1728   5.308416
+# 2 1318418389__3645437_4e431_60c0edf80bea9.jpg       3232        2424   7.834368
+# 3           346918433__1323919_5d1ab_1179.jpg       3072        1728   5.308416
+# 4             325991853__1305043_cfec6_97.jpg       3072        1728   5.308416
+# 5 1320102509__3654977_2dea0_60c23cb128f9f.jpg       3840        2160   8.294400
+# 6             204024303__1129811_162e7_50.jpg       2340        4160   9.734400
+#   GPSLatitude GPSLongitude
+# 1   -22.91927    -43.25491
+# 2   -22.86169    -43.30698
+# 3   -22.81576    -43.30089
+# 4   -22.89630    -43.19573
+# 5   -22.97323    -43.39293
+# 6   -22.89879    -43.10323
+</code></pre>
+<div class="alert alert-note">
+  <div>
+    The downloaded Kartaview images did not come with GPS coordinates in the EXIF data. I added them from the separate metadata file that came with the images.
+  </div>
+</div>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Visualise the locations of all images. Note any patterns you see in the spatial distribution of images. Does the spatial distribution influence any conclusions you might draw about the urban environment?</li>
+<li>Notice that this particular dataset does not have the heading of the camera. Or the lens height. Or the yaw. Or any number of other settings that affect the captured image. How might these absences influence your analysis downstream?</li>
+</ul>
+<hr>
+<h2 id="object-detection">Object Detection</h2>
+<p>Python is generally preferred for object detection due to its extensive support for deep learning and computer vision libraries. Tools like <code>TensorFlow</code>, <code>PyTorch</code>, and <code>OpenCV</code> are actively developed and widely used in the machine learning community, offering pre-trained models, efficient GPU support, and flexible APIs for building and deploying object detection systems. Python also has strong integration with datasets like COCO and platforms for annotation, making it easier to experiment, customize, and scale object detection workflows &mdash; something that R currently lacks in terms of ecosystem and performance for these tasks.</p>
+<p>We will use <code>reticulate</code> package to run Python code within R. More importantly, it allows you to use environments created using <code>venv</code> or <code>conda</code> directly from R. This is useful because you can create a separate environment for this tutorial and install only the necessary packages without affecting your main R or Python setup.</p>
+<pre><code class="language-r">library(reticulate)
+use_condaenv(PATH_TO_CONDA_ENV, required = TRUE) #suitably modify as below
+
+</code></pre>
+<p>For this tutorial, I already set up a Python environment.</p>
+<ul>
+<li>For Windows use <code>P:\\shared_folder\\conda_envs\\object_detect_win\\object_detection</code></li>
+<li>For Mac use <code>~networkdrive/shared_folder/conda_envs/object_detect_mac/object_detection</code></li>
+</ul>
+<p>where the <code>~networkdrive</code> is a mounted network drive on your Mac and <code>P</code> is the letter that you mapped the network drive to in the Windows. In the lab, this <code>P</code> drive is automatically mapped to the course network drive.</p>
+<p>Once the environment is set up, we can load the necessary Python packages and the pre-trained YOLOv10 model. YOLO (You Only Look Once) is a popular object detection algorithm known for its speed and accuracy. YOLOv10 is one of the latest versions, offering improved performance over previous iterations.</p>
+<pre><code class="language-r">
+torch &lt;- import(&quot;torch&quot;)
+ultralytics &lt;- import(&quot;ultralytics&quot;)
+model &lt;- ultralytics$YOLO(&quot;yolov10b.pt&quot;)
+
+</code></pre>
+<p>All of these python packages above have already been installed in the python environment. You are just importing them into R.</p>
+<div class="alert alert-alert">
+  <div>
+    <p>Loading the environment and calling the models will take some time depending on the network speed and congestion.</p>
+<p>If you are impatient and know how to use python, setup the environment yourself on the local drive. The <code>environment.yml</code> is in the shared folder.</p>
+  </div>
+</div>
+<p>Let&rsquo;s focus on a single photograph.</p>
+<pre><code class="language-r">example_img_path &lt;- img_files[1]
+
+result &lt;- model(source = example_img_path)
+# 
+# image 1/1 N:\Dropbox\website_new\website\tutorials_datasets\rio_kartaview_images\geotagged\1318411189__3645401_74b21_60c0ec1f7c728.jpg: 480x640 1 person, 5 cars, 3 traffic lights, 1 stop sign, 1 handbag, 194.0ms
+# Speed: 2.5ms preprocess, 194.0ms inference, 0.3ms postprocess per image at shape (1, 3, 480, 640)
+</code></pre>
+<pre><code class="language-r">str(result)
+# List of 1
+#  $ :ultralytics.engine.results.Results object with attributes:
+# 
+# boxes: ultralytics.engine.results.Boxes object
+# keypoints: None
+# masks: None
+# names: {0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane', 5: 'bus', 6: 'train', 7: 'truck', 8: 'boat', 9: 'traffic light', 10: 'fire hydrant', 11: 'stop sign', 12: 'parking meter', 13: 'bench', 14: 'bird', 15: 'cat', 16: 'dog', 17: 'horse', 18: 'sheep', 19: 'cow', 20: 'elephant', 21: 'bear', 22: 'zebra', 23: 'giraffe', 24: 'backpack', 25: 'umbrella', 26: 'handbag', 27: 'tie', 28: 'suitcase', 29: 'frisbee', 30: 'skis', 31: 'snowboard', 32: 'sports ball', 33: 'kite', 34: 'baseball bat', 35: 'baseball glove', 36: 'skateboard', 37: 'surfboard', 38: 'tennis racket', 39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife', 44: 'spoon', 45: 'bowl', 46: 'banana', 47: 'apple', 48: 'sandwich', 49: 'orange', 50: 'broccoli', 51: 'carrot', 52: 'hot dog', 53: 'pizza', 54: 'donut', 55: 'cake', 56: 'chair', 57: 'couch', 58: 'potted plant', 59: 'bed', 60: 'dining table', 61: 'toilet', 62: 'tv', 63: 'laptop', 64: 'mouse', 65: 'remote', 66: 'keyboard', 67: 'cell phone', 68: 'microwave', 69: 'oven', 70: 'toaster', 71: 'sink', 72: 'refrigerator', 73: 'book', 74: 'clock', 75: 'vase', 76: 'scissors', 77: 'teddy bear', 78: 'hair drier', 79: 'toothbrush'}
+# obb: None
+# orig_img: array([[[173, 172, 176],
+#         [172, 171, 175],
+#         [171, 170, 174],
+#         ...,
+#         [183, 186, 184],
+#         [182, 185, 183],
+#         [180, 183, 181]],
+# 
+#        [[172, 171, 175],
+#         [172, 171, 175],
+#         [171, 170, 174],
+#         ...,
+#         [183, 186, 184],
+#         [182, 185, 183],
+#         [180, 183, 181]],
+# 
+#        [[171, 170, 174],
+#         [171, 170, 174],
+#         [171, 170, 174],
+#         ...,
+#         [183, 186, 184],
+#         [182, 185, 183],
+#         [181, 184, 182]],
+# 
+#        ...,
+# 
+#        [[ 78,  80,  81],
+#         [ 77,  79,  80],
+#         [ 77,  79,  80],
+#         ...,
+#         [ 71,  76,  77],
+#         [ 80,  85,  86],
+#         [ 89,  94,  95]],
+# 
+#        [[ 77,  79,  80],
+#         [ 78,  80,  81],
+#         [ 79,  81,  82],
+#         ...,
+#         [ 64,  69,  70],
+#         [ 71,  76,  77],
+#         [ 78,  83,  84]],
+# 
+#        [[ 76,  78,  79],
+#         [ 78,  80,  81],
+#         [ 81,  83,  84],
+#         ...,
+#         [ 70,  75,  76],
+#         [ 73,  78,  79],
+#         [ 64,  69,  70]]], shape=(2424, 3232, 3), dtype=uint8)
+# orig_shape: (2424, 3232)
+# path: 'N:\\Dropbox\\website_new\\website\\tutorials_datasets\\rio_kartaview_images\\geotagged\\1318411189__3645401_74b21_60c0ec1f7c728.jpg'
+# probs: None
+# save_dir: 'runs\\detect\\predict3'
+# speed: {'preprocess': 2.5243000127375126, 'inference': 193.9829000039026, 'postprocess': 0.2989000058732927}
+</code></pre>
+<p>We notice that the result is a list of lists and the key information is in the first element of the list. To make our lives easier we use the <a href="https://docs.ultralytics.com/reference/engine/results/#ultralytics.engine.results.Results" target="_blank" rel="noopener">methods ultralytics</a> provides to convert to a data frame, especially <code>to_df()</code>. Others listed there might be useful as well.</p>
+<pre><code class="language-r">
+detections &lt;- result[[1]]$to_df()
+
+detections &lt;- detections %&gt;% 
+        filter(confidence &gt; 0.5 ) %&gt;%       # Only select the detections that are above a threshold. This is arbitrary. Play around with this to see what results you get.
+        filter (name %in% c('person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat'))  # This is a set of classes that seemed pertinent to transportation. 
+
+</code></pre>
+<p>Let&rsquo;s visualise these.</p>
+<pre><code class="language-r">glimpse(detections)
+# Rows: 5
+# Columns: 4
+# $ name       &lt;chr&gt; &quot;person&quot;, &quot;car&quot;, &quot;car&quot;, &quot;car&quot;, &quot;car&quot;
+# $ class      &lt;dbl&gt; 0, 2, 2, 2, 2
+# $ confidence &lt;dbl&gt; 0.88537, 0.78528, 0.73780, 0.70800, 0.63851
+# $ box        &lt;list&gt; [1988.412, 1049.375, 2798.399, 2419.963], [351.9287, 2144.3…
+</code></pre>
+<p>But first recognise that <code>box</code> is sublist of <code>detections</code>. And we might as well rename columns</p>
+<pre><code class="language-r">library(magrittr)
+
+detections %&lt;&gt;%
+  mutate(map_dfr(detections$box, as_tibble)) %&gt;%
+  rename(   xmin = x1,
+            ymin = y1,
+            xmax = x2,
+            ymax = y2)
+
+</code></pre>
+<p>Now we are ready to plot it using ggplot. We just have to readjust the coordinate system that the bounding box represents using the height of the image, since ggplot&rsquo;s coordinate system and every one else&rsquo;s. Few key things to remember.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ggplot</th>
+<th>Other Systems</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Origin</td>
+<td>Bottom-Left</td>
+<td>Top-Left</td>
+</tr>
+<tr>
+<td>Y-axis direction</td>
+<td>Increases upwards</td>
+<td>Increases downwards</td>
+</tr>
+<tr>
+<td>Units</td>
+<td>data units</td>
+<td>pixels</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-r">img &lt;- image_read(example_img_path)
+# Get image dimensions for annotation_raster
+img_width &lt;- image_info(img)$width
+img_height &lt;- image_info(img)$height
+
+plot_data &lt;- detections%&gt;%
+  mutate(
+    xmin_ggplot = xmin,
+    xmax_ggplot = xmax,
+    ymin_ggplot = img_height - ymax,  # Flip y-axis for ggplot
+    ymax_ggplot = img_height - ymin
+  )
+
+ggplot() +
+  # Add the image as a background
+  annotation_raster(img, xmin = 0, xmax = img_width, ymin = 0, ymax = img_height) +
+  # Add bounding boxes
+  geom_rect(data = plot_data, aes(xmin = xmin_ggplot, ymin = ymin_ggplot, xmax = xmax_ggplot, ymax = ymax_ggplot, color = name), fill = NA, linewidth = 1) +
+  # Set plot limits to match image dimensions
+  xlim(0, img_width) +
+  ylim(0, img_height) +
+  # Remove axis labels and ticks for a clean image display
+  labs(x = NULL, y = NULL) +
+  theme_void() +
+  coord_fixed(ratio = 1) # Ensure aspect ratio is preserved
+</code></pre>
+<img src="https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/index.en_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+<div class="alert alert-alert">
+  <div>
+    Notice all the misidentifications with high confidence. This may seriously undermine your results. Furthermore, what is not identified but present in the image?
+  </div>
+</div>
+<p>It should be relatively straightforward to count the number of cars and persons in this image</p>
+<pre><code class="language-r">detections %&gt;%
+  group_by(name) %&gt;%
+  summarise(count = n())
+# # A tibble: 2 × 2
+#   name   count
+#   &lt;chr&gt;  &lt;int&gt;
+# 1 car        4
+# 2 person     1
+</code></pre>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Repeat this for another random image in the data set.</li>
+<li>Write a function to repeat it for 10 images and display the number of cars, persons and bikes in each image.</li>
+<li>The code as it is written is very brittle and does not account for incorrect outputs, invalid conversions etc. Modify the function to intelligently catch the errors and gracefully fail.</li>
+<li>Display the number cars and persons in each image in the entire dataset, based on the location of the image.</li>
+</ul>
+<hr>
+<h1 id="conclusion">Conclusion</h1>
+<p>While computer vision offers promising applications for planning practice, it remains a tool with significant limitations that planners must carefully consider before implementation. It is crucial to recognize that these techniques frequently struggle with accuracy in real-world conditions—misclassifying objects, failing to detect items in poor lighting or weather, and exhibiting biases based on their training data.</p>
+<p>The technology&rsquo;s tendency to produce confident-seeming results that mask underlying uncertainties can lead to flawed policy decisions if planners treat automated analyses as truth rather than imperfect interpretations requiring human validation. Moreover, computer vision systems often perform poorly on the nuanced, context-dependent assessments that planning work demands—such as evaluating neighborhood character, assessing building quality, or understanding the social dynamics of public spaces. Privacy concerns, high implementation costs, and the risk of perpetuating existing inequities through biased algorithms further complicate adoption. While computer vision may eventually become a valuable supplementary tool for certain planning tasks, it should be approached with healthy skepticism, robust validation processes, and clear understanding that human judgment, community input.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#data">Data</a></li>
+    <li><a href="#object-detection">Object Detection</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&amp;text=Object%20Detection%20Using%20Pre-trained%20Neural%20Network%20Models" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&amp;t=Object%20Detection%20Using%20Pre-trained%20Neural%20Network%20Models" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Object%20Detection%20Using%20Pre-trained%20Neural%20Network%20Models&amp;body=https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&amp;title=Object%20Detection%20Using%20Pre-trained%20Neural%20Network%20Models" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Object%20Detection%20Using%20Pre-trained%20Neural%20Network%20Models%20https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&amp;title=Object%20Detection%20Using%20Pre-trained%20Neural%20Network%20Models" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2023 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

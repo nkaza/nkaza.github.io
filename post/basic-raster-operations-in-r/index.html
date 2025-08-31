@@ -972,20 +972,21 @@
 <script src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/pymjs/pym.v1.js"></script>
 <script src="https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/widgetframe-binding/widgetframe.js"></script>
 <h2 id="introduction">Introduction</h2>
-<p>While much of urban data systems moved to vector object based data structures, raster datasets are ubiquitous and ever present. Raster datasets are simply an array of pixels/cells organized into rows and columns (or a grid) where each cell contains a value representing information, such as temperature, soil type, land use, water level. Rasters are aerial photographs, imagery from satellites, google street view images. Few things to note.</p>
+<p>While much of urban data systems moved to vector object based data structures, raster datasets are ubiquitous and ever present. Raster datasets are simply an array of pixels/cells organized into rows and columns (or a grid) where each cell contains a value representing information, such as temperature, soil type, land use, water level. Rasters are aerial photographs, imagery from satellites, google street view images.</p>
+<p>Few things to note:</p>
 <ul>
-<li>Raster datasets are always rectangular (rows x col) similar to matrices. Irregular boundaries are created by using NAs.</li>
+<li>Raster datasets are always rectangular (rows x col) similar to matrices. Irregular boundaries and holes are created by using NAs.</li>
 <li>Rasters have to contain values of the same type (int, float, boolean) throughout the raster, just like matrices and unlike data.frames</li>
 <li>The size of the raster depends on the resolution and the extent of the raster. As such many rasters are large and often cannot be held in memory completely.</li>
 <li>In general, rasters we would interested in have a coordinate system (projected or unprojected). Because of it regular nature of the data structure, all we need to store is the Origin coordinates and the cell resolution (square or rectangular).</li>
 </ul>
 <h2 id="rasters-in-r">Rasters in R</h2>
-<p>The workhorse package for working with rasters in R is <code>raster</code> and <code>terra</code> packages by Robert Hijmans. In particular see <a href="https://rspatial.org/raster/index.html" target="_blank" rel="noopener">Spatial Data Science with R</a>. <code>terra</code> is better and faster in many instances, but is newer and does not have all the functionality and support associated with <code>raster</code>. I will switch back and forth between the two packages as necessary. Most functions are available in both packages, but it is useful to learn the differences</p>
+<p>The workhorse packages for working with rasters in R is <code>raster</code> and <code>terra</code> packages by Robert Hijmans. In particular see <a href="https://rspatial.org/raster/index.html" target="_blank" rel="noopener">Spatial Data Science with R</a>. <code>terra</code> is better and faster in many instances, but is newer and does not have all the functionality and support associated with <code>raster</code>. I will switch back and forth between the two packages as necessary. Most functions are available in both packages, but it is useful to learn the differences</p>
 <p>Eventually, if you get into the weeds in Remote Sensing, you should use <code>RStoolbox</code> package that has support for parallel processing. If you are working in rasters that are not geographically located (such as digital pictures) <code>magick</code> wrapper around <a href="https://imagemagick.org/index.php" target="_blank" rel="noopener">ImageMagick</a> may be a good option.</p>
 <h2 id="download-data">Download data</h2>
 <p>You can download the datasets used in this tutorial <a href="https://www.dropbox.com/s/5ecfr5zm49fr3p9/Archive.zip?dl=0" target="_blank" rel="noopener">here</a></p>
 <h2 id="reading-in-rasters">Reading in Rasters</h2>
-<p>Let’s start with toy examples and examine the use of functions in the raster library.</p>
+<p>Let’s start with toy examples and examine the use of functions in the raster and terra packages.</p>
 <pre><code class="language-r">
 library(raster)
 library(rasterVis)
@@ -1012,7 +1013,7 @@ raster_object
 # crs        : +proj=longlat +datum=WGS84 +no_defs
 raster_object_terra
 # class       : SpatRaster 
-# dimensions  : 5, 5, 1  (nrow, ncol, nlyr)
+# size        : 5, 5, 1  (nrow, ncol, nlyr)
 # resolution  : 80, 80  (x, y)
 # extent      : -500, -100, 100, 500  (xmin, xmax, ymin, ymax)
 # coord. ref. : +proj=longlat +datum=WGS84 +no_defs
@@ -1039,7 +1040,7 @@ raster_object2 &lt;- raster_object * 2
 <hr>
 <p><strong>Exercise</strong></p>
 <ul>
-<li>Notice the difference in the format between objects created by <code>rast</code> and <code>raster</code>. Read up on those differences.</li>
+<li>Notice the difference in the format between objects created by <code>rast</code> and <code>raster</code>. Read up on those <a href="https://stackoverflow.com/questions/75428377/difference-between-a-a-terra-spatraster-object-and-a-formal-class-rasterlayer" target="_blank" rel="noopener">differences</a>.</li>
 </ul>
 <hr>
 <p>Of course, the real advantage is to reading in rasters that we can work with in the urban policy arena. <a href="https://gdal.org/drivers/raster/index.html" target="_blank" rel="noopener">Rasters come in many formats</a>.</p>
@@ -1195,7 +1196,7 @@ durham_tracts_sf %&gt;%
 </tr>
 </tbody>
 </table>
-<p>Table 1: Data summary</p>
+<p><span id="tab:unnamed-chunk-6"></span>Table 1: Data summary</p>
 <p><strong>Variable type: numeric</strong></p>
 <table>
 <thead>
@@ -1281,7 +1282,7 @@ levelplot(durham_lc_raster, att=&quot;Classification&quot;, ylab=NULL, xlab=NULL
 proj4string(durham_lc_raster)
 # [1] &quot;+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs&quot;
 crs(durham_tracts_sf)
-# [1] &quot;PROJCRS[\&quot;Albers\&quot;,\n    BASEGEOGCRS[\&quot;GCS_GRS 1980(IUGG, 1980)\&quot;,\n        DATUM[\&quot;D_unknown\&quot;,\n            ELLIPSOID[\&quot;GRS80\&quot;,6378137,298.257222101,\n                LENGTHUNIT[\&quot;metre\&quot;,1,\n                    ID[\&quot;EPSG\&quot;,9001]]]],\n        PRIMEM[\&quot;Greenwich\&quot;,0,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433]]],\n    CONVERSION[\&quot;unnamed\&quot;,\n        METHOD[\&quot;Albers Equal Area\&quot;,\n            ID[\&quot;EPSG\&quot;,9822]],\n        PARAMETER[\&quot;Latitude of false origin\&quot;,23,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8821]],\n        PARAMETER[\&quot;Longitude of false origin\&quot;,-96,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8822]],\n        PARAMETER[\&quot;Latitude of 1st standard parallel\&quot;,29.5,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8823]],\n        PARAMETER[\&quot;Latitude of 2nd standard parallel\&quot;,45.5,\n            ANGLEUNIT[\&quot;Degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8824]],\n        PARAMETER[\&quot;Easting at false origin\&quot;,0,\n            LENGTHUNIT[\&quot;metre\&quot;,1],\n            ID[\&quot;EPSG\&quot;,8826]],\n        PARAMETER[\&quot;Northing at false origin\&quot;,0,\n            LENGTHUNIT[\&quot;metre\&quot;,1],\n            ID[\&quot;EPSG\&quot;,8827]]],\n    CS[Cartesian,2],\n        AXIS[\&quot;(E)\&quot;,east,\n            ORDER[1],\n            LENGTHUNIT[\&quot;metre\&quot;,1,\n                ID[\&quot;EPSG\&quot;,9001]]],\n        AXIS[\&quot;(N)\&quot;,north,\n            ORDER[2],\n            LENGTHUNIT[\&quot;metre\&quot;,1,\n                ID[\&quot;EPSG\&quot;,9001]]]]&quot;
+# [1] &quot;PROJCRS[\&quot;unknown\&quot;,\n    BASEGEOGCRS[\&quot;unknown\&quot;,\n        DATUM[\&quot;Unknown based on GRS 1980 ellipsoid\&quot;,\n            ELLIPSOID[\&quot;GRS 1980\&quot;,6378137,298.257222101,\n                LENGTHUNIT[\&quot;metre\&quot;,1],\n                ID[\&quot;EPSG\&quot;,7019]]],\n        PRIMEM[\&quot;Greenwich\&quot;,0,\n            ANGLEUNIT[\&quot;degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8901]]],\n    CONVERSION[\&quot;unknown\&quot;,\n        METHOD[\&quot;Albers Equal Area\&quot;,\n            ID[\&quot;EPSG\&quot;,9822]],\n        PARAMETER[\&quot;Latitude of false origin\&quot;,23,\n            ANGLEUNIT[\&quot;degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8821]],\n        PARAMETER[\&quot;Longitude of false origin\&quot;,-96,\n            ANGLEUNIT[\&quot;degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8822]],\n        PARAMETER[\&quot;Latitude of 1st standard parallel\&quot;,29.5,\n            ANGLEUNIT[\&quot;degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8823]],\n        PARAMETER[\&quot;Latitude of 2nd standard parallel\&quot;,45.5,\n            ANGLEUNIT[\&quot;degree\&quot;,0.0174532925199433],\n            ID[\&quot;EPSG\&quot;,8824]],\n        PARAMETER[\&quot;Easting at false origin\&quot;,0,\n            LENGTHUNIT[\&quot;metre\&quot;,1],\n            ID[\&quot;EPSG\&quot;,8826]],\n        PARAMETER[\&quot;Northing at false origin\&quot;,0,\n            LENGTHUNIT[\&quot;metre\&quot;,1],\n            ID[\&quot;EPSG\&quot;,8827]]],\n    CS[Cartesian,2],\n        AXIS[\&quot;(E)\&quot;,east,\n            ORDER[1],\n            LENGTHUNIT[\&quot;metre\&quot;,1,\n                ID[\&quot;EPSG\&quot;,9001]]],\n        AXIS[\&quot;(N)\&quot;,north,\n            ORDER[2],\n            LENGTHUNIT[\&quot;metre\&quot;,1,\n                ID[\&quot;EPSG\&quot;,9001]]]]&quot;
 
 durham_lc_terra &lt;- rast(durham_lc_raster)
 </code></pre>
@@ -1314,8 +1315,8 @@ lc_tracts_tbl
 #  8     8   914  5732  1114   212     5 12414  2242   919   565  1498  2801  1371
 #  9     9   153  6603   731   108    NA 11765  3395  1670   381   952  1489    75
 # 10    10   130  5958  1996  1387   224  3112  2519   410   105   369   308  3490
-# # … with 50 more rows, and 4 more variables: lc31 &lt;int&gt;, lc82 &lt;int&gt;,
-# #   lc95 &lt;int&gt;, GEOID10 &lt;chr&gt;
+# # ℹ 50 more rows
+# # ℹ 4 more variables: lc31 &lt;int&gt;, lc82 &lt;int&gt;, lc95 &lt;int&gt;, GEOID10 &lt;chr&gt;
 </code></pre>
 <h2 id="tips--tricks">Tips &amp; Tricks</h2>
 <h3 id="exploit-rasteroptions">Exploit RasterOptions</h3>

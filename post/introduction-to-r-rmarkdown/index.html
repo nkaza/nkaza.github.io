@@ -346,7 +346,7 @@
         content="2019-12-31T00:00:00&#43;00:00"
       />
     
-    <meta property="article:modified_time" content="2025-08-14T00:00:00&#43;00:00">
+    <meta property="article:modified_time" content="2025-08-20T00:00:00&#43;00:00">
   
 
   
@@ -379,7 +379,7 @@
   ],
   
   "datePublished": "2019-12-31T00:00:00Z",
-  "dateModified": "2025-08-14T00:00:00Z",
+  "dateModified": "2025-08-20T00:00:00Z",
   
   "author": {
     "@type": "Person",
@@ -927,7 +927,7 @@
           Last updated on
       
     
-    Aug 14, 2025
+    Aug 20, 2025
   </span>
   
 
@@ -1015,7 +1015,7 @@ a &lt;- 2:5  #Assign vector 2:5 to a variable a
 a      #print a to console
 # [1] 2 3 4 5
 runif(5)   #Generate 5 random numbers
-# [1] 0.3400087 0.8271542 0.7233197 0.9561858 0.5935197
+# [1] 0.08783858 0.60768902 0.46983531 0.21926932 0.99419249
 sessionInfo()     #What is my computer environment? (Mac, Windows, packages etc.)
 # R version 4.4.1 (2024-06-14)
 # Platform: aarch64-apple-darwin20
@@ -1309,16 +1309,18 @@ chicago_df$`VIOLATION DATE` &lt;- mdy(chicago_df$`VIOLATION DATE`)
 <hr>
 <p><strong>Exercise</strong></p>
 <ol>
-<li>It is useful to develop specific naming conventions for variables and datasets, so that your code will be legible to you later on.</li>
-</ol>
+<li>
+<p>It is useful to develop specific naming conventions for variables and datasets, so that your code will be legible to you later on.</p>
 <ul>
 <li>Notice that column names have spaces in them. Rename the columns replacing the space with an underscore, using <code>rename</code> command from tidyverse package</li>
 <li>Notice that VIOLATION DATE column is read in as a character but should really be a date. We used the base R way to convert it into a date. However, if we were to follow a tidyverse way of doing it, how would you do it using <code>mutate</code> and <code>mdy</code>?</li>
 <li>Notice that parsing the file resulted in a lot of errors that read_csv gracefully skipped over. Examine the data file to understand what these errors are. Can you read the file correctly, by explicitly specifying the <code>col_types</code> in read_csv command. See help for read_csv.
 How would you access the help file?</li>
 </ul>
-<ol>
-<li>Set up a separate project and directory structure to read in the gasoline purchase data from [here]https://www.dropbox.com/scl/fo/vfph4nimw1qmf79r93axz/AOEx-eYMjsnR7WEy7K2MBNM?rlkey=kykwyzta8ny5ucledt77xqv1d&amp;dl=0). Notice that there are 2 files (csv and xlsx). Read in both files and compare them. Which one is easier to read in? Why? Hint: You might have to use a different package (e.g. <code>openxlsx2</code>) than <code>tidyverse</code> to read in the xlsx file.</li>
+</li>
+<li>
+<p>Set up a separate project and directory structure to read in the <a href="https://www.dropbox.com/scl/fo/vfph4nimw1qmf79r93axz/AOEx-eYMjsnR7WEy7K2MBNM?rlkey=kykwyzta8ny5ucledt77xqv1d&amp;dl=0" target="_blank" rel="noopener">gasoline purchase data</a>. Notice that there are 2 files (csv and xlsx). Read in both files and compare them. Which one is easier to read in? Why? Hint: You might have to use a different package (e.g. <code>openxlsx2</code>) than <code>tidyverse</code> to read in the xlsx file.</p>
+</li>
 </ol>
 <hr>
 <h3 id="basic-data-manipulation">Basic Data Manipulation</h3>
@@ -1372,7 +1374,10 @@ chicago_df %&gt;%
 <p><code>%&gt;%</code> is called a pipe operator. A combination function \(f(g(x))\) where \(f\) and \(g\) are functions and \(x\) is the argument can be written as <code>x %&gt;% f() %&gt;% g()</code>. You will do well to get comfortable with this pipe operator as it makes the code cleaner. It is  part of <code>magittr</code> package, which is loaded when you call <code>library(tidyverse)</code> in the earlier section of the code. See <a href="https://www.datacamp.com/community/tutorials/pipe-r-tutorial" target="_blank" rel="noopener">this tutorial</a> for details.</p>
 </li>
 <li>
-<p><code>&amp;</code> is a logical operator. <code>&amp;</code> and <code>&amp;&amp;</code> indicate logical AND and <code>|</code> and <code>||</code> indicate logical OR. The shorter form performs elementwise comparisons in much the same way as arithmetic operators. The longer form evaluates left to right examining only the first element of each vector. Evaluation proceeds only until the result is determined. The longer form is appropriate for programming control-flow and typically preferred in if clauses.</p>
+<p>In newer versions of R (&gt; 4.2.0), there is an alternative pipe operator <code>|&gt;</code> that is part of the <code>base</code> package. In this course, I will switch between <code>%&gt;%</code> and <code>|&gt;</code>.   You can use either one, but you might want to be <a href="https://www.tidyverse.org/blog/2023/04/base-vs-magrittr-pipe/#-vs" target="_blank" rel="noopener">mindful of the crucial differences</a> between <code>%&gt;%</code> and <code>|&gt;</code>.</p>
+</li>
+<li>
+<p><code>&amp;</code> is a logical operator. <code>&amp;</code> and <code>&amp;&amp;</code> indicate logical AND and <code>|</code> and <code>||</code> indicate logical OR. The shorter form performs element wise comparisons in much the same way as arithmetic operators. The longer form evaluates left to right examining only the first element of each vector. Evaluation proceeds only until the result is determined. The longer form is appropriate for programming control-flow and typically preferred in if clauses.</p>
 </li>
 <li>
 <p>I could have simply used year(.) == 2008 to achieve the same result. But in what situations will this code fail to do what you want it to do? Hint: 2008 could be stored and interpreted in R in lot of different ways (double, character, Date).</p>

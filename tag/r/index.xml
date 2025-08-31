@@ -2340,20 +2340,21 @@ print(g1)
 &lt;script src=&#34;https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/basic-raster-operations-in-r/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;While much of urban data systems moved to vector object based data structures, raster datasets are ubiquitous and ever present. Raster datasets are simply an array of pixels/cells organized into rows and columns (or a grid) where each cell contains a value representing information, such as temperature, soil type, land use, water level. Rasters are aerial photographs, imagery from satellites, google street view images. Few things to note.&lt;/p&gt;
+&lt;p&gt;While much of urban data systems moved to vector object based data structures, raster datasets are ubiquitous and ever present. Raster datasets are simply an array of pixels/cells organized into rows and columns (or a grid) where each cell contains a value representing information, such as temperature, soil type, land use, water level. Rasters are aerial photographs, imagery from satellites, google street view images.&lt;/p&gt;
+&lt;p&gt;Few things to note:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Raster datasets are always rectangular (rows x col) similar to matrices. Irregular boundaries are created by using NAs.&lt;/li&gt;
+&lt;li&gt;Raster datasets are always rectangular (rows x col) similar to matrices. Irregular boundaries and holes are created by using NAs.&lt;/li&gt;
 &lt;li&gt;Rasters have to contain values of the same type (int, float, boolean) throughout the raster, just like matrices and unlike data.frames&lt;/li&gt;
 &lt;li&gt;The size of the raster depends on the resolution and the extent of the raster. As such many rasters are large and often cannot be held in memory completely.&lt;/li&gt;
 &lt;li&gt;In general, rasters we would interested in have a coordinate system (projected or unprojected). Because of it regular nature of the data structure, all we need to store is the Origin coordinates and the cell resolution (square or rectangular).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;rasters-in-r&#34;&gt;Rasters in R&lt;/h2&gt;
-&lt;p&gt;The workhorse package for working with rasters in R is &lt;code&gt;raster&lt;/code&gt; and &lt;code&gt;terra&lt;/code&gt; packages by Robert Hijmans. In particular see &lt;a href=&#34;https://rspatial.org/raster/index.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Spatial Data Science with R&lt;/a&gt;. &lt;code&gt;terra&lt;/code&gt; is better and faster in many instances, but is newer and does not have all the functionality and support associated with &lt;code&gt;raster&lt;/code&gt;. I will switch back and forth between the two packages as necessary. Most functions are available in both packages, but it is useful to learn the differences&lt;/p&gt;
+&lt;p&gt;The workhorse packages for working with rasters in R is &lt;code&gt;raster&lt;/code&gt; and &lt;code&gt;terra&lt;/code&gt; packages by Robert Hijmans. In particular see &lt;a href=&#34;https://rspatial.org/raster/index.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Spatial Data Science with R&lt;/a&gt;. &lt;code&gt;terra&lt;/code&gt; is better and faster in many instances, but is newer and does not have all the functionality and support associated with &lt;code&gt;raster&lt;/code&gt;. I will switch back and forth between the two packages as necessary. Most functions are available in both packages, but it is useful to learn the differences&lt;/p&gt;
 &lt;p&gt;Eventually, if you get into the weeds in Remote Sensing, you should use &lt;code&gt;RStoolbox&lt;/code&gt; package that has support for parallel processing. If you are working in rasters that are not geographically located (such as digital pictures) &lt;code&gt;magick&lt;/code&gt; wrapper around &lt;a href=&#34;https://imagemagick.org/index.php&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ImageMagick&lt;/a&gt; may be a good option.&lt;/p&gt;
 &lt;h2 id=&#34;download-data&#34;&gt;Download data&lt;/h2&gt;
 &lt;p&gt;You can download the datasets used in this tutorial &lt;a href=&#34;https://www.dropbox.com/s/5ecfr5zm49fr3p9/Archive.zip?dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&#34;reading-in-rasters&#34;&gt;Reading in Rasters&lt;/h2&gt;
-&lt;p&gt;Let’s start with toy examples and examine the use of functions in the raster library.&lt;/p&gt;
+&lt;p&gt;Let’s start with toy examples and examine the use of functions in the raster and terra packages.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 library(raster)
 library(rasterVis)
@@ -2380,7 +2381,7 @@ raster_object
 # crs        : +proj=longlat +datum=WGS84 +no_defs
 raster_object_terra
 # class       : SpatRaster 
-# dimensions  : 5, 5, 1  (nrow, ncol, nlyr)
+# size        : 5, 5, 1  (nrow, ncol, nlyr)
 # resolution  : 80, 80  (x, y)
 # extent      : -500, -100, 100, 500  (xmin, xmax, ymin, ymax)
 # coord. ref. : +proj=longlat +datum=WGS84 +no_defs
@@ -2407,7 +2408,7 @@ raster_object2 &amp;lt;- raster_object * 2
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Notice the difference in the format between objects created by &lt;code&gt;rast&lt;/code&gt; and &lt;code&gt;raster&lt;/code&gt;. Read up on those differences.&lt;/li&gt;
+&lt;li&gt;Notice the difference in the format between objects created by &lt;code&gt;rast&lt;/code&gt; and &lt;code&gt;raster&lt;/code&gt;. Read up on those &lt;a href=&#34;https://stackoverflow.com/questions/75428377/difference-between-a-a-terra-spatraster-object-and-a-formal-class-rasterlayer&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;differences&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;p&gt;Of course, the real advantage is to reading in rasters that we can work with in the urban policy arena. &lt;a href=&#34;https://gdal.org/drivers/raster/index.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Rasters come in many formats&lt;/a&gt;.&lt;/p&gt;
@@ -2563,7 +2564,7 @@ durham_tracts_sf %&amp;gt;%
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Table 1: Data summary&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;tab:unnamed-chunk-6&#34;&gt;&lt;/span&gt;Table 1: Data summary&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Variable type: numeric&lt;/strong&gt;&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -2649,7 +2650,7 @@ levelplot(durham_lc_raster, att=&amp;quot;Classification&amp;quot;, ylab=NULL, x
 proj4string(durham_lc_raster)
 # [1] &amp;quot;+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs&amp;quot;
 crs(durham_tracts_sf)
-# [1] &amp;quot;PROJCRS[\&amp;quot;Albers\&amp;quot;,\n    BASEGEOGCRS[\&amp;quot;GCS_GRS 1980(IUGG, 1980)\&amp;quot;,\n        DATUM[\&amp;quot;D_unknown\&amp;quot;,\n            ELLIPSOID[\&amp;quot;GRS80\&amp;quot;,6378137,298.257222101,\n                LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1,\n                    ID[\&amp;quot;EPSG\&amp;quot;,9001]]]],\n        PRIMEM[\&amp;quot;Greenwich\&amp;quot;,0,\n            ANGLEUNIT[\&amp;quot;Degree\&amp;quot;,0.0174532925199433]]],\n    CONVERSION[\&amp;quot;unnamed\&amp;quot;,\n        METHOD[\&amp;quot;Albers Equal Area\&amp;quot;,\n            ID[\&amp;quot;EPSG\&amp;quot;,9822]],\n        PARAMETER[\&amp;quot;Latitude of false origin\&amp;quot;,23,\n            ANGLEUNIT[\&amp;quot;Degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8821]],\n        PARAMETER[\&amp;quot;Longitude of false origin\&amp;quot;,-96,\n            ANGLEUNIT[\&amp;quot;Degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8822]],\n        PARAMETER[\&amp;quot;Latitude of 1st standard parallel\&amp;quot;,29.5,\n            ANGLEUNIT[\&amp;quot;Degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8823]],\n        PARAMETER[\&amp;quot;Latitude of 2nd standard parallel\&amp;quot;,45.5,\n            ANGLEUNIT[\&amp;quot;Degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8824]],\n        PARAMETER[\&amp;quot;Easting at false origin\&amp;quot;,0,\n            LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1],\n            ID[\&amp;quot;EPSG\&amp;quot;,8826]],\n        PARAMETER[\&amp;quot;Northing at false origin\&amp;quot;,0,\n            LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1],\n            ID[\&amp;quot;EPSG\&amp;quot;,8827]]],\n    CS[Cartesian,2],\n        AXIS[\&amp;quot;(E)\&amp;quot;,east,\n            ORDER[1],\n            LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1,\n                ID[\&amp;quot;EPSG\&amp;quot;,9001]]],\n        AXIS[\&amp;quot;(N)\&amp;quot;,north,\n            ORDER[2],\n            LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1,\n                ID[\&amp;quot;EPSG\&amp;quot;,9001]]]]&amp;quot;
+# [1] &amp;quot;PROJCRS[\&amp;quot;unknown\&amp;quot;,\n    BASEGEOGCRS[\&amp;quot;unknown\&amp;quot;,\n        DATUM[\&amp;quot;Unknown based on GRS 1980 ellipsoid\&amp;quot;,\n            ELLIPSOID[\&amp;quot;GRS 1980\&amp;quot;,6378137,298.257222101,\n                LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1],\n                ID[\&amp;quot;EPSG\&amp;quot;,7019]]],\n        PRIMEM[\&amp;quot;Greenwich\&amp;quot;,0,\n            ANGLEUNIT[\&amp;quot;degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8901]]],\n    CONVERSION[\&amp;quot;unknown\&amp;quot;,\n        METHOD[\&amp;quot;Albers Equal Area\&amp;quot;,\n            ID[\&amp;quot;EPSG\&amp;quot;,9822]],\n        PARAMETER[\&amp;quot;Latitude of false origin\&amp;quot;,23,\n            ANGLEUNIT[\&amp;quot;degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8821]],\n        PARAMETER[\&amp;quot;Longitude of false origin\&amp;quot;,-96,\n            ANGLEUNIT[\&amp;quot;degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8822]],\n        PARAMETER[\&amp;quot;Latitude of 1st standard parallel\&amp;quot;,29.5,\n            ANGLEUNIT[\&amp;quot;degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8823]],\n        PARAMETER[\&amp;quot;Latitude of 2nd standard parallel\&amp;quot;,45.5,\n            ANGLEUNIT[\&amp;quot;degree\&amp;quot;,0.0174532925199433],\n            ID[\&amp;quot;EPSG\&amp;quot;,8824]],\n        PARAMETER[\&amp;quot;Easting at false origin\&amp;quot;,0,\n            LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1],\n            ID[\&amp;quot;EPSG\&amp;quot;,8826]],\n        PARAMETER[\&amp;quot;Northing at false origin\&amp;quot;,0,\n            LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1],\n            ID[\&amp;quot;EPSG\&amp;quot;,8827]]],\n    CS[Cartesian,2],\n        AXIS[\&amp;quot;(E)\&amp;quot;,east,\n            ORDER[1],\n            LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1,\n                ID[\&amp;quot;EPSG\&amp;quot;,9001]]],\n        AXIS[\&amp;quot;(N)\&amp;quot;,north,\n            ORDER[2],\n            LENGTHUNIT[\&amp;quot;metre\&amp;quot;,1,\n                ID[\&amp;quot;EPSG\&amp;quot;,9001]]]]&amp;quot;
 
 durham_lc_terra &amp;lt;- rast(durham_lc_raster)
 &lt;/code&gt;&lt;/pre&gt;
@@ -2682,8 +2683,8 @@ lc_tracts_tbl
 #  8     8   914  5732  1114   212     5 12414  2242   919   565  1498  2801  1371
 #  9     9   153  6603   731   108    NA 11765  3395  1670   381   952  1489    75
 # 10    10   130  5958  1996  1387   224  3112  2519   410   105   369   308  3490
-# # … with 50 more rows, and 4 more variables: lc31 &amp;lt;int&amp;gt;, lc82 &amp;lt;int&amp;gt;,
-# #   lc95 &amp;lt;int&amp;gt;, GEOID10 &amp;lt;chr&amp;gt;
+# # ℹ 50 more rows
+# # ℹ 4 more variables: lc31 &amp;lt;int&amp;gt;, lc82 &amp;lt;int&amp;gt;, lc95 &amp;lt;int&amp;gt;, GEOID10 &amp;lt;chr&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&#34;tips--tricks&#34;&gt;Tips &amp;amp; Tricks&lt;/h2&gt;
 &lt;h3 id=&#34;exploit-rasteroptions&#34;&gt;Exploit RasterOptions&lt;/h3&gt;
@@ -3912,7 +3913,7 @@ a &amp;lt;- 2:5  #Assign vector 2:5 to a variable a
 a      #print a to console
 # [1] 2 3 4 5
 runif(5)   #Generate 5 random numbers
-# [1] 0.3400087 0.8271542 0.7233197 0.9561858 0.5935197
+# [1] 0.08783858 0.60768902 0.46983531 0.21926932 0.99419249
 sessionInfo()     #What is my computer environment? (Mac, Windows, packages etc.)
 # R version 4.4.1 (2024-06-14)
 # Platform: aarch64-apple-darwin20
@@ -4206,16 +4207,18 @@ chicago_df$`VIOLATION DATE` &amp;lt;- mdy(chicago_df$`VIOLATION DATE`)
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;It is useful to develop specific naming conventions for variables and datasets, so that your code will be legible to you later on.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;li&gt;
+&lt;p&gt;It is useful to develop specific naming conventions for variables and datasets, so that your code will be legible to you later on.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Notice that column names have spaces in them. Rename the columns replacing the space with an underscore, using &lt;code&gt;rename&lt;/code&gt; command from tidyverse package&lt;/li&gt;
 &lt;li&gt;Notice that VIOLATION DATE column is read in as a character but should really be a date. We used the base R way to convert it into a date. However, if we were to follow a tidyverse way of doing it, how would you do it using &lt;code&gt;mutate&lt;/code&gt; and &lt;code&gt;mdy&lt;/code&gt;?&lt;/li&gt;
 &lt;li&gt;Notice that parsing the file resulted in a lot of errors that read_csv gracefully skipped over. Examine the data file to understand what these errors are. Can you read the file correctly, by explicitly specifying the &lt;code&gt;col_types&lt;/code&gt; in read_csv command. See help for read_csv.
 How would you access the help file?&lt;/li&gt;
 &lt;/ul&gt;
-&lt;ol&gt;
-&lt;li&gt;Set up a separate project and directory structure to read in the gasoline purchase data from [here]https://www.dropbox.com/scl/fo/vfph4nimw1qmf79r93axz/AOEx-eYMjsnR7WEy7K2MBNM?rlkey=kykwyzta8ny5ucledt77xqv1d&amp;amp;dl=0). Notice that there are 2 files (csv and xlsx). Read in both files and compare them. Which one is easier to read in? Why? Hint: You might have to use a different package (e.g. &lt;code&gt;openxlsx2&lt;/code&gt;) than &lt;code&gt;tidyverse&lt;/code&gt; to read in the xlsx file.&lt;/li&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Set up a separate project and directory structure to read in the &lt;a href=&#34;https://www.dropbox.com/scl/fo/vfph4nimw1qmf79r93axz/AOEx-eYMjsnR7WEy7K2MBNM?rlkey=kykwyzta8ny5ucledt77xqv1d&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;gasoline purchase data&lt;/a&gt;. Notice that there are 2 files (csv and xlsx). Read in both files and compare them. Which one is easier to read in? Why? Hint: You might have to use a different package (e.g. &lt;code&gt;openxlsx2&lt;/code&gt;) than &lt;code&gt;tidyverse&lt;/code&gt; to read in the xlsx file.&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ol&gt;
 &lt;hr&gt;
 &lt;h3 id=&#34;basic-data-manipulation&#34;&gt;Basic Data Manipulation&lt;/h3&gt;
@@ -4269,7 +4272,10 @@ chicago_df %&amp;gt;%
 &lt;p&gt;&lt;code&gt;%&amp;gt;%&lt;/code&gt; is called a pipe operator. A combination function \(f(g(x))\) where \(f\) and \(g\) are functions and \(x\) is the argument can be written as &lt;code&gt;x %&amp;gt;% f() %&amp;gt;% g()&lt;/code&gt;. You will do well to get comfortable with this pipe operator as it makes the code cleaner. It is  part of &lt;code&gt;magittr&lt;/code&gt; package, which is loaded when you call &lt;code&gt;library(tidyverse)&lt;/code&gt; in the earlier section of the code. See &lt;a href=&#34;https://www.datacamp.com/community/tutorials/pipe-r-tutorial&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;this tutorial&lt;/a&gt; for details.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;code&gt;&amp;amp;&lt;/code&gt; is a logical operator. &lt;code&gt;&amp;amp;&lt;/code&gt; and &lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt; indicate logical AND and &lt;code&gt;|&lt;/code&gt; and &lt;code&gt;||&lt;/code&gt; indicate logical OR. The shorter form performs elementwise comparisons in much the same way as arithmetic operators. The longer form evaluates left to right examining only the first element of each vector. Evaluation proceeds only until the result is determined. The longer form is appropriate for programming control-flow and typically preferred in if clauses.&lt;/p&gt;
+&lt;p&gt;In newer versions of R (&amp;gt; 4.2.0), there is an alternative pipe operator &lt;code&gt;|&amp;gt;&lt;/code&gt; that is part of the &lt;code&gt;base&lt;/code&gt; package. In this course, I will switch between &lt;code&gt;%&amp;gt;%&lt;/code&gt; and &lt;code&gt;|&amp;gt;&lt;/code&gt;.   You can use either one, but you might want to be &lt;a href=&#34;https://www.tidyverse.org/blog/2023/04/base-vs-magrittr-pipe/#-vs&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;mindful of the crucial differences&lt;/a&gt; between &lt;code&gt;%&amp;gt;%&lt;/code&gt; and &lt;code&gt;|&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;&amp;amp;&lt;/code&gt; is a logical operator. &lt;code&gt;&amp;amp;&lt;/code&gt; and &lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt; indicate logical AND and &lt;code&gt;|&lt;/code&gt; and &lt;code&gt;||&lt;/code&gt; indicate logical OR. The shorter form performs element wise comparisons in much the same way as arithmetic operators. The longer form evaluates left to right examining only the first element of each vector. Evaluation proceeds only until the result is determined. The longer form is appropriate for programming control-flow and typically preferred in if clauses.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;I could have simply used year(.) == 2008 to achieve the same result. But in what situations will this code fail to do what you want it to do? Hint: 2008 could be stored and interpreted in R in lot of different ways (double, character, Date).&lt;/p&gt;
