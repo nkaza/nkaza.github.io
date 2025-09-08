@@ -1,0 +1,301 @@
+<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold; fill: #2c3e50; }
+      .kernel-title { font-family: 'Arial', sans-serif; font-size: 14px; font-weight: bold; fill: #34495e; }
+      .cell-text { font-family: 'Courier New', monospace; font-size: 12px; font-weight: bold; text-anchor: middle; dominant-baseline: central; }
+      .positive { fill: #e74c3c; }
+      .negative { fill: #3498db; }
+      .zero { fill: #95a5a6; }
+      .fraction { font-size: 10px; }
+      .grid-line { stroke: #34495e; stroke-width: 2; fill: none; }
+      .cell-bg-positive { fill: #ffebee; stroke: #e74c3c; stroke-width: 1.5; }
+      .cell-bg-negative { fill: #e3f2fd; stroke: #3498db; stroke-width: 1.5; }
+      .cell-bg-zero { fill: #f5f5f5; stroke: #95a5a6; stroke-width: 1.5; }
+    </style>
+  </defs>
+  
+  <!-- Main Title -->
+  <text x="450" y="35" class="title" text-anchor="middle">3×3 Image Processing Kernels</text>
+  
+  <!-- Row 1 -->
+  
+  <!-- Gaussian Blur -->
+  <g transform="translate(100, 80)">
+    <text x="60" y="-15" class="kernel-title" text-anchor="middle">Gaussian Blur</text>
+    
+    <rect x="0" y="0" width="120" height="120" class="grid-line"/>
+    <line x1="40" y1="0" x2="40" y2="120" class="grid-line"/>
+    <line x1="80" y1="0" x2="80" y2="120" class="grid-line"/>
+    <line x1="0" y1="40" x2="120" y2="40" class="grid-line"/>
+    <line x1="0" y1="80" x2="120" y2="80" class="grid-line"/>
+    
+    <rect x="2" y="2" width="36" height="36" class="cell-bg-positive"/>
+    <text x="20" y="13" class="cell-text positive fraction">1</text>
+    <text x="20" y="27" class="cell-text positive fraction">16</text>
+    <line x1="12" y1="17" x2="28" y2="17" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="42" y="2" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="13" class="cell-text positive fraction">2</text>
+    <text x="60" y="27" class="cell-text positive fraction">16</text>
+    <line x1="52" y1="17" x2="68" y2="17" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="2" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="13" class="cell-text positive fraction">1</text>
+    <text x="100" y="27" class="cell-text positive fraction">16</text>
+    <line x1="92" y1="17" x2="108" y2="17" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="2" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="20" y="53" class="cell-text positive fraction">2</text>
+    <text x="20" y="67" class="cell-text positive fraction">16</text>
+    <line x1="12" y1="57" x2="28" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="42" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="53" class="cell-text positive fraction">4</text>
+    <text x="60" y="67" class="cell-text positive fraction">16</text>
+    <line x1="52" y1="57" x2="68" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="53" class="cell-text positive fraction">2</text>
+    <text x="100" y="67" class="cell-text positive fraction">16</text>
+    <line x1="92" y1="57" x2="108" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="2" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="20" y="93" class="cell-text positive fraction">1</text>
+    <text x="20" y="107" class="cell-text positive fraction">16</text>
+    <line x1="12" y1="97" x2="28" y2="97" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="42" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="93" class="cell-text positive fraction">2</text>
+    <text x="60" y="107" class="cell-text positive fraction">16</text>
+    <line x1="52" y1="97" x2="68" y2="97" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="93" class="cell-text positive fraction">1</text>
+    <text x="100" y="107" class="cell-text positive fraction">16</text>
+    <line x1="92" y1="97" x2="108" y2="97" stroke="#e74c3c" stroke-width="1"/>
+  </g>
+  
+  <!-- Box Blur -->
+  <g transform="translate(350, 80)">
+    <text x="60" y="-15" class="kernel-title" text-anchor="middle">Box Blur</text>
+    
+    <rect x="0" y="0" width="120" height="120" class="grid-line"/>
+    <line x1="40" y1="0" x2="40" y2="120" class="grid-line"/>
+    <line x1="80" y1="0" x2="80" y2="120" class="grid-line"/>
+    <line x1="0" y1="40" x2="120" y2="40" class="grid-line"/>
+    <line x1="0" y1="80" x2="120" y2="80" class="grid-line"/>
+    
+    <rect x="2" y="2" width="36" height="36" class="cell-bg-positive"/>
+    <text x="20" y="13" class="cell-text positive fraction">1</text>
+    <text x="20" y="27" class="cell-text positive fraction">9</text>
+    <line x1="12" y1="17" x2="28" y2="17" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="42" y="2" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="13" class="cell-text positive fraction">1</text>
+    <text x="60" y="27" class="cell-text positive fraction">9</text>
+    <line x1="52" y1="17" x2="68" y2="17" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="2" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="13" class="cell-text positive fraction">1</text>
+    <text x="100" y="27" class="cell-text positive fraction">9</text>
+    <line x1="92" y1="17" x2="108" y2="17" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="2" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="20" y="53" class="cell-text positive fraction">1</text>
+    <text x="20" y="67" class="cell-text positive fraction">9</text>
+    <line x1="12" y1="57" x2="28" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="42" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="53" class="cell-text positive fraction">1</text>
+    <text x="60" y="67" class="cell-text positive fraction">9</text>
+    <line x1="52" y1="57" x2="68" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="53" class="cell-text positive fraction">1</text>
+    <text x="100" y="67" class="cell-text positive fraction">9</text>
+    <line x1="92" y1="57" x2="108" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="2" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="20" y="93" class="cell-text positive fraction">1</text>
+    <text x="20" y="107" class="cell-text positive fraction">9</text>
+    <line x1="12" y1="97" x2="28" y2="97" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="42" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="93" class="cell-text positive fraction">1</text>
+    <text x="60" y="107" class="cell-text positive fraction">9</text>
+    <line x1="52" y1="97" x2="68" y2="97" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="93" class="cell-text positive fraction">1</text>
+    <text x="100" y="107" class="cell-text positive fraction">9</text>
+    <line x1="92" y1="97" x2="108" y2="97" stroke="#e74c3c" stroke-width="1"/>
+  </g>
+  
+  <!-- Sobel X -->
+  <g transform="translate(600, 80)">
+    <text x="60" y="-15" class="kernel-title" text-anchor="middle">Sobel X</text>
+    
+    <rect x="0" y="0" width="120" height="120" class="grid-line"/>
+    <line x1="40" y1="0" x2="40" y2="120" class="grid-line"/>
+    <line x1="80" y1="0" x2="80" y2="120" class="grid-line"/>
+    <line x1="0" y1="40" x2="120" y2="40" class="grid-line"/>
+    <line x1="0" y1="80" x2="120" y2="80" class="grid-line"/>
+    
+    <rect x="2" y="2" width="36" height="36" class="cell-bg-negative"/>
+    <text x="20" y="20" class="cell-text negative">-1</text>
+    
+    <rect x="42" y="2" width="36" height="36" class="cell-bg-zero"/>
+    <text x="60" y="20" class="cell-text zero">0</text>
+    
+    <rect x="82" y="2" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="20" class="cell-text positive">1</text>
+    
+    <rect x="2" y="42" width="36" height="36" class="cell-bg-negative"/>
+    <text x="20" y="60" class="cell-text negative">-2</text>
+    
+    <rect x="42" y="42" width="36" height="36" class="cell-bg-zero"/>
+    <text x="60" y="60" class="cell-text zero">0</text>
+    
+    <rect x="82" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="60" class="cell-text positive">2</text>
+    
+    <rect x="2" y="82" width="36" height="36" class="cell-bg-negative"/>
+    <text x="20" y="100" class="cell-text negative">-1</text>
+    
+    <rect x="42" y="82" width="36" height="36" class="cell-bg-zero"/>
+    <text x="60" y="100" class="cell-text zero">0</text>
+    
+    <rect x="82" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="100" class="cell-text positive">1</text>
+  </g>
+  
+  <!-- Row 2 -->
+  
+  <!-- Sobel Y -->
+  <g transform="translate(100, 330)">
+    <text x="60" y="-15" class="kernel-title" text-anchor="middle">Sobel Y</text>
+    
+    <rect x="0" y="0" width="120" height="120" class="grid-line"/>
+    <line x1="40" y1="0" x2="40" y2="120" class="grid-line"/>
+    <line x1="80" y1="0" x2="80" y2="120" class="grid-line"/>
+    <line x1="0" y1="40" x2="120" y2="40" class="grid-line"/>
+    <line x1="0" y1="80" x2="120" y2="80" class="grid-line"/>
+    
+    <rect x="2" y="2" width="36" height="36" class="cell-bg-negative"/>
+    <text x="20" y="20" class="cell-text negative">-1</text>
+    
+    <rect x="42" y="2" width="36" height="36" class="cell-bg-negative"/>
+    <text x="60" y="20" class="cell-text negative">-2</text>
+    
+    <rect x="82" y="2" width="36" height="36" class="cell-bg-negative"/>
+    <text x="100" y="20" class="cell-text negative">-1</text>
+    
+    <rect x="2" y="42" width="36" height="36" class="cell-bg-zero"/>
+    <text x="20" y="60" class="cell-text zero">0</text>
+    
+    <rect x="42" y="42" width="36" height="36" class="cell-bg-zero"/>
+    <text x="60" y="60" class="cell-text zero">0</text>
+    
+    <rect x="82" y="42" width="36" height="36" class="cell-bg-zero"/>
+    <text x="100" y="60" class="cell-text zero">0</text>
+    
+    <rect x="2" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="20" y="100" class="cell-text positive">1</text>
+    
+    <rect x="42" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="100" class="cell-text positive">2</text>
+    
+    <rect x="82" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="100" class="cell-text positive">1</text>
+  </g>
+  
+  <!-- High Pass -->
+  <g transform="translate(350, 330)">
+    <text x="60" y="-15" class="kernel-title" text-anchor="middle">High Pass</text>
+    
+    <rect x="0" y="0" width="120" height="120" class="grid-line"/>
+    <line x1="40" y1="0" x2="40" y2="120" class="grid-line"/>
+    <line x1="80" y1="0" x2="80" y2="120" class="grid-line"/>
+    <line x1="0" y1="40" x2="120" y2="40" class="grid-line"/>
+    <line x1="0" y1="80" x2="120" y2="80" class="grid-line"/>
+    
+    <rect x="2" y="2" width="36" height="36" class="cell-bg-negative"/>
+    <text x="20" y="20" class="cell-text negative">-1</text>
+    
+    <rect x="42" y="2" width="36" height="36" class="cell-bg-negative"/>
+    <text x="60" y="20" class="cell-text negative">-1</text>
+    
+    <rect x="82" y="2" width="36" height="36" class="cell-bg-negative"/>
+    <text x="100" y="20" class="cell-text negative">-1</text>
+    
+    <rect x="2" y="42" width="36" height="36" class="cell-bg-negative"/>
+    <text x="20" y="60" class="cell-text negative">-1</text>
+    
+    <rect x="42" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="60" class="cell-text positive">8</text>
+    
+    <rect x="82" y="42" width="36" height="36" class="cell-bg-negative"/>
+    <text x="100" y="60" class="cell-text negative">-1</text>
+    
+    <rect x="2" y="82" width="36" height="36" class="cell-bg-negative"/>
+    <text x="20" y="100" class="cell-text negative">-1</text>
+    
+    <rect x="42" y="82" width="36" height="36" class="cell-bg-negative"/>
+    <text x="60" y="100" class="cell-text negative">-1</text>
+    
+    <rect x="82" y="82" width="36" height="36" class="cell-bg-negative"/>
+    <text x="100" y="100" class="cell-text negative">-1</text>
+  </g>
+  
+  <!-- Low Pass -->
+  <g transform="translate(600, 330)">
+    <text x="60" y="-15" class="kernel-title" text-anchor="middle">Low Pass</text>
+    
+    <rect x="0" y="0" width="120" height="120" class="grid-line"/>
+    <line x1="40" y1="0" x2="40" y2="120" class="grid-line"/>
+    <line x1="80" y1="0" x2="80" y2="120" class="grid-line"/>
+    <line x1="0" y1="40" x2="120" y2="40" class="grid-line"/>
+    <line x1="0" y1="80" x2="120" y2="80" class="grid-line"/>
+    
+    <rect x="2" y="2" width="36" height="36" class="cell-bg-zero"/>
+    <text x="20" y="20" class="cell-text zero">0</text>
+    
+    <rect x="42" y="2" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="13" class="cell-text positive fraction">1</text>
+    <text x="60" y="27" class="cell-text positive fraction">4</text>
+    <line x1="52" y1="17" x2="68" y2="17" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="2" width="36" height="36" class="cell-bg-zero"/>
+    <text x="100" y="20" class="cell-text zero">0</text>
+    
+    <rect x="2" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="20" y="53" class="cell-text positive fraction">1</text>
+    <text x="20" y="67" class="cell-text positive fraction">4</text>
+    <line x1="12" y1="57" x2="28" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="42" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="53" class="cell-text positive fraction">1</text>
+    <text x="60" y="67" class="cell-text positive fraction">2</text>
+    <line x1="52" y1="57" x2="68" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="42" width="36" height="36" class="cell-bg-positive"/>
+    <text x="100" y="53" class="cell-text positive fraction">1</text>
+    <text x="100" y="67" class="cell-text positive fraction">4</text>
+    <line x1="92" y1="57" x2="108" y2="57" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="2" y="82" width="36" height="36" class="cell-bg-zero"/>
+    <text x="20" y="100" class="cell-text zero">0</text>
+    
+    <rect x="42" y="82" width="36" height="36" class="cell-bg-positive"/>
+    <text x="60" y="93" class="cell-text positive fraction">1</text>
+    <text x="60" y="107" class="cell-text positive fraction">4</text>
+    <line x1="52" y1="97" x2="68" y2="97" stroke="#e74c3c" stroke-width="1"/>
+    
+    <rect x="82" y="82" width="36" height="36" class="cell-bg-zero"/>
+    <text x="100" y="100" class="cell-text zero">0</text>
+  </g>
+  
+  <!-- Download Instructions -->
+  <text x="450" y="570" class="kernel-title" text-anchor="middle" style="font-size: 12px; fill: #7f8c8d;">Right-click on the image and select "Save as..." to download as SVG, then convert to JPG using any image editor</text>
+</svg>

@@ -5,12 +5,519 @@
     <link>https://nkaza.github.io/category/new-urban-analytics/</link>
       <atom:link href="https://nkaza.github.io/category/new-urban-analytics/index.xml" rel="self" type="application/rss+xml" />
     <description>new-urban-analytics</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2023 Nikhil Kaza</copyright><lastBuildDate>Wed, 26 Oct 2022 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Thu, 04 Sep 2025 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
       <title>new-urban-analytics</title>
       <link>https://nkaza.github.io/category/new-urban-analytics/</link>
     </image>
+    
+    <item>
+      <title>Working with Drone Imagery</title>
+      <link>https://nkaza.github.io/post/working-with-drone-imagery/</link>
+      <pubDate>Thu, 04 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/working-with-drone-imagery/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Drone imagery offers promising capabilities for urban planning, but its application warrants a measured and critical perspective. While drones can rapidly capture high-resolution spatial data, enabling planners to visualize land use, infrastructure, and environmental conditions with impressive detail, their use also raises concerns about data accuracy, privacy, and long-term integration. The quality of drone imagery can vary depending on weather, flight regulations, and operator expertise, potentially limiting its reliability for complex planning decisions. Moreover, the proliferation of aerial surveillance introduces ethical questions around consent and the monitoring of public and private spaces. Urban planners must also grapple with the challenge of incorporating drone data into existing workflows and regulatory frameworks, which are often not designed to accommodate such fast-evolving technologies. Nonetheless it is useful to figure out how to use them effectively.&lt;/p&gt;
+&lt;p&gt;When focusing specifically on drones, the types of data they can collect are largely determined by the onboard sensors they carry. Standard RGB cameras provide high-resolution visual imagery, useful for mapping, inspections, and photogrammetry. Multispectral sensors detect light across several bands, allowing analysis of vegetation health, water pollution, and urban heat islands—especially valuable in environmental planning. Thermal cameras capture infrared radiation, helping identify energy inefficiencies in buildings or monitor heat patterns in dense urban areas. LiDAR systems, which use laser pulses to measure distances, generate precise 3D models of terrain and infrastructure, even in areas with dense vegetation or poor lighting.&lt;/p&gt;
+&lt;p&gt;Within R, tools like &lt;code&gt;FIELDimageR&lt;/code&gt; and &lt;code&gt;uasim&lt;/code&gt; offer specialized functions for managing UAV imagery, including organizing flight data, converting formats, and preparing images for GIS integration. However, pre-processing and flight planning work is often done in other applications and R is used predominantly for processing the mosaiced raster datasets. In this tutorial we are focused on these later steps, especially on nadir/overhead images.&lt;/p&gt;
+&lt;h2 id=&#34;multiple-ways-of-thinking-about-rasters&#34;&gt;Multiple ways of thinking about rasters&lt;/h2&gt;
+&lt;p&gt;Rasters are everywhere including pictures that may or may not have an external coordinate system, medical images (e.g. X-rays), astronomical images from telescopes,  drawings etc. A raster is a grid of cells (or pixels), each holding a value that represents something about the space it covers. These values might describe elevation, temperature, color intensity, or even tissue density—depending on the domain. Some key features:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Grid Structure: Rasters are organized into rows and columns, forming a rectangular data.&lt;/li&gt;
+&lt;li&gt;Pixel Values: Each cell contains a numeric value—this could be brightness, elevation, or a class label.&lt;/li&gt;
+&lt;li&gt;Resolution: The size of each pixel determines how detailed the raster is. Smaller pixels mean finer detail.&lt;/li&gt;
+&lt;li&gt;Bands/Layers: Rasters can have multiple layers (bands), each representing different data types (e.g., RGB channels in images). Sometimes, these layers can be discretised time representing the same area at different timestamps.&lt;/li&gt;
+&lt;li&gt;Spatial Context: Some rasters are tied to real-world coordinates (georeferenced), while others are not. When rasters are georeferenced within a particular coordinate system, all you need to know is the coordinates of the corners of the raster and the resolution to figure out the coordinates of every pixel in the raster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Rasters can be thought of in a number of different ways. Chief among them are:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;They are similar to rectangular data frames where each pixel is a row and each band is a column. You can have other columns such as raster row position and raster column position.&lt;/li&gt;
+&lt;li&gt;They are matrices where each cell is a pixel and each band is a matrix.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;These two points are illustrated below.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;&#34;
+           src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/includes/raster_animation.gif&#34;
+           loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;!-- --&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;They are a regular network/graph, where each pixel is node and the edges are the connectivity among the pixels; i.e. neighboring pixels are connected to each other. Different connectivities (such as rook, 2-nd order queen) can be defined. This is illustrated below.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src=&#34;includes/raster_graph.png&#34; width=&#34;100%&#34; /&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;Rasters are samples of a continuous surface that is discretised by the pixels.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;&#34;
+           src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/includes/raster_continuous_surface.gif&#34;
+           loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;Each of these ways of thinking may be useful for particular purposes. Sometimes it is helpful to think about rasters with their geographic locations. Sometimes what matters are internal relationships among the pixels.&lt;/p&gt;
+&lt;h2 id=&#34;rasters-in-r&#34;&gt;Rasters in R&lt;/h2&gt;
+&lt;p&gt;R offers a diverse ecosystem of packages for handling rasters, images, and multidimensional arrays across domains like biology, computer vision, remote sensing, and climate science.&lt;/p&gt;
+&lt;h3 id=&#34;remote-sensing--raster-visualization&#34;&gt;Remote Sensing &amp;amp; Raster Visualization&lt;/h3&gt;
+&lt;p&gt;These packages are designed for geospatial raster data, satellite imagery, and thematic mapping.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Package&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;terra&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Modern package for handling spatial raster data efficiently. Supports cropping, resampling, and projection.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;rasterVis&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Enhances raster visualization with lattice-style graphics and thematic mapping tools.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;stars&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Handles spatiotemporal arrays and integrates with &lt;code&gt;sf&lt;/code&gt; and tidyverse. Great for multi-band satellite data.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;satellite&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Tailored for processing satellite imagery, including atmospheric correction and vegetation indices.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;RStoolbox&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Toolbox for remote sensing analysis—supports PCA, supervised classification, and spectral indices.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;environmental--climate-raster-data-netcdf-geotiff-etc&#34;&gt;Environmental &amp;amp; Climate Raster Data (NetCDF, GeoTIFF, etc.)&lt;/h3&gt;
+&lt;p&gt;These packages specialize in large-scale environmental datasets, including climate models and ecological predictors.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Package&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;ncdf4&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Low-level interface for reading and writing NetCDF files. Ideal for custom extraction and manipulation.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;RNetCDF&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Alternative NetCDF interface with support for metadata and structured arrays.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;stars&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Also supports NetCDF and spatiotemporal raster data. Integrates well with tidy workflows.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;geodata&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Simplifies access to global environmental datasets like WorldClim, elevation, and land cover.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;elevatr&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Easy access to global elevation data from various sources (e.g., SRTM, AWS).&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;climate&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Tools for analyzing climate data, including temperature and precipitation trends.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;rnoaa&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Interfaces with NOAA datasets including climate, weather, and ocean data.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;biological--medical-imaging&#34;&gt;Biological &amp;amp; Medical Imaging&lt;/h3&gt;
+&lt;p&gt;These packages are ideal for analyzing microscopy, medical scans, and structural biological data.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Package&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;EBImage&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Bioconductor package for biological image analysis. Supports segmentation, object detection, and feature extraction.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;mmand&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Provides mathematical morphology operations (e.g., erosion, dilation, skeletonization) on multidimensional arrays. Great for structural analysis.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;ANTsR&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Advanced image registration and segmentation, especially for neuroimaging. Wraps the ANTs toolkit used in medical research.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;general-image-processing--computer-vision&#34;&gt;General Image Processing &amp;amp; Computer Vision&lt;/h3&gt;
+&lt;p&gt;These tools support pixel-level manipulation, filtering, and high-level image editing.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Package&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;imager&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Versatile for pixel-level operations, filters, edge detection, and convolution. Excellent for computer vision tasks.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;magick&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Wraps ImageMagick for high-level image editing—cropping, compositing, format conversion, and annotation.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;OpenImageR&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Offers image preprocessing, feature extraction, and similarity metrics. Useful in machine learning pipelines.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;landscapemetrics&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Focuses on landscape ecology metrics from raster data. Computes patch, class, and landscape-level statistics.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;imagefx&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;Lightweight package for basic image effects like blur, sharpen, and color adjustments.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;processing-drone-imagery-in-r&#34;&gt;Processing Drone Imagery in R&lt;/h2&gt;
+&lt;p&gt;Let us use &lt;code&gt;terra&lt;/code&gt; to process drone imagery in R. Download the &lt;a href=&#34;https://www.dropbox.com/scl/fo/zpehjt5qopi21hyua18ha/ALPXxsJ_wzBcIH1gqfXmNMA?rlkey=rynzn7kdzpod6931dv3kqn0k5&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;required data&lt;/a&gt; and locate it into your &lt;code&gt;InputData&lt;/code&gt; folder as is the general practise in this class. The following code reads a georeferenced orthomosaic image, crops it to a specific area of interest, and visualizes the result.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(terra)
+
+# Adjust the path to where you have stored the data
+here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;drone_images&amp;quot;, &amp;quot;2_mosaic&amp;quot;, &amp;quot;20240801_Anafi_site4_transparent_mosaic_group1.tif&amp;quot;) %&amp;gt;%
+  rast() -&amp;gt; drone_raster
+
+drone_raster
+# class       : SpatRaster 
+# size        : 11428, 7969, 4  (nrow, ncol, nlyr)
+# resolution  : 0.03962, 0.03962  (x, y)
+# extent      : 423103.3, 423419.1, 4012352, 4012805  (xmin, xmax, ymin, ymax)
+# coord. ref. : WGS 84 / UTM zone 18N (EPSG:32618) 
+# source      : 20240801_Anafi_site4_transparent_mosaic_group1.tif 
+# names       : 2024080~roup1_1, 2024080~roup1_2, 2024080~roup1_3, 2024080~roup1_4 
+# min values  :               0,               0,               0,               0 
+# max values  :             255,             255,             255,             255
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note a few things about the raster:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It has 4 bands. It is tempting to think that they are Red, Green, Blue and Near Infrared bands. However, we will see shortly that this is not the case. (Hint: try &lt;code&gt;summary&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;The coordinate reference system is UTM zone 18N (EPSG:32618). Thus the units of the raster is in meters&lt;/li&gt;
+&lt;li&gt;The resolution is about .039 meters (3.9 cm) in both X and Y directions.&lt;/li&gt;
+&lt;li&gt;The extent of the raster is in UTM coordinates. The lower left corner is at (423103.3, 4012352) and the upper right corner is at (423419.1, 4012805). Thus the raster covers an area of about 316 m by 453 m. This is equivalent to 35 acres.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let&amp;rsquo;s visualise each band separately.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;par(mfrow = c(2, 2)) # Set up a 2x2 plotting layout
+
+# Loop through and plot the first four bands
+for (i in 1:4) {
+  plot(drone_raster[[i]],
+       main = paste(&amp;quot;Band&amp;quot;, i),
+       col = gray.colors(256))
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;960&#34; /&gt;
+&lt;p&gt;Visualising this suggests that Band 4 is simply a mask that specifies which pixels are valid (non-NA). In this particular instance 255 refers to non-NA values. The other three bands are Red, Green and Blue bands. We can confirm this by plotting a RGB composite image using the &lt;code&gt;plotRGB&lt;/code&gt; function.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plotRGB(drone_raster, r=1, g=2, b=3,
+        stretch=&amp;quot;lin&amp;quot;,
+        main=&amp;quot;RGB Composite (1=R, 2=G, 3=B)&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-6-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;p&gt;It is useful to recognise that the values of the raster can be accessed using the &lt;code&gt;[&lt;/code&gt; operator. For example, the value of the pixel at row 1000 and column 500 for bands 1 and 2 can be accessed as follows.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;drone_raster[1000, 500, 1:2]
+#   20240801_Anafi_site4_transparent_mosaic_group1_1
+# 1                                               96
+#   20240801_Anafi_site4_transparent_mosaic_group1_2
+# 1                                              125
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Likewise, &lt;code&gt;[[&lt;/code&gt;, or &lt;code&gt;$&lt;/code&gt; extracts the entire band as a Spatraster as we have seen earlier.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+drone_raster$`20240801_Anafi_site4_transparent_mosaic_group1_3`
+# class       : SpatRaster 
+# size        : 11428, 7969, 1  (nrow, ncol, nlyr)
+# resolution  : 0.03962, 0.03962  (x, y)
+# extent      : 423103.3, 423419.1, 4012352, 4012805  (xmin, xmax, ymin, ymax)
+# coord. ref. : WGS 84 / UTM zone 18N (EPSG:32618) 
+# source      : 20240801_Anafi_site4_transparent_mosaic_group1.tif 
+# name        : 20240801_Anafi_site4_transparent_mosaic_group1_3 
+# min value   :                                                0 
+# max value   :                                              255
+
+drone_raster[[3]] %&amp;gt;% 
+  plot()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the value of the pixel at row 1500 and column 800 for bands 1 and 3?&lt;/li&gt;
+&lt;li&gt;Extract values for 50x50 pixels starting at row 1200 and column 400 for all three bands.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;raster-arithmetic&#34;&gt;Raster Arithmetic&lt;/h2&gt;
+&lt;p&gt;Raster arithmetic is a powerful technique for deriving new insights from existing raster data. By performing mathematical operations on raster layers, we can create indices that highlight specific features or conditions in the landscape. In this instance, it might be useful to  think of rasters as columns and the airthmetic is row within each row with airthmetic happening among the columns.&lt;/p&gt;
+&lt;p&gt;For example,&lt;/p&gt;
+&lt;p&gt;$$ VARI = \frac{(G - R)}{ (G + R – B)} $$
+is particularly good at isolating the vegetation signal by normalizing the Green-Red difference by the overall visible light reflectance.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+vari &amp;lt;- (drone_raster[[2]] - drone_raster[[1]]) / 
+  (drone_raster[[2]] + drone_raster[[1]] - drone_raster[[3]])
+
+plot(vari, main=&amp;quot;VARI Index&amp;quot;, col=gray.colors(256))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Other indices that are useful for vegetation include&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;Normalized band index (NBI). Each band is normalised by dividing with the sum of all three bands.&lt;/li&gt;
+&lt;li&gt;Excess green index (ExG). $ 2G - R - B $&lt;/li&gt;
+&lt;li&gt;Excess green minus excess red index (ExGR). $ 3G - 2.4R - B $&lt;/li&gt;
+&lt;li&gt;Green leaf index (GLI). $ \frac{2G - R - B}{2G + R + B} $&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Compute these indices. Visualise the results. Put them in a multilayered SpatRaster object. Which index do you think is best for identifying vegetation in this image? Why?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;What happens when the denominator in these indices is 0? How does R handle this? How would you like it to be handled?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;app&lt;/code&gt;, &lt;code&gt;lapp&lt;/code&gt; are &lt;a href=&#34;https://www.pmassicotte.com/posts/2025-06-12-terra-layer-funs/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;useful&lt;/a&gt; and memory-safe functions for applying functions to each pixel across multiple layers. Explore these functions and see if you can use them to compute the indices above.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;colorspaces&#34;&gt;Colorspaces&lt;/h2&gt;
+&lt;p&gt;A color space is a mathematical model for representing colors as a set of numerical values. While the most familiar color space, RGB (Red, Green, Blue), is an additive model that&amp;rsquo;s hardware-oriented, it&amp;rsquo;s not intuitive for humans to manipulate because changing one color channel can unpredictably alter both the hue and brightness.
+Hue, which identifies the dominant color and is represented as an angle on a color wheel; Saturation, which denotes the purity or vividness of the color; and Intensity, which represents the overall brightness or luminance. Unlike HSV, which uses the maximum RGB value for its Value component, HSI&amp;rsquo;s Intensity component is often calculated as the average of the red, green, and blue values, making it a more direct measure of brightness.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.RGB(drone_raster, 1:3, &amp;quot;rgb&amp;quot;)
+drone_raster_hsi &amp;lt;- colorize(drone_raster, to = &amp;quot;HSI&amp;quot;)
+
+plot(drone_raster_hsi[[1:3]], main=c(&amp;quot;Hue&amp;quot;, &amp;quot;Saturation&amp;quot;, &amp;quot;Intensity&amp;quot;), col=gray.colors(256))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;h2 id=&#34;identifying-glint&#34;&gt;Identifying glint&lt;/h2&gt;
+&lt;p&gt;Glint refers to the bright spots or reflections often seen in aerial imagery, particularly over water bodies or shiny surfaces. These reflections can obscure important details in the image and complicate analysis. Identifying and mitigating glint is crucial for accurate interpretation of drone imagery. In the above image, glint is obvious in various areas in the East and Southwest parts of the image. The glint obscures the submerged aquatic vegetation in these areas.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s try a couple of approaches to identify glint in this image.&lt;/p&gt;
+&lt;p&gt;Areas of glint seem to have high intensity and low saturation. Lets apply some thresholds.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+brightness_threshold &amp;lt;- quantile(values(drone_raster_hsi[[3]]), .95, na.rm = TRUE) # High brightness
+saturation_threshold &amp;lt;- quantile(values(drone_raster_hsi[[3]]), 0.3, na.rm = TRUE)  # Low saturation
+    
+glint_mask &amp;lt;- (drone_raster_hsi[[3]] &amp;gt; brightness_threshold) &amp;amp; (drone_raster_hsi[[2]] &amp;lt; saturation_threshold)
+
+plot(glint_mask, main=&amp;quot;Glint Mask (Brightness + Saturation)&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;p&gt;Use a relative difference between red and green to identify glint. This is similar to the Normalized Difference Water Index (NDWI) used in remote sensing to identify water bodies.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;    # Calculate normalized difference water index-like metric
+    ndwi &amp;lt;- (drone_raster[[2]] - drone_raster[[1]]) / (drone_raster[[1]] + drone_raster[[2]] + 0.001)  # Add small value to avoid division by zero
+  
+    ndwi_threshold &amp;lt;- quantile(values(ndwi), 0.7, na.rm = TRUE)
+    
+    glint_mask2 &amp;lt;- (drone_raster_hsi[[3]] &amp;gt; brightness_threshold) &amp;amp; (ndwi &amp;gt; ndwi_threshold)
+
+    plot(glint_mask2, main=&amp;quot;Glint Mask (NDWI + Intensity)&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;use Raster arithmetic to substitute for logical arithmetic. Pay special attention to NAs.&lt;/li&gt;
+&lt;li&gt;Experiment with different thresholds. How do you think they should be set?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;It might useful to compare the original RGB values among the two glint masks. Note the use of the binary valued glint mask as a row index to extract the RGB values (1:3 columns) from the original raster.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+library(cowplot)
+
+rgb_values_glint1 &amp;lt;- as.data.frame(drone_raster)[as.vector(glint_mask), 1:3]
+rgb_values_glint2 &amp;lt;- as.data.frame(drone_raster)[as.vector(glint_mask2), 1:3]
+
+names(rgb_values_glint1) &amp;lt;- c(&amp;quot;r&amp;quot;, &amp;quot;g&amp;quot;, &amp;quot;b&amp;quot;)
+names(rgb_values_glint2) &amp;lt;- c(&amp;quot;r&amp;quot;, &amp;quot;g&amp;quot;, &amp;quot;b&amp;quot;)
+
+g_red &amp;lt;- ggplot(data =  ) +
+  geom_density(aes(x=r, fill=&amp;quot;Mask1&amp;quot;), data = rgb_values_glint1, , alpha=0.5) +
+  geom_density(aes(x=r, fill=&amp;quot;Mask2&amp;quot;), data = rgb_values_glint2, alpha=0.5) +
+  xlim(0, 255)+
+  scale_fill_manual(name=&amp;quot;Glint Mask&amp;quot;, values=c(Mask1=&amp;quot;yellow&amp;quot;, Mask2=&amp;quot;brown&amp;quot;)) +
+  theme_minimal() +
+  theme(legend.position=&amp;quot;none&amp;quot;) +
+  xlab(&amp;quot;Red&amp;quot;) 
+
+g_green &amp;lt;- ggplot(data =  ) +
+  geom_density(aes(x=g, fill=&amp;quot;Mask1&amp;quot;), data = rgb_values_glint1, , alpha=0.5) +
+  geom_density(aes(x=g, fill=&amp;quot;Mask2&amp;quot;), data = rgb_values_glint2, alpha=0.5) +
+  xlim(0, 255)+
+  scale_fill_manual(name=&amp;quot;Glint Mask&amp;quot;, values=c(Mask1=&amp;quot;yellow&amp;quot;, Mask2=&amp;quot;brown&amp;quot;)) +
+  theme_minimal() +
+  theme(legend.position=&amp;quot;none&amp;quot;) +
+  xlab(&amp;quot;Green&amp;quot;) 
+
+g_blue &amp;lt;- ggplot(data =  ) +
+  geom_density(aes(x=b, fill=&amp;quot;Mask1&amp;quot;), data = rgb_values_glint1, , alpha=0.5) +
+  geom_density(aes(x=b, fill=&amp;quot;Mask2&amp;quot;), data = rgb_values_glint2, alpha=0.5) +
+  xlim(0, 255)+
+  scale_fill_manual(name=&amp;quot;Glint Mask&amp;quot;, values=c(Mask1=&amp;quot;yellow&amp;quot;, Mask2=&amp;quot;brown&amp;quot;)) +
+  theme_minimal() +
+  theme(legend.position=&amp;quot;none&amp;quot;) +
+  xlab(&amp;quot;Blue&amp;quot;)
+
+g_legend &amp;lt;- 
+  get_legend(
+  g_red + theme(legend.position = &amp;quot;right&amp;quot;)
+)
+
+plot_grid(g_red, g_green, g_blue, g_legend, ncol=4, rel_widths = c(1,1,1,.2))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Instead of repeating the ggplot for each band, make a function that you can call multiple time and use to generate this graphic.&lt;/li&gt;
+&lt;li&gt;How might you avoid the use of legends in this graphic? Is it wise?&lt;/li&gt;
+&lt;li&gt;Figure out an easier wasy to generate this graphic using &lt;code&gt;pivot_longer&lt;/code&gt; and &lt;code&gt;facet_grid&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;convolutions--moving-windows&#34;&gt;Convolutions &amp;amp; Moving Windows&lt;/h2&gt;
+&lt;p&gt;Convolutions and moving window operations are fundamental techniques in raster and image processing that apply mathematical operations to each pixel based on its surrounding neighborhood. In these operations, a small matrix called a kernel, filter, or window is systematically moved across the entire raster, with the kernel&amp;rsquo;s center positioned over each target pixel. At each position, the kernel values are multiplied element-wise with the corresponding pixel values in the neighborhood, and these products are summed to produce a new value for the center pixel. This process enables a wide range of analytical capabilities, from simple smoothing and noise reduction using averaging kernels, to edge detection with gradient operators like Sobel or Laplacian filters, to more complex feature extraction and pattern recognition tasks. The size and values within the kernel determine the specific operation performed—for example, a 3×3 kernel filled with 1/9 values creates a mean filter for smoothing, while kernels with positive and negative values can highlight directional edges or enhance specific spatial frequencies. These operations form the mathematical foundation for many advanced techniques in computer vision, remote sensing, and spatial analysis, allowing meaningful information from spatial patterns and relationships within raster datasets to be extracted.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;knitr::include_graphics(&amp;quot;includes/image_processing_kernels.svg&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;&#34;
+           src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/includes/image_processing_kernels.svg&#34;
+           loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;!-- --&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+gaussian_kernel &amp;lt;- matrix(c(
+  1, 2, 1,
+  2, 4, 2,
+  1, 2, 1
+), nrow = 3, ncol = 3, byrow = TRUE) / 16
+
+
+smoothed_intensity &amp;lt;- focal(drone_raster_hsi[[3]], w = gaussian_kernel, fun = sum, na.rm = TRUE)
+glint_mask_smooth &amp;lt;- (smoothed_intensity &amp;gt; brightness_threshold) &amp;amp; (drone_raster_hsi[[2]] &amp;lt; saturation_threshold)
+
+plot(glint_mask_smooth , main=&amp;quot;Glint Mask (Smoothed Gaussian + Intensity + Low Saturation) &amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Try other kernels and see what the output of the convolution is&lt;/li&gt;
+&lt;li&gt;Explore the effect of changing the size of the kernel&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;Morphological operations like erosion and dilation are specialized types of moving window operations that share the same fundamental mechanism as convolutions but operate on binary or grayscale images using set theory principles rather than arithmetic multiplication and summation. In morphological operations, a structural element (analogous to a convolution kernel) moves across the image, but instead of computing weighted sums, these operations apply logical rules based on the spatial relationship between the structural element and the underlying pixel values. Erosion shrinks or &amp;ldquo;erodes&amp;rdquo; bright regions by replacing the center pixel with the minimum value found within the structural element&amp;rsquo;s neighborhood—effectively, a pixel remains bright only if all pixels under the structural element are bright. Conversely, dilation expands bright regions by taking the maximum value in the neighborhood, causing bright areas to grow outward by the shape of the structural element. While convolutions use multiplication and addition to blend neighborhood information, morphological operations use min/max functions or set intersection/union operations, making them particularly effective for shape analysis, noise removal, and boundary extraction in binary images. Both approaches follow the same spatial scanning pattern and neighborhood-based processing philosophy, but morphological operations focus on preserving and manipulating the geometric structure of objects rather than smoothing or detecting gradients.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;knitr::include_graphics(&amp;quot;includes/morphological_opening.gif&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;&#34;
+           src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/includes/morphological_opening.gif&#34;
+           loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;We can use these morphological operations  to get a better sense of the glint mask by only including areas using &lt;code&gt;focal&lt;/code&gt; functions in terra.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+struct_elem &amp;lt;- matrix(1, nrow = 5, ncol =5)
+
+glint_mask_cleaned &amp;lt;- focal(glint_mask_smooth, w = struct_elem, fun = function(x, ...) as.integer(max(x, na.rm = TRUE)), na.rm = TRUE)
+plot(glint_mask_cleaned, main=&amp;quot;Cleaned Glint Mask (Dilation)&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-17-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;h2 id=&#34;conversion-to-vector&#34;&gt;Conversion to vector&lt;/h2&gt;
+&lt;p&gt;Sometimes, it might be helpful to convert these rasters into vectors for processing elsewhere.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+glint_polygons &amp;lt;- as.polygons(glint_mask_cleaned, dissolve=TRUE)
+
+glint_polygons
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can save these as shapefiles if you prefer&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;writeVector(glint_polygons, here(&amp;quot;outputs&amp;quot;, &amp;quot;glints&amp;quot;), filetype=&#39;ESRI Shapefile&#39;, insert=FALSE,
+    overwrite=FALSE, options=&amp;quot;ENCODING=UTF-8&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;In conclusion, basic raster analysis of drone imagery offers a practical framework for understanding urban environments. By processing high-resolution aerial data, analysts can identify spatial patterns such as land use, infrastructure density, and vegetation distribution. However, much of the analysis is about the art of managing large datasets, thinking through analytical frames and bringing to bear other data. We will touch upon these in other tutorials.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Cleaning Spatial Networks</title>
