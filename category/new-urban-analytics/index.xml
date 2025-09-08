@@ -92,7 +92,7 @@
 &lt;p&gt;Each of these ways of thinking may be useful for particular purposes. Sometimes it is helpful to think about rasters with their geographic locations. Sometimes what matters are internal relationships among the pixels.&lt;/p&gt;
 &lt;h2 id=&#34;rasters-in-r&#34;&gt;Rasters in R&lt;/h2&gt;
 &lt;p&gt;R offers a diverse ecosystem of packages for handling rasters, images, and multidimensional arrays across domains like biology, computer vision, remote sensing, and climate science.&lt;/p&gt;
-&lt;h3 id=&#34;remote-sensing--raster-visualization&#34;&gt;Remote Sensing &amp;amp; Raster Visualization&lt;/h3&gt;
+&lt;h4 id=&#34;remote-sensing--raster-visualization&#34;&gt;Remote Sensing &amp;amp; Raster Visualization&lt;/h4&gt;
 &lt;p&gt;These packages are designed for geospatial raster data, satellite imagery, and thematic mapping.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -124,7 +124,7 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;environmental--climate-raster-data-netcdf-geotiff-etc&#34;&gt;Environmental &amp;amp; Climate Raster Data (NetCDF, GeoTIFF, etc.)&lt;/h3&gt;
+&lt;h4 id=&#34;environmental--climate-raster-data&#34;&gt;Environmental &amp;amp; Climate Raster Data&lt;/h4&gt;
 &lt;p&gt;These packages specialize in large-scale environmental datasets, including climate models and ecological predictors.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -164,7 +164,7 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;biological--medical-imaging&#34;&gt;Biological &amp;amp; Medical Imaging&lt;/h3&gt;
+&lt;h4 id=&#34;biological--medical-imaging&#34;&gt;Biological &amp;amp; Medical Imaging&lt;/h4&gt;
 &lt;p&gt;These packages are ideal for analyzing microscopy, medical scans, and structural biological data.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -188,7 +188,7 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;general-image-processing--computer-vision&#34;&gt;General Image Processing &amp;amp; Computer Vision&lt;/h3&gt;
+&lt;h4 id=&#34;general-image-processing--computer-vision&#34;&gt;General Image Processing &amp;amp; Computer Vision&lt;/h4&gt;
 &lt;p&gt;These tools support pixel-level manipulation, filtering, and high-level image editing.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -221,7 +221,7 @@
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id=&#34;processing-drone-imagery-in-r&#34;&gt;Processing Drone Imagery in R&lt;/h2&gt;
-&lt;p&gt;Let us use &lt;code&gt;terra&lt;/code&gt; to process drone imagery in R. Download the &lt;a href=&#34;https://www.dropbox.com/scl/fo/zpehjt5qopi21hyua18ha/ALPXxsJ_wzBcIH1gqfXmNMA?rlkey=rynzn7kdzpod6931dv3kqn0k5&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;required data&lt;/a&gt; and locate it into your &lt;code&gt;InputData&lt;/code&gt; folder as is the general practise in this class. The following code reads a georeferenced orthomosaic image, crops it to a specific area of interest, and visualizes the result.&lt;/p&gt;
+&lt;p&gt;Let us use &lt;code&gt;terra&lt;/code&gt; to process drone imagery in R. Download the &lt;a href=&#34;https://www.dropbox.com/scl/fo/zpehjt5qopi21hyua18ha/ALPXxsJ_wzBcIH1gqfXmNMA?rlkey=rynzn7kdzpod6931dv3kqn0k5&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;required data&lt;/a&gt; and locate it into your &lt;code&gt;InputData&lt;/code&gt; folder as is the general practise in this class. The following code reads a georeferenced orthomosaic image and visualizes the result.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(terra)
 
 # Adjust the path to where you have stored the data
@@ -270,7 +270,7 @@ for (i in 1:4) {
 #   20240801_Anafi_site4_transparent_mosaic_group1_2
 # 1                                              125
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Likewise, &lt;code&gt;[[&lt;/code&gt;, or &lt;code&gt;$&lt;/code&gt; extracts the entire band as a Spatraster as we have seen earlier.&lt;/p&gt;
+&lt;p&gt;Likewise, &lt;code&gt;[[&lt;/code&gt;, or &lt;code&gt;$&lt;/code&gt; extracts the entire band as a Spatraster, as we have seen earlier.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 drone_raster$`20240801_Anafi_site4_transparent_mosaic_group1_3`
 # class       : SpatRaster 
@@ -295,7 +295,7 @@ drone_raster[[3]] %&amp;gt;%
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;raster-arithmetic&#34;&gt;Raster Arithmetic&lt;/h2&gt;
-&lt;p&gt;Raster arithmetic is a powerful technique for deriving new insights from existing raster data. By performing mathematical operations on raster layers, we can create indices that highlight specific features or conditions in the landscape. In this instance, it might be useful to  think of rasters as columns and the airthmetic is row within each row with airthmetic happening among the columns.&lt;/p&gt;
+&lt;p&gt;Raster arithmetic is a powerful technique for deriving new insights from existing raster data. By performing mathematical operations on raster layers, we can create indices that highlight specific features or conditions in the landscape. In this instance, it might be useful to  think of raster layers as columns and the airthmetic is  within each row, with airthmetic happening among the columns (much like most spreadsheet operations, or &lt;code&gt;mutate&lt;/code&gt; from tidyverse).&lt;/p&gt;
 &lt;p&gt;For example,&lt;/p&gt;
 &lt;p&gt;$$ VARI = \frac{(G - R)}{ (G + R – B)} $$
 is particularly good at isolating the vegetation signal by normalizing the Green-Red difference by the overall visible light reflectance.&lt;/p&gt;
@@ -328,8 +328,8 @@ plot(vari, main=&amp;quot;VARI Index&amp;quot;, col=gray.colors(256))
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;colorspaces&#34;&gt;Colorspaces&lt;/h2&gt;
-&lt;p&gt;A color space is a mathematical model for representing colors as a set of numerical values. While the most familiar color space, RGB (Red, Green, Blue), is an additive model that&amp;rsquo;s hardware-oriented, it&amp;rsquo;s not intuitive for humans to manipulate because changing one color channel can unpredictably alter both the hue and brightness.
-Hue, which identifies the dominant color and is represented as an angle on a color wheel; Saturation, which denotes the purity or vividness of the color; and Intensity, which represents the overall brightness or luminance. Unlike HSV, which uses the maximum RGB value for its Value component, HSI&amp;rsquo;s Intensity component is often calculated as the average of the red, green, and blue values, making it a more direct measure of brightness.&lt;/p&gt;
+&lt;p&gt;A color space is a mathematical model for representing colors as a set of numerical values. While the most familiar color space, RGB (Red, Green, Blue), is an additive model that&amp;rsquo;s hardware-oriented, it&amp;rsquo;s not intuitive for humans to manipulate because changing one color channel can unpredictably alter both the hue and brightness.&lt;/p&gt;
+&lt;p&gt;Hue, which identifies the dominant color and is represented as an angle on a color wheel; Saturation, which denotes the purity or vividness of the color; and Intensity, which represents the overall brightness or luminance. Unlike HSV, which uses the maximum RGB value for its Value component, HSI&amp;rsquo;s Intensity component is often calculated as the average of the red, green, and blue values, making it a more direct measure of brightness.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.RGB(drone_raster, 1:3, &amp;quot;rgb&amp;quot;)
 drone_raster_hsi &amp;lt;- colorize(drone_raster, to = &amp;quot;HSI&amp;quot;)
 
@@ -363,7 +363,7 @@ plot(glint_mask, main=&amp;quot;Glint Mask (Brightness + Saturation)&amp;quot;)
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;use Raster arithmetic to substitute for logical arithmetic. Pay special attention to NAs.&lt;/li&gt;
+&lt;li&gt;use Raster arithmetic to substitute for logical arithmetic. In particular, think about how multiplication and addition by 1,0 work? Pay special attention to NAs.&lt;/li&gt;
 &lt;li&gt;Experiment with different thresholds. How do you think they should be set?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
@@ -422,31 +422,7 @@ plot_grid(g_red, g_green, g_blue, g_legend, ncol=4, rel_widths = c(1,1,1,.2))
 &lt;hr&gt;
 &lt;h2 id=&#34;convolutions--moving-windows&#34;&gt;Convolutions &amp;amp; Moving Windows&lt;/h2&gt;
 &lt;p&gt;Convolutions and moving window operations are fundamental techniques in raster and image processing that apply mathematical operations to each pixel based on its surrounding neighborhood. In these operations, a small matrix called a kernel, filter, or window is systematically moved across the entire raster, with the kernel&amp;rsquo;s center positioned over each target pixel. At each position, the kernel values are multiplied element-wise with the corresponding pixel values in the neighborhood, and these products are summed to produce a new value for the center pixel. This process enables a wide range of analytical capabilities, from simple smoothing and noise reduction using averaging kernels, to edge detection with gradient operators like Sobel or Laplacian filters, to more complex feature extraction and pattern recognition tasks. The size and values within the kernel determine the specific operation performed—for example, a 3×3 kernel filled with 1/9 values creates a mean filter for smoothing, while kernels with positive and negative values can highlight directional edges or enhance specific spatial frequencies. These operations form the mathematical foundation for many advanced techniques in computer vision, remote sensing, and spatial analysis, allowing meaningful information from spatial patterns and relationships within raster datasets to be extracted.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;knitr::include_graphics(&amp;quot;includes/image_processing_kernels.svg&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;&#34;
-           src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/includes/image_processing_kernels.svg&#34;
-           loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-&lt;!-- --&gt;&lt;/p&gt;
+&lt;img src=&#34;includes/image_processing_kernels.svg&#34; width=&#34;100%&#34; /&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 gaussian_kernel &amp;lt;- matrix(c(
   1, 2, 1,
@@ -469,50 +445,38 @@ plot(glint_mask_smooth , main=&amp;quot;Glint Mask (Smoothed Gaussian + Intensit
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;p&gt;Morphological operations like erosion and dilation are specialized types of moving window operations that share the same fundamental mechanism as convolutions but operate on binary or grayscale images using set theory principles rather than arithmetic multiplication and summation. In morphological operations, a structural element (analogous to a convolution kernel) moves across the image, but instead of computing weighted sums, these operations apply logical rules based on the spatial relationship between the structural element and the underlying pixel values. Erosion shrinks or &amp;ldquo;erodes&amp;rdquo; bright regions by replacing the center pixel with the minimum value found within the structural element&amp;rsquo;s neighborhood—effectively, a pixel remains bright only if all pixels under the structural element are bright. Conversely, dilation expands bright regions by taking the maximum value in the neighborhood, causing bright areas to grow outward by the shape of the structural element. While convolutions use multiplication and addition to blend neighborhood information, morphological operations use min/max functions or set intersection/union operations, making them particularly effective for shape analysis, noise removal, and boundary extraction in binary images. Both approaches follow the same spatial scanning pattern and neighborhood-based processing philosophy, but morphological operations focus on preserving and manipulating the geometric structure of objects rather than smoothing or detecting gradients.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;knitr::include_graphics(&amp;quot;includes/morphological_opening.gif&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;&#34;
-           src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/includes/morphological_opening.gif&#34;
-           loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-&lt;!-- --&gt;&lt;/p&gt;
+&lt;img src=&#34;includes/morphological_opening.gif&#34; width=&#34;100%&#34; /&gt;
 &lt;p&gt;We can use these morphological operations  to get a better sense of the glint mask by only including areas using &lt;code&gt;focal&lt;/code&gt; functions in terra.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 struct_elem &amp;lt;- matrix(1, nrow = 5, ncol =5)
 
-glint_mask_cleaned &amp;lt;- focal(glint_mask_smooth, w = struct_elem, fun = function(x, ...) as.integer(max(x, na.rm = TRUE)), na.rm = TRUE)
-plot(glint_mask_cleaned, main=&amp;quot;Cleaned Glint Mask (Dilation)&amp;quot;)
+glint_eroded &amp;lt;- focal(glint_mask_smooth, w = struct_elem , fun = function(x, ...) as.integer(min(x, na.rm = TRUE)), na.rm = TRUE)
+glint_opened &amp;lt;- focal(glint_eroded, w = struct_elem , fun = function(x, ...) as.integer(max(x, na.rm = TRUE)), na.rm = TRUE)
+
+plot(glint_opened, main=&amp;quot;Cleaned Glint Mask (Opening)&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-17-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Try other morphological operations such as closing, dilation and erosion. How do they compare?&lt;/li&gt;
+&lt;li&gt;Try other kernels such as cross, diamond, circle etc. How do they compare?&lt;/li&gt;
+&lt;li&gt;Try other kernel sizes. How do they compare?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
 &lt;h2 id=&#34;conversion-to-vector&#34;&gt;Conversion to vector&lt;/h2&gt;
 &lt;p&gt;Sometimes, it might be helpful to convert these rasters into vectors for processing elsewhere.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
-glint_polygons &amp;lt;- as.polygons(glint_mask_cleaned, dissolve=TRUE)
+glint_polygons &amp;lt;- as.polygons(glint_opened, dissolve=TRUE)
 
 glint_polygons
 
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You can save these as shapefiles if you prefer&lt;/p&gt;
+&lt;p&gt;You can save these as shapefiles, or as other rasters if you prefer&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;writeVector(glint_polygons, here(&amp;quot;outputs&amp;quot;, &amp;quot;glints&amp;quot;), filetype=&#39;ESRI Shapefile&#39;, insert=FALSE,
     overwrite=FALSE, options=&amp;quot;ENCODING=UTF-8&amp;quot;)
+
+writeRaster(glint_opened, here(&amp;quot;outputs&amp;quot;, &#39;glint.img&#39;), datatype=&amp;quot;INT1U&amp;quot;)  # Write out the raster in ERDAS Imagine file format, with the right data type (boolean).
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;In conclusion, basic raster analysis of drone imagery offers a practical framework for understanding urban environments. By processing high-resolution aerial data, analysts can identify spatial patterns such as land use, infrastructure density, and vegetation distribution. However, much of the analysis is about the art of managing large datasets, thinking through analytical frames and bringing to bear other data. We will touch upon these in other tutorials.&lt;/p&gt;
