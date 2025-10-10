@@ -682,6 +682,18 @@ here('figs', 'aiannh.png') %>%
 ::::
 
 :::
+```{r aiannh_map2, echo=FALSE, out.width="100%"}
+aiannh <- native_areas(cb = TRUE, progress_bar = FALSE)
+states_all <- states(cb = TRUE, progress_bar = FALSE) 
+
+tmap_mode("view")
+tm_shape(states_all) +
+  tm_borders(col = "gray80", lwd = 1, lty = "dashed", name = 'State') +
+tm_shape(aiannh) +
+tm_polygons(fill = "NAME", fill_alpha = 0.6,
+            border.col = "darkred", lwd = 1, id = "NAME", legend.show = FALSE, name = "AIANNH area")
+
+```
 
 
 
