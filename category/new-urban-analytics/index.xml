@@ -411,7 +411,7 @@ g_legend &amp;lt;-
 
 plot_grid(g_red, g_green, g_blue, g_legend, ncol=4, rel_widths = c(1,1,1,.2))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;100%&#34; /&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -423,6 +423,7 @@ plot_grid(g_red, g_green, g_blue, g_legend, ncol=4, rel_widths = c(1,1,1,.2))
 &lt;h2 id=&#34;convolutions--moving-windows&#34;&gt;Convolutions &amp;amp; Moving Windows&lt;/h2&gt;
 &lt;p&gt;Convolutions and moving window operations are fundamental techniques in raster and image processing that apply mathematical operations to each pixel based on its surrounding neighborhood. In these operations, a small matrix called a kernel, filter, or window is systematically moved across the entire raster, with the kernel&amp;rsquo;s center positioned over each target pixel. At each position, the kernel values are multiplied element-wise with the corresponding pixel values in the neighborhood, and these products are summed to produce a new value for the center pixel. This process enables a wide range of analytical capabilities, from simple smoothing and noise reduction using averaging kernels, to edge detection with gradient operators like Sobel or Laplacian filters, to more complex feature extraction and pattern recognition tasks. The size and values within the kernel determine the specific operation performed—for example, a 3×3 kernel filled with 1/9 values creates a mean filter for smoothing, while kernels with positive and negative values can highlight directional edges or enhance specific spatial frequencies. These operations form the mathematical foundation for many advanced techniques in computer vision, remote sensing, and spatial analysis, allowing meaningful information from spatial patterns and relationships within raster datasets to be extracted.&lt;/p&gt;
 &lt;img src=&#34;includes/image_processing_kernels.svg&#34; width=&#34;100%&#34; /&gt;
+&lt;p&gt;&lt;img src=&#34;includes/gaussian_blur.gif&#34; width=&#34;49%&#34; height=&#34;20%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;img src=&#34;includes/highpass_filter.gif&#34; width=&#34;49%&#34; height=&#34;20%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 gaussian_kernel &amp;lt;- matrix(c(
   1, 2, 1,
@@ -436,12 +437,13 @@ glint_mask_smooth &amp;lt;- (smoothed_intensity &amp;gt; brightness_threshold) &
 
 plot(glint_mask_smooth , main=&amp;quot;Glint Mask (Smoothed Gaussian + Intensity + Low Saturation) &amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;480&#34; /&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Try other kernels and see what the output of the convolution is&lt;/li&gt;
 &lt;li&gt;Explore the effect of changing the size of the kernel&lt;/li&gt;
+&lt;li&gt;Moving window operations are very similar in concept to &amp;lsquo;rolling&amp;rsquo; operations in time series. Explore the &lt;code&gt;rollapply&lt;/code&gt; function from the &lt;code&gt;zoo&lt;/code&gt; package and see if can see parallels.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;p&gt;Morphological operations like erosion and dilation are specialized types of moving window operations that share the same fundamental mechanism as convolutions but operate on binary or grayscale images using set theory principles rather than arithmetic multiplication and summation. In morphological operations, a structural element (analogous to a convolution kernel) moves across the image, but instead of computing weighted sums, these operations apply logical rules based on the spatial relationship between the structural element and the underlying pixel values. Erosion shrinks or &amp;ldquo;erodes&amp;rdquo; bright regions by replacing the center pixel with the minimum value found within the structural element&amp;rsquo;s neighborhood—effectively, a pixel remains bright only if all pixels under the structural element are bright. Conversely, dilation expands bright regions by taking the maximum value in the neighborhood, causing bright areas to grow outward by the shape of the structural element. While convolutions use multiplication and addition to blend neighborhood information, morphological operations use min/max functions or set intersection/union operations, making them particularly effective for shape analysis, noise removal, and boundary extraction in binary images. Both approaches follow the same spatial scanning pattern and neighborhood-based processing philosophy, but morphological operations focus on preserving and manipulating the geometric structure of objects rather than smoothing or detecting gradients.&lt;/p&gt;
@@ -455,7 +457,7 @@ glint_opened &amp;lt;- focal(glint_eroded, w = struct_elem , fun = function(x, .
 
 plot(glint_opened, main=&amp;quot;Cleaned Glint Mask (Opening)&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-17-1.png&#34; width=&#34;480&#34; /&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;480&#34; /&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -469,9 +471,9 @@ plot(glint_opened, main=&amp;quot;Cleaned Glint Mask (Opening)&amp;quot;)
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 glint_polygons &amp;lt;- as.polygons(glint_opened, dissolve=TRUE)
 
-glint_polygons
-
+plot(glint_polygons)
 &lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/working-with-drone-imagery/index.en_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;480&#34; /&gt;
 &lt;p&gt;You can save these as shapefiles, or as other rasters if you prefer&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;writeVector(glint_polygons, here(&amp;quot;outputs&amp;quot;, &amp;quot;glints&amp;quot;), filetype=&#39;ESRI Shapefile&#39;, insert=FALSE,
     overwrite=FALSE, options=&amp;quot;ENCODING=UTF-8&amp;quot;)

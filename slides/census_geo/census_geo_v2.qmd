@@ -1,0 +1,697 @@
+---
+title: "Understanding Geographies in US Census"
+subtitle: "Geographic Relationships, GEOIDs, and More"
+author: "Nikhil Kaza"
+date: "`r Sys.Date()`"
+format: 
+    revealjs:
+        width: 1920 # Or a higher value like 3000 for very wide screens
+        height: 1080 # Adjust height as needed for your desired aspect ratio
+        margin: 0
+        slide-number: true
+---
+
+## Overview
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, 
+                      fig.width = 10, fig.height = 6)
+
+# Load required packages
+library(tidycensus)
+library(sf)
+library(tmap)
+library(tidyverse)
+library(tigris)
+library(here)
+library(knitr)
+
+# Set your Census API key
+# census_api_key("YOUR_API_KEY_HERE", install = TRUE)
+
+# Set tigris options
+options(tigris_use_cache = TRUE)
+
+out_dir <- tempfile()
+here("data", "tl_2025_us_uac20.zip") %>% unzip(exdir = out_dir) 
+ua <- st_read(dsn = out_dir)
+
+```
+
+```{r echo=FALSE, out.width = "100%"}
+here("figs", "censusgeochart.png") %>% include_graphics()
+
+```
+
+
+## Regions & Divisons
+
+```{r echo=FALSE, out.width = "100%"}
+here("figs", "Regions_and_Divisions.png") %>% include_graphics()
+
+```
+
+
+## Geographies (Administrative vs Statistical)
+
+::: columns
+
+::::{.column width="80%"}
+
+```{r echo=FALSE}
+
+STATE_NAME <- "North Carolina"
+STATE_FIPS <- "37"
+COUNTY_NAME <- "Orange"
+
+
+state_geo <- states(cb = TRUE, resolution = "5m", 
+                    progress_bar = FALSE) %>% 
+    filter(NAME == STATE_NAME)
+
+county_geo <- counties(state = STATE_FIPS, cb = TRUE, 
+                       progress_bar = FALSE)
+
+tracts_geo <- tracts(state = STATE_FIPS, county = COUNTY_NAME, 
+                     progress_bar = FALSE)
+
+bg_geo <- block_groups(state = STATE_FIPS, county = COUNTY_NAME, 
+                       progress_bar = FALSE)
+
+
+blocks_raw <- blocks(state = STATE_FIPS, county = COUNTY_NAME, year = 2020, 
+                     progress_bar = FALSE)
+
+
+
+
+tmap_mode("view")
+tm_basemap(server = "CartoDB.Positron") +
+    tm_shape(state_geo) +
+    tm_borders(col = "darkblue", lwd = 2.5, group = 'state', id="STATEFP") +
+    tm_group("state", zoom_levels = 4:8) +
+    tm_shape(county_geo) +
+    tm_borders(col = "gray", lwd = 1.5, group = 'county', id = 'GEOID')+
+    tm_group("county", zoom_levels = 7:10) +
+    tm_shape(tracts_geo) +
+    tm_borders(col = "blue", lwd = 1, group = 'tract', id = "GEOID") +
+    tm_group("tract", zoom_levels = 9:13) +
+    tm_shape(bg_geo) +
+    tm_borders(col = "red", lwd = 0.5, group = 'block group', id = "GEOID") +
+    tm_group("block group", zoom_levels = 11:15) +
+    tm_shape(blocks_raw) +
+    tm_borders(col = "darkgreen",lwd =.2, col_alpha = 0.5, group = 'census block', id = 'GEOID20') +
+    tm_group("census block", zoom_levels = 13:20) 
+        
+```
+::::
+
+::::{.column width="20%"}
+```{r diagrammer_state_blk_1, echo=FALSE, out.width='60%'}
+library(DiagrammeR)
+blk_state <- 
+grViz("
+  digraph geo_hierarchy {
+    
+    # Graph attributes
+    graph [rankdir = TB, bgcolor = white]
+    
+    # Node attributes
+    node [shape = box, style = filled, fontname = Helvetica]
+    
+    # Define nodes with colors
+    state [label = 'State', fillcolor = '#b3e5fc']
+    county [label = 'County', fillcolor = '#81d4fa']
+    tract [label = 'Census Tract', fillcolor = '#4fc3f7']
+    bg [label = 'Block Group', fillcolor = '#29b6f6']
+    blk [label = 'Census Block', fillcolor = '#039be5', fontcolor = white]
+    
+    # Define edges (hierarchy)
+    state  -> county
+    county -> tract
+    tract -> bg
+    bg -> blk
+  }
+")
+
+blk_state
+```
+
+::::
+
+:::
+
+- Q. How many states are there in the US?
+
+## GEOID Structure: Each level adds digits
+
+<div style="font-family: monospace; font-size: 40px; margin: 20px;">
+<span style="background-color: #FFE6E6; padding: 5px;">37</span>
+<span style="background-color: #E6D5FF; padding: 5px;">063</span>
+<span style="background-color: #E6D5FF; padding: 5px;">000100</span>
+<span style="background-color: #CCE5FF; padding: 5px;">1</span>
+<span style="background-color: #B3D9FF; padding: 5px;">000</span>
+</div>
+
+
+-   **State**: 2 digits → `37` (North Carolina)
+-   **County**: State + 3 → `37063` (Orange County)
+-   **Tract**: County + 6 → `37063000100` (Tract 001.00)
+-   **Block Group**: Tract + 1 → `370630001001` (BG 1)
+-   **Block**: Tract + 1 + 3 → `370630001001000` (Block 1(BG)000)
+
+## Taking Advantage of GEOID nesting
+
+::: columns
+
+::::{.column width="60%"}
+```{r geoid_extraction}
+# Extract different levels from a block GEOID
+block_geoid <- "370630001001000"
+str_sub(block_geoid, 1, 2)   # State
+str_sub(block_geoid, 1, 5)   # County
+str_sub(block_geoid, 1, 11)  # Tract
+str_sub(block_geoid, 1, 12)  # Block Group
+```
+::::
+
+::::{.column width="40%"}
+```{r diagrammer_state_blk, echo=FALSE, out.width='40%'}
+blk_state
+```
+::::
+
+:::
+
+
+
+## Counties & County Equivalents
+
+- Counties are both statistical and administrative geographies (mostly).
+- ~3,200 counties in the US (depending on what states you include)
+- County equivalents include: Parishes (LA), Boroughs (AK), Independent Cities (e.g. VA,MD, MO, NV)
+-- e.g. Richmond city, VA, St. Louis city, MO, Carson City, NV
+- CT has no county governments.
+- Counties are creatures of the state government and thus cannot cross state boundaries.
+
+
+
+## Places (Incorporated and CDPs)
+
+```{r places_map, echo=FALSE, out.width="100%"}
+# Get places (cities/towns)
+nc_places <- places(state = "NC", cb = TRUE, progress_bar = FALSE)
+orange_county <- county_geo %>% filter(NAME == "Orange")
+orange_places <- nc_places %>% 
+  st_filter(orange_county) %>%
+    mutate(CDP = ifelse(str_detect(NAMELSAD, "CDP"), "CDP", "Incorporated"))
+
+tm_shape(orange_county) +
+  tm_polygons(col = "gray90", border.col = "black", lwd = 2) +
+tm_shape(orange_places) +
+  tm_polygons(col = "CDP", alpha = 0.6, palette = "Set2",
+              border.col = "darkblue", lwd = 2, id = "NAME") +
+        tm_shape(blocks_raw) +
+    tm_borders(col = "darkgreen",lwd =.2, col_alpha = 0.5, group = 'census block', id = 'GEOID20') +
+    tm_group("census block", zoom_levels = 13:20) 
+```
+
+
+
+
+## Places contd.
+
+::: columns
+
+::::{.column width="60%"}
+- Places are independent of counties/tracts/block groups.
+- ~32,500 places in the US (12,600 are CDP). 
+- Places can cross county boundaries, but not state boundaries
+- Places can have holes and leap frogs
+- The Las Vegas strip is not incorporated, but is two CDPs (Paradise and Winchester).
+
+
+<div style="font-family: monospace; font-size: 40px; margin: 20px;">
+<span style="background-color: #FFE6E6; padding: 5px;">37</span>
+<span style="background-color: #E6D5FF; padding: 5px;">11800</span>
+</div>
+
+-   **State**: 2 digits → `37` (North Carolina)
+-   **Place**: State + 5 → `3711800` (Chapel Hill town)
+::::
+
+::::{.column width="40%"}
+
+```{r lv, echo=FALSE, out.width = "100%"}
+here("figs", "lvnv.png") %>% include_graphics()
+```
+::::
+
+:::
+
+## Urban Areas are not Places
+- Urban Areas (UAs, ~2,600) are statistical geographies and can cross state boundaries
+
+::: columns
+
+::::{.column width="40%"}
+
+```{r diagrammer_place_urban, echo=FALSE, out.width='80%'}
+
+grViz("
+  digraph geo_hierarchy {
+    
+    # Graph attributes
+    graph [rankdir = TB, bgcolor = white]
+    
+    # Node attributes
+    node [shape = box, style = filled, fontname = Helvetica]
+    
+    # Define nodes with colors
+    nation [label = 'Nation', fillcolor = '#ffcc80']
+    state [label = 'State', fillcolor = '#b3e5fc']
+    county [label = 'County', fillcolor = '#81d4fa']
+    tract [label = 'Census Tract', fillcolor = '#4fc3f7']
+    place [label = 'Place', fillcolor = '#aed581']
+    urban [label = 'Urban Area', fillcolor = '#ffb74d']
+  
+    
+    # Define edges (hierarchy)
+    nation -> state
+    state  -> county
+    county -> tract
+    nation -> urban
+    state -> place
+
+  }
+")
+```
+:::
+
+::::{.column width="60%"}
+
+
+```{r urban_areas_map, echo=FALSE, out.width= "100%"}
+#ua <- urban_areas( cb = TRUE, progress_bar = FALSE)
+
+ua_nc <- ua %>%
+  st_filter(state_geo)
+
+uamap <- 
+tm_shape(state_geo, name = 'State') +
+  tm_borders(col = "black", lwd = 3, lty = "dashed") +
+tm_shape(ua_nc, name = "Urban Areas") +
+tm_polygons(fill = "NAME20", fill_alpha = 0.6,
+            border.col = "darkred", lwd = 1, id = "NAME20",
+           legend.show=FALSE) +
+tm_shape(nc_places, name = "Places")+
+    tm_polygons(col = "darkblue", lwd = .5, id = "NAME") 
+
+uamap %>% 
+  tmap_leaflet() %>%
+  leaflet::hideGroup("Places")
+```
+::::
+
+:::
+
+## MSA/µSA are Core Based Statistical Areas
+
+
+::: columns
+
+:::: {.column width="50%"}
+- Defined by OMB, as collections of counties for use in federal statistics
+- Metropolitan Statistical Areas (MSA ~393)  
+- Micropolitan Statistical Areas (µSA ~ 542) 
+- MSA/µSA extents change over time (frequently).
+- 94.7% of US lives in CBSAs (86% in MSA).
+
+<div style="font-family: monospace; font-size: 40px; margin: 20px;">
+<span style="background-color: #FFE6E6; padding: 5px;">24780 </span>
+</div>
+
+-  Cannot infer state or county from CBSA GEOID. Need a cross walk table.
+::::
+
+::::{.column width="50%"}
+```{r cbsa_fig, echo=FALSE, out.width = "100%"}
+here("figs", "metro_micro.webp") %>% include_graphics()
+```
+- <p style="font-size: 75%;"> source: https://www.brookings.edu/articles/the-new-rural-the-implications-of-ombs-proposal-to-redefine-nonmetro-america/ </p>
+
+::::
+
+:::
+
+
+## MSA/µSA are not Urban
+
+
+
+::: columns
+
+::::  {.column width="30%"}
+
+
+```{r diagrammer_msa, echo=FALSE, out.width='60%'}
+
+grViz("
+  digraph geo_hierarchy {
+    
+    # Graph attributes
+    graph [rankdir = TB, bgcolor = white]
+    
+    # Node attributes
+    node [shape = box, style = filled, fontname = Helvetica]
+    
+    # Define nodes with colors
+    nation [label = 'Nation', fillcolor = '#ffcc80']
+    state [label = 'State', fillcolor = '#b3e5fc']
+    county [label = 'County', fillcolor = '#81d4fa']
+    tract [label = 'Census Tract', fillcolor = '#4fc3f7']
+    place [label = 'Place', fillcolor = '#aed581']
+    urban [label = 'Urban Area', fillcolor = '#ffb74d']
+    metro [label = 'MSA/&mu;SA', fillcolor = '#ba68c8']
+  
+    
+    # Define edges (hierarchy)
+    nation -> state
+    state  -> county
+    county -> tract
+    nation -> urban
+    state -> place
+    nation -> metro
+    metro -> county
+
+  }
+")
+```
+::::
+
+::::{.column width="60%"}
+
+
+```{r msa_map, echo=FALSE, out.width= "100%"}
+cbsa <- core_based_statistical_areas(cb = TRUE, progress_bar = FALSE)
+
+
+cbsa_nc <- cbsa %>%
+    st_filter(state_geo) %>%
+    mutate(cbsa_type = ifelse(str_detect(NAMELSAD, "Metro"), "Metro", "Micro"))
+
+cbsamap <- 
+    tm_shape(state_geo, name = 'State') +
+    tm_borders(col = "black", lwd = 3, lty = "dashed") +
+    tm_shape(county_geo, name = 'County') +
+    tm_borders(col = "gray", lwd = 1) +
+    tm_shape(cbsa_nc, name = "CBSA") +
+    tm_polygons(fill = "cbsa_type", fill_alpha = 0.6,
+                border.col = "darkred", lwd = 2, id = "NAME", 
+                palette = 'brewer.set3',
+                title = 'CBSA Type') +
+    tm_shape(nc_places, name = "Places")+
+    tm_polygons(fill = "darkblue", lwd = .5, id = "NAME", fill_alpha = .5) +
+    tm_shape(ua_nc, name = "Urban Areas") +
+    tm_polygons(fill = "#E04050", fill_alpha = 0.4)
+
+cbsamap %>% 
+    tmap_leaflet() %>%
+    leaflet::hideGroup("Places") %>%
+    leaflet::hideGroup("Urban Areas")
+```
+::::
+
+:::
+
+- 56% of the `rural` population lives in a MSA.
+
+## Crosswalk Tables
+
+https://mcdc.missouri.edu/applications/geocorr2022.html
+
+```{r, echo=FALSE, out.width = "100%"}
+include_graphics(here("figs", "geocorr.png"))
+```
+
+##  Example crosswalk table 
+
+```{r echo=FALSE}
+library(kableExtra)
+here('data', 'geocorr2022.csv') %>%
+  read_csv() %>%
+  head(7) %>% 
+      kable() %>%
+    kable_styling(full_width = FALSE, position = "left")
+```
+
+## Get Comfortable with Joins
+
+- `right_join`/`inner_join`, `group_by` and `summarise` are your friends.
+
+```{r eval = FALSE}
+# County population data with FIPS codes
+library(dplyr)
+
+county_dat <- tibble::tibble(
+  countyfips = c("37183", "37063", "37135", "37119", "37081", "37095"),
+  num_stops = c(116, 80, 30, 128, 143, 4)
+)
+
+# 37095 does not have a corresponding MSA
+
+county_msa <- tibble::tibble(
+  countyfips = c("37183", "37063", "37135", "37119", "37081"),
+  msa_geoid = c("39580", "20500", "20500", "16740", "24660")
+)
+
+msa_pop <- county_dat %>%
+  inner_join(county_msa, by = "countyfips") %>%
+  group_by(msa_geoid) %>%
+  summarise(total_stops = sum(num_stops, na.rm = TRUE))
+
+```
+
+::: columns
+
+::::{.column width="50%"}
+
+```{r, echo=FALSE}
+here('figs', 'right_join.gif') %>% 
+  include_graphics()
+```
+::::
+    
+::::{.column width="50%"}
+```{r, echo=FALSE}
+here('figs', 'inner_join.gif') %>% 
+  include_graphics()
+```
+::::
+
+:::
+
+
+## Legislative districts are creatures of state
+
+```{r sld_cld_map, echo=FALSE, out.width="100%"}
+
+sld_lower <- state_legislative_districts(state = "NC", house = "lower", cb = TRUE, progress_bar = FALSE)
+sld_upper <- state_legislative_districts(state = "NC", house = "upper", cb = TRUE, progress_bar = FALSE)
+cld <- congressional_districts(state = "NC", cb = TRUE, progress_bar = FALSE)
+
+sldcldmap <-
+tm_shape(state_geo, name = 'State') +
+  tm_borders(col = "black", lwd = 3, lty = "dashed") +
+tm_shape(county_geo, name = 'County') +
+  tm_borders(col = "gray", lwd = 1) +
+tm_shape(sld_lower, name = "State Lower") +
+tm_borders(col = "darkgreen", lwd = 1, id = "NAMELSAD") +
+tm_shape(sld_upper, name = "State Upper") +
+tm_borders(col = "purple", lwd = 1, id = "NAMELSAD") +
+tm_shape(cld, name = "Congressional") +
+tm_borders(col = "orange", lwd = 1, id = "NAMELSAD") +
+tm_shape(nc_places, name = "Places")+
+    tm_polygons(fill = "darkblue", lwd = .5, id = "NAMELSAD", fill_alpha = .5) 
+
+
+
+sldcldmap %>% 
+  tmap_leaflet() %>%
+  leaflet::hideGroup("County") %>%
+  leaflet::hideGroup("Places")
+
+```
+
+## School Districts 
+
+- Taxing jurisdictions, often independent of, but sometimes coextensive with, counties
+
+```{r school_districts_map, echo=FALSE, out.width="100%"}
+sd_uni <- school_districts(state = "NC", type = "unified", cb = TRUE, progress_bar = FALSE)
+
+sdunimap <-
+tm_shape(state_geo, name = 'State') +
+  tm_borders(col = "black", lwd = 3, lty = "dashed") +
+tm_shape(county_geo, name = 'County') +
+  tm_borders(col = "gray", lwd = 1) +
+tm_shape(sd_uni, name = "Unified School District") +
+tm_borders(col = "darkred", lwd = 1, id = "NAME") +
+tm_shape(nc_places, name = "Places")+
+    tm_polygons(fill = "darkblue", lwd = .5, id = "NAMELSAD", fill_alpha = .5)
+
+sdunimap %>% 
+  tmap_leaflet() %>%
+  leaflet::hideGroup("County") %>%
+  leaflet::hideGroup("Places")
+
+```
+
+## Public Service Districts
+
+- Special purpose districts for services like water, sewage, fire protection
+- No nationally consistent dataset
+- Often provided by private entities (e.g., Rural-Metro Fire, American Water)
+- Not related to places, counties or other geographies. 
+
+
+
+## ZIP codes are not polygons
+
+::: columns
+
+::::{.column width="60%"}
+- ZIP Codes are collections of mail delivery routes defined by the US Postal Service (USPS).
+- P.O. Boxes, military addresses have unique ZIP Codes that do not correspond to geographic areas.
+- Change frequently based on delivery needs.
+
+New East ZIP code 
+<div style="font-family: monospace; font-size: 40px; margin: 20px;">
+<span style="background-color: #FFE6E6; padding: 5px;">27599 </span>
+<span style="background-color: #E6D5FF; padding: 5px;">3140 </span>
+</div>
+
+- ZCTAs (ZIP Code Tabulation Areas) are the Census Bureau's attempt to create polygon equivalents of ZIP codes.
+- Not all valid ZIP Codes (~42k) are represented by a 2020 ZCTA (~32k).
+
+
+::::
+
+:::: {.column width="40%"}
+```{r echo=FALSE, out.width = "105%"}
+here("figs", "zipcodes.png") %>% include_graphics()
+
+```
+::::
+
+:::
+
+
+## ZCTA are polygon equivalent of ZIP codes
+
+::: columns
+
+:::: {.column width="30%"}
+```{r diagrammer_zcta, echo=FALSE, out.width='80%'}
+
+grViz("
+  digraph geo_hierarchy {
+    
+    # Graph attributes
+    graph [rankdir = TB, bgcolor = white]
+    
+    # Node attributes
+    node [shape = box, style = filled, fontname = Helvetica]
+    
+    # Define nodes with colors
+    nation [label = 'Nation', fillcolor = '#ffcc80']
+    state [label = 'State', fillcolor = '#b3e5fc']
+    county [label = 'County', fillcolor = '#81d4fa']
+    zcta [label = 'ZCTA', fillcolor = '#ffb74d']
+    tract [label = 'Census Tract', fillcolor = '#4fc3f7']
+    place [label = 'Place', fillcolor = '#aed581']
+    metro [label = 'MSA/&mu;SA', fillcolor = '#ba68c8']
+    blk [label = 'Census Block', fillcolor = '#039be5', fontcolor = white]
+
+
+  
+    
+    # Define edges (hierarchy)
+    nation -> state
+    state  -> county
+    county -> tract
+    nation -> urban
+    state -> place
+    nation -> zcta
+    metro -> county
+    nation -> metro
+    tract -> blk
+    urban -> blk
+    zcta -> blk
+    place -> blk
+
+  }
+")
+```
+::::
+
+::::  {.column width="70%"}
+
+```{r zcta_map, echo=FALSE}
+zcta <- zctas(cb = FALSE, progress_bar = FALSE, year = '2022')
+zcta_nc <- zcta %>%
+  st_filter(state_geo)
+
+
+tmap_mode("plot")
+
+tm_shape(state_geo, name = 'State') +
+  tm_borders(col = "black", lwd = 3, lty = "dashed") +
+tm_shape(zcta_nc, name = "ZCTA") +
+tm_polygons(fill = "gray80", fill_alpha = 0.6,
+            border.col = "darkred", lwd = 1, id = "ZCTA5CE20") 
+
+```
+::::
+
+:::
+
+## American Indian, Alaska Native, Native Hawaiian (AIANNH), an overlooked geography
+
+::: columns
+::::  {.column width="60%"}
+
+- Defined in partnership with tribal governments
+
+Cherokee Oklahoma Tribal Statistical Area
+
+<div style="font-family: monospace; font-size: 40px; margin: 20px;">
+<span style="background-color: #FFE6E6; padding: 5px;">5550 </span>
+</div>
+
+- Cannot infer other geographies from GEOID
+
+::::
+
+:::: {.column width="30%"}
+```{r aiannh_map, echo=FALSE, out.width = "150%"}
+here('figs', 'aiannh.png') %>%
+  include_graphics()
+
+```
+::::
+
+:::
+
+
+
+## Geographies are `Institutional Facts` (Searle)
+
+- They are contingent and made for specific purposes and for particular uses and abuses.
+- They are not neutral or natural. Often contested.
+- They are are imprecise.
+- They change over time. Most counts presented here will be outdated shortly.
+- They stand often as imperfect proxies for one another.
+
+
+
