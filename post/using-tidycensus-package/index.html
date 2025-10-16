@@ -343,10 +343,10 @@
     
       <meta
         property="article:published_time"
-        content="2020-01-12T00:00:00&#43;00:00"
+        content="2025-10-16T00:00:00&#43;00:00"
       />
     
-    <meta property="article:modified_time" content="2020-01-12T00:00:00&#43;00:00">
+    <meta property="article:modified_time" content="2025-10-16T00:00:00&#43;00:00">
   
 
   
@@ -378,8 +378,8 @@
     "https://nkaza.github.io/post/using-tidycensus-package/featured.png"
   ],
   
-  "datePublished": "2020-01-12T00:00:00Z",
-  "dateModified": "2020-01-12T00:00:00Z",
+  "datePublished": "2025-10-16T00:00:00Z",
+  "dateModified": "2025-10-16T00:00:00Z",
   
   "author": {
     "@type": "Person",
@@ -923,7 +923,7 @@
     
       
     
-    Jan 12, 2020
+    Oct 16, 2025
   </span>
   
 
@@ -932,7 +932,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    12 min read
+    13 min read
   </span>
   
 
@@ -983,7 +983,7 @@
 <h2 id="querying-census-servers">Querying Census Servers</h2>
 <p>Different APIs have different requirements, so you will have to use the documentation specific to the endpoint. To illustrate, let’s use the <a href="https://www.census.gov/data/developers/data-sets/acs-5year.html" target="_blank" rel="noopener">American Community Survey API</a>. For example, paste the following into your web browser after suitably editing for the “YOUR_API_KEY”</p>
 <p><code>https://api.census.gov/data/2017/acs/acs5?key=YOUR_API_KEY&amp;get=B01003_001E&amp;for=zip%20code%20tabulation%20area:27514,27510&amp;in=state:37</code></p>
-<p>The output should look like the following in the JSON format</p>
+<p>The output should look like the following in the JSON format (Different browsers may format it slightly differently)</p>
 <p>
 
 
@@ -1028,12 +1028,12 @@
 <p>Note that the all the arguments are concatenated using <code>&amp;</code>.</p>
 </li>
 </ul>
-<p>This structure is unique to Census and ACS APIs and endpoints. For other APIs you will have to refer to their documentation. And it is also likely that these structures will change over time, which may explain why your code may stop working after a while.</p>
+<p>This structure is unique to <a href="https://www.census.gov/data/developers/data-sets.html" target="_blank" rel="noopener">Census APIs and endpoints</a>. For other APIs you will have to refer to their documentation. And it is also likely that these structures will change over time, which may explain why your code may stop working after a while.</p>
 <hr>
 <p><strong>Exercise</strong></p>
 <p>Practise the following in the web browser by constructing the right URL.</p>
 <ul>
-<li>Use the endpoint for the decennial census and get the population for all the zipcodes in Durham, NC.</li>
+<li>Use the <a href="https://www.census.gov/data/developers/data-sets.html" target="_blank" rel="noopener">endpoint</a> for the decennial census and get the population for all the zipcodes in Durham, NC.</li>
 <li>Use the ACS 2016 endpoint and get the population for all the census tracts in Orange County, NC.</li>
 <li>Use the ACS 2013-2018 and get the households under poverty in each census tracts in Orange County, NC</li>
 </ul>
@@ -1053,42 +1053,43 @@ library(tidycensus)
 census_api_key(&quot;YOUR_KEY_HERE&quot;, install=TRUE)
 </code></pre>
 <p>To get the poverty level, you can use B17001_01 (persons for whom poverty level is tracked) and B17001_002 (persons whose income in the last 12 months was below poverty level). Use the get_acs function for ACS.</p>
-<pre><code class="language-r">povrate17 &lt;- 
-    get_acs(geography = &quot;tract&quot;, variables = &quot;B17001_002&quot;,  summary_var = 'B17001_001',state = &quot;NC&quot;, geometry = TRUE, year = 2017) %&gt;%
+<pre><code class="language-r">
+povrate23 &lt;- 
+    get_acs(geography = &quot;tract&quot;, variables = &quot;B17001_002&quot;,  summary_var = 'B17001_001',state = &quot;NC&quot;, geometry = TRUE, year = 2023, progress_bar = FALSE) %&gt;%
         rename(population = summary_est) %&gt;%
   filter(population&gt;0)%&gt;%
   mutate(pov_rate = estimate/population) %&gt;%
   select(GEOID, NAME, population, pov_rate)
 
-povrate17
-# Simple feature collection with 2162 features and 4 fields
+povrate23
+# Simple feature collection with 2643 features and 4 fields
 # Geometry type: MULTIPOLYGON
 # Dimension:     XY
 # Bounding box:  xmin: -84.32187 ymin: 33.84232 xmax: -75.46062 ymax: 36.58812
 # Geodetic CRS:  NAD83
 # First 10 features:
-#          GEOID                                                  NAME population
-# 1  37001020502  Census Tract 205.02, Alamance County, North Carolina       3987
-# 2  37001021000     Census Tract 210, Alamance County, North Carolina       3447
-# 3  37013930200    Census Tract 9302, Beaufort County, North Carolina       6722
-# 4  37013930800    Census Tract 9308, Beaufort County, North Carolina       2748
-# 5  37019020511 Census Tract 205.11, Brunswick County, North Carolina       2379
-# 6  37021001000      Census Tract 10, Buncombe County, North Carolina       4641
-# 7  37021003201   Census Tract 32.01, Buncombe County, North Carolina       1875
-# 8  37025040702  Census Tract 407.02, Cabarrus County, North Carolina       7589
-# 9  37025041901  Census Tract 419.01, Cabarrus County, North Carolina       2243
-# 10 37025042102  Census Tract 421.02, Cabarrus County, North Carolina       4062
-#     pov_rate                       geometry
-# 1  0.3009782 MULTIPOLYGON (((-79.47267 3...
-# 2  0.4374819 MULTIPOLYGON (((-79.41351 3...
-# 3  0.2247843 MULTIPOLYGON (((-77.19577 3...
-# 4  0.1943231 MULTIPOLYGON (((-76.91488 3...
-# 5  0.1433375 MULTIPOLYGON (((-78.44122 3...
-# 6  0.2796811 MULTIPOLYGON (((-82.58559 3...
-# 7  0.0320000 MULTIPOLYGON (((-82.50883 3...
-# 8  0.1578601 MULTIPOLYGON (((-80.61131 3...
-# 9  0.2888988 MULTIPOLYGON (((-80.61569 3...
-# 10 0.2833580 MULTIPOLYGON (((-80.59842 3...
+#          GEOID                                                 NAME population
+# 1  37037020600     Census Tract 206; Chatham County; North Carolina       4364
+# 2  37105030102      Census Tract 301.02; Lee County; North Carolina       6147
+# 3  37165010300    Census Tract 103; Scotland County; North Carolina       3737
+# 4  37133000800        Census Tract 8; Onslow County; North Carolina        995
+# 5  37133002500       Census Tract 25; Onslow County; North Carolina       3367
+# 6  37013930200   Census Tract 9302; Beaufort County; North Carolina       5214
+# 7  37001020100    Census Tract 201; Alamance County; North Carolina       4374
+# 8  37063001706    Census Tract 17.06; Durham County; North Carolina       5222
+# 9  37065020400   Census Tract 204; Edgecombe County; North Carolina       4809
+# 10 37129011200 Census Tract 112; New Hanover County; North Carolina       1776
+#      pov_rate                       geometry
+# 1  0.07080660 MULTIPOLYGON (((-79.40216 3...
+# 2  0.03090939 MULTIPOLYGON (((-79.23063 3...
+# 3  0.42895371 MULTIPOLYGON (((-79.48963 3...
+# 4  0.09447236 MULTIPOLYGON (((-77.35379 3...
+# 5  0.13632314 MULTIPOLYGON (((-77.30802 3...
+# 6  0.21212121 MULTIPOLYGON (((-77.19577 3...
+# 7  0.25674440 MULTIPOLYGON (((-79.45802 3...
+# 8  0.07027959 MULTIPOLYGON (((-78.98735 3...
+# 9  0.31108339 MULTIPOLYGON (((-77.79452 3...
+# 10 0.11936937 MULTIPOLYGON (((-77.94605 3...
 </code></pre>
 <p>The above code downloads and constructs the poverty rate for census tracts. Note the omission of tracts that have zero population. Also note the blithe use of estimates as true values.</p>
 <div class="alert alert-warning">
@@ -1101,19 +1102,28 @@ povrate17
 
 tmap_mode('view')
 
-m1 &lt;-
-povrate17 %&gt;%
+
+povrate23 &lt;-
+  povrate23 %&gt;%
   mutate(pov_rate = pov_rate*100) %&gt;%
-  st_transform(crs=4326) %&gt;% # EPSG Code for WGS84
-tm_shape() +
-  tm_polygons(&quot;pov_rate&quot;,
-    title = &quot;Poverty Rate&quot;,    # This renames the title of th variable in the legend.
-    style = &quot;cont&quot;,
-    border.col = NULL,
-    legend.format=list(fun=function(x) paste0(formatC(x, digits=0, format=&quot;f&quot;), &quot;%&quot;))) + # This formats the numbers in the legend
-  tm_view(view.legend.position = c(&quot;right&quot;, &quot;top&quot;)) +
-  tm_tiles(leaflet::providers$Stamen.TonerLines, alpha=.5) +
-  tm_tiles(leaflet::providers$Stamen.TonerLabels, alpha=.5)
+  st_transform(crs=4326)  # EPSG Code for WGS84
+  
+m1 &lt;- povrate23 %&gt;%
+  tm_shape() +
+  tm_polygons(fill = &quot;pov_rate&quot;, # Variable to use for filling
+              fill.scale = tm_scale_intervals(breaks = seq(0,100, 20), # Breaks for the legend
+                                              values = 'brewer.yl_gn', # Color scheme. see cols4all package
+                                              label.format = tm_label_format(suffix = &quot;%&quot;)
+              ),
+              col = 'gray90' , # Border color
+              col.alpha = .3, # Border transparency
+              lwd  = .1, # Border line width
+              fill.legend = tm_legend(title = &quot;Poverty Rate&quot;, 
+                                      position = c(&quot;right&quot;, &quot;top&quot;), 
+                                      text.size = 0.5)
+  ) +
+  tm_tiles('CartoDB.PositronOnlyLabels')  # Use for labels, becasue the basemap is useless for context
+
 
 
 library(widgetframe)
@@ -1121,21 +1131,25 @@ frameWidget(tmap_leaflet(m1))
 </code></pre>
 <div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
 <script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-3.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+<div class="alert alert-alert">
+  <div>
+    Do not use <code>frameWidget</code>. Widgetframe and frameWidget are needed to embed the interactive maps in blogdown on a webserver. If you are using Rmarkdown, you can simply just print the map.
+  </div>
+</div>
 <p>It should be apparent by now that choices of colors, cuts and linewidths etc. dramatically alter the visual evidence produced by the map. See for example,</p>
-<pre><code class="language-r">m1 &lt;- 
-povrate17 %&gt;%
-  mutate(pov_rate = pov_rate*100) %&gt;%
-  st_transform(crs=4326) %&gt;%
-tm_shape() +
-  tm_polygons(&quot;pov_rate&quot;,
-    title = &quot;Poverty Rate&quot;,
-    style = &quot;quantile&quot;,
-    palette = &quot;seq&quot;,
-    border.col = NULL,
-    legend.format=list(fun=function(x) paste0(formatC(x, digits=0, format=&quot;f&quot;), &quot;%&quot;))) + # This formats the numbers in the legend
-  tm_view(view.legend.position = c(&quot;right&quot;, &quot;top&quot;)) +
-  tm_tiles(leaflet::providers$Stamen.TonerLines, alpha=.5) +
-  tm_tiles(leaflet::providers$Stamen.TonerLabels, alpha=.5)
+<pre><code class="language-r">
+m1 &lt;- povrate23 %&gt;%
+  tm_shape() +
+  tm_polygons(fill = &quot;pov_rate&quot;, # Variable to use for filling
+              fill.scale = tm_scale_continuous(values = 'matplotlib.seismic', midpoint = 20),
+              col = 'black' , # Border color
+              col_alpha = .5, # Border transparency
+              lwd  = .2, # Border line width
+              fill.legend = tm_legend(title = &quot;Poverty Rate %&quot;, 
+                                      position = c(&quot;right&quot;, &quot;top&quot;), 
+                                      text.size = 0.5)
+  ) +
+  tm_tiles('CartoDB.PositronOnlyLabels')  # Use for labels, becasue the basemap is useless for context
 
 frameWidget(tmap_leaflet(m1))
 </code></pre>
@@ -1145,10 +1159,19 @@ frameWidget(tmap_leaflet(m1))
 <p><strong>Exercise</strong></p>
 <ul>
 <li>
-<p>Experiment with different options in the above maps for colors, breaks, border widths, projections etc and note the differences in visual evidence it produces.</p>
+<p>Experiment with different options in the above maps for breaks, border widths etc and note the differences in visual evidence it produces.</p>
+</li>
+<li>
+<p>Use cols4all package to choose different color schemes. See <a href="https://cran.r-project.org/web/packages/cols4all/vignettes/cols4all.html" target="_blank" rel="noopener">here</a> for more details.</p>
+</li>
+<li>
+<p>Use tmap_mode(‘plot’) to create static maps instead of interactive maps. Change the projections and see how the visual evidence changes.</p>
 </li>
 <li>
 <p>Instead of the point estimates, create a map of the Margins of Errors to understand the geographic distribution of the uncertainty in the poverty rate estimates. See <a href="https://walkerke.github.io/tidycensus/articles/margins-of-error.html" target="_blank" rel="noopener">Kyle Walker’s page on this topic</a></p>
+</li>
+<li>
+<p>Some Census tracts have poverty rate above 90%. Are these real? How much do you trust these numbers?</p>
 </li>
 </ul>
 <hr>
@@ -1157,7 +1180,7 @@ frameWidget(tmap_leaflet(m1))
 
 unique(fips_codes$state_code)[1:10] %&gt;%  # We extract unique state FIPS codes and subset the first 10 
    map(function(x){get_acs(geography = &quot;tract&quot;, variables = &quot;B17001_002&quot;,  summary_var = 'B17001_001',
-            state = x, geometry = TRUE, year = 2017)}) %&gt;% #Note the use of argument x. We are simply applying the custom built function for each of the 10 states
+            state = x, geometry = TRUE, year = 2023)}) %&gt;% #Note the use of argument x. We are simply applying the custom built function for each of the 10 states
   reduce(rbind) %&gt;% # The list of 10 elements is reduced using 'row binding' to create one single tibble. read up on these map and reduce functions in purrr. They are key to functional programming paradigm
   rename(population = summary_est) %&gt;%
   filter(population&gt;0)%&gt;%
@@ -1185,7 +1208,7 @@ lf_m &lt;- paste(&quot;B23001_&quot;, formatC(seq(4,67,7), width=3, flag=&quot;0
 lf_f &lt;- paste(&quot;B23001_&quot;, formatC(seq(90,153,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;) # Females
 
 lf_t &lt;- 
-  get_acs(geography='tract', variables = c(lf_m, lf_f), state=&quot;NC&quot;, year=2017)%&gt;% 
+  get_acs(geography='tract', variables = c(lf_m, lf_f), state=&quot;NC&quot;, year=2023)%&gt;% 
   group_by(GEOID) %&gt;%
   summarize(lf_est = sum(estimate, na.rm=T))
 
@@ -1195,15 +1218,15 @@ unemp_m &lt;- paste(&quot;B23001_&quot;, formatC(seq(8,71,7), width=3, flag=&quo
 unemp_f &lt;- paste(&quot;B23001_&quot;, formatC(seq(94,157,7), width=3, flag=&quot;0&quot;), &quot;E&quot;, sep=&quot;&quot;)
 
 unemp_t &lt;- 
-  get_acs(geography='tract', variables = c(unemp_m, unemp_f), state=&quot;NC&quot;, year=2017)%&gt;%
+  get_acs(geography='tract', variables = c(unemp_m, unemp_f), state=&quot;NC&quot;, year=2023)%&gt;%
   group_by(GEOID) %&gt;%
   summarize(unemp_est = sum(estimate, na.rm=T))
 
 
-unemprate17 &lt;-
+unemprate23 &lt;-
   left_join(lf_t, unemp_t, by=c('GEOID'='GEOID')) %&gt;%  #Look up joining tables. It is incredibly useful to merge data
   filter(lf_est &gt;0) %&gt;%
-  mutate(unemp_rate = unemp_est/lf_est)
+  mutate(unemp_rate = unemp_est/lf_est * 100)
 </code></pre>
 <hr>
 <p><strong>Exercise</strong></p>
@@ -1220,68 +1243,75 @@ unemprate17 &lt;-
 </ul>
 <hr>
 <p>Is the spatial distribution of unemployment rate, same as the spatial distribution of poverty rate? On some occasions it may be useful to put those maps side by side (small multiples in Tufte parlance) and compare them. Fortunately, tmap does it automatically, when you supply multiple variables.</p>
-<p>However, notice that there are 2,168 observations in Unemployment Rate data and 2,162 in poverty rate data. Let’s see what the issue might be</p>
-<pre><code class="language-r"> unemprate17 %&gt;%
-     left_join(povrate17 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
+<p>However, notice that there are 2,645 observations in Unemployment Rate data and 2,643 in poverty rate data. Let’s see what the issue might be</p>
+<pre><code class="language-r"> unemprate23 %&gt;%
+     left_join(povrate23 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
       filter(is.na(pov_rate)|is.na(unemp_rate))
-# # A tibble: 6 × 8
+# # A tibble: 4 × 8
 #   GEOID       lf_est unemp_est unemp_rate NAME  population pov_rate
 #   &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;
-# 1 37051003402   3622         0     0      &lt;NA&gt;          NA       NA
-# 2 37051003404   2242         0     0      &lt;NA&gt;          NA       NA
-# 3 37051980200    460         0     0      &lt;NA&gt;          NA       NA
-# 4 37063001503    223         4     0.0179 &lt;NA&gt;          NA       NA
-# 5 37133000500   1659         0     0      &lt;NA&gt;          NA       NA
-# 6 37135011601    964        54     0.0560 &lt;NA&gt;          NA       NA
-# # … with 1 more variable: geometry &lt;MULTIPOLYGON [°]&gt;
+# 1 37051003404   3560         0       0    &lt;NA&gt;          NA       NA
+# 2 37051980100    149         0       0    &lt;NA&gt;          NA       NA
+# 3 37051980200    737         0       0    &lt;NA&gt;          NA       NA
+# 4 37063001503    431        32       7.42 &lt;NA&gt;          NA       NA
+# # ℹ 1 more variable: geometry &lt;MULTIPOLYGON [°]&gt;
 </code></pre>
 <hr>
 <p><strong>Exercise</strong></p>
 <ul>
-<li>There are empty polygons. So it might be useful to think about why these polygons exist without poverty data attached to them but have unemployment data.</li>
+<li>There are empty polygons. So it might be useful to think about why these areas exist without poverty data attached to them. Why do they have unemployment or labour force data?</li>
 </ul>
 <hr>
 <p>For the moment, I am going to ignore these polygons by throwing them out using <code>inner_join</code>. This only keep the records where both GEOIDs match.</p>
-<pre><code class="language-r">tmap_mode('plot')
+<pre><code class="language-r">
+tmap_mode('plot')
 
-unemprate17 %&gt;%
-  inner_join(povrate17 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
-  mutate(unemp_rate = unemp_rate*100, pov_rate = pov_rate*100)%&gt;%
+unemprate23 %&gt;%
+  inner_join(povrate23 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
   st_as_sf() %&gt;%
   st_transform(crs=4326) %&gt;%
   tm_shape() +
     tm_polygons(c(&quot;pov_rate&quot;, &quot;unemp_rate&quot;),
-    title = c(&quot;Poverty Rate&quot;, &quot;Unemployment Rate&quot;),
-    style = &quot;quantile&quot;,
-    palette = &quot;seq&quot;,
-    border.col = NULL,
-    legend.format=list(fun=function(x) paste0(formatC(x, digits=2, format=&quot;f&quot;), &quot;%&quot;))) + 
-  tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))
+                fill.legend = tm_legend(&quot;&quot;), # Remove legend titles
+                fill.scale = tm_scale_continuous(values = rev('viridis')),
+                col = NULL #remove borders
+                ) +
+  tm_tiles('CartoDB.PositronOnlyLabels') +
+  tm_layout(frame = FALSE,
+            panel.labels = c(&quot;Poverty Rate&quot;, &quot;Unemployment Rate&quot;))
+# 
+|---------|---------|---------|---------|
+=========================================
+                                          
 </code></pre>
 <img src="https://nkaza.github.io/post/using-tidycensus-package/index_files/figure-html/unnamed-chunk-8-1.png" width="672" />
 <p>It should be relatively obvious that this visualisation does not tell us much about the correlation between poverty and unemployment rates. It is better to visualise them as a scatter plot</p>
-<pre><code class="language-r">unemprate17 %&gt;%
-       inner_join(povrate17 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
+<pre><code class="language-r">unemprate23 %&gt;%
+       inner_join(povrate23 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) %&gt;%
       ggplot() + 
       geom_point(aes(x=unemp_rate, y=pov_rate), alpha=.3) + 
       geom_smooth(aes(x=unemp_rate, y=pov_rate), method='lm') +  # Linear trend
       ylab('Poverty Rate') + xlab('Unemployment Rate')
 </code></pre>
 <img src="https://nkaza.github.io/post/using-tidycensus-package/index_files/figure-html/unnamed-chunk-9-1.png" width="672" />
-<p>As you can see, there is strong linear relationship between poverty rate and unemployment rate. Notice the range of values on the axes. While unemployment rate ranges from 0 to 40%, poverty rate ranges from 0 to 86%, suggesting that poverty may be more acute than unemployment. Furthermore, if you just focus on the average relationship, you will miss the substantial variance around the relationship. It may be useful to identify, some of the outliers and focus on them in the map.</p>
+<p>As you can see, there is strong linear relationship between poverty rate and unemployment rate. Notice the range of values on the axes. While unemployment rate ranges from 0 to 40%, poverty rate ranges from 0 to 100%, suggesting that poverty may be more acute than unemployment. Furthermore, if you just focus on the average relationship, you will miss the substantial variance around the relationship. It may be useful to identify, some of the outliers and focus on them in the map.</p>
 <p>One way to identify them is perhaps to look at the predictions made by the regression line and if the actual value is higher or lower than the prediction interval, we can call them outliers.</p>
-<pre><code class="language-r">dat17 &lt;-
-  unemprate17 %&gt;%
-  inner_join(povrate17 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) 
+<pre><code class="language-r">dat23 &lt;-
+  unemprate23 %&gt;%
+  inner_join(povrate23 , by=c(&quot;GEOID&quot;=&quot;GEOID&quot;)) 
 
-mod1 &lt;- lm(pov_rate ~ unemp_rate , data=dat17)
-dat17 &lt;- cbind(dat17, predict(mod1, interval = 'prediction'))
+mod1 &lt;- lm(pov_rate ~ unemp_rate , data=dat23)
+dat23 &lt;- cbind(dat23, predict(mod1, interval = 'prediction'))
 
-dat17 %&gt;%
+library(ggthemes)
+
+dat23 %&gt;%
   mutate(outlier = ifelse(pov_rate &gt;= upr | pov_rate &lt;= lwr, &quot;Yes&quot;, &quot;No&quot;) %&gt;% as_factor) %&gt;%
   ggplot() +
   geom_point(aes(x=unemp_rate, y=pov_rate, color = outlier), alpha=.5) +
-  ylab('Poverty Rate') + xlab('Unemployment Rate')
+  scale_color_manual(values = c(&quot;No&quot;='gray90', &quot;Yes&quot;='red')) +
+  ylab('Poverty Rate') + xlab('Unemployment Rate') +
+  theme_tufte()
 </code></pre>
 <img src="https://nkaza.github.io/post/using-tidycensus-package/index_files/figure-html/unnamed-chunk-10-1.png" width="672" />
 <pre><code class="language-r"> 
@@ -1289,42 +1319,62 @@ dat17 %&gt;%
 tmap_mode('view')
 
 m1 &lt;- 
-dat17 %&gt;%
+dat23 %&gt;%
   mutate(outlier = ifelse(pov_rate &gt;= upr | pov_rate &lt;= lwr, &quot;Yes&quot;, &quot;No&quot;) %&gt;% as_factor) %&gt;% 
   st_as_sf() %&gt;%
   st_transform(4326)%&gt;%
     tm_shape() +
     tm_polygons(&quot;outlier&quot;,
-                palette = c('white', &quot;red&quot;),
-                border.col = &quot;gray70&quot;,
-                border.aplha=.2,
-                alpha =.3,
+                fill.scale = tm_scale_categorical(values = c(&quot;No&quot;='gray90', &quot;Yes&quot;='red')),
+                fill.legend = tm_legend(title = &quot;Outlier&quot;, position = c(&quot;right&quot;, &quot;top&quot;), text.size = 0.5),
+                fill_alpha = .5,
+                col = 'brown',
+                col_alpha = .1,
                 lwd =.1
+                
                 ) +
-  tm_tiles(leaflet::providers$Stamen.TonerLabels)
+  tm_tiles(&quot;CartoDB.PositronOnlyLabels&quot;) 
+
 
 frameWidget(tmap_leaflet(m1))
 </code></pre>
 <div id="htmlwidget-3" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
 <script type="application/json" data-for="htmlwidget-3">{"x":{"url":"index_files/figure-html//widgets/widget_unnamed-chunk-10.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
-<p>Note that this representation provides some insight but is in fact not particularly helpful. Many small census tracts within the metropolitan areas are in the outliers but are not visible because of small area that is obfuscated by the borders. The large tracts draw attention to the eye even when they are probably not most important from a policy perspective.</p>
-<pre><code class="language-r">dat17 &lt;- 
-  dat17 %&gt;%  st_as_sf()
+<p>Note that this representation provides some insight, but is in fact not particularly helpful. Many small census tracts within the metropolitan areas are in the outliers but are not visible because of small area that is obfuscated by the borders. The large tracts draw attention to the eye even when they are probably not most important from a policy perspective.</p>
+<pre><code class="language-r">
+dat23 &lt;- 
+  dat23 %&gt;%  st_as_sf()
 
-outliers&lt;- dat17 %&gt;%
+outliers&lt;- dat23 %&gt;%
     filter(pov_rate &gt;= upr | pov_rate &lt;= lwr)
   
 tmap_mode('plot')
 
-tm_shape( dat17) +
-    tm_borders(lwd=.1, alpha=.5) + 
+tm_shape( dat23) +
+    tm_borders(col_alpha=.1) + 
     tm_shape(outliers)+
-    tm_bubbles(col=&quot;red&quot;, size=.5, alpha=.3, border.col='gray90')
+    tm_bubbles(col = NULL,
+               size=.7, 
+               fill = 'red',
+               fill_alpha=.3) +
+  tm_tiles('CartoDB.PositronOnlyLabels')+
+  tm_layout(frame = FALSE)+
+  tm_title(&quot;Outliers in Poverty Rate vs Unemployment Rate&quot;) +
+  tm_compass() +
+  tm_scale_bar()+
+  tm_credits(&quot;Source: ACS 2019-2023&quot;, position = c(&quot;right&quot;, &quot;bottom&quot;))
 </code></pre>
 <img src="https://nkaza.github.io/post/using-tidycensus-package/index_files/figure-html/unnamed-chunk-11-1.png" width="672" />
 <hr>
 <p><strong>Exercise</strong></p>
+<ul>
+<li>
+<p>Perhaps the focus should be on left and right outliers separately. Visualise them and see if they tell a different story.</p>
+</li>
+<li>
 <p>The above map may not be even the right story to tell. It could very well be that the focus should be on outliers that have high poverty and high unemployment rates, perhaps also places that have at least some threshold of population levels. Make some judgement about these and create a different visualisation.</p>
+</li>
+</ul>
 <hr>
 <h2 id="conclusions">Conclusions</h2>
 <p>This tutorial is about how to use APIs to access US Census data. Becoming quite familiar with the quirks of the Census data is quite useful for planners. But the ease with which these data can be queried does not obviate the need for careful consideration of what kinds of analysis and visualisations are needed and what kinds of compelling stories that need to be told.</p>
