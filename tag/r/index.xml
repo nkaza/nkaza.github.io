@@ -5,7 +5,7 @@
     <link>https://nkaza.github.io/tag/r/</link>
       <atom:link href="https://nkaza.github.io/tag/r/index.xml" rel="self" type="application/rss+xml" />
     <description>R</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Thu, 16 Oct 2025 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Fri, 17 Oct 2025 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
       <title>R</title>
@@ -15,7 +15,7 @@
     <item>
       <title>Using TidyCensus package to explore Census Data</title>
       <link>https://nkaza.github.io/post/using-tidycensus-package/</link>
-      <pubDate>Thu, 16 Oct 2025 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 17 Oct 2025 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/using-tidycensus-package/</guid>
       <description>&lt;script src=&#34;https://nkaza.github.io/post/using-tidycensus-package/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/using-tidycensus-package/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
@@ -419,6 +419,12 @@ tm_shape( dat23) +
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;Perhaps the focus should be on left and right outliers separately. Visualise them and see if they tell a different story.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Do we need the boundaries of Census tracts in these viusalisations? What purpose do they serve? Can we use other contextual boundaries that might help with the story?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Why do locations of the census tracts matter for the story? Why not counts in a county or other regions? Justify.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;The above map may not be even the right story to tell. It could very well be that the focus should be on outliers that have high poverty and high unemployment rates, perhaps also places that have at least some threshold of population levels. Make some judgement about these and create a different visualisation.&lt;/p&gt;
@@ -3605,7 +3611,7 @@ You can right click on any post in the craigslist result page and use inspect el
     &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/craigslist4.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
   &lt;/div&gt;&lt;/figure&gt;
 &lt;/p&gt;
-&lt;p&gt;In this particular instance each posted ad seems to be within a list, with a list element &lt;code&gt;&amp;lt;li&amp;gt;&lt;/code&gt; with a class &lt;code&gt;cl-search-result&lt;/code&gt;, with a &lt;code&gt;data-pid&lt;/code&gt; associated with it.&lt;/p&gt;
+&lt;p&gt;In this particular instance each posted ad seems to be within a &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; with a class &lt;code&gt;cl-search-result&lt;/code&gt;, with a &lt;code&gt;data-pid&lt;/code&gt; associated with it.&lt;/p&gt;
 &lt;p&gt;
 
 
@@ -3642,6 +3648,7 @@ library(netstat)
 rD &amp;lt;- rsDriver(browser = &#39;firefox&#39;,
                verbose =F,
                chromever = NULL,
+               phantomver = NULL,
                port = free_port()) # Sometimes these ports are blocked by the firewall. You can change the port number to something else. Or check with your system administrator.
 remDr &amp;lt;- rD[[&amp;quot;client&amp;quot;]]
 
@@ -3652,23 +3659,23 @@ html_page &amp;lt;- remDr$getPageSource()[[1]]
 #  # Close the browser whenever you are done with it.
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&#34;using-rvest-to-extract-data-from-html&#34;&gt;Using rvest to extract data from html&lt;/h2&gt;
-&lt;p&gt;The workhorse functions we are going to use are &lt;code&gt;html_elements&lt;/code&gt; and &lt;code&gt;html_element&lt;/code&gt; from the &lt;code&gt;rvest&lt;/code&gt; library. &lt;code&gt;html_element&lt;/code&gt; always extracts exactly one element. In this instance we want to extract all elements that are of &lt;code&gt;cl-search-result&lt;/code&gt; class&lt;/p&gt;
+&lt;p&gt;The workhorse functions we are going to use are &lt;code&gt;html_elements&lt;/code&gt; and &lt;code&gt;html_element&lt;/code&gt; from the &lt;code&gt;rvest&lt;/code&gt; library. &lt;code&gt;html_element&lt;/code&gt; always extracts exactly one element. In this instance we want to extract all elements that are of &lt;code&gt;cl-search-result&lt;/code&gt; class of element &lt;code&gt;div&lt;/code&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;#(raw_query &amp;lt;- read_html(query_url))
 
 raw_query &amp;lt;- read_html(html_page)
 
 ## Select out the listing ads
-raw_ads &amp;lt;- html_elements(raw_query, &amp;quot;li.cl-search-result&amp;quot;)
+raw_ads &amp;lt;- html_elements(raw_query, &amp;quot;div.cl-search-result&amp;quot;)
 raw_ads %&amp;gt;% head()
 # {xml_nodeset (6)}
-# [1] &amp;lt;li data-pid=&amp;quot;7795984275&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [2] &amp;lt;li data-pid=&amp;quot;7795983719&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [3] &amp;lt;li data-pid=&amp;quot;7795982750&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [4] &amp;lt;li data-pid=&amp;quot;7795982286&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [5] &amp;lt;li data-pid=&amp;quot;7795981274&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [6] &amp;lt;li data-pid=&amp;quot;7795979820&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
+# [1] &amp;lt;div data-pid=&amp;quot;7889542394&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-ga ...
+# [2] &amp;lt;div data-pid=&amp;quot;7889541038&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-ga ...
+# [3] &amp;lt;div data-pid=&amp;quot;7889517114&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-ga ...
+# [4] &amp;lt;div data-pid=&amp;quot;7889378662&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-ga ...
+# [5] &amp;lt;div data-pid=&amp;quot;7889345678&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-ga ...
+# [6] &amp;lt;div data-pid=&amp;quot;7889328379&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-ga ...
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In the following bit of code, I extract the entire list of attributes that are part of each result-row. In particular, I want to extact id, title, price, date and locale. Notice how each of them require some special manipulation to get into a right format.&lt;/p&gt;
+&lt;p&gt;In the following bit of code, I extract the entire list of attributes that are part of each result-row. In particular, I want to extact id, title, price, date and metadata. Notice how each of them require some special manipulation to get into a right format.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ids &amp;lt;-
   raw_ads %&amp;gt;%
   html_attr(&#39;data-pid&#39;)
@@ -3682,7 +3689,7 @@ prices &amp;lt;-
    raw_ads %&amp;gt;% 
      html_element(&amp;quot;span.priceinfo&amp;quot;) %&amp;gt;%
      html_text() %&amp;gt;%
-     str_replace_all(&amp;quot;\\$|,+&amp;quot;, &amp;quot;&amp;quot;) %&amp;gt;% # This is a function that includes a regular expression to extract a special symbol $ and , and replace them with nothing.
+     str_replace_all(&amp;quot;\\$|,+&amp;quot;, &amp;quot;&amp;quot;) %&amp;gt;% # This is a function that includes a regular expression to extract a special symbols $ and , and replace them with nothing.
      as.numeric()
 
 metadata &amp;lt;-
@@ -3715,12 +3722,15 @@ metadata &amp;lt;-
 &lt;h2 id=&#34;extracting-location-attributes&#34;&gt;Extracting location attributes&lt;/h2&gt;
 &lt;p&gt;Location of the apartments/houses are little bit more tricky because they are not embedded in the results page, but in each individual ad. To access them we need to access individual urls for the ads and then extract the location attributes.&lt;/p&gt;
 &lt;p&gt;To do this we use the &lt;code&gt;map_*&lt;/code&gt; function in &lt;code&gt;purrr&lt;/code&gt; package. The function is effectively like a for loop. So the following code for each of the element of urls use the function(x) and then combine them into a table using row binding.&lt;/p&gt;
+&lt;p&gt;To avoid being blocked by craigslist server, we use &lt;code&gt;Sys.sleep(1)&lt;/code&gt; to pause for a second between each request. This makes the loop a time consuming process, but is necessary to avoid being blocked by the server. I am going to demonstrate the loop only for 30 urls here for brevity. You can run it for all the urls in your own time.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
 urls &amp;lt;-
   raw_ads %&amp;gt;%
   html_element(&amp;quot;.cl-app-anchor&amp;quot;) %&amp;gt;%
   html_attr(&amp;quot;href&amp;quot;)
-  
+
+selection_num &amp;lt;- 30
+urls &amp;lt;- urls[1:selection_num] # For brevity only first 10 urls
 
 latlongs &amp;lt;- map_dfr(urls, function(x){
     remDr$navigate(x) # Navigate to the url
@@ -3737,30 +3747,42 @@ latlongs &amp;lt;- map_dfr(urls, function(x){
   )
 
 latlongs
-# # A tibble: 120 × 3
+# # A tibble: 30 × 3
 #    `data-latitude` `data-longitude` `data-accuracy`
 #              &amp;lt;dbl&amp;gt;            &amp;lt;dbl&amp;gt;           &amp;lt;dbl&amp;gt;
-#  1            42.2            -71.2              22
-#  2            42.1            -71.2              22
-#  3            42.2            -71.0              10
-#  4            42.5            -71.2              22
-#  5            42.4            -71.2              10
-#  6            42.5            -71.0              22
-#  7            42.5            -71.4              22
-#  8            42.4            -71.0              10
-#  9            42.4            -71.0              22
-# 10            42.4            -71.1              10
-# # ℹ 110 more rows
+#  1            42.4            -71.1              15
+#  2            42.5            -70.9              10
+#  3            42.4            -71.1              15
+#  4            42.4            -71.1               5
+#  5            42.8            -71.5              22
+#  6            42.4            -71.3              20
+#  7            42.4            -71.2              20
+#  8            42.5            -70.9              10
+#  9            42.3            -71.1              22
+# 10            42.1            -71.4              22
+# # ℹ 20 more rows
 &lt;/code&gt;&lt;/pre&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;It is useful to go through each step of the function and see why they result in the lat longs finally.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;It is useful to go through each step of the function and see why they result in the lat longs finally.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Extract the number of pictures posted on the ad and relate it to the rent charged.&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h3 id=&#34;geocoding-addresses&#34;&gt;Geocoding addresses&lt;/h3&gt;
 &lt;p&gt;Notice the &lt;code&gt;data-accuracy&lt;/code&gt; field in the results. It is not clear, if the lat longs provided by the craigslist are accurate. It is useful to geocode the addresses to get a more accurate location. We first extract the addresses that are in each page and then geocode them using &lt;code&gt;tidygeocoder&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;But first, let’s limit the data that we already collected to the 30 urls that we are using for this demonstration.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+ids &amp;lt;- ids[1:selection_num]
+titles &amp;lt;- titles[1:selection_num]
+prices &amp;lt;- prices[1:selection_num]
+metadata &amp;lt;- metadata[1:selection_num]
+
+
 addresses &amp;lt;- map_dfr(urls, function(x){
     remDr$navigate(x) # Navigate to the url
     Sys.sleep(1) # give the page time to fully load and don&#39;t run afoul of rate limits
@@ -3785,12 +3807,12 @@ head(addresses)
 # # A tibble: 6 × 3
 #   pid        title                                                     full_addr
 #   &amp;lt;chr&amp;gt;      &amp;lt;chr&amp;gt;                                                     &amp;lt;chr&amp;gt;    
-# 1 7795984275 Working privacy pod, Patio / balcony, Undermount sink, L… 8 Upland…
-# 2 7795983719 9 ft ceilings, Dual vanity, Gas grilling areas, Billiards 400 Foxb…
-# 3 7795982750 Air Conditioning, FreeWeights, Refrigerator, Attached ga… 550 Libe…
-# 4 7795982286 Build credit score with RentTrack, Moving services with … 1 Inwood…
-# 5 7795981274 Tile backsplash, Smart Home + GiGstreem Internet, Billia… 36 River…
-# 6 7795979820 Air conditioning, Walking trail, Garages, Loft-style hom… 1000 Cra…
+# 1 7889542394 Amazing North Cambridge Apartment                         Cedar St…
+# 2 7889541038 3 bedroom, 2 bathroom renovated home                      294 Esse…
+# 3 7889517114 Large spacious all new 4 Bedroom , 2 Bathroom Apt for Re… Orchard …
+# 4 7889378662 New 2 Bed 2 Bath w/ UNIT LAUNDRY- GARAGE PARKING - AC - … Corey St…
+# 5 7889345678 **FREE RENT SPECIAL!!**SPACIOUS 2 BEDROOM DELUXE WITH FI… 170 Conc…
+# 6 7889328379 Charming 2-Bedroom Single Family Home for Rent in North … mountain…
 
 library(tidygeocoder)
 library(sf)
@@ -3812,20 +3834,20 @@ craigslist_table &amp;lt;- craigslist_table %&amp;gt;%
   left_join(addresses_geocode, by=c(&amp;quot;ids&amp;quot; = &amp;quot;pid&amp;quot;))
 
 craigslist_table
-# # A tibble: 120 × 12
+# # A tibble: 30 × 12
 #    ids      titles urls  `data-latitude` `data-longitude` `data-accuracy` prices
 #    &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;  &amp;lt;chr&amp;gt;           &amp;lt;dbl&amp;gt;            &amp;lt;dbl&amp;gt;           &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt;
-#  1 7795984… Worki… http…            42.2            -71.2              22   3216
-#  2 7795983… 9 ft … http…            42.1            -71.2              22   3124
-#  3 7795982… Air C… http…            42.2            -71.0              10   3419
-#  4 7795982… Build… http…            42.5            -71.2              22   2870
-#  5 7795981… Tile … http…            42.4            -71.2              10   3225
-#  6 7795979… Air c… http…            42.5            -71.0              22   3333
-#  7 7795978… Wood … http…            42.5            -71.4              22   2350
-#  8 7795978… Stora… http…            42.4            -71.0              10   3100
-#  9 7795936… 4 bed… http…            42.4            -71.0              22   4500
-# 10 7795912… Davis… http…            42.4            -71.1              10   3200
-# # ℹ 110 more rows
+#  1 7889542… Amazi… http…            42.4            -71.1              15   4650
+#  2 7889541… 3 bed… http…            42.5            -70.9              10   3650
+#  3 7889517… Large… http…            42.4            -71.1              15   4500
+#  4 7889378… New 2… http…            42.4            -71.1               5   2650
+#  5 7889345… **FRE… http…            42.8            -71.5              22   2100
+#  6 7889328… Charm… http…            42.4            -71.3              20   3200
+#  7 7889231… *Spac… http…            42.4            -71.2              20   4500
+#  8 7889226… 3 Bed… http…            42.5            -70.9              10   2950
+#  9 7889158… Bosto… http…            42.3            -71.1              22   3500
+# 10 7889122… White… http…            42.1            -71.4              22   2352
+# # ℹ 20 more rows
 # # ℹ 5 more variables: title &amp;lt;chr&amp;gt;, full_addr &amp;lt;chr&amp;gt;, lat &amp;lt;dbl&amp;gt;, long &amp;lt;dbl&amp;gt;,
 # #   query &amp;lt;chr&amp;gt;
 
@@ -3833,21 +3855,21 @@ craigslist_table$dist_err &amp;lt;- diag(geosphere::distm(craigslist_table[,c(&a
 
 
 craigslist_table %&amp;gt;% arrange(-`data-accuracy`) %&amp;gt;% glimpse()
-# Rows: 120
+# Rows: 30
 # Columns: 13
-# $ ids              &amp;lt;chr&amp;gt; &amp;quot;7793439550&amp;quot;, &amp;quot;7795984275&amp;quot;, &amp;quot;7795983719&amp;quot;, &amp;quot;7795982286…
-# $ titles           &amp;lt;chr&amp;gt; &amp;quot;2-3 bed, 1-2 bath condo- 2 units&amp;quot;, &amp;quot;Working privacy …
-# $ urls             &amp;lt;chr&amp;gt; &amp;quot;https://boston.craigslist.org/gbs/apa/d/belmont-3-be…
-# $ `data-latitude`  &amp;lt;dbl&amp;gt; 42.3960, 42.1868, 42.0649, 42.4829, 42.5326, 42.4567,…
-# $ `data-longitude` &amp;lt;dbl&amp;gt; -71.1820, -71.2033, -71.2441, -71.1574, -70.9612, -71…
+# $ ids              &amp;lt;chr&amp;gt; &amp;quot;7889051723&amp;quot;, &amp;quot;7889345678&amp;quot;, &amp;quot;7889158492&amp;quot;, &amp;quot;7889122400…
+# $ titles           &amp;lt;chr&amp;gt; &amp;quot;Absolutley Gorgeous &amp;amp; Spacious Ayer Mansion Suites 2…
+# $ urls             &amp;lt;chr&amp;gt; &amp;quot;https://boston.craigslist.org/nwb/apa/d/lowell-absol…
+# $ `data-latitude`  &amp;lt;dbl&amp;gt; 42.64850, 42.77900, 42.29730, 42.09350, 42.55190, 42.…
+# $ `data-longitude` &amp;lt;dbl&amp;gt; -71.32830, -71.47480, -71.07450, -71.40580, -71.25180…
 # $ `data-accuracy`  &amp;lt;dbl&amp;gt; 99, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 2…
-# $ prices           &amp;lt;dbl&amp;gt; 3400, 3216, 3124, 2870, 3333, 2350, 4500, 4200, 2995,…
-# $ title            &amp;lt;chr&amp;gt; &amp;quot;2-3 bed, 1-2 bath condo- 2 units&amp;quot;, &amp;quot;Working privacy …
-# $ full_addr        &amp;lt;chr&amp;gt; NA, &amp;quot;8 Upland Woods Cir,, Norwood, MA 02062&amp;quot;, &amp;quot;400 Fo…
-# $ lat              &amp;lt;dbl&amp;gt; NA, 42.21076, 42.04648, 42.52207, 42.55445, 42.43790,…
-# $ long             &amp;lt;dbl&amp;gt; NA, -71.19273, -71.23641, -71.13192, -70.97567, -71.4…
-# $ query            &amp;lt;chr&amp;gt; &amp;quot;&amp;quot;, &amp;quot;census&amp;quot;, &amp;quot;arcgis&amp;quot;, &amp;quot;arcgis&amp;quot;, &amp;quot;census&amp;quot;, &amp;quot;census&amp;quot;,…
-# $ dist_err         &amp;lt;dbl&amp;gt; NA, 2800.6538, 2142.9896, 4829.4004, 2702.8893, 4948.…
+# $ prices           &amp;lt;dbl&amp;gt; 2850, 2100, 3500, 2352, 2103, 3488, 3500, 2638, 3625,…
+# $ title            &amp;lt;chr&amp;gt; &amp;quot;Absolutley Gorgeous &amp;amp; Spacious Ayer Mansion Suites 2…
+# $ full_addr        &amp;lt;chr&amp;gt; NA, &amp;quot;170 Concord St, Nashua, NH 03064&amp;quot;, NA, &amp;quot;10 Indep…
+# $ lat              &amp;lt;dbl&amp;gt; NA, 42.78968, NA, 42.05982, 42.54221, 42.43790, 42.38…
+# $ long             &amp;lt;dbl&amp;gt; NA, -71.46928, NA, -71.39399, -71.28571, -71.42923, -…
+# $ query            &amp;lt;chr&amp;gt; &amp;quot;&amp;quot;, &amp;quot;census&amp;quot;, &amp;quot;&amp;quot;, &amp;quot;census&amp;quot;, &amp;quot;census&amp;quot;, &amp;quot;census&amp;quot;, &amp;quot;cens…
+# $ dist_err         &amp;lt;dbl&amp;gt; NA, 1269.406981, NA, 3866.728457, 2985.981177, 4948.7…
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Notice all the missing addresses with ‘high-accuracy’. Clearly the text address is an incomplete data. However, can you trust the CL created longitude and latitude?&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
@@ -3872,7 +3894,7 @@ craigslist_sf &amp;lt;- st_as_sf(craigslist_table, coords = c(&amp;quot;data-lon
 
 m1 &amp;lt;-
   tm_shape(craigslist_sf) +
-  tm_dots(col = &amp;quot;prices&amp;quot;) +
+  tm_bubbles(fill  = &amp;quot;prices&amp;quot;) +
   tm_basemap(&amp;quot;CartoDB.Positron&amp;quot;) 
 
 
@@ -3883,21 +3905,19 @@ frameWidget(tmap_leaflet(m1))
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-8.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;navigating-to-next-page&#34;&gt;Navigating to next page&lt;/h2&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;div&gt;
+    The following used to work when Craigslist paginated. However, Craigslist has recently changed their page structure and the following code may not work any longer. This section is here for the sake of completeness rather than accuracy.
+  &lt;/div&gt;
+&lt;/div&gt;
 &lt;p&gt;The above code only extracts the first page of the results. To extract all the results, we need to navigate to the next page and extract the results. We can do this by clicking on the next button and then extracting the results. We can do this programmatically using Selenium and finding the button element and clicking on it.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;remDr$navigate(query_url)
 nextbutton &amp;lt;- remDr$findElement(using = &#39;css selector&#39;, value = &#39;button.cl-next-page&#39;)
 nextbutton$clickElement()
 Sys.sleep(3)
 html_page2 &amp;lt;- remDr$getPageSource()[[1]]
-raw_ads &amp;lt;- html_elements(read_html(html_page2), &amp;quot;li.cl-search-result&amp;quot;)
+raw_ads &amp;lt;- html_elements(read_html(html_page2), &amp;quot;div.cl-search-result&amp;quot;)
 raw_ads %&amp;gt;% head()
-# {xml_nodeset (6)}
-# [1] &amp;lt;li data-pid=&amp;quot;7791523666&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [2] &amp;lt;li data-pid=&amp;quot;7791436053&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [3] &amp;lt;li data-pid=&amp;quot;7791435513&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [4] &amp;lt;li data-pid=&amp;quot;7791435026&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [5] &amp;lt;li data-pid=&amp;quot;7791434008&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
-# [6] &amp;lt;li data-pid=&amp;quot;7791432435&amp;quot; class=&amp;quot;cl-search-result cl-search-view-mode-gal ...
 &lt;/code&gt;&lt;/pre&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -3907,6 +3927,9 @@ raw_ads %&amp;gt;% head()
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Repeat this for few other urban areas, such as Los Angeles and Raleigh.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Do not forget to close your webdriver with &lt;code&gt;remDr$close()&lt;/code&gt; when you are exiting the script.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
