@@ -4288,15 +4288,15 @@ a &amp;lt;- 2:5  #Assign vector 2:5 to a variable a
 a      #print a to console
 # [1] 2 3 4 5
 runif(5)   #Generate 5 random numbers
-# [1] 0.08783858 0.60768902 0.46983531 0.21926932 0.99419249
+# [1] 0.3127174 0.9060043 0.6500424 0.8881422 0.4958517
 sessionInfo()     #What is my computer environment? (Mac, Windows, packages etc.)
-# R version 4.4.1 (2024-06-14)
-# Platform: aarch64-apple-darwin20
-# Running under: macOS 15.6
+# R version 4.6.1 (2026-06-24)
+# Platform: aarch64-apple-darwin23
+# Running under: macOS Tahoe 26.5.2
 # 
 # Matrix products: default
-# BLAS:   /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRblas.0.dylib 
-# LAPACK: /Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0
+# BLAS:   /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRblas.0.dylib 
+# LAPACK: /Library/Frameworks/R.framework/Versions/4.6/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 # 
 # locale:
 # [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -4308,12 +4308,12 @@ sessionInfo()     #What is my computer environment? (Mac, Windows, packages etc.
 # [1] stats     graphics  grDevices utils     datasets  methods   base     
 # 
 # loaded via a namespace (and not attached):
-#  [1] digest_0.6.37     R6_2.6.1          bookdown_0.43     fastmap_1.2.0    
-#  [5] xfun_0.52         blogdown_1.21     cachem_1.1.0      knitr_1.50       
-#  [9] htmltools_0.5.8.1 rmarkdown_2.29    lifecycle_1.0.4   cli_3.6.5        
-# [13] sass_0.4.10       jquerylib_0.1.4   compiler_4.4.1    rstudioapi_0.17.1
-# [17] tools_4.4.1       evaluate_1.0.4    bslib_0.9.0       yaml_2.3.10      
-# [21] jsonlite_2.0.0    rlang_1.1.6
+#  [1] digest_0.6.39     R6_2.6.1          bookdown_0.47     fastmap_1.2.0    
+#  [5] xfun_0.60         blogdown_1.24     cachem_1.1.0      knitr_1.51       
+#  [9] htmltools_0.5.9   rmarkdown_2.31    lifecycle_1.0.5   cli_3.6.6        
+# [13] sass_0.4.10       jquerylib_0.1.4   compiler_4.6.1    rstudioapi_0.19.0
+# [17] tools_4.6.1       evaluate_1.0.5    bslib_0.11.0      yaml_2.3.12      
+# [21] otel_0.2.0        jsonlite_2.0.0    rlang_1.3.0
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The output of the last two commands will be different on your computer than what is being shown.&lt;/p&gt;
 &lt;hr&gt;
@@ -4422,7 +4422,7 @@ $$y = \mu + \sum_{i=1}^p \beta_i x_i + \epsilon$$
 &lt;p&gt;Embedding graphics created from R is also very easy.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(cars$speed, cars$dist)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/introduction-to-r-rmarkdown/index.en_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/introduction-to-r-rmarkdown/index.en_files/figure-html/unnamed-chunk-2-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -4439,7 +4439,7 @@ include_graphics(&amp;quot;./img/anaconda.png&amp;quot;) # Change the file path 
 &lt;/div&gt;
 &lt;h3 id=&#34;reading-real-data-into-r&#34;&gt;Reading real data into R&lt;/h3&gt;
 &lt;p&gt;In this course, we are going to follow the tidyverse style of programming and its associated packages. To read a comma separated file (*.csv) we are going to use &lt;code&gt;read_csv&lt;/code&gt; command from &lt;code&gt;tidyverse&lt;/code&gt; package.&lt;/p&gt;
-&lt;p&gt;Download the latest building violations data from &lt;a href=&#34;https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;building violations data&lt;/a&gt; from the Chicago Open Data Portal. For convenience, &lt;a href=&#34;https://www.dropbox.com/s/406dh96rgkgvjf4/Building_Violations.csv?dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a local copy downloaded in 2019 is stored here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Download the latest building violations data from &lt;a href=&#34;https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;building violations data&lt;/a&gt; from the Chicago Open Data Portal. For convenience, &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:x:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/buildingviolations/Building_Violations.csv?d=w096cf5a7a1214747a47d741180228778&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=T1TAvQ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a local copy downloaded in 2019 is stored here&lt;/a&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyverse)
 
 
@@ -4447,70 +4447,70 @@ chicago_df &amp;lt;- read_csv(here(&#39;data&#39;, &#39;raw_data&#39;, &#39;Buil
 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;summary(chicago_df)
-#        ID          VIOLATION LAST MODIFIED DATE VIOLATION DATE    
-#  Min.   : 219970   Length:1682199               Length:1682199    
-#  1st Qu.:2846372   Class :character             Class :character  
-#  Median :4173309   Mode  :character             Mode  :character  
-#  Mean   :4041069                                                  
-#  3rd Qu.:5328152                                                  
-#  Max.   :6404250                                                  
-#                                                                   
-#  VIOLATION CODE     VIOLATION STATUS   VIOLATION STATUS DATE
-#  Length:1682199     Length:1682199     Length:1682199       
-#  Class :character   Class :character   Class :character     
-#  Mode  :character   Mode  :character   Mode  :character     
+#        ID          VIOLATION LAST MODIFIED DATE   VIOLATION DATE   
+#  Min.   : 219970   Length   :1682199            Length   :1682199  
+#  1st Qu.:2846372   N.unique :   4164            N.unique :   4482  
+#  Median :4173309   N.blank  :      0            N.blank  :      0  
+#  Mean   :4041069   Min.nchar:     10            Min.nchar:     10  
+#  3rd Qu.:5328152   Max.nchar:     10            Max.nchar:     10  
+#  Max.   :6404250                                                   
+#                                                                    
+#    VIOLATION CODE     VIOLATION STATUS   VIOLATION STATUS DATE
+#  Length   :1682199   Length   :1682199   Length   :1682199    
+#  N.unique :   1473   N.unique :      3   N.unique :   4202    
+#  N.blank  :      0   N.blank  :      0   N.blank  :      0    
+#  Min.nchar:      4   Min.nchar:      4   Min.nchar:     10    
+#  Max.nchar:      9   Max.nchar:      8   Max.nchar:     10    
+#                                          NAs      :1036109    
+#                                                               
+#  VIOLATION DESCRIPTION VIOLATION LOCATION  VIOLATION INSPECTOR COMMENTS
+#  Length   :1682199     Length   :1682199   Length   :1682199           
+#  N.unique :   1316     N.unique :  53045   N.unique :1060435           
+#  N.blank  :      0     N.blank  :      0   N.blank  :      0           
+#  Min.nchar:      4     Min.nchar:      1   Min.nchar:      1           
+#  Max.nchar:     30     Max.nchar:    242   Max.nchar:   3869           
+#  NAs      :  10759     NAs      : 897149   NAs      : 174853           
+#                                                                        
+#  VIOLATION ORDINANCE    INSPECTOR ID     INSPECTION NUMBER  INSPECTION STATUS  
+#  Length   :1682199   Length   :1682199   Min.   :  265575   Length   :1682199  
+#  N.unique :   1310   N.unique :    361   1st Qu.: 2306938   N.unique :      4  
+#  N.blank  :      0   N.blank  :      0   Median :10422051   N.blank  :      0  
+#  Min.nchar:      6   Min.nchar:      4   Mean   : 8062623   Min.nchar:      4  
+#  Max.nchar:    845   Max.nchar:     12   3rd Qu.:11692850   Max.nchar:      6  
+#  NAs      :  47726                       Max.   :13061126   NAs      :     16  
+#                                                                                
+#  INSPECTION WAIVED   INSPECTION CATEGORY DEPARTMENT BUREAU  
+#  Length   :1682199   Length   :1682199   Length   :1682199  
+#  N.unique :      1   N.unique :      4   N.unique :     15  
+#  N.blank  :      0   N.blank  :      0   N.blank  :      0  
+#  Min.nchar:      1   Min.nchar:      6   Min.nchar:      4  
+#  Max.nchar:      1   Max.nchar:     12   Max.nchar:     26  
 #                                                             
 #                                                             
-#                                                             
-#                                                             
-#  VIOLATION DESCRIPTION VIOLATION LOCATION VIOLATION INSPECTOR COMMENTS
-#  Length:1682199        Length:1682199     Length:1682199              
-#  Class :character      Class :character   Class :character            
-#  Mode  :character      Mode  :character   Mode  :character            
-#                                                                       
-#                                                                       
-#                                                                       
-#                                                                       
-#  VIOLATION ORDINANCE INSPECTOR ID       INSPECTION NUMBER  INSPECTION STATUS 
-#  Length:1682199      Length:1682199     Min.   :  265575   Length:1682199    
-#  Class :character    Class :character   1st Qu.: 2306938   Class :character  
-#  Mode  :character    Mode  :character   Median :10422051   Mode  :character  
-#                                         Mean   : 8062623                     
-#                                         3rd Qu.:11692850                     
-#                                         Max.   :13061126                     
-#                                                                              
-#  INSPECTION WAIVED  INSPECTION CATEGORY DEPARTMENT BUREAU    ADDRESS         
-#  Length:1682199     Length:1682199      Length:1682199     Length:1682199    
-#  Class :character   Class :character    Class :character   Class :character  
-#  Mode  :character   Mode  :character    Mode  :character   Mode  :character  
-#                                                                              
-#                                                                              
-#                                                                              
-#                                                                              
-#  STREET NUMBER   STREET DIRECTION   STREET NAME        STREET TYPE       
-#  Min.   :    1   Length:1682199     Length:1682199     Length:1682199    
-#  1st Qu.: 1648   Class :character   Class :character   Class :character  
-#  Median : 3746   Mode  :character   Mode  :character   Mode  :character  
-#  Mean   : 4151                                                           
-#  3rd Qu.: 6229                                                           
-#  Max.   :13770                                                           
-#                                                                          
-#  PROPERTY GROUP        SSA             LATITUDE       LONGITUDE     
-#  Min.   :  1000   Min.   : 1.0      Min.   :41.64   Min.   :-87.91  
-#  1st Qu.: 20560   1st Qu.:22.0      1st Qu.:41.77   1st Qu.:-87.71  
-#  Median :154437   Median :34.0      Median :41.85   Median :-87.67  
-#  Mean   :202155   Mean   :33.8      Mean   :41.85   Mean   :-87.67  
-#  3rd Qu.:367135   3rd Qu.:49.0      3rd Qu.:41.91   3rd Qu.:-87.63  
-#  Max.   :678027   Max.   :69.0      Max.   :42.02   Max.   :-87.52  
-#                   NA&#39;s   :1359814   NA&#39;s   :1513    NA&#39;s   :1513    
-#    LOCATION        
-#  Length:1682199    
-#  Class :character  
-#  Mode  :character  
-#                    
-#                    
-#                    
-# 
+#       ADDRESS        STREET NUMBER    STREET DIRECTION      STREET NAME     
+#  Length   :1682199   Min.   :    1   Length   :1682199   Length   :1682199  
+#  N.unique : 154595   1st Qu.: 1648   N.unique :      4   N.unique :   1190  
+#  N.blank  :      0   Median : 3746   N.blank  :      0   N.blank  :      0  
+#  Min.nchar:     10   Mean   : 4151   Min.nchar:      1   Min.nchar:      3  
+#  Max.nchar:     30   3rd Qu.: 6229   Max.nchar:      1   Max.nchar:     19  
+#                      Max.   :13770                                          
+#                                                                             
+#     STREET TYPE      PROPERTY GROUP        SSA             LATITUDE    
+#  Length   :1682199   Min.   :  1000   Min.   : 1.00     Min.   :41.64  
+#  N.unique :     14   1st Qu.: 20560   1st Qu.:22.00     1st Qu.:41.77  
+#  N.blank  :      0   Median :154437   Median :34.00     Median :41.85  
+#  Min.nchar:      2   Mean   :202155   Mean   :33.78     Mean   :41.85  
+#  Max.nchar:      4   3rd Qu.:367135   3rd Qu.:49.00     3rd Qu.:41.91  
+#  NAs      :  13545   Max.   :678027   Max.   :69.00     Max.   :42.02  
+#                                       NAs    :1359814   NAs    :1513   
+#    LONGITUDE           LOCATION      
+#  Min.   :-87.91   Length   :1682199  
+#  1st Qu.:-87.71   N.unique : 154353  
+#  Median :-87.67   N.blank  :      0  
+#  Mean   :-87.67   Min.nchar:     34  
+#  3rd Qu.:-87.63   Max.nchar:     40  
+#  Max.   :-87.52   NAs      :   1513  
+#  NAs    :1513
 
 nrow(chicago_df)
 # [1] 1682199
@@ -4572,7 +4572,7 @@ str(chicago_df)
 #   ..   LONGITUDE = col_double(),
 #   ..   LOCATION = col_character()
 #   .. )
-#  - attr(*, &amp;quot;problems&amp;quot;)=&amp;lt;externalptr&amp;gt;
+#  - attr(*, &amp;quot;problems&amp;quot;)=&amp;lt;pointer: 0x9a984d600&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Noticing that VIOLATION_DATE is stored as a character instead of a date, we fix it using &lt;code&gt;mdy&lt;/code&gt; function from &lt;code&gt;lubridate&lt;/code&gt;. This function is appropriate compared to another one such as &lt;code&gt;ymd&lt;/code&gt; because the dates &lt;strong&gt;appear&lt;/strong&gt; to be in month, day, year format.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(lubridate)
@@ -4592,7 +4592,7 @@ How would you access the help file?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Set up a separate project and directory structure to read in the &lt;a href=&#34;https://www.dropbox.com/scl/fo/vfph4nimw1qmf79r93axz/AOEx-eYMjsnR7WEy7K2MBNM?rlkey=kykwyzta8ny5ucledt77xqv1d&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;gasoline purchase data&lt;/a&gt;. Notice that there are 2 files (csv and xlsx). Read in both files and compare them. Which one is easier to read in? Why? Hint: You might have to use a different package (e.g. &lt;code&gt;openxlsx2&lt;/code&gt;) than &lt;code&gt;tidyverse&lt;/code&gt; to read in the xlsx file.&lt;/p&gt;
+&lt;p&gt;Set up a separate project and directory structure to read in the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:f:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gasoline_purchases?d=w7b2996d31d4d4230bd755237b157a659&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=P7zWzJ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;gasoline purchase data&lt;/a&gt;. Notice that there are 2 files (csv and xlsx). Read in both files and compare them. Which one is easier to read in? Why? Hint: You might have to use a different package (e.g. &lt;code&gt;openxlsx2&lt;/code&gt;) than &lt;code&gt;tidyverse&lt;/code&gt; to read in the xlsx file.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;hr&gt;
@@ -4628,7 +4628,7 @@ colrs &amp;lt;- c(&amp;quot;Green&amp;quot;,&amp;quot;Red&amp;quot;)
 barplot(as.matrix(chicago_cont_table_df2 ), main=&amp;quot;Bar Chart&amp;quot;, ylab = &amp;quot;Count&amp;quot;, cex.lab = 1.1, cex.main = 1.4, beside=TRUE, col= colrs)
 legend(&amp;quot;topright&amp;quot;, c(&amp;quot;Complied&amp;quot;, &amp;quot;Open&amp;quot;), cex=1.3, bty=&amp;quot;n&amp;quot;, fill=colrs)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/introduction-to-r-rmarkdown/index.en_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/introduction-to-r-rmarkdown/index.en_files/figure-html/unnamed-chunk-8-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;The above is a terrible graphic and is used for demonstration purposes only. What is wrong with this graphic?&lt;/p&gt;
