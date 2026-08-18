@@ -1,0 +1,2059 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Using messy text fields to create some structure out of the datasets." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/matching-messy-texts/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/matching-messy-texts/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/matching-messy-texts/" />
+  <meta property="og:title" content="Matching Messy Texts | Nikhil Kaza" />
+  <meta property="og:description" content="Using messy text fields to create some structure out of the datasets." /><meta property="og:image" content="https://nkaza.github.io/post/matching-messy-texts/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/matching-messy-texts/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2020-08-24T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2025-11-12T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/matching-messy-texts/"
+  },
+  "headline": "Matching Messy Texts",
+  
+  "image": [
+    "https://nkaza.github.io/post/matching-messy-texts/featured.png"
+  ],
+  
+  "datePublished": "2020-08-24T00:00:00Z",
+  "dateModified": "2025-11-12T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Using messy text fields to create some structure out of the datasets."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Matching Messy Texts | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="16c56724db237a7d8228be50d1f47d03" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.7e85d6cfe81caeb57cc49452f9b55e03.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Matching Messy Texts</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Nov 12, 2025
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    32 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/new-urban-analytics/">new-urban-analytics</a>, <a href="/category/data-munging/">data-munging</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 672px;">
+  <div style="position: relative">
+    <img src="/post/matching-messy-texts/featured_hu5ae4231e589da72125e1b2953a4bc700_838465_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="672" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <h2 id="the-problems-of-free-form-text">The Problems of Free Form Text</h2>
+<p>One of the joys of language is that there is an infinite variety of ways in which we can express ourselves. Conventions vary. People are likely to run afoul of grammatical and spelling conventions depending on their background, attention to detail and adherence to convention. This expressive variety becomes a disadvantage for a data analyst who wants to analyse text. Urban datasets frequently contain free form language; names, addresses, surveys, regulations, complaints, tweets, posts, newspaper reports, plans, interviews, ordinances etc. When the text is not standardised and restricted, they pose problems for a data analyst who is trying to reduce and distill the information, often ignoring the context and conventions that the gives meaning to the text. The text is then wrangled, standardised or ignored. In this blog, I will show how one might attempt to wrangle text. I also want to highlight the decisions that the analyst makes that severely distort the meaning and introduce errors.</p>
+<blockquote>
+<p>All clean datasets are alike. But each messy dataset is messy in its own way &mdash; Prener paraphrasing Wickham paraprhasing Tolstoy</p>
+</blockquote>
+<h2 id="data--required-packages">Data &amp; Required Packages</h2>
+<p>The Worker Adjustment and Retraining Notification Act (WARN) requires employers with 100 or more employees (generally not counting those who have worked less than six months in the last 12 months and those who work an average of less than 20 hours a week) to provide at least 60 calendar days advance written notice of a plant closing and mass lay-off affecting 50 or more employees at a single site of employment. In Ohio, the Department of Job and Family Services is in charge of collecting and archiving the notices. <a href="https://www.clevelandfed.org/~/media/content/newsroom%20and%20events/publications/working%20papers/2020/wp2003.pdf" target="_blank" rel="noopener">Research</a> by Cleveland Federal Reserve Bank suggests that these notices are useful bellwethers for economic conditions in the state.  We are limiting our analysis to <a href="https://www.dropbox.com/scl/fo/s5s8nfxmpqazivf37s5om/ACx9bwbp-z1qT1-InaAOC4w?rlkey=1flvs665dqhk8hisox8gtp0ur&amp;st=c3uebuaa&amp;dl=0" target="_blank" rel="noopener">2024 data for</a> Ohio.</p>
+<p>Historical data for WARN is at</p>
+<ul>
+<li>Krolikowski, Pawel M. and Kurt G. Lunsford. 2020. &ldquo;Advance Layoff Notices and Labor Market Forecasting.&rdquo; Federal Reserve Bank of Cleveland, Working Paper no. 20-03. <a href="https://doi.org/10.26509/frbc-wp-202003" target="_blank" rel="noopener">https://doi.org/10.26509/frbc-wp-202003</a></li>
+</ul>
+<p>In this blog, I am going to use another business listings dataset from Infogroup called <a href="http://resource.referenceusa.com/available-databases/" target="_blank" rel="noopener">ReferenceUSA</a> to establish additional information about the business that is listed in the WARN database. ReferenceUSA data for the US can be obtained from UNC library. I obtained the WARN dataset from <a href="https://jfs.ohio.gov/job-services-and-unemployment/job-services/job-programs-and-services/submit-a-warn-notice/current-public-notices-of-layoffs-and-closures-sa" target="_blank" rel="noopener">Ohio</a>.</p>
+<p>In this tutorial, I am going to use <code>stringr</code>, <code>stringi</code>, <code>stringdist</code>, <code>postmastr</code>, <code>ellmer</code>  packages in addition to other packages in R.</p>
+<pre><code class="language-r">library(tidyverse)
+library(skimr)
+library(readxl)
+
+warn_df &lt;- 
+  here(&quot;tutorials_datasets&quot;, &quot;textmatching&quot;, &quot;WARN_OH&quot;, &quot;ohio_warn_2024.xlsm&quot;) %&gt;% 
+  read_excel(sheet = &quot;Sheet1&quot;)
+
+names(warn_df)
+# [1] &quot;Firmname&quot;                                                                                      
+# [2] &quot;Received_Date&quot;                                                                                 
+# [3] &quot;Location&quot;                                                                                      
+# [4] &quot;Affected_employees&quot;                                                                            
+# [5] &quot;Layoff_Date&quot;                                                                                   
+# [6] &quot;Phone&quot;                                                                                         
+# [7] &quot;Union: International of Bridge, Structural, Ornamental, Reinforcing Iron Workers, AFL-CIO, CLC&quot;
+# [8] &quot;notice_ID&quot;                                                                                     
+# [9] &quot;url&quot;
+</code></pre>
+<p>Notice that there is no address field in the dataset. Sometimes the addresses are in the pdf documents that are downloaded from the url field. I am used the following code to download the pdfs and is provided for reference. The downloaded pdfs are [here]((<a href="https://www.dropbox.com/scl/fo/s5s8nfxmpqazivf37s5om/ACx9bwbp-z1qT1-InaAOC4w?rlkey=1flvs665dqhk8hisox8gtp0ur&amp;st=c3uebuaa&amp;dl=0" target="_blank" rel="noopener">https://www.dropbox.com/scl/fo/s5s8nfxmpqazivf37s5om/ACx9bwbp-z1qT1-InaAOC4w?rlkey=1flvs665dqhk8hisox8gtp0ur&st=c3uebuaa&dl=0</a>)</p>
+<pre><code class="language-r">user_agents &lt;- c(
+  &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&quot;,
+  &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15&quot;,
+  &quot;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0&quot;,
+  &quot;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0&quot;,
+  &quot;Mozilla/5.0 (iPad; CPU OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1&quot;
+)
+
+for (i in 1:nrow(warn_df)){
+  current_ua &lt;- sample(user_agents, 1) # Using this to randomly sample user agents to avoid being blocked by servers.
+  print(current_ua)
+  tryCatch({
+  download.file(URLencode(warn_df$url[i]), 
+                destfile = here(&quot;InputData&quot;, &quot;pdfs&quot;, paste0(warn_df$notice_ID[i], &quot;.pdf&quot;)), 
+                mode = 'wb',
+                headers = c(&quot;User-Agent&quot; = current_ua))
+                Sys.sleep(.5)
+  }, error = function(e) {print(paste(&quot;Error downloading file for notice_ID:&quot;, warn_df$notice_ID[i]))})
+}
+
+</code></pre>
+<h2 id="using-a-llm-to-extract-addresses-from-pdfs">Using a LLM to Extract Addresses from PDFs</h2>
+<p>An <a href="https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/" target="_blank" rel="noopener">entire post</a> is dedicated to working with Large Language Models. I will not rehash much of it here. However, I will show how I used Claude Anthropic large language model to extract addresses from the pdfs. You will need to get an <a href="https://docs.claude.com/en/api/admin-api/apikeys/get-api-key" target="_blank" rel="noopener">API key from Claude</a>. You can adapt this code for other LLM relatively easily, but your results may vary.</p>
+<div class="alert alert-alert">
+  <div>
+    Expect to pay for API usage. At the time of writing, Anthropic charges $0.03 per 1,000 tokens for Claude 4.5. Be sure to monitor your usage. If you don&rsquo;t want to pay, use a local LLM such as llama 3.2 via <a href="https://ollama.com/" target="_blank" rel="noopener">Ollama</a>. Expect differences in performance.
+  </div>
+</div>
+<pre><code class="language-r">
+library(ellmer)
+library(jsonlite)
+
+Sys.setenv(&quot;ANTHROPIC_API_KEY&quot; = &quot;YOUR_API_KEY_HERE&quot;)  # Replace with your actual API key
+
+extraction_prompt &lt;- function(file_name){paste0(&quot;
+From the attached pdf document with filename &quot;, file_name, &quot;, only return the name of facility/firm and address of location where a firm/facility is closing. Extract the address in a single line format.
+Ignore information about address for any other entity espectially government entities such as Office of Workforce Development or Rapid Response Unit or variations thereof. If you encounter address for that entity, skip it.
+Ignore firms and addresses that are not in Ohio, OH.
+
+Also extract whether bumping rights exist or not. 
+If the address or bumping rights information are not present in the text, return null for that field.
+Return the result as a JSON list the contains JSON objects with three fields: 'facility_name' (string), 'address' (string) and 'bumping_rights' (true or false). 
+The output must be valid JSON that can be parsed by fromJSON() in R. Do not include any explanation or formatting outside the JSON. 
+
+Example output:
+  {
+    'facility_name': 'ABC Manufacturing',
+    'address': '123 Main St, Springfield, OH 45501',
+    'bumping_rights': true
+    'file_name' : '000-24-002.pdf'
+  }
+
+Rules:
+  - Only extract information that is clearly present
+- Return null for missing information. Do not make up values
+- Ensure valid JSON format
+- No text outside the JSON response
+- Multiple entries in JSON are allowed.
+- No ``` blocks.
+
+
+File Content:
+&lt;&lt;PDF_FILE_CONTENT&gt;&gt;
+ &quot;
+)}
+
+
+
+pdf_paths &lt;- here(&quot;tutorials_datasets&quot;, &quot;text_matching&quot;, &quot;WARN_OH&quot;, &quot;pdfs&quot;) %&gt;%
+  list.files(full.names = T)
+
+# For each file, create a prompt and content_pdf_file object
+
+prompts_warn &lt;- map(pdf_paths, function(f){
+  list(extraction_prompt(content_pdf_file(f)@filename),
+       content_pdf_file(f)
+      )
+})
+
+claude_chat &lt;- chat_anthropic(
+  model = &quot;claude-sonnet-4-5-20250929&quot;,  # Check to see what the name of the latest model is https://docs.claude.com/en/docs/about-claude/models/overview
+  api_key = Sys.getenv(&quot;ANTHROPIC_API_KEY&quot;), #
+  system_prompt = &quot;You are an expert at extracting structured information from unstructured text. Always return valid JSON.&quot;,
+  params = list(max_tokens = 1000,temperature = 0.1)  # Low temperature for consistent extraction
+)
+
+chat_out &lt;- parallel_chat_text(claude_chat, 
+                      prompts_warn
+                      )
+</code></pre>
+<h2 id="parse-the-json-output">Parse the JSON output</h2>
+<p>The above is a very time consuming processes and produces a list of JSON strings. I have written it out as a text file <a href="https://www.dropbox.com/scl/fi/46tlvu2bbbj9vwouomz0t/claude_warn_extraction_responses.txt?rlkey=g9fpurfm92m61sgqiioch8kix&amp;dl=0" target="_blank" rel="noopener">here</a>.</p>
+<p>I am going to read them in and parse them as if I ran the Claude code. But of course, saving them to a disk distorted the file from a vector a string. So we need to do some processing to recover the vector of JSON strings.
+First I am using <code>readLines</code> to read in the text file and collapse them into a single string.</p>
+<pre><code class="language-r">chat_out2 &lt;- here(&quot;tutorials_datasets&quot;, &quot;textmatching&quot;, &quot;WARN_OH&quot;, &quot;claude_warn_extraction_responses.txt&quot;) %&gt;%
+  readLines() %&gt;%
+  paste(collapse = &quot;\n&quot;)
+
+chat_out2
+</code></pre>
+<pre><code># [1] &quot;```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;GDI Services (Amazon Warehouse)\&quot;,\n    \&quot;address\&quot;: \&quot;1550 W Main St, West Jefferson, OH 43162\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-002.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;GDI Services (Amazon Warehouse)\&quot;,\n    \&quot;address\&quot;: \&quot;1245 Beech Rd SW, New Albany, OH 43054\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-002.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;GDI Services (Amazon Warehouse)\&quot;,\n    \&quot;address\&quot;: \&quot;27400 Crossroads PKWY, Rossford, OH 43460\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-002.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Akron, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-006.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Columbus, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-006.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Lima, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-006.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;North Royalton, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-006.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;South Bloomfield, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-006.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Troy, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-006.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Upper Arlington, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-006.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;61000 Leyshom Drive, Byesville, OH 43723\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-075.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;1341 Freese Works Place, Galion, OH 44833\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-075.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;675 Wales Drive, Hartville, OH 44632\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-075.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;212 Hobart Drive, Hillsboro, OH 45133\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-075.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;2545 St. Johns Road, Lima, OH 45804\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-075.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;635 Independence Drive, Napolean, OH 43545\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-075.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;322 Arco Drive, Toledo, OH 43607\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-075.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;2991 S. County Road 25A, Troy, OH 45373\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-075.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Vimo, Inc. dba GetInsured\&quot;,\n    \&quot;address\&quot;: null,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-095.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;D&amp;A Consulting Services, dba GetInsured\&quot;,\n    \&quot;address\&quot;: null,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;000-24-095.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Nursery Supplies, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;3175 Gilchrist Road, Mogadore, Ohio 44260\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;002-24-045.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Epiroc Industrial Tools and Attachments LLC\&quot;,\n    \&quot;address\&quot;: \&quot;820 Glaser Pkwy, Akron, OH 44306\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;002-24-058.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Universal Screen Arts, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;5581 Hudson Industrial Parkway, Hudson, OH 44236\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;002-24-072.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Universal Screen Arts, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;6279 Hudson Crossing Parkway, Suite 100, Hudson, OH 44236\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;002-24-072.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Nestlé USA, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;5750 Harper Road, Solon, OH 44139\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-008.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Nestlé USA, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;30003 Bainbridge Rd, Solon, OH 44139\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-008.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Nestlé USA, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;30000 Bainbridge Road, Solon, OH 44139\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-008.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;ZIN Technologies, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;6749 Engle Road, Middleburg Heights, OH 44130\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-009.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;ZIN Technologies, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;6745 Engle Road, Middleburg Heights, OH 44130\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-009.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Metro Décor LLC\&quot;,\n    \&quot;address\&quot;: \&quot;30320 Emerald Valley Parkway, Glenwillow, Ohio 44139\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-015.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Metro Décor LLC\&quot;,\n    \&quot;address\&quot;: \&quot;28625 Fountain Parkway, Solon, Ohio 44139\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-015.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;CLE 2 Amazon\&quot;,\n    \&quot;address\&quot;: \&quot;21500 Emery Rd, North Randall, OH 44128\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-023.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Associated Materials, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;3773 State Road, Cuyahoga Falls, OH 44223\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-024.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;ProMedica Skilled Nursing and Rehabilitation at MetroHealth\&quot;,\n    \&quot;address\&quot;: \&quot;4229 Pearl Road, Cleveland, OH 44109\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-028.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Xellia Pharmaceuticals USA LLC\&quot;,\n    \&quot;address\&quot;: \&quot;200 Northfield Rd., Bedford, OH 44146\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;003-24-048.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Aramark Facility Services, LLC at Cleveland Browns Stadium\&quot;,\n    \&quot;address\&quot;: \&quot;100 Alfred Lerner Way, Cleveland, OH\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-055.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Airgas USA, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;6055 Rockside Woods Blvd North, Independence, OH 44131\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-067.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Swissport USA, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;5300 Riverside Dr, Cleveland, OH 44135\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;003-24-070.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;True Value Company, L.L.C.\&quot;,\n    \&quot;address\&quot;: \&quot;26025 First Street, Westlake, OH 44145-1400\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;003-24-082.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;American Sugar Refining, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;2075 E 65th St., Cleveland, OH 44103\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;003-24-088.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;First Student\&quot;,\n    \&quot;address\&quot;: \&quot;42242 Albrecht Road, Elyria, OH 44035\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;004-24-021.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Inservco Inc. d/b/a Vexos\&quot;,\n    \&quot;address\&quot;: \&quot;110 Commerce Drive, LaGrange, OH 44050\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;004-24-057.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Nordson Corporation\&quot;,\n    \&quot;address\&quot;: \&quot;555 Jackson Street, Amherst, OH 44001\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;004-24-079.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Nordson Corporation\&quot;,\n    \&quot;address\&quot;: \&quot;444 Gordon Ave, Amherst, OH 44001\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;004-24-079.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Nordson Corporation\&quot;,\n    \&quot;address\&quot;: \&quot;200 Nordson Drive, Amherst, OH 44001\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;004-24-079.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Nordson Corporation\&quot;,\n    \&quot;address\&quot;: \&quot;100 Nordson Drive, Amherst, OH 44001\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;004-24-079.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Libra Industries, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;7770 Division Drive, Mentor, Ohio 44060\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;005-24-074.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Libra Industries, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;7770 Division Drive, Mentor, Ohio 44060\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;005-24-091.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Anheuser-Busch\&quot;,\n    \&quot;address\&quot;: \&quot;1611 Marietta Ave SE, Canton, OH 44707\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;006-24-061.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;PPC Flexible Packaging LLC\&quot;,\n    \&quot;address\&quot;: \&quot;9465 Edison St NE, Alliance, OH 44601\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;006-24-084.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Newell Brands Distribution LLC\&quot;,\n    \&quot;address\&quot;: \&quot;175 Heritage Drive, Pataskala, OH 43062\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-003.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Marsden Services, L.L.C.\&quot;,\n    \&quot;address\&quot;: \&quot;11999 National Rd SW Etna, OH 43018\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-004.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;VS Direct Fulfillment, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;5959 Bigger Road, Kettering, OH 45440\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-005.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Linamar Structures USA (Michigan) Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;507 W Indiana St, Edon, OH 43518\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-010.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;SAVOR at Nutter Center\&quot;,\n    \&quot;address\&quot;: \&quot;3640 Colonel Glenn Highway, Fairborn, OH 45324\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;007-24-014.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;IAC Wauseon, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;555 W. Linfoot Street, Wauseon, OH 43567\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;007-24-018.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Amsive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;3303 West Tech Road, Miamisburg, Ohio 45342\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-022.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Honeywell Intelligrated LLC\&quot;,\n    \&quot;address\&quot;: \&quot;475 E. High Street, London, OH 43140\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-030.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Bon Appetit Management Co.\&quot;,\n    \&quot;address\&quot;: \&quot;100 Smith Lane, Granville, OH\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-033.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Insight Direct USA, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;8337 Green Meadows Drive N, Lewis Center, OH 43035\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-035.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;RK Industries, Inc\&quot;,\n    \&quot;address\&quot;: \&quot;725 N Locust St, Ottawa, OH 45875\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-042.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;675 Wales Drive, Hartville, OH 44632\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-044.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;212 Hobart Drive, Hillsboro, OH 45133\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-044.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Cygnus Home Service, LLC, d/b/a Yelloh\&quot;,\n    \&quot;address\&quot;: \&quot;2254 Rice Road, Jackson, OH 45640\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-044.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Delta Apparel, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;102 Reliance Drive, Hebron, Ohio 43025\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-051.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;idX Corporation dba idX Dayton\&quot;,\n    \&quot;address\&quot;: \&quot;2875 Needmore Road, Dayton, OH 45414\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-054.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Global Medical Response\&quot;,\n    \&quot;address\&quot;: \&quot;8261 State Route 235, Dayton, Ohio 45424\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-059.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Global Medical Response\&quot;,\n    \&quot;address\&quot;: \&quot;106 Royan Street, Sidney, Ohio 45365\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-059.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;ZF Active Safety US Inc\&quot;,\n    \&quot;address\&quot;: \&quot;1750 Production Drive, Findlay, OH 45840\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;007-24-066.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Faurecia Exhaust Systems\&quot;,\n    \&quot;address\&quot;: \&quot;1255 Archer Dr, Troy, OH 45373\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-068.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;IAC Wauseon, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;555 W. Linfoot Street, Wauseon, OH 43567\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;007-24-073.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;P. Graham Dunn, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;630 Henry St., Dalton, OH 44618\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-077.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;idX Corporation dba idX Dayton\&quot;,\n    \&quot;address\&quot;: \&quot;2875 Needmore Road, Dayton, OH 45414\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-089.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;American Freight Stores, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;109 Innovation Court, Delaware, OH 43015\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-090.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Spartech LLC\&quot;,\n    \&quot;address\&quot;: \&quot;925 W. Gasser Road, Paulding, OH, 45879\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;007-24-092.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Decorative Panels International, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;2900 Hill Avenue, Toledo, Ohio 43607\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;009-24-017.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Optum\&quot;,\n    \&quot;address\&quot;: \&quot;100 N Byrne Rd, Toledo, OH 43607\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;009-24-041.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;FCA US LLC - Toledo Assembly Complex\&quot;,\n    \&quot;address\&quot;: \&quot;4400 Chrysler Drive, Toledo, OH 43608\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;009-24-085.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Mobis North America LLC\&quot;,\n    \&quot;address\&quot;: \&quot;3900 Stickney Ave., Toledo, Ohio 43608\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;009-24-086.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;KUKA Toledo Production Operations, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;3770 Stickney Ave, Toledo, OH 43608\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;009-24-087.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Walmart\&quot;,\n    \&quot;address\&quot;: \&quot;3579 S High St, Columbus, OH 43207\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-011.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Genpact LLC\&quot;,\n    \&quot;address\&quot;: \&quot;7000 Cardinal Place, Dublin, OH 43017\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-012.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;BrightView Enterprise Solutions, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;6530 W. Campus Oval #300, New Albany, OH 43054\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-019.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Sid Tool Co., Inc. dba MSC Industrial Direct Co., Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;1568 Georgesville Rd., Columbus, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-020.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;EVO Transportation &amp; Energy Services, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;3115 E. 17th Avenue, Columbus, OH 43219\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-031.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Express, LLC and Express Fashion Operations, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;1 Express Drive, Columbus, OH 43230\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-032.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Express, LLC and Express Fashion Operations, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;235 North 4th Street, Columbus, OH 43215\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-032.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Arlington Contact Lens Service, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;2250 International St. Columbus, OH 43228\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-034.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Bath &amp; Body Works Logistics Services, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;1 Limited Parkway, Columbus, OH 43230\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-036.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Djafi Trucking Company, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;2491 East Dublin Granville Road, Columbus, OH 43229\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-037.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Sodexo, Inc and Affiliates\&quot;,\n    \&quot;address\&quot;: \&quot;4892 BLAZER PKWY, Dublin, OH 43017\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;011-24-038.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Charter Communications Customer Contact Center\&quot;,\n    \&quot;address\&quot;: \&quot;1600 Dublin Road, Columbus, OH 43215\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-047.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Bath &amp; Body Works Logistics Services, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;1 Limited Parkway, Columbus, OH 43230\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-049.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Pitney Bowes Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;6111 Bixby Road, Canal Winchester, OH\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-053.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Pitney Bowes Inc. Global Ecommerce facility\&quot;,\n    \&quot;address\&quot;: \&quot;6111 Bixby Road, Canal Winchester, OH\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;011-24-060.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;DHL Supply Chain\&quot;,\n    \&quot;address\&quot;: \&quot;6200 Winchester Blvd, Canal Winchester, OH 43110\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;011-24-080.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Centerpoint Health\&quot;,\n    \&quot;address\&quot;: \&quot;3420 Atrium Blvd., Suite 102, Franklin, OH 45005\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;012-24-007.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;St. Bernard Soap Company\&quot;,\n    \&quot;address\&quot;: \&quot;5177 Spring Grove Avenue, Cincinnati, OH 45217\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;013-24-001.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Oak View Group\&quot;,\n    \&quot;address\&quot;: \&quot;525 Elm St, Cincinnati, OH 45202\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;013-24-029.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Mauser Packaging Solutions\&quot;,\n    \&quot;address\&quot;: \&quot;8200 Broadwell Road, Cincinnati, OH 45244\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;013-24-039.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Barclays Services, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;1435 Vine St, Cincinnati, OH 45202\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;013-24-043.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Nordic Consulting Group, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;1701 Mercy Health Place, Cincinnati, OH 45237\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;013-24-050.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Pepsi Beverages Company Cincinnati\&quot;,\n    \&quot;address\&quot;: \&quot;2121 Sunnybrook Dr, Cincinnati, OH 45237\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;013-24-083.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Northside Regional Medical Center\&quot;,\n    \&quot;address\&quot;: \&quot;500 Gypsy Lane, Youngstown, OH 44501\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;017-24-062.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Hillside Rehabilitation Hospital\&quot;,\n    \&quot;address\&quot;: \&quot;8747 Squires Lane NE, Warren, OH 44484\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;018-24-063.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Hillside Rehabilitation Hospital\&quot;,\n    \&quot;address\&quot;: \&quot;8747 Squires Lane NE Warren, OH 44484\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;018-24-064.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Trumbull Regional Medical Center\&quot;,\n    \&quot;address\&quot;: \&quot;1350 E. Market Street, Warren, OH 44483\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;018-24-065.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Mohawk Fine Papers, Inc.\&quot;,\n    \&quot;address\&quot;: \&quot;6800 Center Road, Ashtabula, OH 44004\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;019-24-016.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;General Aluminum, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;1370 Chamberlain Blvd. Conneaut, Ohio 44030\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;019-24-081.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Commercial Vehicle Group (CVG) Chillicothe\&quot;,\n    \&quot;address\&quot;: \&quot;75 Chamber Dr., Chillicothe, OH 45601\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;020-24-013.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Post Consumer Brands\&quot;,\n    \&quot;address\&quot;: \&quot;3775 Lancaster New Lexington Rd. SE, Lancaster, OH 43130\&quot;,\n    \&quot;bumping_rights\&quot;: true,\n    \&quot;file_name\&quot;: \&quot;020-24-056.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;American Freight Stores, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;109 Innovation Court, Delaware, OH 43015\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;077-24-093.pdf\&quot;\n  }\n]\n```\n```json\n[]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;780 S3 W PLANE ST, BETHEL, Clermont, OH 45106-1313\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;1300 7990 READING RD, CINCINNATI, Hamilton, OH 45237-2112\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;3549 6704 N RIDGE RD, MADISON, Lake, OH 44057-2639\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;3967 1121 N REYNOLDS RD, TOLEDO, Lucas, OH 43615-4755\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;4052 650 N UNIVERSITY BLVD, MIDDLETOWN, Butler, OH 45042-3356\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;4674 5527 BRIDGETOWN RD, Cincinnati, Hamilton, OH 45248-4329\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;4936 511 S BREIEL BLVD, MIDDLETOWN, Butler, OH 45044-5111\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;5778 9302 MILES AVENUE, CLEVELAND, Cuyahoga, OH 44105-6116\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;5819 440 N JAMES H MCGEE BLVD, DAYTON, Montgomery, OH 45402-6531\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;5948 519 S 2ND ST, RIPLEY, Brown, OH 45167-1307\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;6226 2372 CLEVELAND AVE, COLUMBUS, Franklin, OH 43211-1610\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;6364 1250 E 105TH ST, CLEVELAND, Cuyahoga, OH 44108-3568\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family Dollar\&quot;,\n    \&quot;address\&quot;: \&quot;6925 3577 E Livingston Avenue, Columbus, Franklin, OH 43227-2235\&quot;,\n    \&quot;bumping_rights\&quot;: null,\n    \&quot;file_name\&quot;: \&quot;999-24-026.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Family\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Volta Charging Industries, LLC\&quot;,\n    \&quot;address\&quot;: null,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-027.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: null,\n    \&quot;address\&quot;: null,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-040.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Akron, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-071.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Columbus, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-071.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;lima, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-071.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;North Royalton, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-071.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;South Bloomfield, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-071.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Troy, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-071.pdf\&quot;\n  },\n  {\n    \&quot;facility_name\&quot;: \&quot;Lost Boys Interactive, LLC\&quot;,\n    \&quot;address\&quot;: \&quot;Upper Arlington, Ohio\&quot;,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-071.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: \&quot;kaleo, Inc.\&quot;,\n    \&quot;address\&quot;: null,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-076.pdf\&quot;\n  }\n]\n```\n```json\n[\n  {\n    \&quot;facility_name\&quot;: null,\n    \&quot;address\&quot;: null,\n    \&quot;bumping_rights\&quot;: false,\n    \&quot;file_name\&quot;: \&quot;999-24-078.pdf\&quot;\n  }\n]\n```&quot;
+</code></pre>
+<p>Extract individual JSON objects from the text. We are going to use <a href="https://rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf" target="_blank" rel="noopener">Regular Expressions</a> to search and extract.</p>
+<div class="alert alert-alert">
+  <div>
+    Before proceeding, if you are not familiar with Regular Expressions, I highly recommend going through the <a href="https://regexone.com/" target="_blank" rel="noopener">RegexOne</a> tutorial. It is free and interactive.
+  </div>
+</div>
+<pre><code class="language-r"># The pattern uses DOTALL (?s) to allow '.' to match newlines,
+# and a non-greedy capture group (.*?) to grab only the content
+# between the code fences.
+json_regex &lt;- &quot;(?s)```json\n(.*?)\n```&quot;
+
+# str_match_all finds all matches and returns a list of matrices.
+# The JSON content is in the second column of the matrix.
+extracted_matches &lt;- str_match_all(chat_out2, json_regex)[[1]]
+
+# Extract the second column (Capture Group 1: the raw JSON string)
+json_blocks_vector &lt;- extracted_matches[, 2]
+
+</code></pre>
+<h3 id="explanation-of-the-regular-expression">Explanation of the Regular Expression</h3>
+<p>Here is a breakdown of its components:</p>
+<ul>
+<li>&ldquo;(?s)&rdquo;: This is an inline flag (modifier) that enables the DOTALL (or single-line) mode for the entire regular expression. In this mode, the dot (.) metacharacter matches any single character, including newline characters (\n). By default, the dot usually excludes newlines.</li>
+<li>&ldquo;```json\n&rdquo;: This part matches the literal string &ldquo;```json&rdquo; followed by a newline character.</li>
+<li>(.*?): This is the core of the regex:
+<ul>
+<li>&ldquo;(&rdquo; and &ldquo;)&rdquo;: These parentheses create a capturing group, which saves the matched text for later use.</li>
+<li>&ldquo;.&rdquo; : In combination with the (?s) flag, this matches any single character, including newlines.</li>
+<li>&ldquo;*?&rdquo;: This is a non-greedy (or lazy) quantifier, meaning it matches zero or more occurrences of the preceding element (.) but as few times as possible to allow the rest of the pattern to match. It stops as soon as it encounters the pattern that follows it.</li>
+<li>&ldquo;\n```&rdquo;: This matches a literal newline character followed by &ldquo;```&rdquo;, which serves as the end boundary for the non-greedy match.</li>
+</ul>
+</li>
+</ul>
+<p>In summary, this regex looks for the first occurrence of &ldquo;```json&rdquo; followed by a newline, and then lazily captures all the content after it until it finds the next newline character. It is likely used to extract a single line of data (which might contain spaces) that follows a &ldquo;json&rdquo; header in a multi-line string.</p>
+<p>It might helpful to see what this regex does on a sample text. In this example the second JSON is malformed in the sample text with no closing code fence &ldquo;```&rdquo;</p>
+<pre><code class="language-r"># Sample text with multiple lines
+text &lt;- &quot;Some introductory text.
+Here is a block of data:
+
+```json
+{\&quot;key\&quot;: \&quot;value\&quot;, \&quot;count\&quot;: 123}
+
+````
+```json
+[1, 2, 3]
+End of data block
+
+&quot;
+str_match_all(text, json_regex)
+</code></pre>
+<pre><code># [[1]]
+#      [,1]                                                  
+# [1,] &quot;```json\n{\&quot;key\&quot;: \&quot;value\&quot;, \&quot;count\&quot;: 123}\n\n```&quot;
+#      [,2]                                    
+# [1,] &quot;{\&quot;key\&quot;: \&quot;value\&quot;, \&quot;count\&quot;: 123}\n&quot;
+</code></pre>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>The above is necessary only to extract JSON strings from a larger text. Adapt the code to work on the output of the LLM.</li>
+</ul>
+<hr>
+<p>The following code cleans up the extracted JSON strings. It removes the code fences and ensures that the JSON objects are complete by appending necessary closing brackets if they are missing.</p>
+<pre><code class="language-r">
+json_blocks_vector &lt;- json_blocks_vector[str_detect(json_blocks_vector, &quot;\\{&quot;)]  # Keep only responses that contain JSON objects
+
+library(jsonlite)
+
+warn_extracted_df &lt;- 
+  map(json_blocks_vector, function(x){
+  tryCatch({
+    fromJSON(x, simplifyDataFrame = TRUE, flatten = TRUE)
+  }, error = function(e){
+    tibble(facility_name = NA_character_,
+           address = NA_character_,
+           bumping_rights = NA,
+           file_name = NA_character_)
+  })
+  }) %&gt;%
+  bind_rows()
+
+warn_extracted_df %&gt;% glimpse()
+# Rows: 123
+# Columns: 4
+# $ facility_name  &lt;chr&gt; &quot;GDI Services (Amazon Warehouse)&quot;, &quot;GDI Services (Amazo…
+# $ address        &lt;chr&gt; &quot;1550 W Main St, West Jefferson, OH 43162&quot;, &quot;1245 Beech…
+# $ bumping_rights &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,…
+# $ file_name      &lt;chr&gt; &quot;000-24-002.pdf&quot;, &quot;000-24-002.pdf&quot;, &quot;000-24-002.pdf&quot;, &quot;…
+
+
+warn_df &lt;-
+  warn_extracted_df %&gt;%
+  mutate(notice_ID = str_remove(file_name, &quot;\\.pdf$&quot;)) %&gt;%
+  filter(!is.na(address)) %&gt;%
+  left_join(warn_df, by = c(&quot;notice_ID&quot; = &quot;notice_ID&quot;)) 
+
+
+warn_df %&gt;% glimpse()
+# Rows: 120
+# Columns: 13
+# $ facility_name                                                                                    &lt;chr&gt; …
+# $ address                                                                                          &lt;chr&gt; …
+# $ bumping_rights                                                                                   &lt;lgl&gt; …
+# $ file_name                                                                                        &lt;chr&gt; …
+# $ notice_ID                                                                                        &lt;chr&gt; …
+# $ Firmname                                                                                         &lt;chr&gt; …
+# $ Received_Date                                                                                    &lt;chr&gt; …
+# $ Location                                                                                         &lt;chr&gt; …
+# $ Affected_employees                                                                               &lt;dbl&gt; …
+# $ Layoff_Date                                                                                      &lt;chr&gt; …
+# $ Phone                                                                                            &lt;chr&gt; …
+# $ `Union: International of Bridge, Structural, Ornamental, Reinforcing Iron Workers, AFL-CIO, CLC` &lt;chr&gt; …
+# $ url                                                                                              &lt;chr&gt; …
+</code></pre>
+<h2 id="parsing-the-addresses">Parsing the Addresses</h2>
+<p>Most geocoders expect an address that is properly standardised (e.g. South - S, Bvld - Boulevard ) and spelling errors corrected. This is important as user entered text about addresses rely on personal and local convention rather than standardisation. We can use <code>postmastr</code> to standardise and parse addresses.</p>
+<p><code>postmastr</code> is not yet available on CRAN, but can be installed from github using</p>
+<pre><code class="language-r">remotes::install_github(&quot;slu-openGIS/postmastr&quot;)
+</code></pre>
+<div class="alert alert-warning">
+  <div>
+    At the time of writing, postmastr is still in beta stages. So it may be buggy. Use it with caution.
+  </div>
+</div>
+<div class="alert alert-warning">
+  <div>
+    The following sections refer to addresses within the US, following its conventions. While some of the methods will transfer to other locations, use caution to interpret and adapt .
+  </div>
+</div>
+<p>postmastr works by following the <em>precise sequence</em> of the following steps.</p>
+<h3 id="preparation">Preparation</h3>
+<p>First there is a need to create a unique ID for unique addresses, so that only unique addresses are parsed. A quick look at the address column reveals that it has newlines <code>\n</code> in some of the entries. Let&rsquo;s replace it with a space.</p>
+<p>In the following code, I am replacing all the diacritics, e.g.ř, ü, é, è by transliterating to Latin alphabet. This is not strictly necessary but is useful to remember that some place names are in Spanish in the US. Some databases store the diacritics and some don&rsquo;t. Apologies to speakers of other languages.</p>
+<p>It is always a good idea to have one case. We are going to use the upper case.</p>
+<pre><code class="language-r">warn_df &lt;- warn_df %&gt;%
+        mutate(address = str_replace_all(address, &quot;[[:space:]]&quot;, &quot; &quot;),
+               address = stringi::stri_trans_general(address, &quot;Latin-ASCII&quot;),
+               address = str_remove_all(address, &quot;[[:punct:]]&quot;),
+               address = str_to_upper(address)
+               
+               ) 
+
+warn_df$address %&gt;% head()
+# [1] &quot;1550 W MAIN ST WEST JEFFERSON OH 43162&quot; 
+# [2] &quot;1245 BEECH RD SW NEW ALBANY OH 43054&quot;   
+# [3] &quot;27400 CROSSROADS PKWY ROSSFORD OH 43460&quot;
+# [4] &quot;AKRON OHIO&quot;                             
+# [5] &quot;COLUMBUS OHIO&quot;                          
+# [6] &quot;LIMA OHIO&quot;
+</code></pre>
+<pre><code class="language-r">library(postmastr)
+warn_df &lt;- pm_identify(warn_df, var = &quot;address&quot;)
+warn_min &lt;- pm_prep(warn_df, var = &quot;address&quot;, type ='street') # There do not seem to be any addresses that are based on intersections. So we are using the type=street.
+nrow(warn_df)
+# [1] 120
+nrow(warn_min)
+# [1] 101
+</code></pre>
+<p>You should notice the difference in the number of rows. 19 observations are dropped.</p>
+<h3 id="extract-zipcodes-and-states">Extract Zipcodes and States</h3>
+<p>Zipcodes come in two formats. A 5 digit variety and 5-4 digit variety. <code>pm_postal_parse</code> is able to parse both types, though in this instance only 5 digit codes are present.</p>
+<pre><code class="language-r">warn_min &lt;- pm_postal_parse(warn_min)
+</code></pre>
+<p>In this instance only state present in the dataset is OH. First we need to create a dictonary in case OH is spelled out in different ways such as Ohio or OHIO. Fortunately, this dataset only contains OH. If not, use <code>pm_append</code> to add different instances of the state name to the dictionary.</p>
+<pre><code class="language-r">ohDict &lt;- pm_dictionary(locale = &quot;us&quot;, type = &quot;state&quot;, filter = &quot;OH&quot;, case = &quot;upper&quot;)
+ohDict
+# # A tibble: 2 × 2
+#   state.output state.input
+#   &lt;chr&gt;        &lt;chr&gt;      
+# 1 OH           OH         
+# 2 OH           OHIO
+
+(warn_min &lt;- pm_state_parse(warn_min, dict=ohDict))
+# # A tibble: 101 × 4
+#    pm.uid pm.address                     pm.state pm.zip
+#     &lt;int&gt; &lt;chr&gt;                          &lt;chr&gt;    &lt;chr&gt; 
+#  1      1 1550 W MAIN ST WEST JEFFERSON  OH       43162 
+#  2      2 1245 BEECH RD SW NEW ALBANY    OH       43054 
+#  3      3 27400 CROSSROADS PKWY ROSSFORD OH       43460 
+#  4      4 AKRON                          OH       &lt;NA&gt;  
+#  5      5 COLUMBUS                       OH       &lt;NA&gt;  
+#  6      6 LIMA                           OH       &lt;NA&gt;  
+#  7      7 NORTH ROYALTON                 OH       &lt;NA&gt;  
+#  8      8 SOUTH BLOOMFIELD               OH       &lt;NA&gt;  
+#  9      9 TROY                           OH       &lt;NA&gt;  
+# 10     10 UPPER ARLINGTON                OH       &lt;NA&gt;  
+# # ℹ 91 more rows
+</code></pre>
+<pre><code class="language-r">ohCityDict &lt;- pm_dictionary(locale = &quot;us&quot;, type = &quot;city&quot;, filter = &quot;OH&quot;, case = &quot;upper&quot;)
+(warn_min &lt;- pm_city_parse(warn_min, dictionary = ohCityDict))
+# # A tibble: 101 × 5
+#    pm.uid pm.address            pm.city          pm.state pm.zip
+#     &lt;int&gt; &lt;chr&gt;                 &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt; 
+#  1      1 1550 W MAIN ST        WEST JEFFERSON   OH       43162 
+#  2      2 1245 BEECH RD SW      NEW ALBANY       OH       43054 
+#  3      3 27400 CROSSROADS PKWY ROSSFORD         OH       43460 
+#  4      4 &lt;NA&gt;                  AKRON            OH       &lt;NA&gt;  
+#  5      5 &lt;NA&gt;                  COLUMBUS         OH       &lt;NA&gt;  
+#  6      6 &lt;NA&gt;                  LIMA             OH       &lt;NA&gt;  
+#  7      7 &lt;NA&gt;                  NORTH ROYALTON   OH       &lt;NA&gt;  
+#  8      8 &lt;NA&gt;                  SOUTH BLOOMFIELD OH       &lt;NA&gt;  
+#  9      9 &lt;NA&gt;                  TROY             OH       &lt;NA&gt;  
+# 10     10 &lt;NA&gt;                  UPPER ARLINGTON  OH       &lt;NA&gt;  
+# # ℹ 91 more rows
+</code></pre>
+<h3 id="parsing-street-numbers-and-direction">Parsing Street, Numbers and Direction</h3>
+<p>We can use similar functions to parse out the street number.</p>
+<pre><code class="language-r">warn_min &lt;- warn_min %&gt;%
+             pm_house_parse()
+</code></pre>
+<p>Directionality of the street is little of a challenge. North could mean direction or a street name North St. Postmastr has logic already built into it to distinguish these two cases. By default, postmastr uses <code>dic_us_dir</code> dictionary.</p>
+<pre><code class="language-r">dic_us_dir
+# # A tibble: 20 × 2
+#    dir.output dir.input 
+#    &lt;chr&gt;      &lt;chr&gt;     
+#  1 E          E         
+#  2 E          East      
+#  3 N          N         
+#  4 N          North     
+#  5 NE         NE        
+#  6 NE         Northeast 
+#  7 NE         North East
+#  8 NW         NW        
+#  9 NW         Northwest 
+# 10 NW         North West
+# 11 S          S         
+# 12 S          South     
+# 13 SE         SE        
+# 14 SE         Southeast 
+# 15 SE         South East
+# 16 SW         SW        
+# 17 SW         Southwest 
+# 18 SW         South West
+# 19 W          W         
+# 20 W          West
+</code></pre>
+<p>We have already converted our strings to upper cases rather than leaving it in the sentence case as dic_us_dir assumes. We will have to modify the dictionary to fit our useccase.</p>
+<pre><code class="language-r">dic_us_dir &lt;- dic_us_dir %&gt;%
+              mutate(dir.input = str_to_upper(dir.input))
+
+
+warn_min &lt;- warn_min %&gt;%  
+             pm_streetDir_parse(dictionary = dic_us_dir) %&gt;%
+             pm_streetSuf_parse() %&gt;%
+             pm_street_parse(ordinal = TRUE, drop = TRUE)
+
+</code></pre>
+<p>Once we have parsed data, we add our parsed data back into the source.</p>
+<pre><code class="language-r">warn_parsed &lt;- pm_replace(warn_min, source = warn_df) %&gt;%
+               pm_rebuild(output=&quot;short&quot;, keep_parsed = 'yes')
+
+</code></pre>
+<p>Now that it is straightforward to geocode the addresses since they are all standardised.</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>
+<p>Use<code>tidygeocoder</code> to see if the parsed addresses are geocoded correctly. Check for whether single line addresses can be geocoded correctly. How much improvement did you get? Was it worth the effort?</p>
+</li>
+<li>
+<p>Use <code>tmap</code> to visualiase the locations of where the layoffs are occuring in Ohio.</p>
+</li>
+</ul>
+<hr>
+<h2 id="matching-names">Matching Names</h2>
+<p>Notice that in WARN data there are no <a href="https://www.census.gov/naics/?58967?yearbck=2022" target="_blank" rel="noopener">NAICS codes</a>, an industrial classification system that is commonly used (Other older classification is called SIC). So it is hard to tell which industry is being affected by these layoffs. Fortunately, another dataset has names and NAICS codes. So just as we matched parsed addresses to latitude an longitude, we can try and match names to NAICS codes. However, names are more idiosyncratic than addresses.</p>
+<p>Here are some rules, I came up using iterative methods. They are not exhaustive nor are they representative of what you might want to with other datasets.</p>
+<pre><code class="language-r">library(stringi)
+library(stringr)
+
+# I am trying to remove common words in the name that can impact string similarity scores. Add to the list or modify to suit.
+
+removalwords &lt;- c(&quot;CORP&quot;, &quot;CORPORATION&quot;, &quot;SERVICE&quot;, &quot;SERVICES&quot;, &quot;CO&quot;,  &quot;GROUP&quot;, &quot;HOLDINGS&quot;, &quot;MANAGEMENT&quot;, &quot;LTD&quot;, &quot;INC&quot;, &quot;LLC&quot;, &quot;L.L.C.&quot;, &quot;PC&quot;, &quot;PLLC&quot;, &quot;SOLUTIONS&quot;, &quot;COMPANY&quot;, &quot;COMPANIES&quot;, &quot;MANAGEMENT&quot;, &quot;MGMNT&quot;, &quot;USA&quot;, &quot;US&quot;)
+
+placenames &lt;- tigris::places(state=&quot;OH&quot;, progress_bar = FALSE) %&gt;% sf::st_set_geometry(NULL) %&gt;% pull(NAME) %&gt;% toupper()
+
+
+compnames &lt;- warn_parsed %&gt;%
+  rename(company = facility_name) %&gt;%
+  select(company, pm.zip) %&gt;%
+  mutate(
+    orig_company = company,
+    company = str_squish(company),  # Removes leading and trailing white spaces
+    company = str_remove_all(company, &quot;\\&amp;[A-Za-z]*;&quot;), # This removes some HTML tags like &amp;quot; &amp;lt; etc.
+    company = str_remove_all(company, &quot;\\t|\\n|\\r&quot;),  # This removes newlines and some other returns
+    company = str_remove_all(company, &quot;[[:punct:]]&quot;), # This removes punctuations marks such as `,`, `'`, '?
+    company = str_replace_all(company, &quot;\\.&quot;, &quot;\ &quot;), # This replaces . with a space.
+    company = str_replace(company, &quot;d/b/a &quot;, &quot;DBA&quot;), #This replaces d/b/a with DBA
+    company = stringi::stri_trans_general(company, &quot;Latin-ASCII&quot;), # substitute unicode characters such as é, ü, ñ etc.
+    company = str_to_upper(company), # Convert to upper case.
+    company = str_remove_all(company, paste0(&quot;\\b(&quot;,paste0(removalwords,  collapse=&quot;|&quot;), &quot;)\\b&quot;)), # Remove all the words that are in the list above.
+   company = str_remove_all(company, paste0(&quot;\\b(&quot;,paste0(placenames,  collapse=&quot;|&quot;), &quot;)\\b&quot;)), # Remove place names from the company names. This may not work out well if the company is called for e.g. Cleveland Plastics.
+    name1 = str_split(company, &quot;DBA&quot;, n=2, simplify = T)[,1] %&gt;% str_squish(), #The following two lines split the names of the company at DBA (Doing Business As).
+    name2 = str_split(company, &quot;DBA&quot;, n=2, simplify = T)[,2] %&gt;% str_squish()
+  )
+
+</code></pre>
+<p>We can make educated guesses about what the NAICS codes for the WARN dataset are going to by searching for some common substrings associated with the industry. For example, sector 72 is Accommodation and Food Services.</p>
+<pre><code class="language-r">compnames &lt;- compnames %&gt;%
+  mutate(NAICS2 = case_when(
+    str_detect(company, &quot;\\bMEDICAl\\b&quot;) ~ &quot;62&quot;,
+    str_detect(company, '\\bAIRLINES\\b') ~ &quot;48&quot;,
+    str_detect(company, '\\bRESTAURANT|RSTRNT\\b') ~ &quot;72&quot;,
+    str_detect(company, '\\bCAFE|BAR\\b') ~ &quot;72&quot;,
+    str_detect(company, &quot;\\bFITNESS\\b&quot;) ~ &quot;71&quot;,
+    str_detect(company, &quot;\\bHOTEL|MOTEL|INN\\b&quot;) ~ &quot;72&quot;,
+    str_detect(company, &quot;\\bHOSPITAL\\b&quot;) ~ &quot;62&quot;,
+    str_detect(company, &quot;\\bSCHOOL|UNIVERSITY|COLLEGE|ACADEMY\\b&quot;) ~ &quot;61&quot;,
+    str_detect(company, &quot;\\bGROCERY|SUPERMARKET|MARKET\\b&quot;) ~ &quot;44&quot;,
+    str_detect(company, &quot;\\bFACTORY|MANUFACTURING|MFG|PLANT|INDUSTRIES|INDUSTRIAL\\b&quot;) ~ &quot;31&quot;,
+    str_detect(company, &quot;\\bCONSTRUCTION|CONTRACTORS|CONSTR\\b&quot;) ~ &quot;23&quot;,
+    str_detect(company, &quot;\\bTRANSPORTATION|TRANSIT|LOGISTICS|FREIGHT|TRUCKING|HAULING\\b&quot;) ~ &quot;48&quot;,
+    str_detect(company, &quot;\\bRETAIL|STORE|STORES|SHOPPING\\b&quot;) ~ &quot;44&quot;,
+    str_detect(company, &quot;\\bTECHNOLOGY|TECH|SOFTWARE|INFORMATICS|INFORMATION SYSTEMS|INTERACTIVE\\b&quot;) ~ &quot;51&quot;,
+    TRUE ~ NA_character_
+    
+  )
+  )
+
+</code></pre>
+<p>We still need to find out the NAICS code for 90 companies.</p>
+<h3 id="fuzzy-string-matching">Fuzzy String Matching</h3>
+<p>For the rest of the dataset, we are going to use Reference USA dataset that has names and NAICS codes.</p>
+<pre><code class="language-r">refUSA &lt;- here(&quot;tutorials_datasets&quot;, &quot;textmatching&quot;, &quot;WARN_OH&quot;,  &quot;ohio_business_2022.csv&quot;) %&gt;% read_csv() %&gt;%
+  mutate(orig_company = company,
+         company = str_to_upper(company),
+         company = str_remove_all(company, &quot;[[:punct:]]&quot;),
+         company = str_replace_all(company, &quot;\\.&quot;, &quot;\ &quot;),
+         company = str_remove_all(company, paste0(&quot;\\b(&quot;,paste0(removalwords,  collapse=&quot;|&quot;), &quot;)\\b&quot;)),
+         company = str_squish(company)
+  ) %&gt;%
+  mutate(NAICS2 = str_sub(naics_code, start=1, end=2)) %&gt;%
+  filter(company != &quot;&quot;) 
+</code></pre>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Try matching (exact) on names from the WARN dataset to the RefUSA dataset. What is the match rate?</li>
+</ul>
+<hr>
+<p>You will notice that the match rate is on exact match is not great because of various spellings and typos. Thus asking the question what is the row that matches the company name string in RefUSA dataset. So we instead ask a different question. How similar are two strings? To do that we have to understand the notion of distance between two strings. There are number of such distances. Here are some common ones.</p>
+<ul>
+<li>Levenshtein distance (lv) the minimum number of single-character edits (insertions, deletions or substitutions) required to change one word into the other</li>
+<li>Damerau&ndash;Levenshtein (dl) distance is the minimum number of operations (consisting of insertions, deletions or substitutions of a single character, or <em>transposition</em> of two adjacent characters) required to change one word into the other.</li>
+<li>Optimal String Alignment (osa) uses Damerau&ndash;Levenshtein distance but each substring may only be edited once.</li>
+<li>Hamming distance (hamming) is the number of positions with same symbol/character in both strings of equal length.</li>
+<li>Longest common substring distance (lcs) is the minimum number of symbols/characters that need to be removed to make the two strings the same.</li>
+<li>Jaro-winker distance (jw) is a distance that is derived from the lengths of two strings, number of shared symbols an their transpositions.</li>
+<li>soundex is distance between two strings when they are translated to phonetic code.</li>
+</ul>
+<p>These are by no means exhaustive. They can even be improved upon (e.g. weighting spelling errors based on keyboard layouts.)</p>
+<p>In the following code, I am going to use a bunch of different string distance algorithms, find the most similar string based on each algorithm and pick the string that is selected by many different algorithms.</p>
+<div class="alert alert-note">
+  <div>
+    This is by no means the only way to do this fuzzy matching or even the most appropriate way. I am demonstrating this here for pedagogical purposes. You should explore alternatives.
+  </div>
+</div>
+<pre><code class="language-r">library(stringdist)
+
+distance_methods&lt;-c('osa', 'dl','lcs','jw', 'soundex')
+
+# While loops are terrible in R it is easy to program them. Better for readability.
+
+for (i in 1:dim(compnames)[1]){
+  # Only focus on the subset of data that we did not already hard code the NAICS
+  if(is.na(compnames$NAICS2[i])){
+    company &lt;- compnames[i,]
+    name1 &lt;- company$name1
+    name2 &lt;- company$name2
+    zcta &lt;- company$pm.zip
+    
+    # Create a target dataset.
+    refusa_select &lt;- if(!is.na(zcta)){refUSA %&gt;% filter(zipcode == zcta)} 
+                        else {refUSA}
+    
+    # The following creates a vector of potential candidates (best match based on different algorithms)
+    # In the following, I am using similarity score of 0.7 or higher. Adjust this for tighter or looser matches.
+    
+    closestmatch &lt;-
+      map_int(distance_methods,  # for each distance method
+              possibly(
+                function(x){
+                  name1sim &lt;- stringsim(name1, refusa_select$company, method= x) # Create a string similarity between name1 and refusa name
+                  name2sim &lt;- stringsim(name2, refusa_select$company, method=x)  # Create a string similarity between name2 and refusa name
+                  # Apply a threshold
+                  name1sim &lt;- ifelse(name1sim&lt;0.7, NA, name1sim)
+                  name2sim &lt;- ifelse(name2sim&lt;0.7, NA, name2sim)
+                  # Between name1sim an name2sim, pick the one with the highest score.
+                  k &lt;- pmax(name1sim, name2sim, na.rm=T) %&gt;% which.max()
+                  return(ifelse(length(k)!=0,k,NA_integer_))
+                },
+                NA_integer_
+              )
+      ) %&gt;%
+      .[!is.na(.)]
+    
+    # Of the distance methods, only select the matches that pass the threshold and pick the NAICS code that has the highest frequency. Note that this code does not break ties.i.e. there may be multiple NAICS that potentially picked by multiple algorithms, but this code picks the one that is at the top (possibly ordered)
+    
+    
+    compnames$NAICS2[i]&lt;- 
+      ifelse(length(closestmatch)&gt;0, 
+               refusa_select[closestmatch,] %&gt;%
+               group_by(NAICS2) %&gt;%
+               summarize(no = n()) %&gt;%
+               slice_max(no, n=1, with_ties = FALSE) %&gt;% select(NAICS2) %&gt;% unlist() %&gt;% unname(),
+             NA_character_
+      )
+    
+    rm(name1,name2,zcta,closestmatch)
+  }
+}
+
+</code></pre>
+<p>Of the 120 we are able to determine the NAICS codes for 75 companies, a 62.5 % hit rate. This is not quite acceptable, but we will stop here since it is already too long.</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Use a different set string distance algorithms, especially ones based on n-grams.</li>
+<li>Instead of selecting strings with maximum similarity, select top 5 similar strings and then pick the string that appears in most of these algorithms.</li>
+<li>What other preprocessing can be done to improve the hit rate?</li>
+<li>Spot check to see if the hits are accurate?</li>
+</ul>
+<hr>
+<h2 id="conclusions">Conclusions</h2>
+<p>As you noticed, a lot of text/string manipulation relies on understanding the linguistic conventions and is an iterative processes. What works in one context may not work in another and you should be prepared to adapt. You will encounter edge cases much more frequently in this type of work, than other kinds of data munging operations. Nonetheless, it is a useful skill to have. In particular, it is useful get familiar with using <a href="https://www.regexbuddy.com/" target="_blank" rel="noopener">Regular Expressions</a> to search for patterns within strings. However, use it judiciously.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li>Silge, Julia, and David Robinson. 2020. Text Mining with R. Sebastapol, CA: O&rsquo; Reilly. <a href="https://www.tidytextmining.com/" target="_blank" rel="noopener">https://www.tidytextmining.com/</a>.</li>
+</ul>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-problems-of-free-form-text">The Problems of Free Form Text</a></li>
+    <li><a href="#data--required-packages">Data &amp; Required Packages</a></li>
+    <li><a href="#using-a-llm-to-extract-addresses-from-pdfs">Using a LLM to Extract Addresses from PDFs</a></li>
+    <li><a href="#parse-the-json-output">Parse the JSON output</a>
+      <ul>
+        <li><a href="#explanation-of-the-regular-expression">Explanation of the Regular Expression</a></li>
+      </ul>
+    </li>
+    <li><a href="#parsing-the-addresses">Parsing the Addresses</a>
+      <ul>
+        <li><a href="#preparation">Preparation</a></li>
+        <li><a href="#extract-zipcodes-and-states">Extract Zipcodes and States</a></li>
+        <li><a href="#parsing-street-numbers-and-direction">Parsing Street, Numbers and Direction</a></li>
+      </ul>
+    </li>
+    <li><a href="#matching-names">Matching Names</a>
+      <ul>
+        <li><a href="#fuzzy-string-matching">Fuzzy String Matching</a></li>
+      </ul>
+    </li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#additional-resources">Additional Resources</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/r/">R</a>
+  
+  <a class="badge badge-light" href="/tag/teaching/">teaching</a>
+  
+</div>
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/matching-messy-texts/&amp;text=Matching%20Messy%20Texts" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/matching-messy-texts/&amp;t=Matching%20Messy%20Texts" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Matching%20Messy%20Texts&amp;body=https://nkaza.github.io/post/matching-messy-texts/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/matching-messy-texts/&amp;title=Matching%20Messy%20Texts" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Matching%20Messy%20Texts%20https://nkaza.github.io/post/matching-messy-texts/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/matching-messy-texts/&amp;title=Matching%20Messy%20Texts" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/cleaning-using-spatial-networks/">Cleaning Spatial Networks</a></li>
+      
+      <li><a href="/post/isochrones-from-routing-engines-osrm/">Isochrones from Routing Engines (OSRM)</a></li>
+      
+      <li><a href="/post/exploratory-data-analysis-and-visualisation/">Exploratory Data Analysis and Visualisation</a></li>
+      
+      <li><a href="/post/intersection-density-from-osm-using-qgis-r/">Intersection Density From OSM using QGIS &amp; R</a></li>
+      
+      <li><a href="/post/analysing-free-form-text/">Analysing Free Form Text</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2025 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.39c2c2890f0b42f46fe5d6e8216f4117.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.6b73888494485d3b0874ca2ec83f614f.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.912ac2d390999e2611191259848f756b.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

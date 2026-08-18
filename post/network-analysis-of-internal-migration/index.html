@@ -1,0 +1,1956 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction Places can be understood as intricate webs of connection rather than mere collections of buildings and roads. Beneath their visible structures lie countless interdependencies linking people, organizations, and activities. Transport routes move not only goods and commuters but also ideas and opportunities." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/network-analysis-of-internal-migration/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.0d287f18ae9831e05717a040ad587d40.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/network-analysis-of-internal-migration/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/network-analysis-of-internal-migration/" />
+  <meta property="og:title" content="Network Analysis of Internal Migration | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction Places can be understood as intricate webs of connection rather than mere collections of buildings and roads. Beneath their visible structures lie countless interdependencies linking people, organizations, and activities. Transport routes move not only goods and commuters but also ideas and opportunities." /><meta property="og:image" content="https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta property="article:published_time" content="2025-11-04T00:00:00&#43;00:00" />
+    
+    <meta property="article:modified_time" content="2025-11-04T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/network-analysis-of-internal-migration/"
+  },
+  "headline": "Network Analysis of Internal Migration",
+  
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "2025-11-04T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction Places can be understood as intricate webs of connection rather than mere collections of buildings and roads. Beneath their visible structures lie countless interdependencies linking people, organizations, and activities. Transport routes move not only goods and commuters but also ideas and opportunities."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Network Analysis of Internal Migration | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="65b5ef804a42c7087f38752fb2d2be49" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.7e85d6cfe81caeb57cc49452f9b55e03.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Network Analysis of Internal Migration</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Nov 4, 2025
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    14 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/new-urban-analytics/">new-urban-analytics</a>, <a href="/category/r/">R</a>, <a href="/category/regional-science/">regional-science</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <h2 id="introduction">Introduction</h2>
+<p>Places can be understood as intricate webs of connection rather than mere collections of buildings and roads. Beneath their visible structures lie countless interdependencies linking people, organizations, and activities. Transport routes move not only goods and commuters but also ideas and opportunities. Relationships among residents shape patterns of cooperation and trust. Economic exchanges tie together firms and regions, while digital communication networks influence how information and resources circulate. For planners, recognizing these overlapping systems of connection is essential, since each type of network shapes how cities function, adapt, and grow. The questions we ask about these linkages, in turn, determine the kinds of tools and analyses we bring to bear.</p>
+<p>Network analysis offers a powerful framework for understanding these complex interconnections. By representing places as networks of nodes (e.g., individuals, organizations, locations) linked by edges (e.g., relationships, flows, interactions), we can uncover patterns and structures that traditional analyses might miss. This approach allows us to explore how different types of connections influence urban dynamics, from social cohesion to economic development.</p>
+<p>In this post, we will explore the application of network analysis to internal migration patterns within a country. Internal migration—the movement of people from one region to another within national borders—plays a crucial role in shaping demographic trends, economic opportunities, and social dynamics. By analyzing migration flows as a network, we can gain insights into the factors driving these movements and the implications for regional development.</p>
+<h2 id="data-preparation">Data Preparation</h2>
+<p>This tutorial demonstratesnetwork analysis techniques applied to  county-to-county migration data within American Community Survey by US Census.
+Make sure that you have <a href="/post/using-tidycensus-package/">CENSUS_API_KEY installed</a>.</p>
+<p>ACS captures detailed information on where people lived one year ago, allowing researchers, planners, and policymakers to analyze patterns of residential mobility within and across states, counties, and metropolitan areas. This dataset sheds light on domestic and international migration flows, helping to identify demographic, economic, and social characteristics associated with movers versus non-movers. By linking migration with variables such as age, income, education, and housing tenure, ACS migration data offers insights into population dynamics, urban growth, labor market shifts, and regional disparities—informing decisions in areas ranging from transportation and housing planning to workforce development and community resilience.</p>
+<p>We&rsquo;ll explore:</p>
+<ul>
+<li><strong>Graph construction</strong> from migration flows</li>
+<li><strong>Centrality measures</strong> to identify key migration hubs</li>
+<li><strong>Community detection</strong> algorithms for regional clustering</li>
+</ul>
+<pre><code class="language-r"># Core network analysis
+library(igraph)
+library(spdep)
+
+# Spatial data handling
+library(sf)
+library(tigris)
+library(tidycensus)
+
+# Data manipulation
+library(tidyverse)
+
+# Visualization
+library(ggplot2)
+library(ggraph)
+library(tmap)
+library(tmaptools)
+library(patchwork)
+
+# Set options
+options(tigris_use_cache = TRUE)
+sf_use_s2(FALSE)
+</code></pre>
+<pre><code class="language-r"># Download county boundaries
+county_sf &lt;- tigris::counties(year = 2020, class = &quot;sf&quot;, progress_bar = FALSE) %&gt;%
+  select(GEOID, NAME, geometry)
+  
+# Download county-to-county migration flows from ACS
+migration_df &lt;- get_flows(
+  geography = &quot;county&quot;,
+  year = '2020',
+  moe_level = 95
+)
+
+glimpse(migration_df)
+# Rows: 1,440,390
+# Columns: 7
+# $ GEOID1     &lt;chr&gt; &quot;01001&quot;, &quot;01001&quot;, &quot;01001&quot;, &quot;01001&quot;, &quot;01001&quot;, &quot;01001&quot;, &quot;0100…
+# $ GEOID2     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;01003&quot;, &quot;01003&quot;, &quot;0100…
+# $ FULL1_NAME &lt;chr&gt; &quot;Autauga County, Alabama&quot;, &quot;Autauga County, Alabama&quot;, &quot;Auta…
+# $ FULL2_NAME &lt;chr&gt; &quot;Asia&quot;, &quot;Asia&quot;, &quot;Asia&quot;, &quot;Europe&quot;, &quot;Europe&quot;, &quot;Europe&quot;, &quot;U.S.…
+# $ variable   &lt;chr&gt; &quot;MOVEDIN&quot;, &quot;MOVEDOUT&quot;, &quot;MOVEDNET&quot;, &quot;MOVEDIN&quot;, &quot;MOVEDOUT&quot;, &quot;…
+# $ estimate   &lt;dbl&gt; 80, NA, NA, 195, NA, NA, 5, NA, NA, 30, 489, -459, 5, 0, 5,…
+# $ moe        &lt;dbl&gt; 66.723404, NA, NA, 307.404255, NA, NA, 91.744681, NA, NA, 4…
+tail(migration_df)
+# # A tibble: 6 × 7
+#   GEOID1 GEOID2     FULL1_NAME                FULL2_NAME variable estimate   moe
+#   &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;                     &lt;chr&gt;      &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
+# 1 72153  4207121344 Yauco Municipio, Puerto … East Lamp… MOVEDIN         0  35.7
+# 2 72153  4207121344 Yauco Municipio, Puerto … East Lamp… MOVEDOUT       13  27.4
+# 3 72153  4207121344 Yauco Municipio, Puerto … East Lamp… MOVEDNET      -13  27.4
+# 4 72153  5513384250 Yauco Municipio, Puerto … Waukesha … MOVEDIN        31  59.6
+# 5 72153  5513384250 Yauco Municipio, Puerto … Waukesha … MOVEDOUT        0  26.2
+# 6 72153  5513384250 Yauco Municipio, Puerto … Waukesha … MOVEDNET       31  59.6
+</code></pre>
+<p>From the glimpses of the data few things are obvious about the data cleaning that needs to happen</p>
+<ol>
+<li>GEOID columns are fips codes, but some GEOIDs are NA (e.g. international migration)</li>
+<li>There are three variables related to migration counts. We might want to focus only on net migration. These net migration values can be negative.</li>
+<li>Self-loops (within-county migration) may or may not be useful to keep</li>
+<li>Some GEOIDs are not counties (length &gt; 5)</li>
+<li>Some county pairs have very little migration. So we may need to impose a threshold.</li>
+</ol>
+<p>As has been the theme, these are not exhaustive but illustrative of kinds of judgments we need to make.</p>
+<pre><code class="language-r">withinUS_migration_df &lt;-
+  migration_df %&gt;%
+  filter(!is.na(GEOID1) &amp; !is.na(GEOID2)) %&gt;%
+  filter(str_length(GEOID1) == 5 &amp; str_length(GEOID2) ==5) %&gt;%
+  filter(variable == &quot;MOVEDNET&quot;) %&gt;%
+  filter(GEOID1 != GEOID2)
+
+nrow(withinUS_migration_df)
+# [1] 406348
+
+glimpse(withinUS_migration_df)
+# Rows: 406,348
+# Columns: 7
+# $ GEOID1     &lt;chr&gt; &quot;01001&quot;, &quot;01001&quot;, &quot;01001&quot;, &quot;01001&quot;, &quot;01001&quot;, &quot;01001&quot;, &quot;0100…
+# $ GEOID2     &lt;chr&gt; &quot;01003&quot;, &quot;01005&quot;, &quot;01007&quot;, &quot;01015&quot;, &quot;01017&quot;, &quot;01019&quot;, &quot;0102…
+# $ FULL1_NAME &lt;chr&gt; &quot;Autauga County, Alabama&quot;, &quot;Autauga County, Alabama&quot;, &quot;Auta…
+# $ FULL2_NAME &lt;chr&gt; &quot;Baldwin County, Alabama&quot;, &quot;Barbour County, Alabama&quot;, &quot;Bibb…
+# $ variable   &lt;chr&gt; &quot;MOVEDNET&quot;, &quot;MOVEDNET&quot;, &quot;MOVEDNET&quot;, &quot;MOVEDNET&quot;, &quot;MOVEDNET&quot;,…
+# $ estimate   &lt;dbl&gt; -459, 5, -36, -21, -7, 6, 18, -6, -116, -111, -27, 51, -86,…
+# $ moe        &lt;dbl&gt; 471.829787, 9.531915, 73.872340, 40.510638, 19.063830, 14.2…
+</code></pre>
+<p>It might be helpful to see how the migration flows work for one county. Let&rsquo;s focus on Orange county (fips 37135)</p>
+<pre><code class="language-r">withinUS_migration_df %&gt;%
+  filter(GEOID1 == &quot;37135&quot; | GEOID2 == &quot;37135&quot;) %&gt;%
+  select(GEOID1, GEOID2, estimate) %&gt;%
+  arrange(desc(abs(estimate)))
+# # A tibble: 700 × 3
+#    GEOID1 GEOID2 estimate
+#    &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;
+#  1 37119  37135      -746
+#  2 37135  37119       746
+#  3 37001  37135       537
+#  4 37135  37001      -537
+#  5 37135  37147      -452
+#  6 37147  37135       452
+#  7 37063  37135       293
+#  8 37135  37063      -293
+#  9 12011  37135      -263
+# 10 37129  37135      -263
+# # ℹ 690 more rows
+</code></pre>
+<p>This dataset immediately points to some interesting artefacts about the data. For example, there is a dual for each county pair. For example, there is a flow of 746 from Orange County to Mecklenburg (37119) and a flow of 746 from Mecklenburg County to Orange County. Yet they represent the same flow. We need to get only keep one.</p>
+<p>We will use the <code>pmin</code> and <code>pmax</code> functions to create sorted columns for each county pair and then use <code>distinct</code> to deduplicate.</p>
+<pre><code class="language-r">
+withinUS_migration_df2 &lt;- withinUS_migration_df %&gt;%
+  mutate(sorted_col1 = pmin(GEOID1, GEOID2),
+         sorted_col2 = pmax(GEOID1, GEOID2)) %&gt;%
+  distinct(sorted_col1, sorted_col2, .keep_all = TRUE) %&gt;%
+  select(-sorted_col1, -sorted_col2)  # Remove temporary columns
+
+nrow(withinUS_migration_df2)
+# [1] 203174
+</code></pre>
+<p>You should see that the dataset is exactly half as large as before.</p>
+<h2 id="graph-construction">Graph Construction</h2>
+<p>Now that we have a cleaned migration dataset, we can construct a graph object using the <code>igraph</code> package. In this graph, counties will be represented as nodes, and migration flows between them will be represented as edges.</p>
+<p>In the process of this construction, we will also reverse the flow of the edge based on the sign of the net migration value, so that we end up with non-zero edge weights.The weight of each edge will correspond to the absolute value of the net migration between the two counties.</p>
+<pre><code class="language-r">
+
+# First remove small migration flows
+withinUS_migration_df2 &lt;-
+  withinUS_migration_df2 %&gt;%
+  filter(estimate &gt; 50 | estimate &lt; -50)
+
+
+G1 &lt;- graph_from_data_frame(
+  d = withinUS_migration_df2,
+  directed = TRUE)
+
+G1
+# IGRAPH 57d2fdb DN-- 3083 40279 -- 
+# + attr: name (v/c), FULL1_NAME (e/c), FULL2_NAME (e/c), variable (e/c),
+# | estimate (e/n), moe (e/n)
+# + edges from 57d2fdb (vertex names):
+#  [1] 01001-&gt;01003 01001-&gt;01029 01001-&gt;01031 01001-&gt;01035 01001-&gt;01045
+#  [6] 01001-&gt;01047 01001-&gt;01051 01001-&gt;01055 01001-&gt;01073 01001-&gt;01089
+# [11] 01001-&gt;01097 01001-&gt;01101 01001-&gt;01109 01001-&gt;01113 01001-&gt;01123
+# [16] 01001-&gt;01125 01001-&gt;01131 01001-&gt;12033 01001-&gt;13073 01001-&gt;13135
+# [21] 01001-&gt;20103 01001-&gt;22015 01001-&gt;24017 01001-&gt;35001 01001-&gt;35009
+# [26] 01001-&gt;45085 01001-&gt;49049 01001-&gt;51153 01001-&gt;51810 01001-&gt;53053
+# [31] 01003-&gt;01015 01003-&gt;01019 01003-&gt;01029 01003-&gt;01045 01003-&gt;01053
+# + ... omitted several edges
+
+
+E(G1)$weight &lt;- withinUS_migration_df2$estimate
+
+G1 &lt;- reverse_edges(G1, E(G1)[E(G1)$weight&lt;0])
+
+E(G1)$weight &lt;- abs(E(G1)$weight)
+
+</code></pre>
+<p>You can access the vertices and edges using <code>V</code> and <code>E</code> functions.
+Remember a graph can have multiple components. i.e. there is no &lsquo;valid&rsquo; path between all pairs of nodes.</p>
+<pre><code class="language-r">V(G1)%&gt;% head
+# + 6/3083 vertices, named, from 57dd412:
+# [1] 01001 01003 01005 01007 01009 01011
+
+E(G1) %&gt;% head
+# + 6/40279 edges from 57dd412 (vertex names):
+# [1] 01003-&gt;01001 01029-&gt;01001 01031-&gt;01001 01001-&gt;01035 01045-&gt;01001
+# [6] 01001-&gt;01047
+
+E(G1)$weight %&gt;% head
+# [1] 459 116 111  51  86  94
+
+# Graph summary
+cat(&quot;Graph Properties:\n&quot;)
+# Graph Properties:
+cat(&quot;Vertices:&quot;, vcount(G1), &quot;\n&quot;)
+# Vertices: 3083
+cat(&quot;Edges:&quot;, ecount(G1), &quot;\n&quot;)
+# Edges: 40279
+cat(&quot;Density:&quot;, edge_density(G1), &quot;\n&quot;)
+# Density: 0.004239089
+cat(&quot;Directed:&quot;, is_directed(G1), &quot;\n&quot;)
+# Directed: TRUE
+cat(&quot;Weighted:&quot;, is_weighted(G1), &quot;\n&quot;)
+# Weighted: TRUE
+cat(&quot;Number of components:&quot;, components(G1)$no, &quot;\n&quot;)
+# Number of components: 3
+</code></pre>
+<p>You can extract subgraphs for a subset  of vertices. E.g. you can extract just the California subgraph as follows.</p>
+<pre><code class="language-r">
+CA_sample &lt;- V(G1)[str_sub(V(G1)$name, 1,2) == &quot;06&quot;]
+CA_G1 &lt;- induced_subgraph(G1, CA_sample)
+
+
+# plot using ggraph
+library(ggraph)
+ggraph(CA_G1, layout = 'kk') + 
+    geom_edge_fan(show.legend = FALSE) +
+    geom_node_point()
+</code></pre>
+<img src="https://nkaza.github.io/post/network-analysis-of-internal-migration/index.en_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+<p>Note that the graph does not respect the geographic locations. If you want to fix the positions relative to their lat/long coordinates, you should can specify them using layout parameters.</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Use different layouts (such as star and cricle) to visualise the network.</li>
+<li>Use different edge attributes to style the edges of the above graph</li>
+<li>Style the vertices using for e.g. number of incoming trips per day, or their location in different boroughs.</li>
+</ul>
+<hr>
+<h3 id="adjacency-matrix">Adjacency matrix</h3>
+<p>One representation of a graph is an adjacency matrix. It is a square matrix used to represent a finite graph. The elements of the matrix indicate whether pairs of vertices are adjacent or not in the graph. Each row and each column represents a single vertex. $ A $ is and adjacency matrix, whose elements $ a_{ij} $ is 0 when vertices/nodes $ i $ and $ j $ are not adjacent. If the graph is undirected and unweighted then $ a_{ij} $ is 1 only when they are adjacent.  In the case of a directed graph, the matrix is not symmetric. In our case, we have a weighted directed graph with the weights representing the flow between two counties. To visualise a portion of this matrix try</p>
+<pre><code class="language-r">as_adjacency_matrix(G1, attr = &quot;weight&quot;)[1:6, 1:6]
+# 6 x 6 sparse Matrix of class &quot;dgCMatrix&quot;
+#       01001 01003 01005 01007 01009 01011
+# 01001     .     .     .     .     .     .
+# 01003   459     .     .     .     .     .
+# 01005     .     .     .     .     .    52
+# 01007     .     .     .     .     .     .
+# 01009     .     .     .     .     .     .
+# 01011     .     .     .     .     .     .
+</code></pre>
+<p>Adjacency matrix is very important as it allows us to perform matrix operations much more efficiently as we will see in <a href="/post/using-network-ananlysis-to-identify-clusters-of-deprivation/">other tutorials</a></p>
+<h2 id="degree-distribution-and-strength">Degree Distribution and Strength</h2>
+<p>In network analysis, degree distribution describes how connections (or links) are spread among nodes—essentially showing how many nodes have few versus many connections. It provides insight into the overall structure of the network, such as whether it is centralized around a few highly connected hubs or more evenly connected. Strength, on the other hand, extends this idea to weighted networks, where connections have varying intensities or capacities. A node’s strength is the sum of the weights of its links, capturing not just how many connections it has but also how strong or important those connections are. Together, degree and strength reveal both the topology and the intensity of interactions within a network.</p>
+<pre><code class="language-r">
+# Strength (weighted degree)
+V(G1)$in_strength &lt;- strength(G1, mode = &quot;in&quot;)
+V(G1)$out_strength &lt;- strength(G1, mode = &quot;out&quot;)
+
+# Degree distribution plots
+deg_data &lt;- tibble(
+  in_str = V(G1)$in_strength,
+  out_str = V(G1)$out_strength
+)
+
+p1 &lt;- ggplot(deg_data, aes(x = in_str)) +
+  geom_histogram(bins = 30, fill = &quot;steelblue&quot;, alpha = 0.7) +
+  scale_x_log10() +
+  labs(title = &quot;In-strength Distribution&quot;, x = &quot;In-strength (log scale)&quot;, y = &quot;Count&quot;) +
+  theme_minimal()
+
+p2 &lt;- ggplot(deg_data, aes(x = out_str)) +
+  geom_histogram(bins = 30, fill = &quot;coral&quot;, alpha = 0.7) +
+  scale_x_log10() +
+  labs(title = &quot;Out-strength Distribution&quot;, x = &quot;Out-strength (log scale)&quot;, y = &quot;Count&quot;) +
+  theme_minimal()
+
+p1 + p2
+</code></pre>
+<img src="https://nkaza.github.io/post/network-analysis-of-internal-migration/index.en_files/figure-html/degree_distribution-1.png" width="672" />
+<p>The degree distribution in a migration flow graph show how many counties each county exchanges migrants with—whether most places have only a few migration connections or some act as major hubs linking to many others. The strength of a node reflects the total volume of migration associated with it, summing the number of people moving in and out. Areas with high degree and strength are migration hubs, attracting and sending large numbers of movers to many destinations, while areas with low values are more isolated or stable. Analyzing degree and strength together helps reveal whether migration is concentrated around a few key centers or more evenly distributed across the network.</p>
+<pre><code class="language-r">tibble(
+  name = V(G1)$name,
+  in_strength = V(G1)$in_strength) %&gt;%
+  arrange(desc(in_strength)) %&gt;%
+  slice_head(n = 10) %&gt;%
+  select(name, in_strength) %&gt;%
+  knitr::kable()
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">name</th>
+<th style="text-align:right">in_strength</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">06037</td>
+<td style="text-align:right">143791</td>
+</tr>
+<tr>
+<td style="text-align:left">17031</td>
+<td style="text-align:right">96129</td>
+</tr>
+<tr>
+<td style="text-align:left">36047</td>
+<td style="text-align:right">77452</td>
+</tr>
+<tr>
+<td style="text-align:left">12086</td>
+<td style="text-align:right">58136</td>
+</tr>
+<tr>
+<td style="text-align:left">36081</td>
+<td style="text-align:right">56865</td>
+</tr>
+<tr>
+<td style="text-align:left">48113</td>
+<td style="text-align:right">52080</td>
+</tr>
+<tr>
+<td style="text-align:left">06073</td>
+<td style="text-align:right">51701</td>
+</tr>
+<tr>
+<td style="text-align:left">48201</td>
+<td style="text-align:right">51014</td>
+</tr>
+<tr>
+<td style="text-align:left">36061</td>
+<td style="text-align:right">48548</td>
+</tr>
+<tr>
+<td style="text-align:left">06059</td>
+<td style="text-align:right">45896</td>
+</tr>
+</tbody>
+</table>
+<p>The table above shows the top 10 counties by in-strength, indicating they are major destinations for internal migration. These counties attract large numbers of movers from various origins, highlighting their role as key migration hubs within the network.</p>
+<h2 id="centrality-measures">Centrality Measures</h2>
+<p>In a migration network, centrality measures help identify which counties play the most influential roles in shaping population movement patterns. Degree centrality highlights areas with many migration connections, indicating places that are broadly linked to others as sources or destinations. Betweenness centrality identifies regions that act as intermediaries or “bridges” through which migration flows pass, revealing potential transit hubs or gateway regions. Closeness centrality measures how easily a region can reach all others in the network, capturing accessibility and potential influence over migration dynamics. Eigenvector centrality emphasizes areas connected to other highly connected regions, showing influence within the broader migration system. Together, these measures uncover the structural importance of different places—distinguishing between migration attractors, gateways, and peripheral regions—offering valuable insights for understanding regional interdependence and mobility patterns.</p>
+<p>Borrowing from web and information networks, hub regions are those that send migrants to many important destinations, acting as major sources or dispersal centers. Authority regions, by contrast, are key destinations that receive migrants from many influential origins. A region with high hub centrality may represent an area with strong outward migration links—such as people moving out for jobs or education—while one with high authority centrality may be an attractive destination due to economic opportunities or urban amenities. Combined with other centrality measures like degree, betweenness, and eigenvector centrality, the hub–authority framework helps distinguish between migration senders, receivers, and intermediaries, revealing how population movements are structured around dominant centers and supporting regions within the wider mobility system.</p>
+<pre><code class="language-r">
+# Multiple centrality measures
+
+V(G1)$betweenness &lt;- betweenness(G1, directed = TRUE, weights = 1/E(G1)$weight)
+V(G1)$closeness &lt;- closeness(G1, mode = &quot;all&quot;, weights = 1/E(G1)$weight)
+V(G1)$eigenvector &lt;- eigen_centrality(G1, directed = TRUE, 
+                                     weights = E(G1)$weight)$vector
+V(G1)$pagerank &lt;- page_rank(G1, weights = E(G1)$weight)$vector
+
+# Hub and authority scores (for directed networks)
+hub_auth &lt;- hub_score(G1, weights = E(G1)$weight)
+V(G1)$hub &lt;- hub_auth$vector
+V(G1)$authority &lt;- authority_score(G1, weights = E(G1)$weight)$vector
+
+# Extract centrality data
+centrality_df &lt;- tibble(
+  fips = V(G1)$name,
+  betweenness = V(G1)$betweenness,
+  closeness = V(G1)$closeness,
+  eigenvector = V(G1)$eigenvector,
+  pagerank = V(G1)$pagerank,
+  hub = V(G1)$hub,
+  authority = V(G1)$authority,
+  in_strength = V(G1)$in_strength,
+  out_strength = V(G1)$out_strength
+)
+
+centrality_df %&gt;% 
+        arrange(desc(pagerank)) %&gt;% 
+        select(fips, pagerank, in_strength, out_strength) %&gt;%
+        head(10) %&gt;%
+        knitr::kable()
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">fips</th>
+<th style="text-align:right">pagerank</th>
+<th style="text-align:right">in_strength</th>
+<th style="text-align:right">out_strength</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">36061</td>
+<td style="text-align:right">0.0194967</td>
+<td style="text-align:right">48548</td>
+<td style="text-align:right">16160</td>
+</tr>
+<tr>
+<td style="text-align:left">36047</td>
+<td style="text-align:right">0.0152540</td>
+<td style="text-align:right">77452</td>
+<td style="text-align:right">12009</td>
+</tr>
+<tr>
+<td style="text-align:left">17031</td>
+<td style="text-align:right">0.0125918</td>
+<td style="text-align:right">96129</td>
+<td style="text-align:right">12644</td>
+</tr>
+<tr>
+<td style="text-align:left">06037</td>
+<td style="text-align:right">0.0112714</td>
+<td style="text-align:right">143791</td>
+<td style="text-align:right">24008</td>
+</tr>
+<tr>
+<td style="text-align:left">36081</td>
+<td style="text-align:right">0.0094103</td>
+<td style="text-align:right">56865</td>
+<td style="text-align:right">11187</td>
+</tr>
+<tr>
+<td style="text-align:left">12086</td>
+<td style="text-align:right">0.0053119</td>
+<td style="text-align:right">58136</td>
+<td style="text-align:right">13055</td>
+</tr>
+<tr>
+<td style="text-align:left">48201</td>
+<td style="text-align:right">0.0051530</td>
+<td style="text-align:right">51014</td>
+<td style="text-align:right">35574</td>
+</tr>
+<tr>
+<td style="text-align:left">06073</td>
+<td style="text-align:right">0.0050836</td>
+<td style="text-align:right">51701</td>
+<td style="text-align:right">30208</td>
+</tr>
+<tr>
+<td style="text-align:left">36005</td>
+<td style="text-align:right">0.0048895</td>
+<td style="text-align:right">33568</td>
+<td style="text-align:right">13418</td>
+</tr>
+<tr>
+<td style="text-align:left">36059</td>
+<td style="text-align:right">0.0045158</td>
+<td style="text-align:right">25140</td>
+<td style="text-align:right">17744</td>
+</tr>
+</tbody>
+</table>
+<h2 id="community-detection">Community Detection</h2>
+<p>Finding a community structure in a network is to identify clusters of nodes that are more strongly connected within the cluster than to nodes outside the cluster. In a migration network, community detection aims to identify groups of regions that are more strongly connected to each other through migration flows than to regions outside their group.</p>
+<p>By detecting such clusters, we can uncover hidden regional systems and patterns of spatial integration or fragmentation. For example, community detection might reveal clusters of interconnected cities forming regional migration corridors or identify peripheral areas that are loosely tied to core migration hubs. Understanding these communities helps planners and policymakers recognize functional regions, target regional development efforts, and anticipate how shifts in employment, housing, or climate might reshape internal migration patterns.There are many algorithms that identify community structures.</p>
+<pre><code class="language-r">
+## Multiple Community Detection Algorithms
+# Convert to undirected for community detection
+G_undir_weighted &lt;- as.undirected(G1, mode = &quot;collapse&quot;,
+                                  edge.attr.comb = list(weight = &quot;sum&quot;))
+
+# 1. Louvain (fast, good quality)
+comm_louvain &lt;- cluster_louvain(G_undir_weighted, weights = E(G_undir_weighted)$weight)
+
+# 2. Walktrap (random walks)
+comm_walktrap &lt;- cluster_walktrap(G_undir_weighted, weights = E(G_undir_weighted)$weight)
+
+
+# 3. Label Propagation (very fast)
+comm_label_prop &lt;- cluster_label_prop(G_undir_weighted, 
+                                      weights = E(G_undir_weighted)$weight)
+
+# Store memberships
+V(G1)$comm_louvain &lt;- comm_louvain$membership
+V(G1)$comm_walktrap &lt;- comm_walktrap$membership
+V(G1)$comm_label_prop &lt;- comm_label_prop$membership
+
+# Compare algorithms
+comm_compare &lt;- data.frame(
+  Algorithm = c(&quot;Louvain&quot;, &quot;Walktrap&quot;, &quot;Label Propagation&quot;),
+  N_Communities = c(length(unique(comm_louvain$membership)),
+                    length(unique(comm_walktrap$membership)),
+                    length(unique(comm_label_prop$membership))),
+  Modularity = c(modularity(comm_louvain),
+                 modularity(comm_walktrap),
+                 modularity(comm_label_prop))
+)
+
+knitr::kable(comm_compare, digits = 3, 
+             caption = &quot;Community Detection Algorithm Comparison&quot;)
+</code></pre>
+<p>Table: (#tab:community_detection)Community Detection Algorithm Comparison</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Algorithm</th>
+<th style="text-align:right">N_Communities</th>
+<th style="text-align:right">Modularity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Louvain</td>
+<td style="text-align:right">13</td>
+<td style="text-align:right">0.506</td>
+</tr>
+<tr>
+<td style="text-align:left">Walktrap</td>
+<td style="text-align:right">377</td>
+<td style="text-align:right">0.465</td>
+</tr>
+<tr>
+<td style="text-align:left">Label Propagation</td>
+<td style="text-align:right">98</td>
+<td style="text-align:right">0.442</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Map these clusters using tmap or ggplot2</li>
+</ul>
+<hr>
+<h2 id="conclusions">Conclusions</h2>
+<p>Network analysis techniques provide a very useful set of tools that we can apply in many contexts in urban analytics. Networks are ubiquitous and the above two are but few of the situations where network tools can be readily applied. They need to be used more, and used judiciously.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#data-preparation">Data Preparation</a></li>
+    <li><a href="#graph-construction">Graph Construction</a>
+      <ul>
+        <li><a href="#adjacency-matrix">Adjacency matrix</a></li>
+      </ul>
+    </li>
+    <li><a href="#degree-distribution-and-strength">Degree Distribution and Strength</a></li>
+    <li><a href="#centrality-measures">Centrality Measures</a></li>
+    <li><a href="#community-detection">Community Detection</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/network-analysis-of-internal-migration/&amp;text=Network%20Analysis%20of%20Internal%20Migration" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/network-analysis-of-internal-migration/&amp;t=Network%20Analysis%20of%20Internal%20Migration" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Network%20Analysis%20of%20Internal%20Migration&amp;body=https://nkaza.github.io/post/network-analysis-of-internal-migration/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/network-analysis-of-internal-migration/&amp;title=Network%20Analysis%20of%20Internal%20Migration" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Network%20Analysis%20of%20Internal%20Migration%20https://nkaza.github.io/post/network-analysis-of-internal-migration/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/network-analysis-of-internal-migration/&amp;title=Network%20Analysis%20of%20Internal%20Migration" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/regional-employment-structure-using-labor-market-centrality-index/">Regional Employment Structure Using Labor Market Centrality Index</a></li>
+      
+      <li><a href="/post/using-network-ananlysis-to-identify-clusters-of-deprivation/">Regions of Deprivation</a></li>
+      
+      <li><a href="/post/analysing-urban-neworks/">Analysing Urban Neworks</a></li>
+      
+      <li><a href="/post/identifying-employment-centers/">Identifying Employment Centers</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2025 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.39c2c2890f0b42f46fe5d6e8216f4117.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.6b73888494485d3b0874ca2ec83f614f.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.912ac2d390999e2611191259848f756b.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

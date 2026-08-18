@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  
+  
+
+  
+  
+  
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Wowchemy 5.4.0 for Hugo">
+
+  
+  <link rel="manifest" href="/index.webmanifest">
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="https://nkaza.github.io/slides/machinelearning/ml_slides/">
+
+  <title>Machine Learning for Urban Analytics | Nikhil Kaza</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/dist/reveal.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/dist/theme/black.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" id="highlight-theme">
+
+  
+  
+  <link rel="stylesheet" href="/css/reveal_custom.min.css">
+</head>
+<body>
+
+  
+<div class="reveal">
+  <div class="slides">
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+    <section>
+    
+      
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>class: right, bottom</p>
+<div id="machine-learning-for-urban-analytics" class="section level2">
+<h2>Machine Learning for Urban Analytics</h2>
+<div id="nikhil-kaza" class="section level5">
+<h5>Nikhil Kaza</h5>
+</div>
+<div id="department-of-city-regional-planning-university-of-north-carolina-at-chapel-hill" class="section level5">
+<h5>Department of City &amp; Regional Planning <br /> University of North Carolina at Chapel Hill</h5>
+<div id="updated-2022-01-22" class="section level6">
+<h6>updated: 2022-01-22</h6>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># What is Machine Learning ?</td>
+</tr>
+<tr class="even">
+<td><img src="figs/ML_what.jpg" width="360" /></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="the-purpose-of-machine-learning" class="section level1">
+<h1>The purpose of Machine Learning</h1>
+<ul>
+<li>Mostly for Prediction…
+<ul>
+<li>Classification (Categories of objects e.g. spam/not spam; median strip /side walk/road, default/ prepayment / Current)</li>
+<li>Regression (Continous variables, e.g. volume of water consumption/ energy use )
+<ul>
+<li>Not the same as statistical inference such as linear regression.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>### OK. What kinds of prediction?</p>
+<ul>
+<li>Local governments: Traffic congestion</li>
+<li>Google: What ads to show</li>
+<li>Amazon: What products to buy</li>
+<li>Insurance: Risk based on prior claims</li>
+<li>UNC: Sakai use to identify students in need of intervention.</li>
+</ul>
+<hr />
+</div>
+<div id="different-terms" class="section level1">
+<h1>Different Terms</h1>
+<ul>
+<li>Prediction</li>
+<li>Projection</li>
+<li>Forecast</li>
+<li>Scenarios</li>
+</ul>
+<div id="what-do-you-think-the-differences-are" class="section level2">
+<h2>What do you think the differences are?</h2>
+<p><img src="figs/sunspots.png" width="1200" /></p>
+<hr />
+</div>
+</div>
+<div id="the-central-dogma-of-prediction" class="section level1">
+<h1>The central dogma of prediction</h1>
+<p><img src="figs/centraldogma.png" width="678" /></p>
+</div>
+<div id="components-of-a-predictor" class="section level1">
+<h1>Components of a predictor</h1>
+<p></br></p>
+<center>
+question -&gt; input data -&gt; features -&gt; algorithm -&gt; parameters -&gt; evaluation
+</center>
+<hr />
+</div>
+<div id="spam-example" class="section level1">
+<h1>SPAM Example</h1>
+<p></br></p>
+<center>
+<redtext>question</redtext> -&gt; input data -&gt; features -&gt; algorithm -&gt; parameters -&gt; evaluation
+</center>
+<p></br></p>
+<p><strong>Start with a general question</strong></p>
+<p>Can I automatically detect emails that are SPAM that are not?</p>
+<p><strong>Make it concrete</strong></p>
+<p>Can I use quantitative characteristics of the emails to classify them as SPAM/HAM?</p>
+<hr />
+</div>
+<div id="spam-example-1" class="section level1">
+<h1>SPAM Example</h1>
+<p></br></p>
+<center>
+question -&gt; <redtext>input data </redtext> -&gt; features -&gt; algorithm -&gt; parameters -&gt; evaluation
+</center>
+<p><img class=center src=./figs/spamR.png height='400' /></p>
+<p><a href="http://rss.acs.unt.edu/Rdoc/library/kernlab/html/spam.html">http://rss.acs.unt.edu/Rdoc/library/kernlab/html/spam.html</a></p>
+<hr />
+</div>
+<div id="spam-example-2" class="section level1">
+<h1>SPAM Example</h1>
+<p></br></p>
+<center>
+question -&gt; input data -&gt; <redtext>features</redtext> -&gt; algorithm -&gt; parameters -&gt; evaluation
+</center>
+<p></br></p>
+<p><b>
+Dear Jeff,</p>
+<p>Can you send me your address so I can send you the invitation?</p>
+<p>Thanks,</p>
+<p>Ben
+</b></p>
+<hr />
+</div>
+<div id="spam-example-3" class="section level1">
+<h1>SPAM Example</h1>
+<p></br></p>
+<center>
+question -&gt; input data -&gt; <redtext>features</redtext> -&gt; algorithm -&gt; parameters -&gt; evaluation
+</center>
+<p></br></p>
+<p><b></p>
+<p>Dear Jeff,</p>
+<p>Can <rt>you</rt> send me your address so I can send <rt>you</rt> the invitation?</p>
+<p>Thanks,</p>
+<p>Ben
+</b></p>
+<p></br></p>
+<p>Frequency of you <span class="math inline">\(= 2/17 = 0.118\)</span></p>
+<hr />
+</div>
+<div id="spam-example-4" class="section level1">
+<h1>SPAM Example</h1>
+<p></br></p>
+<center>
+question -&gt; input data -&gt; <redtext>features</redtext> -&gt; algorithm -&gt; parameters -&gt; evaluation
+</center>
+<pre class="r"><code>library(kernlab)
+data(spam)
+str(spam)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    4601 obs. of  58 variables:
+##  $ make             : num  0 0.21 0.06 0 0 0 0 0 0.15 0.06 ...
+##  $ address          : num  0.64 0.28 0 0 0 0 0 0 0 0.12 ...
+##  $ all              : num  0.64 0.5 0.71 0 0 0 0 0 0.46 0.77 ...
+##  $ num3d            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ our              : num  0.32 0.14 1.23 0.63 0.63 1.85 1.92 1.88 0.61 0.19 ...
+##  $ over             : num  0 0.28 0.19 0 0 0 0 0 0 0.32 ...
+##  $ remove           : num  0 0.21 0.19 0.31 0.31 0 0 0 0.3 0.38 ...
+##  $ internet         : num  0 0.07 0.12 0.63 0.63 1.85 0 1.88 0 0 ...
+##  $ order            : num  0 0 0.64 0.31 0.31 0 0 0 0.92 0.06 ...
+##  $ mail             : num  0 0.94 0.25 0.63 0.63 0 0.64 0 0.76 0 ...
+##  $ receive          : num  0 0.21 0.38 0.31 0.31 0 0.96 0 0.76 0 ...
+##  $ will             : num  0.64 0.79 0.45 0.31 0.31 0 1.28 0 0.92 0.64 ...
+##  $ people           : num  0 0.65 0.12 0.31 0.31 0 0 0 0 0.25 ...
+##  $ report           : num  0 0.21 0 0 0 0 0 0 0 0 ...
+##  $ addresses        : num  0 0.14 1.75 0 0 0 0 0 0 0.12 ...
+##  $ free             : num  0.32 0.14 0.06 0.31 0.31 0 0.96 0 0 0 ...
+##  $ business         : num  0 0.07 0.06 0 0 0 0 0 0 0 ...
+##  $ email            : num  1.29 0.28 1.03 0 0 0 0.32 0 0.15 0.12 ...
+##  $ you              : num  1.93 3.47 1.36 3.18 3.18 0 3.85 0 1.23 1.67 ...
+##  $ credit           : num  0 0 0.32 0 0 0 0 0 3.53 0.06 ...
+##  $ your             : num  0.96 1.59 0.51 0.31 0.31 0 0.64 0 2 0.71 ...
+##  $ font             : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num000           : num  0 0.43 1.16 0 0 0 0 0 0 0.19 ...
+##  $ money            : num  0 0.43 0.06 0 0 0 0 0 0.15 0 ...
+##  $ hp               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ hpl              : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ george           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num650           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ lab              : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ labs             : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ telnet           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num857           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ data             : num  0 0 0 0 0 0 0 0 0.15 0 ...
+##  $ num415           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num85            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ technology       : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ num1999          : num  0 0.07 0 0 0 0 0 0 0 0 ...
+##  $ parts            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ pm               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ direct           : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ cs               : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ meeting          : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ original         : num  0 0 0.12 0 0 0 0 0 0.3 0 ...
+##  $ project          : num  0 0 0 0 0 0 0 0 0 0.06 ...
+##  $ re               : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ edu              : num  0 0 0.06 0 0 0 0 0 0 0 ...
+##  $ table            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ conference       : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ charSemicolon    : num  0 0 0.01 0 0 0 0 0 0 0.04 ...
+##  $ charRoundbracket : num  0 0.132 0.143 0.137 0.135 0.223 0.054 0.206 0.271 0.03 ...
+##  $ charSquarebracket: num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ charExclamation  : num  0.778 0.372 0.276 0.137 0.135 0 0.164 0 0.181 0.244 ...
+##  $ charDollar       : num  0 0.18 0.184 0 0 0 0.054 0 0.203 0.081 ...
+##  $ charHash         : num  0 0.048 0.01 0 0 0 0 0 0.022 0 ...
+##  $ capitalAve       : num  3.76 5.11 9.82 3.54 3.54 ...
+##  $ capitalLong      : num  61 101 485 40 40 15 4 11 445 43 ...
+##  $ capitalTotal     : num  278 1028 2259 191 191 ...
+##  $ type             : Factor w/ 2 levels &quot;nonspam&quot;,&quot;spam&quot;: 2 2 2 2 2 2 2 2 2 2 ...</code></pre>
+<hr />
+</div>
+<div id="spam-example-5" class="section level1">
+<h1>SPAM Example</h1>
+<pre class="r"><code>table(spam$type)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+nonspam
+</th>
+<th style="text-align:right;">
+spam
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+2788
+</td>
+<td style="text-align:right;">
+1813
+</td>
+</tr>
+</tbody>
+</table>
+<hr />
+</div>
+<div id="spam-example-6" class="section level1">
+<h1>SPAM Example</h1>
+<center>
+question -&gt; input data -&gt; features -&gt; <redtext>algorithm</redtext> -&gt; parameters -&gt; evaluation
+</center>
+<pre class="r"><code>plot(density(spam$your[spam$type==&quot;nonspam&quot;]),
+     col=&quot;blue&quot;,main=&quot;&quot;,xlab=&quot;Frequency of &#39;your&#39;&quot;)
+lines(density(spam$your[spam$type==&quot;spam&quot;]),col=&quot;red&quot;)</code></pre>
+<p><img src="figs/unnamed-chunk-5-1.png" width="576" /></p>
+<hr />
+</div>
+<div id="spam-example-7" class="section level1">
+<h1>SPAM Example</h1>
+<center>
+question -&gt; input data -&gt; features -&gt; <redtext>algorithm</redtext> -&gt; parameters -&gt; evaluation
+</center>
+<p></br></br></p>
+<p><strong>Our algorithm</strong></p>
+<ul>
+<li>Find a value <span class="math inline">\(C\)</span>.</li>
+<li><strong>frequency of ‘your’ <span class="math inline">\(&gt;\)</span> C</strong> predict “spam”</li>
+</ul>
+<hr />
+</div>
+<div id="spam-example-8" class="section level1">
+<h1>SPAM Example</h1>
+<center>
+question -&gt; input data -&gt; features -&gt; algorithm -&gt; <redtext>parameters</redtext> -&gt; evaluation
+</center>
+<pre class="r"><code>plot(density(spam$your[spam$type==&quot;nonspam&quot;]),
+     col=&quot;blue&quot;,main=&quot;&quot;,xlab=&quot;Frequency of &#39;your&#39;&quot;)
+lines(density(spam$your[spam$type==&quot;spam&quot;]),col=&quot;red&quot;)
+abline(v=0.5,col=&quot;black&quot;)</code></pre>
+<p><img src="figs/unnamed-chunk-6-1.png" width="576" /></p>
+<hr />
+</div>
+<div id="spam-example-9" class="section level1">
+<h1>SPAM Example</h1>
+<center>
+question -&gt; input data -&gt; features -&gt; algorithm -&gt; parameters -&gt; <redtext>evaluation</redtext>
+</center>
+<pre class="r"><code>prediction &lt;- ifelse(spam$your &gt; 0.5,&quot;spam&quot;,&quot;nonspam&quot;)
+table(prediction,spam$type)/length(spam$type)</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+nonspam
+</th>
+<th style="text-align:right;">
+spam
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+nonspam
+</td>
+<td style="text-align:right;">
+0.4590306
+</td>
+<td style="text-align:right;">
+0.1017170
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+spam
+</td>
+<td style="text-align:right;">
+0.1469246
+</td>
+<td style="text-align:right;">
+0.2923278
+</td>
+</tr>
+</tbody>
+</table>
+<p>Accuracy <span class="math inline">\(\approx 0.459 + 0.292 = 0.751\)</span></p>
+</div>
+<div id="bike-sharing" class="section level1">
+<h1>Bike Sharing</h1>
+<ul>
+<li>General Q: Can you predict which stations will need to be restocked with bikes at different times of the day?
+<ul>
+<li>How can you use neighborhood characterstics (demographics, economics, proxmity to other stations) and time of day, day of the week, season, weather etc. to predict number of open slots on bike stations?</li>
+</ul></li>
+</ul>
+<p><img class=center src=./figs/ML_process.png height='350' /></p>
+<hr />
+</div>
+<div id="urban-sprawl-environmental-impacts" class="section level1">
+<h1>Urban Sprawl &amp; Environmental Impacts</h1>
+<ul>
+<li>General Q: Can you predict number of bad air quality days from urban form characteristics?
+<ul>
+<li>Can urban landscape metrics and other demographic characteristics predict bad air quality days in a year?</li>
+</ul></li>
+</ul>
+<p><img class=center src=./figs/ML_process.png height='350' /></p>
+<hr />
+</div>
+<div id="urban-form-healthy-behaviours" class="section level1">
+<h1>Urban Form &amp; Healthy Behaviours</h1>
+<ul>
+<li>General Q: How does urban form characteristics relate to healthy outcomes?
+<ul>
+<li>How does street density, intersection density, activity density etc. impact residents’ healthy behaviours (healthy food consumption, exercise etc.)?</li>
+</ul></li>
+</ul>
+<p><img class=center src=./figs/ML_process.png height='350' /></p>
+<hr />
+</div>
+<div id="energy-conservation-mortgage-risks" class="section level1">
+<h1>Energy Conservation &amp; Mortgage Risks</h1>
+<ul>
+<li>General Q: Should we reward households with conservation proclivities with a break on mortgage interest rates?
+<ul>
+<li>Is the choice to buy energy star appliances and houses in infill urban areas correlated with lower default/prepayment rate?</li>
+</ul></li>
+</ul>
+<p><img class=center src=./figs/ML_process.png height='350' /></p>
+<hr />
+</div>
+<div id="mode-choice" class="section level1">
+<h1>Mode Choice</h1>
+<ul>
+<li>General Q: Can we predict household transportation mode choice?
+<ul>
+<li>Given the weather, cost of travel, cost of parking etc. what is the likelihood that a household will choose to drive vs. taking public transit.</li>
+</ul></li>
+</ul>
+<p><img class=center src=./figs/ML_process.png height='350' /></p>
+<hr />
+</div>
+<div id="experimental-design" class="section level1">
+<h1>Experimental Design</h1>
+<p><img class=center src=./figs/studydesign.png height = '200'/></p>
+<p><img class=center src=./figs/cross_validation.png height='300' /></p>
+</div>
+<div id="k-nearest-neighbor" class="section level1">
+<h1>K Nearest Neighbor</h1>
+<p><img class=center src=./figs/knnClassification.png height = '400'/></p>
+<div id="footnote-httpsen.wikipedia.orgwikik-nearest_neighbors_algorithm" class="section level2">
+<h2>.footnote[ <a href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm" class="uri">https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm</a>]</h2>
+</div>
+</div>
+<div id="logistic-regression-misnomer" class="section level1">
+<h1>Logistic Regression (Misnomer)</h1>
+<p><img class=center src=./figs/logisticregression.png height = '400'/></p>
+<p>.footnote[<a href="http://dataaspirant.com/2017/03/02/how-logistic-regression-model-works/" class="uri">http://dataaspirant.com/2017/03/02/how-logistic-regression-model-works/</a>]</p>
+<hr />
+</div>
+<div id="trees" class="section level1">
+<h1>Trees</h1>
+<p><img class=center src=./figs/regressiontree.gif height = '400'/></p>
+<p>.footnote[<a href="https://www.techemergence.com/what-is-machine-learning/" class="uri">https://www.techemergence.com/what-is-machine-learning/</a>]</p>
+<hr />
+</div>
+<div id="trees-1" class="section level1">
+<h1>Trees</h1>
+<p><img class=center src=./figs/obamatree.png height = '600'/></p>
+<p>.footnote[<a href="https://nyti.ms/2QRnQxI" class="uri">https://nyti.ms/2QRnQxI</a>]</p>
+<hr />
+</div>
+<div id="forests-ensembles" class="section level1">
+<h1>Forests (Ensembles)</h1>
+<p><img class=center src=./figs/forests.png height=400></p>
+<p>.footnote[<a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect5.pdf" class="uri">http://www.robots.ox.ac.uk/~az/lectures/ml/lect5.pdf</a>]</p>
+<hr />
+</div>
+<div id="and-lots-more" class="section level1">
+<h1>And lots more…</h1>
+<p><img class=center src=./figs/caretmodels.png height=700></p>
+<hr />
+<p>class: right, bottom, inverse</p>
+<div id="some-terminology" class="section level2">
+<h2>Some Terminology</h2>
+<hr />
+</div>
+</div>
+<div id="ensembling" class="section level1">
+<h1>Ensembling</h1>
+<p><img class=center src=./figs/ensembling2.png height=350></p>
+<p>.footnote[<a href="https://quantdare.com/what-is-the-difference-between-bagging-and-boosting/" class="uri">https://quantdare.com/what-is-the-difference-between-bagging-and-boosting/</a>]</p>
+<hr />
+</div>
+<div id="bootstrap-aggregating-bagging" class="section level1">
+<h1>Bootstrap aggregating (bagging)</h1>
+<ol style="list-style-type: decimal">
+<li>Resample cases and recalculate predictions</li>
+<li>Average or majority vote</li>
+</ol>
+<p><img class=center src=./figs/bagging.png height=400></p>
+<p>.footnote[
+list()]</p>
+<hr />
+</div>
+<div id="boosting" class="section level1">
+<h1>Boosting</h1>
+<ol style="list-style-type: decimal">
+<li>Create a model</li>
+<li>Focus on the errors of the model and create another model</li>
+<li>Continue this process until no improvement occurs</li>
+</ol>
+<p><img class=center src=./figs/boosted-trees-process.png height=400></p>
+<p>.footnote[<a href="https://blog.bigml.com/2017/03/14/introduction-to-boosted-trees/" class="uri">https://blog.bigml.com/2017/03/14/introduction-to-boosted-trees/</a>]</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Boosting Explained</td>
+</tr>
+<tr class="even">
+<td><img class=center src=./figs/boosting1.png height=500></td>
+</tr>
+<tr class="odd">
+<td>.footnote[<a href="https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d" class="uri">https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d</a>]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="boosting-explained" class="section level1">
+<h1>Boosting Explained</h1>
+<p><img class=center src=./figs/boosting2.png height=500></p>
+<p>.footnote[<a href="https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d" class="uri">https://medium.com/mlreview/gradient-boosting-from-scratch-1e317ae4587d</a>]</p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>## Basic terms</td>
+</tr>
+<tr class="even">
+<td>In general, <strong>Positive</strong> = identified and <strong>negative</strong> = rejected. Therefore:</td>
+</tr>
+<tr class="odd">
+<td><strong>True positive</strong> (TP) = correctly identified (e.g. Real buildings identified as buildings by the model.)</td>
+</tr>
+<tr class="even">
+<td><strong>False positive</strong> (FP) = incorrectly identified (e.g. Real non-buildings identified as buildings)</td>
+</tr>
+<tr class="odd">
+<td><strong>True negative</strong> (TN) = correctly rejected (e.g. Real non-buildings identified as non-buildings by the model)</td>
+</tr>
+<tr class="even">
+<td><strong>False negative</strong> (FN) = incorrectly rejected (e.g. Real buildings identified as roads by the model)</td>
+</tr>
+<tr class="odd">
+<td><a href="http://en.wikipedia.org/wiki/Sensitivity_and_specificity">http://en.wikipedia.org/wiki/Sensitivity_and_specificity</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="accuracy-metrics" class="section level1">
+<h1>Accuracy Metrics</h1>
+<ol style="list-style-type: decimal">
+<li>Mean squared error (or root mean squared error)</li>
+</ol>
+<ul>
+<li>Continuous data, sensitive to outliers</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Median absolute deviation</li>
+</ol>
+<ul>
+<li>Continuous data, often more robust</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Sensitivity (recall): <span class="math inline">\(TP/(TP+FN)\)</span></li>
+</ol>
+<ul>
+<li>If you want few missed positives (e.g. identify as many buildings as possible, even if you misidentify some non-buildings as buildings)</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li>Specificity: <span class="math inline">\(TN/(TN+FP)\)</span></li>
+</ol>
+<ul>
+<li>If you want few negatives called positives (e.g. identify more buildings correctly, even if you miss some true buildings )</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Accuracy <span class="math inline">\((TP+TN)/(TP + TN + FP + FN)\)</span></li>
+</ol>
+<ul>
+<li>Weights false positives/negatives equally</li>
+</ul>
+<ol start="6" style="list-style-type: decimal">
+<li>Concordance</li>
+</ol>
+<ul>
+<li>One example is <a href="http://en.wikipedia.org/wiki/Cohen%27s_kappa">kappa</a></li>
+</ul>
+<ol start="7" style="list-style-type: decimal">
+<li>Predictive value of a positive (precision): <span class="math inline">\(TP/(TP +FP)\)</span></li>
+</ol>
+<ul>
+<li>When the prevalance is low (e.g. identify a rare class of a ‘tent city’ in US cities)</li>
+</ul>
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td># Conclusion</td>
+</tr>
+<tr class="even">
+<td><img class=center src=./figs/mlconsiderations.jpg height=500></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="practical-advice" class="section level1">
+<h1>Practical Advice</h1>
+<ul>
+<li>Focus on the importance of the problem</li>
+<li>Try simple models first</li>
+<li>Much of machine learning is about trying to create good features (variables); Models are secondary</li>
+<li>Scale the features to have similar values (sale price in millions, sq.ft in 1000s don’t work well)</li>
+<li>Ideally you want these features to be minimally correlated</li>
+<li>Some algorithms requires lots of training data. Focus on creating good labelled data. Share it with others</li>
+</ul>
+</div>
+
+    </section>
+    
+
+    
+    
+  </div>
+</div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/dist/reveal.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/plugin/markdown/markdown.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/plugin/highlight/highlight.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/plugin/notes/notes.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/plugin/search/search.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/plugin/math/math.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.2.1/plugin/zoom/zoom.min.js" crossorigin="anonymous"></script>
+
+  
+  
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-menu@2.1.0/plugin.js" integrity="sha256-M6JwAjnRAWmi+sbXURR/yAhWZKYhAw7YXnnLvIxrdGs=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-menu@2.1.0/menu.js" integrity="sha256-l14dklFcW5mWar6w/9KaW0fWVerf3mYr7Wt0+rXzFAA=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-menu@2.1.0/menu.css" integrity="sha256-0fU8HKLaTjgzfaV9CgSqbsN8ilA3zo6zK1M6rlgULd8=" crossorigin="anonymous">
+  
+
+  
+
+  
+  <script src="/js/wowchemy-slides.js"></script>
+
+</body>
+</html>

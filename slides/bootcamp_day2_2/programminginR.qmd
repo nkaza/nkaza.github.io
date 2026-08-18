@@ -1,0 +1,158 @@
+---
+title: "Programming in R"
+author: "Nikhil Kaza"
+date: August 18, 2024
+#monofont: 'Source Code Pro'
+keep-tex: false
+prefer-html: true
+format: 
+    revealjs:
+     footer: "[nkaza.github.io](https://nkaza.github.io)&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Theme from Meghan Hall](https://github.com/meghall06/neair)"
+     theme: [moon, ../custom.scss]
+     slide-number: true
+     show-slide-number: all
+     preview-links: auto
+     code-fold: false
+     chalkboard: 
+       boardmarker-width: 5
+#from: markdown+emoji
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+
+
+## Agenda
+
+- Functions
+
+
+# Avoid Repeating Code
+
+```{r}
+# create dummy data
+library(tidyverse)
+
+city <- tibble(
+  porto = rnorm(100),
+  aberdeen = rnorm(100),
+  nairobi = c(rep(NA, 10), rnorm(90)),
+  genoa = rnorm(100)
+)
+
+glimpse(city)
+
+# Create a new function to multiply two vectors together
+multiply_columns <- function(x,y){return(x*y)}
+
+multiply_columns(x = city$porto, y = city$aberdeen) %>% head(5)
+multiply_columns(x = city$nairobi, y = city$aberdeen) %>% head(5)
+```
+
+## Use it in Mutate
+
+```{r}
+city %>%
+    mutate(por_aber = multiply_columns(x = porto, y = aberdeen),
+           nai_aber = multiply_columns(x = nairobi, y = aberdeen))
+```
+
+## Edge Cases are important
+
+- Producing Errors and Warnings are good practise.
+- Test for things that might produce unexpected results.
+
+```{r warning=TRUE, error=TRUE}
+divide_columns <- function(x, y) {
+
+if(any(y==0)){
+    warning("Division by 0 is likely. You should expect to see a NAN")
+}
+
+  temp_var <- x / y
+  
+  if (any(is.na(temp_var))) {
+    warning("The function has a produced NA")
+    return(temp_var)
+  } else {
+    return(temp_var)
+  }
+}
+
+divide_columns(x = city$nairobi, y = city$aberdeen) %>% head(5)
+
+divide_columns(x = rep(0,100), y = city$aberdeen) %>% head(5)
+
+divide_columns(x=city$nairobi, y=rep(0,100)) %>% head(5)
+
+```
+
+## Logial Operators
+
+- & : Element Wise AND
+```{r}
+v <- c(3,1,3,5L)
+t <- c(4,1,NA,5.0001)
+
+v>=3 & t>=4
+```
+
+- &&: Logical AND (Only use it on a scalars)
+
+```{r}
+any(is.na(v)) && any(is.na(t))
+```
+
+- | : Element Wise OR
+```{r}
+v>=3 | t>=4
+```
+
+- ||: Logical OR (Only use it on a scalars)
+
+```{r}
+any(is.na(v)) || any(is.na(t))
+```
+
+`&&` and `||` are often used in `if` functions for controlling the logic
+
+
+
+## Loops
+
+```{r}
+temp <- list()
+
+i <- 1
+while (i<ncol(city)-1) {
+  temp[[i]] <- multiply_columns(x = city[, i], y = city[, i + 1])
+  i <- i+1
+}
+ 
+temp
+```
+## Loops
+
+```{r}
+temp <- list()
+for (i in 1:(ncol(city) - 1)) {
+  temp[[i]] <- multiply_columns(x = city[, i], y = city[, i + 1])
+}
+
+temp
+```
+
+
+## Sometimes use map instead of loops
+
+```{r}
+map_dfc(1:(ncol(city)-1), function(i){city[,i] * city[,i+1]})
+
+
+```
+
+
+
+# Thank you!

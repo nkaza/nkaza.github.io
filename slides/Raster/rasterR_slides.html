@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="utf-8">
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="nkaza-pres.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class: right, bottom
+
+## Raster data in R 
+
+##### Nikhil Kaza
+##### Department of City &amp; Regional Planning &lt;br /&gt; University of North Carolina at Chapel Hill
+###### updated: 2018-08-03
+
+---
+# Fields vs. Objects
+
+This is an age old debate as to which is a better representation of reality.
+
+Objects: Discrete, sharply defined boundaries, have distinct attributes (e.g. buildings, roads, parcels, census tracts)
+  - Need to keep track of topology and spatial relations among them
+
+Fields: Something that varies continuously over space. The discretisation is an artefact of the data storage and representation (e.g. temperature, ground level, urbanicity)
+  - Topological relationships are embedded 
+ 
+Usually fields are represented by rasters. Rasters could be thought of as a 2D-matrix of values, with row and column indices representing the location information.
+---
+
+# Raster data in urban analytics
+
+.pull-left[
+- Satellite images
+
+- Ground level pictures
+
+- Airborne sensors
+
+- Radar
+]
+
+.pull-right[
+![](./figs/examplerasters.png)
+[Image Credit: ESRI](https://developers.arcgis.com/net/latest/uwp/guide/add-raster-data.htm)
+]
+
+---
+
+# Raster package
+
+In this course we will use Robert Hijmans' excellent Raster package. This package handles raster data that does not fit into memory.
+
+
+```r
+if(!require(raster)){
+    install.packages("raster")
+*    library(raster) 
+}
+
+(rast &lt;- raster())
+```
+
+```
+## class       : RasterLayer 
+## dimensions  : 180, 360, 64800  (nrow, ncol, ncell)
+## resolution  : 1, 1  (x, y)
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0
+```
+
+---
+
+
+```r
+res(rast) &lt;- 20
+rast
+```
+
+```
+## class       : RasterLayer 
+## dimensions  : 9, 18, 162  (nrow, ncol, ncell)
+## resolution  : 20, 20  (x, y)
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0
+```
+
+```r
+ncol(rast) &lt;- 30
+ rast
+```
+
+```
+## class       : RasterLayer 
+## dimensions  : 9, 30, 270  (nrow, ncol, ncell)
+## resolution  : 12, 20  (x, y)
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0
+```
+---
+
+# External Files
+
+
+```r
+rast &lt;- raster(system.file("external/test.grd", package="raster"))
+library(rasterVis)
+levelplot(rast, xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+```
+
+![](figs/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+See [https://oscarperpinan.github.io/rastervis/#levelplot](https://oscarperpinan.github.io/rastervis/#levelplot)
+---
+
+# Rasters can be stacked
+
+
+```r
+rast2 &lt;- rast * runif(ncell(rast)) 
+(rastS &lt;- stack(rast, rast2))
+```
+
+```
+## class       : RasterStack 
+## dimensions  : 115, 80, 9200, 2  (nrow, ncol, ncell, nlayers)
+## resolution  : 40, 40  (x, y)
+## extent      : 178400, 181600, 329400, 334000  (xmin, xmax, ymin, ymax)
+## coord. ref. : +init=epsg:28992 +towgs84=565.237,50.0087,465.658,-0.406857,0.350733,-1.87035,4.0812 +proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs 
+## names       :       test.1,       test.2 
+## min values  : 128.43400574,   0.04142424 
+## max values  :      1805.78,      1583.89
+```
+---
+
+# or bricked
+
+
+```r
+rastB &lt;- brick(rast, rast2)
+names(rastB) &lt;- c('Original', 'Modified')
+levelplot(rastB, xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+```
+
+![](figs/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+---
+
+# Cell by cell algebra
+
+Standard mathematical operators +,- etc. or logical operators such as `\(\ge\)`, `\(\max\)` etc.. work cell by cell between multiple Raster* objects or between Raster and numbers
+
+
+```r
+rastB[[1]] &lt;- rast * 10
+(rastB)
+```
+
+```
+## class       : RasterBrick 
+## dimensions  : 115, 80, 9200, 2  (nrow, ncol, ncell, nlayers)
+## resolution  : 40, 40  (x, y)
+## extent      : 178400, 181600, 329400, 334000  (xmin, xmax, ymin, ymax)
+## coord. ref. : +init=epsg:28992 +towgs84=565.237,50.0087,465.658,-0.406857,0.350733,-1.87035,4.0812 +proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs 
+## data source : in memory
+## names       :         test,     Modified 
+## min values  : 1.284340e+03, 4.142424e-02 
+## max values  :     18057.80,      1583.89
+```
+
+---
+# Cell by cell algebra
+More complicated algebra is possible
+
+
+```r
+(rastB[[1]]/100 &gt;= rastB[[2]]) %&gt;%
+  levelplot(xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+```
+
+&lt;img src="figs/unnamed-chunk-7-1.png" width="60%" /&gt;
+
+---
+# Moving window
+
+```r
+# 3x3 mean filter
+(rast3 &lt;- focal(rast, w=matrix(1/9,nrow=3,ncol=3)) )
+```
+
+```
+## class       : RasterLayer 
+## dimensions  : 115, 80, 9200  (nrow, ncol, ncell)
+## resolution  : 40, 40  (x, y)
+## extent      : 178400, 181600, 329400, 334000  (xmin, xmax, ymin, ymax)
+## coord. ref. : +init=epsg:28992 +towgs84=565.237,50.0087,465.658,-0.406857,0.350733,-1.87035,4.0812 +proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs 
+## data source : in memory
+## names       : layer 
+## values      : 168.611, 1372.349  (min, max)
+```
+---
+
+# Moving window
+
+
+```r
+# Local maximum in 5X5 neighborhood
+rast3 &lt;- focal(rast, w=matrix(1, nrow=5,ncol=5), fun=max, na.rm=TRUE)
+res(rast3)
+```
+
+```
+## [1] 40 40
+```
+
+```r
+levelplot(rast3,xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+```
+
+&lt;img src="figs/unnamed-chunk-9-1.png" width="70%" /&gt;
+---
+
+# Reduce resolution
+
+```r
+rast3 &lt;- rast %&gt;% aggregate(fact=5,fun=mean) 
+res(rast3)
+```
+
+```
+## [1] 200 200
+```
+
+```r
+levelplot(rast3, xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+```
+
+&lt;img src="figs/unnamed-chunk-10-1.png" width="70%" /&gt;
+
+---
+
+# Categorical raster
+
+```r
+rastCat &lt;- rast %&gt;% cut(breaks=c(0,300,800,1100, 1900))
+rastCat &lt;- ratify(rastCat)
+rat &lt;- levels(rastCat)[[1]]
+rat$class &lt;- c('Low', 'Mid', 'High', 'V. High')
+```
+&lt;img src="figs/unnamed-chunk-12-1.png" width="60%" /&gt;
+
+---
+
+# Vector/Raster Operations
+
+
+```r
+cds1 &lt;- structure(c(179169.418312112, 179776.022915626, 179344.40040928, 
+179064.429053812, 178737.795805766, 179076.094526956, 178726.130332621, 
+179169.418312112, 330830.748571234, 330527.446269478, 330049.161870553, 
+329955.838085397, 330037.496397409, 330247.47491401, 330387.460591744, 
+330830.748571234), .Dim = c(8L, 2L))
+
+cds2 &lt;- structure(c(180440.954884862, 180522.613196873, 179857.681227637, 
+179951.005012793, 180440.954884862, 332417.252918885, 331717.324530216, 
+331554.007906193, 331962.29946625, 332417.252918885), .Dim = c(5L, 
+2L))
+
+polys &lt;- SpatialPolygonsDataFrame(SpatialPolygons(list(Polygons(list(Polygon(cds1)), 1), 
+                                  Polygons(list(Polygon(cds2)), 2))),data.frame(ID=c(1,2)))
+
+polys
+```
+
+```
+## class       : SpatialPolygonsDataFrame 
+## features    : 2 
+## extent      : 178726.1, 180522.6, 329955.8, 332417.3  (xmin, xmax, ymin, ymax)
+## coord. ref. : NA 
+## variables   : 1
+## names       : ID 
+## min values  :  1 
+## max values  :  2
+```
+---
+
+# Vector/Raster Operations
+
+
+```r
+p + layer(sp.polygons(polys, lwd=4, col='blue'))
+```
+
+![](figs/unnamed-chunk-14-1.png)&lt;!-- --&gt;
+
+---
+# Count percentage of cells
+
+
+```r
+library(tabularaster)
+cn &lt;- cellnumbers(rastCat, polys)
+library(dplyr)
+(cn %&gt;% mutate(v = raster::extract(rastCat, cell_)) %&gt;% 
+    group_by(object_, v) %&gt;% 
+    summarize(count = n()) %&gt;% 
+  mutate(v.pct = count / sum(count))
+  )
+```
+
+```
+## # A tibble: 4 x 4
+## # Groups:   object_ [2]
+##   object_     v count v.pct
+##     &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+## 1       1     1   114 0.368
+## 2       1     2   196 0.632
+## 3       2     1    49 0.249
+## 4       2     2   148 0.751
+```
+---
+
+# Least cost path between two points
+
+
+```r
+library(gdistance)
+# Construct cells that are `impasssable`
+cost &lt;- calc(rast, fun=function(x)  ifelse(x &gt; 400 &amp; x&lt;900, NA,  x)) #toy example
+rclmat &lt;- c(0,200, 20, 200, 400, 30, 900,1900, 40) %&gt;% matrix(ncol=3, byrow = TRUE)
+cost &lt;- reclassify(cost, rclmat  )
+A &lt;- c(179706.2, 330570.0)
+B &lt;- c(180100.9, 331074.3)
+plot(cost)
+```
+
+&lt;img src="figs/unnamed-chunk-16-1.png" width="70%" /&gt;
+
+---
+
+
+```r
+# Least cost path between two points
+
+conductance &lt;- transition(cost, function(x) 1/mean(x), 8) # Conductance matrix
+AtoB &lt;- shortestPath(conductance, A, B, output="SpatialLines")
+plot(cost)
+lines(AtoB, col="red", lwd=2)
+```
+
+&lt;img src="figs/unnamed-chunk-17-1.png" width="60%" /&gt;
+
+---
+class: center, middle
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"seal": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
