@@ -924,7 +924,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    22 min read
+    23 min read
   </span>
   
 
@@ -1286,7 +1286,7 @@ plot_grid(p_legend24, p_highlight, nrow = 1)
 </details>
 <img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-5-1.png" alt="" width="960" />
 <p>A twenty-four-row legend for twenty-four lines is pointless. <code>cols4all</code> refuses outright past eight colours, and even <code>ggplot2</code>&rsquo;s fallback rainbow just produces a wall of near-identical hues matched to a key nobody&rsquo;s going to scroll through. Most of those lines aren&rsquo;t the story anyway: they&rsquo;re there to show that prices broadly rose across Texas over fifteen years, which the grey backdrop already says perfectly well as a shape. What actually needed an identity was which city rose fastest (Irving) and which one stayed closest to typical (Amarillo). So those are the only two drawn in colour, the only two labelled, and the only two a reader is asked to remember. If your text is about these two, leave the rest in the background.</p>
-<h3 id="a-continuous-map">A continuous map</h3>
+<h3 id="label-the-regions-that-matter">Label the regions that matter</h3>
 <p>Maps make the case even more directly, because the colour-to-value mapping in a continuous legend is genuinely hard to read precisely. Nobody can look at a shade of blue and report a city&rsquo;s price from a colour bar.</p>
 <details>
 <summary>Show code</summary>
@@ -1333,8 +1333,9 @@ plot_grid(p_legend_map, p_direct_map, nrow = 1)
 <p>Second, <code>geom_text_repel()</code> pushes a label off its point and onto the plain map background whenever there&rsquo;s no room on top of it, with a leader line whenever two dots sit close together.</p>
 <p>A few more choices worth noting: each market is a point here, not a polygon. In areal choropleths, large areas dominate visual attention regardless of the value they&rsquo;re actually showing. <a href="https://medium.com/tdebeus/trump-should-ignore-the-mercator-map-when-showing-election-results-52ad2d33b740" target="_blank" rel="noopener">Often this conveys the wrong point entirely</a>.</p>
 <p>Much to the chagrin of my cartographer friends, I also deliberately leave out the north arrow and the scale bar. That is a fight for a different post.</p>
-<h3 id="symbols">Symbols</h3>
-<p>Everything so far has been about colour, but the same argument applies to the shape channel. The 34 markets from the maps above separate, at least partly, on price and sales volume, and a common way to mark a grouping without relying on colour at all is to map it to point shape. That still needs a legend, for the same reason a colour legend does: a shape carries no meaning on its own until it&rsquo;s been decoded against a key.</p>
+<p>However, we need to ask if this map makes any sense at all in the first instance. Is the point of the map to show broad spatial clusters? If so, no obvious spatial clusters exist, i.e. the famous Tobler first law, after all is not a law. The only discernible pattern is that there is an expensive market surrounded by inexpensive markets around Dallas. That point could be made much more succinctly using a different visualisation. I leave that as an exercise.</p>
+<h3 id="symbols-are-no-different-than--colours">Symbols are no different than  colours</h3>
+<p>Everything so far has been about colour, but the same argument applies to the shape channel. A common way to mark a grouping without relying on colour at all is to map to a shape. That still needs a legend, for the same reason a colour legend does. In the markets in Texas, if we want to explore the relationship between sales volume and price, differentiated by region, we can do the following:</p>
 <details>
 <summary>Show code</summary>
 <pre><code class="language-r">sales2015 &lt;- txhousing %&gt;% filter(city %in% core$city, year == 2015) %&gt;%
@@ -1396,7 +1397,7 @@ plot_grid(p_legend_sym, p_direct_sym, nrow = 1)
 </details>
 <img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-7-1.png" alt="" width="960" />
 <p>The direct-label version keeps the shapes, so a reader can tell the six lines apart without a key even before reaching a label. If the focus is each group&rsquo;s general trend, keeping these fitted lines earns its place. The West Texas market looks radically different in trend from the rest of the regions and is worth calling out. Showing what each region&rsquo;s data actually does is far more useful than showing which shape is linked to which region.</p>
-<p>In other cases (e.g. clusters that are well separated, or a handful of genuine outliers), calling them out directly &mdash; using standard ellipses, bounding boxes, explicit tagging, etc. &mdash; is worth the effort.</p>
+<p>In other cases (e.g. clusters that are well separated, or a handful of genuine outliers), calling them out directly using standard ellipses, bounding boxes, explicit tagging, etc., is worth the effort.</p>
 <h3 id="make-the-legend-do-some-work">Make the legend do some work</h3>
 <p>None of this is to say legends are never useful. But if you&rsquo;re going to keep one, perhaps make it earn its keep. A plain colour bar does the least a legend possibly could: one axis, one relationship, nothing else. Swap the strip for a histogram, coloured with the same scale, and the legend can carry information the map doesn&rsquo;t provide on its own.</p>
 <p>In what follows, reading the dot map hasn&rsquo;t changed at all. What&rsquo;s changed is that the legend itself now says something: most Texas markets sit in a $140k&ndash;180k band, and a handful (Austin, Dallas, Midland) sit well clear of it by themselves. The same trick works for a categorical legend: add a count to each label, sort them, and a flat list of swatches becomes a ranking. I leave this, as an exercise.</p>
@@ -1451,7 +1452,7 @@ plot_grid(p_legend_map_bottom, p_right, nrow = 1)
 <h2 id="conclusions">Conclusions</h2>
 <p>I was tempted to title this post similar to <a href="https://kieranhealy.org/files/papers/fuck-nuance.pdf" target="_blank" rel="noopener">Kieran Healy&rsquo;s article</a>, but thought better of it.
 However, the sentiment carries.</p>
-<p>Make it easy for the reader, not for yourself. Label selectively and judiciously, never exhaustively. Pick the right channel &mdash; symbol, colour, position, text &mdash; for the right message. And in every case, the underlying move is identical: stop asking the reader to hold some arbitrary mapping in their head, and put the name where their eyes already are.</p>
+<p>In summary, make it easy for the reader, not for yourself. Label selectively and judiciously, never exhaustively. Pick the right channel &mdash; symbol, colour, position, text &mdash; for the right message. Stop asking the reader to hold some arbitrary mapping in their head, and put the information where their eyes already are.</p>
 
       </div>
       <div class="col-12 col-lg-3 docs-toc">
@@ -1475,8 +1476,8 @@ However, the sentiment carries.</p>
             <li><a href="#draw-attention-to-what-matters">Draw attention to what matters</a></li>
             <li><a href="#group-with-small-multiples">Group with small multiples</a></li>
             <li><a href="#highlight-the-one-series-that-matters">Highlight the one series that matters</a></li>
-            <li><a href="#a-continuous-map">A continuous map</a></li>
-            <li><a href="#symbols">Symbols</a></li>
+            <li><a href="#label-the-regions-that-matter">Label the regions that matter</a></li>
+            <li><a href="#symbols-are-no-different-than--colours">Symbols are no different than  colours</a></li>
             <li><a href="#make-the-legend-do-some-work">Make the legend do some work</a></li>
           </ul>
         </li>
