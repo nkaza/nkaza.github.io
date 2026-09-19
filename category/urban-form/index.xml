@@ -28,7 +28,7 @@
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    This post is inspired by &lt;a href=&#34;https://geoffboeing.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geoff Boeing’s&lt;/a&gt; &lt;a href=&#34;https://geoffboeing.com/2016/11/osmnx-python-street-networks/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;OSMnx&lt;/a&gt; python package. In addition, I drew some notes from &lt;a href=&#34;https://spatialthoughts.com/about/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ujaval Gandhi’s&lt;/a&gt; &lt;a href=&#34;https://www.qgistutorials.com/en/docs/3/calculating_intersection_density.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;QGIS tutorial&lt;/a&gt;.
+    This post is inspired by &lt;a href=&#34;https://geoffboeing.com/&#34;&gt;Geoff Boeing’s&lt;/a&gt; &lt;a href=&#34;https://geoffboeing.com/2016/11/osmnx-python-street-networks/&#34;&gt;OSMnx&lt;/a&gt; python package. In addition, I drew some notes from &lt;a href=&#34;https://spatialthoughts.com/about/&#34;&gt;Ujaval Gandhi’s&lt;/a&gt; &lt;a href=&#34;https://www.qgistutorials.com/en/docs/3/calculating_intersection_density.html&#34;&gt;QGIS tutorial&lt;/a&gt;.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;Often one of the key indicators for measuring walkability of a place is the intersection density of road network. In grid networks, roads intersect at regular intervals and are likely to result in more walkable paths than cul-de-sac patterns. Thus planners often use this metric to to measure urban form (see e.g. &lt;a href=&#34;https://enviroatlas.epa.gov/enviroatlas/DataFactSheets/pdf/Supplemental/PedestrianOrientedStreetIntersectionDensity.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;EPA’s EnviroAtlas&lt;/a&gt;). In this post, I am going to demonstrate how to calculate this measure for any place in the world where &lt;a href=&#34;https://www.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Street Map&lt;/a&gt; has a reasonably detailed and accurate street network.&lt;/p&gt;
@@ -49,7 +49,7 @@
   &lt;div&gt;
     &lt;p&gt;While the OSM data is comparable to proprietary data sources (e.g.Google Maps and Bing) in its coverage and accuracy, it should be noted that as a collaborative project it has its own unique biases. See for example,&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Das, Maitraye, Brent Hecht, and Darren Gergle. 2019. “The Gendered Geography of Contributions to OpenStreetMap: Complexities in Self-Focus Bias.” In Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems, 1–14. New York, NY, USA: Association for Computing Machinery. &lt;a href=&#34;https://doi.org/10.1145/3290605.3300793&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1145/3290605.3300793&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Das, Maitraye, Brent Hecht, and Darren Gergle. 2019. “The Gendered Geography of Contributions to OpenStreetMap: Complexities in Self-Focus Bias.” In Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems, 1–14. New York, NY, USA: Association for Computing Machinery. &lt;a href=&#34;https://doi.org/10.1145/3290605.3300793&#34;&gt;https://doi.org/10.1145/3290605.3300793&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
   &lt;/div&gt;
 &lt;/div&gt;

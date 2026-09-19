@@ -91,7 +91,7 @@
 &lt;p&gt;While the above is a generic way of constructing the query and getting the results using APIs, tidycensus is a package that wraps this all in different convenience functions such as &lt;code&gt;get_decennial&lt;/code&gt; and &lt;code&gt;get_acs&lt;/code&gt;. Note that, this package is tailored only towards US Census and not for any other Census agencies or for that matter other US government data.&lt;/p&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    You should check out Kyle Walker’s excellent book &lt;a href=&#34;https://walker-data.com/census-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Analyzing US Census Data: Methods, Maps, and Models in R&lt;/a&gt;
+    You should check out Kyle Walker’s excellent book &lt;a href=&#34;https://walker-data.com/census-r/&#34;&gt;Analyzing US Census Data: Methods, Maps, and Models in R&lt;/a&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;In the rest of the tutorial, I am going to demonstrate how to download, construct and visualise unemployment rates and poverty rates at a Census tract level. We are going to use the 5 year ACS 2012-2017 data.&lt;/p&gt;
@@ -1454,7 +1454,7 @@ county_summary_df
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
     &lt;p&gt;ggplot works by the use of layers. Most of the time, each layer is added using a &lt;code&gt;+&lt;/code&gt; sign. Note that the &lt;code&gt;+&lt;/code&gt; sign should be at the end of the line, not at the beginning of the next line.&lt;/p&gt;
-&lt;p&gt;To understand how the visualisation is constructed using layers, you can build the plot step by step. Just run it line by line without the + at the end and see what outputs it generates. See &lt;a href=&#34;https://nkaza.github.io/slides/bootcamp_day2_1/visual_ggplot.html#&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;these slides&lt;/a&gt; for a quick introduction.&lt;/p&gt;
+&lt;p&gt;To understand how the visualisation is constructed using layers, you can build the plot step by step. Just run it line by line without the + at the end and see what outputs it generates. See &lt;a href=&#34;https://nkaza.github.io/slides/bootcamp_day2_1/visual_ggplot.html#&#34;&gt;these slides&lt;/a&gt; for a quick introduction.&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;Finally, you can add labels to axes and other features.&lt;/p&gt;
@@ -1655,7 +1655,7 @@ and Model Data. Sebastopol, CA: O’ Reilly media,. &lt;a href=&#34;http://r4ds.
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    This post is inspired by &lt;a href=&#34;https://geoffboeing.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geoff Boeing’s&lt;/a&gt; &lt;a href=&#34;https://geoffboeing.com/2016/11/osmnx-python-street-networks/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;OSMnx&lt;/a&gt; python package. In addition, I drew some notes from &lt;a href=&#34;https://spatialthoughts.com/about/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ujaval Gandhi’s&lt;/a&gt; &lt;a href=&#34;https://www.qgistutorials.com/en/docs/3/calculating_intersection_density.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;QGIS tutorial&lt;/a&gt;.
+    This post is inspired by &lt;a href=&#34;https://geoffboeing.com/&#34;&gt;Geoff Boeing’s&lt;/a&gt; &lt;a href=&#34;https://geoffboeing.com/2016/11/osmnx-python-street-networks/&#34;&gt;OSMnx&lt;/a&gt; python package. In addition, I drew some notes from &lt;a href=&#34;https://spatialthoughts.com/about/&#34;&gt;Ujaval Gandhi’s&lt;/a&gt; &lt;a href=&#34;https://www.qgistutorials.com/en/docs/3/calculating_intersection_density.html&#34;&gt;QGIS tutorial&lt;/a&gt;.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;Often one of the key indicators for measuring walkability of a place is the intersection density of road network. In grid networks, roads intersect at regular intervals and are likely to result in more walkable paths than cul-de-sac patterns. Thus planners often use this metric to to measure urban form (see e.g. &lt;a href=&#34;https://enviroatlas.epa.gov/enviroatlas/DataFactSheets/pdf/Supplemental/PedestrianOrientedStreetIntersectionDensity.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;EPA’s EnviroAtlas&lt;/a&gt;). In this post, I am going to demonstrate how to calculate this measure for any place in the world where &lt;a href=&#34;https://www.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Street Map&lt;/a&gt; has a reasonably detailed and accurate street network.&lt;/p&gt;
@@ -1676,7 +1676,7 @@ and Model Data. Sebastopol, CA: O’ Reilly media,. &lt;a href=&#34;http://r4ds.
   &lt;div&gt;
     &lt;p&gt;While the OSM data is comparable to proprietary data sources (e.g.Google Maps and Bing) in its coverage and accuracy, it should be noted that as a collaborative project it has its own unique biases. See for example,&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Das, Maitraye, Brent Hecht, and Darren Gergle. 2019. “The Gendered Geography of Contributions to OpenStreetMap: Complexities in Self-Focus Bias.” In Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems, 1–14. New York, NY, USA: Association for Computing Machinery. &lt;a href=&#34;https://doi.org/10.1145/3290605.3300793&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1145/3290605.3300793&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Das, Maitraye, Brent Hecht, and Darren Gergle. 2019. “The Gendered Geography of Contributions to OpenStreetMap: Complexities in Self-Focus Bias.” In Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems, 1–14. New York, NY, USA: Association for Computing Machinery. &lt;a href=&#34;https://doi.org/10.1145/3290605.3300793&#34;&gt;https://doi.org/10.1145/3290605.3300793&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
   &lt;/div&gt;
 &lt;/div&gt;
@@ -2364,7 +2364,7 @@ for (i in 1:nrow(warn_df)){
 &lt;p&gt;An &lt;a href=&#34;https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;entire post&lt;/a&gt; is dedicated to working with Large Language Models. I will not rehash much of it here. However, I will show how I used Claude Anthropic large language model to extract addresses from the pdfs. You will need to get an &lt;a href=&#34;https://docs.claude.com/en/api/admin-api/apikeys/get-api-key&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;API key from Claude&lt;/a&gt;. You can adapt this code for other LLM relatively easily, but your results may vary.&lt;/p&gt;
 &lt;div class=&#34;alert alert-alert&#34;&gt;
   &lt;div&gt;
-    Expect to pay for API usage. At the time of writing, Anthropic charges $0.03 per 1,000 tokens for Claude 4.5. Be sure to monitor your usage. If you don&amp;rsquo;t want to pay, use a local LLM such as llama 3.2 via &lt;a href=&#34;https://ollama.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ollama&lt;/a&gt;. Expect differences in performance.
+    Expect to pay for API usage. At the time of writing, Anthropic charges $0.03 per 1,000 tokens for Claude 4.5. Be sure to monitor your usage. If you don&amp;rsquo;t want to pay, use a local LLM such as llama 3.2 via &lt;a href=&#34;https://ollama.com/&#34;&gt;Ollama&lt;/a&gt;. Expect differences in performance.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
@@ -2444,7 +2444,7 @@ chat_out2
 &lt;p&gt;Extract individual JSON objects from the text. We are going to use &lt;a href=&#34;https://rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Regular Expressions&lt;/a&gt; to search and extract.&lt;/p&gt;
 &lt;div class=&#34;alert alert-alert&#34;&gt;
   &lt;div&gt;
-    Before proceeding, if you are not familiar with Regular Expressions, I highly recommend going through the &lt;a href=&#34;https://regexone.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RegexOne&lt;/a&gt; tutorial. It is free and interactive.
+    Before proceeding, if you are not familiar with Regular Expressions, I highly recommend going through the &lt;a href=&#34;https://regexone.com/&#34;&gt;RegexOne&lt;/a&gt; tutorial. It is free and interactive.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# The pattern uses DOTALL (?s) to allow &#39;.&#39; to match newlines,
@@ -2463,14 +2463,14 @@ json_blocks_vector &amp;lt;- extracted_matches[, 2]
 &lt;h3 id=&#34;explanation-of-the-regular-expression&#34;&gt;Explanation of the Regular Expression&lt;/h3&gt;
 &lt;p&gt;Here is a breakdown of its components:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&amp;ldquo;(?s)&amp;rdquo;: This is an inline flag (modifier) that enables the DOTALL (or single-line) mode for the entire regular expression. In this mode, the dot (.) metacharacter matches any single character, including newline characters (\n). By default, the dot usually excludes newlines.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;(?s)&amp;quot;: This is an inline flag (modifier) that enables the DOTALL (or single-line) mode for the entire regular expression. In this mode, the dot (.) metacharacter matches any single character, including newline characters (\n). By default, the dot usually excludes newlines.&lt;/li&gt;
 &lt;li&gt;&amp;ldquo;```json\n&amp;rdquo;: This part matches the literal string &amp;ldquo;```json&amp;rdquo; followed by a newline character.&lt;/li&gt;
 &lt;li&gt;(.*?): This is the core of the regex:
 &lt;ul&gt;
-&lt;li&gt;&amp;ldquo;(&amp;rdquo; and &amp;ldquo;)&amp;rdquo;: These parentheses create a capturing group, which saves the matched text for later use.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;(&amp;rdquo; and &amp;ldquo;)&amp;quot;: These parentheses create a capturing group, which saves the matched text for later use.&lt;/li&gt;
 &lt;li&gt;&amp;ldquo;.&amp;rdquo; : In combination with the (?s) flag, this matches any single character, including newlines.&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;*?&amp;rdquo;: This is a non-greedy (or lazy) quantifier, meaning it matches zero or more occurrences of the preceding element (.) but as few times as possible to allow the rest of the pattern to match. It stops as soon as it encounters the pattern that follows it.&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;\n```&amp;rdquo;: This matches a literal newline character followed by &amp;ldquo;```&amp;rdquo;, which serves as the end boundary for the non-greedy match.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;*?&amp;quot;: This is a non-greedy (or lazy) quantifier, meaning it matches zero or more occurrences of the preceding element (.) but as few times as possible to allow the rest of the pattern to match. It stops as soon as it encounters the pattern that follows it.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;\n```&amp;quot;: This matches a literal newline character followed by &amp;ldquo;```&amp;rdquo;, which serves as the end boundary for the non-greedy match.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
@@ -2868,7 +2868,7 @@ for (i in 1:dim(compnames)[1]){
 &lt;p&gt;As you noticed, a lot of text/string manipulation relies on understanding the linguistic conventions and is an iterative processes. What works in one context may not work in another and you should be prepared to adapt. You will encounter edge cases much more frequently in this type of work, than other kinds of data munging operations. Nonetheless, it is a useful skill to have. In particular, it is useful get familiar with using &lt;a href=&#34;https://www.regexbuddy.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Regular Expressions&lt;/a&gt; to search for patterns within strings. However, use it judiciously.&lt;/p&gt;
 &lt;h2 id=&#34;additional-resources&#34;&gt;Additional Resources&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Silge, Julia, and David Robinson. 2020. Text Mining with R. Sebastapol, CA: O&amp;rsquo; Reilly. &lt;a href=&#34;https://www.tidytextmining.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://www.tidytextmining.com/&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Silge, Julia, and David Robinson. 2020. Text Mining with R. Sebastapol, CA: O&#39; Reilly. &lt;a href=&#34;https://www.tidytextmining.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://www.tidytextmining.com/&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
@@ -4471,7 +4471,7 @@ include_graphics(&amp;quot;./img/anaconda.png&amp;quot;) # Change the file path 
 &lt;/div&gt;
 &lt;h3 id=&#34;reading-real-data-into-r&#34;&gt;Reading real data into R&lt;/h3&gt;
 &lt;p&gt;In this course, we are going to follow the tidyverse style of programming and its associated packages. To read a comma separated file (*.csv) we are going to use &lt;code&gt;read_csv&lt;/code&gt; command from &lt;code&gt;tidyverse&lt;/code&gt; package.&lt;/p&gt;
-&lt;p&gt;Download the latest building violations data from &lt;a href=&#34;https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;building violations data&lt;/a&gt; from the Chicago Open Data Portal. For convenience, &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:x:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/buildingviolations/Building_Violations.csv?d=w096cf5a7a1214747a47d741180228778&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=T1TAvQ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a local copy downloaded in 2019 is stored here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Download the latest building violations data from &lt;a href=&#34;https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;building violations data&lt;/a&gt; from the Chicago Open Data Portal. For convenience, &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/%e2%9d%8c/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/buildingviolations/Building_Violations.csv?d=w096cf5a7a1214747a47d741180228778&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=T1TAvQ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a local copy downloaded in 2019 is stored here&lt;/a&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyverse)
 
 

@@ -455,7 +455,7 @@
   
   
   
-  <script src="/js/wowchemy-init.min.7e85d6cfe81caeb57cc49452f9b55e03.js"></script>
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
 
   
 
@@ -1032,7 +1032,7 @@ for (i in 1:nrow(warn_df)){
 <p>An <a href="https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/" target="_blank" rel="noopener">entire post</a> is dedicated to working with Large Language Models. I will not rehash much of it here. However, I will show how I used Claude Anthropic large language model to extract addresses from the pdfs. You will need to get an <a href="https://docs.claude.com/en/api/admin-api/apikeys/get-api-key" target="_blank" rel="noopener">API key from Claude</a>. You can adapt this code for other LLM relatively easily, but your results may vary.</p>
 <div class="alert alert-alert">
   <div>
-    Expect to pay for API usage. At the time of writing, Anthropic charges $0.03 per 1,000 tokens for Claude 4.5. Be sure to monitor your usage. If you don&rsquo;t want to pay, use a local LLM such as llama 3.2 via <a href="https://ollama.com/" target="_blank" rel="noopener">Ollama</a>. Expect differences in performance.
+    Expect to pay for API usage. At the time of writing, Anthropic charges $0.03 per 1,000 tokens for Claude 4.5. Be sure to monitor your usage. If you don&rsquo;t want to pay, use a local LLM such as llama 3.2 via <a href="https://ollama.com/">Ollama</a>. Expect differences in performance.
   </div>
 </div>
 <pre><code class="language-r">
@@ -1112,7 +1112,7 @@ chat_out2
 <p>Extract individual JSON objects from the text. We are going to use <a href="https://rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf" target="_blank" rel="noopener">Regular Expressions</a> to search and extract.</p>
 <div class="alert alert-alert">
   <div>
-    Before proceeding, if you are not familiar with Regular Expressions, I highly recommend going through the <a href="https://regexone.com/" target="_blank" rel="noopener">RegexOne</a> tutorial. It is free and interactive.
+    Before proceeding, if you are not familiar with Regular Expressions, I highly recommend going through the <a href="https://regexone.com/">RegexOne</a> tutorial. It is free and interactive.
   </div>
 </div>
 <pre><code class="language-r"># The pattern uses DOTALL (?s) to allow '.' to match newlines,
@@ -1131,14 +1131,14 @@ json_blocks_vector &lt;- extracted_matches[, 2]
 <h3 id="explanation-of-the-regular-expression">Explanation of the Regular Expression</h3>
 <p>Here is a breakdown of its components:</p>
 <ul>
-<li>&ldquo;(?s)&rdquo;: This is an inline flag (modifier) that enables the DOTALL (or single-line) mode for the entire regular expression. In this mode, the dot (.) metacharacter matches any single character, including newline characters (\n). By default, the dot usually excludes newlines.</li>
+<li>&ldquo;(?s)&quot;: This is an inline flag (modifier) that enables the DOTALL (or single-line) mode for the entire regular expression. In this mode, the dot (.) metacharacter matches any single character, including newline characters (\n). By default, the dot usually excludes newlines.</li>
 <li>&ldquo;```json\n&rdquo;: This part matches the literal string &ldquo;```json&rdquo; followed by a newline character.</li>
 <li>(.*?): This is the core of the regex:
 <ul>
-<li>&ldquo;(&rdquo; and &ldquo;)&rdquo;: These parentheses create a capturing group, which saves the matched text for later use.</li>
+<li>&ldquo;(&rdquo; and &ldquo;)&quot;: These parentheses create a capturing group, which saves the matched text for later use.</li>
 <li>&ldquo;.&rdquo; : In combination with the (?s) flag, this matches any single character, including newlines.</li>
-<li>&ldquo;*?&rdquo;: This is a non-greedy (or lazy) quantifier, meaning it matches zero or more occurrences of the preceding element (.) but as few times as possible to allow the rest of the pattern to match. It stops as soon as it encounters the pattern that follows it.</li>
-<li>&ldquo;\n```&rdquo;: This matches a literal newline character followed by &ldquo;```&rdquo;, which serves as the end boundary for the non-greedy match.</li>
+<li>&ldquo;*?&quot;: This is a non-greedy (or lazy) quantifier, meaning it matches zero or more occurrences of the preceding element (.) but as few times as possible to allow the rest of the pattern to match. It stops as soon as it encounters the pattern that follows it.</li>
+<li>&ldquo;\n```&quot;: This matches a literal newline character followed by &ldquo;```&rdquo;, which serves as the end boundary for the non-greedy match.</li>
 </ul>
 </li>
 </ul>
@@ -1536,7 +1536,7 @@ for (i in 1:dim(compnames)[1]){
 <p>As you noticed, a lot of text/string manipulation relies on understanding the linguistic conventions and is an iterative processes. What works in one context may not work in another and you should be prepared to adapt. You will encounter edge cases much more frequently in this type of work, than other kinds of data munging operations. Nonetheless, it is a useful skill to have. In particular, it is useful get familiar with using <a href="https://www.regexbuddy.com/" target="_blank" rel="noopener">Regular Expressions</a> to search for patterns within strings. However, use it judiciously.</p>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
-<li>Silge, Julia, and David Robinson. 2020. Text Mining with R. Sebastapol, CA: O&rsquo; Reilly. <a href="https://www.tidytextmining.com/" target="_blank" rel="noopener">https://www.tidytextmining.com/</a>.</li>
+<li>Silge, Julia, and David Robinson. 2020. Text Mining with R. Sebastapol, CA: O' Reilly. <a href="https://www.tidytextmining.com/" target="_blank" rel="noopener">https://www.tidytextmining.com/</a>.</li>
 </ul>
 
       </div>
@@ -1950,7 +1950,7 @@ for (i in 1:dim(compnames)[1]){
       
 
     
-    <script src="/js/vendor-bundle.min.39c2c2890f0b42f46fe5d6e8216f4117.js"></script>
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
 
     
     
@@ -2039,7 +2039,7 @@ for (i in 1:dim(compnames)[1]){
 
     
     
-      <script src="/js/wowchemy-headroom.6b73888494485d3b0874ca2ec83f614f.js" type="module"></script>
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
     
     
     
@@ -2051,7 +2051,7 @@ for (i in 1:dim(compnames)[1]){
       
     
     
-    <script src="/en/js/wowchemy.min.912ac2d390999e2611191259848f756b.js"></script>
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
 
     
   <script async defer src="https://buttons.github.io/buttons.js"></script>

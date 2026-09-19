@@ -1,0 +1,1945 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction A legend asks something unreasonable of the reader: stop looking at the data, find a small box somewhere else on the page, decode a colour or a symbol against a list of names, hold that mapping in memory, and go back to find the mark you were originally looking at." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/my-screed-against-legends/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.d0a3c4356a76e741a5d37933d707b9e1.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/my-screed-against-legends/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/my-screed-against-legends/" />
+  <meta property="og:title" content="My Screed Against Legends | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction A legend asks something unreasonable of the reader: stop looking at the data, find a small box somewhere else on the page, decode a colour or a symbol against a list of names, hold that mapping in memory, and go back to find the mark you were originally looking at." /><meta property="og:image" content="https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2026-09-17T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2026-09-19T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/my-screed-against-legends/"
+  },
+  "headline": "My Screed Against Legends",
+  
+  "datePublished": "2026-09-17T00:00:00Z",
+  "dateModified": "2026-09-19T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction A legend asks something unreasonable of the reader: stop looking at the data, find a small box somewhere else on the page, decode a colour or a symbol against a list of names, hold that mapping in memory, and go back to find the mark you were originally looking at."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>My Screed Against Legends | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="43a2a9ac70558eb474f954fc3756a8bf" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>My Screed Against Legends</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Sep 19, 2026
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    22 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/r/">R</a>, <a href="/category/data-visualization/">data visualization</a>, <a href="/category/ggplot2/">ggplot2</a>, <a href="/category/tmap/">tmap</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <h2 id="introduction">Introduction</h2>
+<p>A legend asks something unreasonable of the reader: stop looking at the data, find a small box somewhere else on the page, decode a colour or a symbol against a list of names, hold that mapping in memory, and go back to find the mark you were originally looking at. Do that for every line, every region, every category, on every chart you read.</p>
+<p><strong>In most instances, this is unnecessary. A legend is an admission that the design failed to speak for itself.</strong></p>
+<p>This is not a new idea. Cleveland was making this argument about graphical perception back in the 1980s, working out how colour and position actually get decoded. Tufte&rsquo;s case against chart junk amounts to the same argument against legends. Colours and symbols are comparatively poor at carrying categorical information on their own; position and text are much better.</p>
+<p>This post works through a series of visualisations, each built twice: legend version next to non-legend version. It&rsquo;s not a rulebook, just ideas for cutting the cognitive burden on the reader. The point isn&rsquo;t that legends are never justified; it is that they&rsquo;re the default far more often than they should be.</p>
+<h2 id="the-burden-of-legends">The burden of legends</h2>
+<p>Legends often reflect authorial laziness. They&rsquo;re easy to reach for because they let the author punt on resolving colour, symbol, text, and data conflicts within the visualisation itself, shoving everything into a white margin where no conflict can exist. That&rsquo;s fine for quick exploratory work, where the point is just to spot patterns across many visualisations. It&rsquo;s not fine when the point is to present a compelling case to a reader.</p>
+<p>Legends shift the cognitive burden from author to reader: a visual search for the right box in the key, a lookup, a repeated translation back to the mark on the chart. On a chart with three or four categories, that&rsquo;s mildly annoying. On a chart with a dozen thin, similarly coloured lines, or a continuous colour scale map, the legend becomes the main obstacle to reading the chart at all. What visualisations are often about (the shape of the data, the outliers, and the general trend) gets lost in this translation.</p>
+<h2 id="remedies">Remedies</h2>
+<p>If not legends, then what? The remedy is direct visual integration made with deliberate and defensible choices: category names appended directly to the graph, text embedded strategically, colour-coded titles where the typography itself does the work of a key. Facets (small multiples) and tooltips help too. You can also draw the reader&rsquo;s eye straight to the elements that matter, the way a photographer frames and focuses a shot to carry one message. Thinking explicitly about these choices cuts the cognitive friction. Removing legends doesn&rsquo;t lower the bar for a visualisation; it raises it, forcing colour and symbol into much more deliberate use.</p>
+<h3 id="direct-labels-should-be-default">Direct labels should be default</h3>
+<p>Often, simply labelling the data is enough. Take median home sale price for five Texas markets, 2000&ndash;2015, from <code>ggplot2::txhousing</code>. Legend on the left, direct labels on the right:</p>
+<details>
+<summary>Show code</summary>
+<pre><code class="language-r">library(ggplot2)
+library(dplyr)
+library(ggrepel)
+library(cowplot)
+library(cols4all)
+
+cities &lt;- c(&quot;Austin&quot;, &quot;Dallas&quot;, &quot;Houston&quot;, &quot;San Antonio&quot;, &quot;Fort Worth&quot;)
+d &lt;- txhousing %&gt;%
+  filter(city %in% cities) %&gt;%
+  group_by(city, year) %&gt;%
+  summarise(median_price = mean(median, na.rm = TRUE), .groups = &quot;drop&quot;)
+
+# One color per city, fixed here and reused wherever else in this post a city
+# gets a color.
+
+city_pal &lt;- setNames(c4a(&quot;misc.okabe&quot;, length(cities)), sort(cities))
+text_cols &lt;- setNames(colorspace::darken(city_pal, amount = 0.45), names(city_pal))
+
+base_theme &lt;- theme_cowplot(font_size = 12) +
+  background_grid(major = &quot;xy&quot;, minor = &quot;none&quot;)
+
+p_legend &lt;- ggplot(d, aes(year, median_price, color = city)) +
+  geom_line(linewidth = 0.7) +
+  scale_color_manual(values = city_pal) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Median sale price&quot;, color = NULL, title = &quot;With a legend&quot;) +
+  base_theme +
+  theme(legend.position = &quot;right&quot;)
+
+last_pts &lt;- d %&gt;%
+  group_by(city) %&gt;%
+  filter(year == max(year)) %&gt;%
+  mutate(txt_col = text_cols[city])
+
+p_direct &lt;- ggplot(d, aes(year, median_price, color = city)) +
+  geom_line(linewidth = 0.7, show.legend = FALSE) +
+  geom_point(data = last_pts, size = 2, show.legend = FALSE) +
+  geom_text_repel(
+    data = last_pts, aes(label = city), color = last_pts$txt_col,
+    hjust = 0, direction = &quot;y&quot;, xlim = c(max(d$year), NA),
+    force = 1.5, box.padding = 0.3, min.segment.length = 0,
+    segment.size = 0.3, segment.color = &quot;grey60&quot;, size = 3.2
+  ) +
+  scale_color_manual(values = city_pal) +
+  scale_x_continuous(expand = expansion(mult = c(0.02, 0.22))) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Median sale price&quot;, title = &quot;With direct labels&quot;) +
+  base_theme
+
+plot_grid(p_legend, p_direct, nrow = 1)
+</code></pre>
+</details>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-1-1.png" alt="" width="960" />
+<p>Two details do the work in the right-hand panel. The labels are sorted by where the lines actually end, so they read top-to-bottom in the same order as the lines. Each label is tinted a darkened version of its own city&rsquo;s colour rather than flat black, dark enough to stay legible, close enough to the line&rsquo;s own hue that the label and the dot beside it read as one thing, not a caption the reader has to connect to a colour by hand.</p>
+<p>Now it&rsquo;s worth asking: is the colour even needed here? Probably not.</p>
+<h3 id="a-map-is-no-different">A map is no different</h3>
+<p>A map is no different than any other 2D statistical graphic, where XY are locations rather than other variables, such as time and prices. If Texas&rsquo;s counties are divided into regions, a categorical map showing where each region sits and how big it is doesn&rsquo;t really need a legend. <code>tmap</code> defaults reach for one just as readily as <code>ggplot2</code>&rsquo;s do. And, we must resist it.</p>
+<p>We can use the same direct-labelling trick as the charts above. Put the label directly where it matters and the cognitive burden disappears: the right-hand map reads instantly. Nobody has to check which colour means &ldquo;West Texas&rdquo;. The map just says so, over the actual West Texas counties.</p>
+<details>
+<summary>Show code</summary>
+<pre><code class="language-r">library(sf)
+library(tigris)
+library(tmap)
+
+# label_ink() picks whichever of ink or white clears more WCAG contrast
+# against a fill --- needed here, and again later, wherever a label sits
+# directly inside a solid-colored region
+rel_lum &lt;- function(hex) {
+  rgb &lt;- grDevices::col2rgb(hex) / 255
+  rgb_lin &lt;- ifelse(rgb &lt;= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055)^2.4)
+  drop(0.2126 * rgb_lin[1, ] + 0.7152 * rgb_lin[2, ] + 0.0722 * rgb_lin[3, ])
+}
+contrast_ratio &lt;- function(h1, h2) {
+  l &lt;- cbind(rel_lum(h1), rel_lum(h2))
+  hi &lt;- pmax(l[, 1], l[, 2]); lo &lt;- pmin(l[, 1], l[, 2])
+  (hi + 0.05) / (lo + 0.05)
+}
+label_ink &lt;- function(fill_hex, ink = &quot;black&quot;, white = &quot;white&quot;) {
+  ifelse(contrast_ratio(fill_hex, ink) &gt;= contrast_ratio(fill_hex, white), ink, white)
+}
+
+# Texas cities grouped into six regions, each with its 2015 median home
+# price attached --- built once here and reused throughout the rest of this
+# post wherever a Texas market needs a location or a price
+regions &lt;- list(
+  &quot;North Texas&quot; = c(&quot;Dallas&quot;, &quot;Fort Worth&quot;, &quot;Arlington&quot;, &quot;Irving&quot;, &quot;Garland&quot;),
+  &quot;Gulf Coast&quot; = c(&quot;Houston&quot;, &quot;Galveston&quot;, &quot;Beaumont&quot;, &quot;Port Arthur&quot;, &quot;Victoria&quot;),
+  &quot;Central Texas&quot; = c(&quot;Austin&quot;, &quot;San Antonio&quot;, &quot;San Marcos&quot;, &quot;Waco&quot;, &quot;Kerrville&quot;),
+  &quot;West Texas&quot; = c(&quot;Amarillo&quot;, &quot;Lubbock&quot;, &quot;Midland&quot;, &quot;Odessa&quot;, &quot;San Angelo&quot;, &quot;Abilene&quot;, &quot;El Paso&quot;, &quot;Wichita Falls&quot;),
+  &quot;Rio Grande Valley&quot; = c(&quot;Laredo&quot;, &quot;McAllen&quot;, &quot;Harlingen&quot;, &quot;Brownsville&quot;, &quot;South Padre Island&quot;, &quot;Corpus Christi&quot;),
+  &quot;East Texas&quot; = c(&quot;Tyler&quot;, &quot;Lufkin&quot;, &quot;Nacogdoches&quot;, &quot;Paris&quot;, &quot;Texarkana&quot;)
+)
+region_df &lt;- stack(regions) %&gt;%
+  rename(city = values, region = ind) %&gt;%
+  mutate(city = as.character(city), region = as.character(region))
+
+tx_places &lt;- places(state = &quot;TX&quot;, cb = TRUE, year = 2022, progress_bar = FALSE) %&gt;%
+  mutate(base_name = gsub(&quot; city$| CDP$| town$&quot;, &quot;&quot;, NAME)) %&gt;%
+  filter(base_name %in% region_df$city)
+pts &lt;- st_centroid(tx_places) %&gt;% st_transform(4326)
+pts_coords &lt;- st_coordinates(pts)
+pts_df &lt;- pts %&gt;% st_drop_geometry() %&gt;% mutate(lon = pts_coords[, 1], lat = pts_coords[, 2]) %&gt;%
+  select(city = base_name, lon, lat)
+
+price2015 &lt;- txhousing %&gt;% filter(city %in% region_df$city, year == 2015) %&gt;%
+  group_by(city) %&gt;% summarise(price2015 = mean(median, na.rm = TRUE))
+
+core &lt;- region_df %&gt;% left_join(pts_df, by = &quot;city&quot;) %&gt;% left_join(price2015, by = &quot;city&quot;)
+
+tx_counties &lt;- counties(state = &quot;TX&quot;, cb = TRUE, year = 2022, progress_bar = FALSE) %&gt;%
+  st_transform(4326)
+county_pts &lt;- st_coordinates(st_centroid(tx_counties))
+city_pts &lt;- as.matrix(core[, c(&quot;lon&quot;, &quot;lat&quot;)])
+nearest_idx &lt;- sapply(seq_len(nrow(county_pts)), function(i) {
+  d &lt;- sqrt((city_pts[, 1] - county_pts[i, 1])^2 + (city_pts[, 2] - county_pts[i, 2])^2)
+  which.min(d)
+})
+tx_counties$region &lt;- core$region[nearest_idx]
+tx_counties$region_wrapped &lt;- gsub(&quot; &quot;, &quot;\n&quot;, tx_counties$region)
+
+region_order &lt;- sort(unique(tx_counties$region))
+region_cols &lt;- setNames(c4a(&quot;misc.okabe&quot;, length(region_order)), region_order)
+region_txt  &lt;- label_ink(region_cols)
+
+m_legend &lt;- tm_shape(tx_counties) +
+  tm_polygons(fill = &quot;region&quot;, fill.scale = tm_scale_categorical(values = &quot;misc.okabe&quot;),
+              col = &quot;white&quot;, lwd = 0.2, fill.legend = tm_legend(title = &quot;Region&quot;)) +
+  tm_layout(frame = FALSE) + tm_title(&quot;With a legend&quot;, fontface = &quot;bold&quot;)
+
+region_diss &lt;- tx_counties %&gt;% group_by(region, region_wrapped) %&gt;%
+  summarise(geometry = st_union(geometry), .groups = &quot;drop&quot;) %&gt;% st_centroid()
+
+m_direct &lt;- tm_shape(tx_counties) +
+  tm_polygons(fill = &quot;region&quot;, fill.scale = tm_scale_categorical(values = &quot;misc.okabe&quot;),
+              col = &quot;white&quot;, lwd = 0.2, fill.legend = tm_legend(show = FALSE)) +
+  tm_layout(frame = FALSE) + tm_title(&quot;With direct labels&quot;, fontface = &quot;bold&quot;)
+
+for (r in region_order) {
+  rc &lt;- filter(region_diss, region == r)
+  m_direct &lt;- m_direct + tm_shape(rc) +
+    tm_text(&quot;region_wrapped&quot;, size = 0.8, fontface = &quot;bold&quot;, col = region_txt[[r]])
+}
+
+tmap_arrange(m_legend, m_direct, ncol = 2)
+</code></pre>
+</details>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-2-1.png" alt="" width="960" />
+<h3 id="draw-attention-to-what-matters">Draw attention to what matters</h3>
+<p>Stacked bars are a common way to show a composition changing between two points in time. Total height across two bars is trivial to compare; one segment&rsquo;s height across two bars is not, because every segment except the bottom one sits on a different, shifting baseline. And a legend is needed just to know which colour is which category before any comparison can even start. A slope graph fixes most of these issues.</p>
+<details>
+<summary>Show code</summary>
+<pre><code class="language-r">cities &lt;- c(&quot;Austin&quot;, &quot;Dallas&quot;, &quot;Houston&quot;, &quot;San Antonio&quot;, &quot;Fort Worth&quot;)
+sales2 &lt;- txhousing %&gt;%
+  filter(city %in% cities, year %in% c(2000, 2015)) %&gt;%
+  group_by(city, year) %&gt;%
+  summarise(sales = sum(sales, na.rm = TRUE), .groups = &quot;drop&quot;)
+
+# city_pal and its darkened text_cols companion were both defined by the
+# first chart; reused as-is here
+sales2 &lt;- sales2 %&gt;% mutate(line_col = city_pal[city])
+
+p_legend_bar &lt;- ggplot(sales2, aes(factor(year), sales, fill = city)) +
+  geom_col(width = 0.6) +
+  scale_fill_manual(values = city_pal) +
+  scale_y_continuous(labels = scales::label_number(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Home sales&quot;, fill = NULL, title = &quot;With a legend&quot;) +
+  base_theme +
+  theme(legend.position = &quot;right&quot;, legend.text = element_text(size = 8))
+
+lab2 &lt;- sales2 %&gt;%
+  mutate(lab = paste0(city, &quot;  &quot;, scales::label_number(scale = 1e-3, accuracy = 0.1, suffix = &quot;k&quot;)(sales)),
+         txt_col = text_cols[city],
+         label_x = if_else(year == 2000, 1998, 2017))
+
+p_slope &lt;- ggplot(sales2, aes(year, sales, color = line_col, group = city)) +
+  geom_line(linewidth = 0.7, show.legend = FALSE) +
+  geom_point(size = 2, show.legend = FALSE) +
+  geom_text_repel(data = filter(lab2, year == 2000), aes(label_x, sales, label = lab, color = txt_col),
+                   hjust = 1, direction = &quot;y&quot;, xlim = c(NA, 1998),
+                   force = 2, box.padding = 0.2, min.segment.length = 0,
+                   segment.size = 0.3, segment.color = &quot;grey60&quot;, size = 3, show.legend = FALSE) +
+  geom_text_repel(data = filter(lab2, year == 2015), aes(label_x, sales, label = lab, color = txt_col),
+                   hjust = 0, direction = &quot;y&quot;, xlim = c(2017, NA),
+                   force = 2, box.padding = 0.2, min.segment.length = 0,
+                   segment.size = 0.3, segment.color = &quot;grey60&quot;, size = 3, show.legend = FALSE) +
+  scale_color_identity() +
+  scale_x_continuous(breaks = c(2000, 2015), expand = expansion(mult = c(0.55, 0.55))) +
+  scale_y_continuous(labels = scales::label_number(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Home sales&quot;, title = &quot;With direct labels (a slope graph)&quot;) +
+  base_theme
+
+plot_grid(p_legend_bar, p_slope, nrow = 1)
+</code></pre>
+</details>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-3-1.png" alt="" width="960" />
+<p>Slope graphs, a Tufte invention, let you focus on how individual components change by leaning on positional shift instead of colour. Because 2000 and 2015 are visually connected by a line, its angle tells the reader both the strength and direction of change directly. Colour becomes largely unnecessary, and so does the legend.</p>
+<h3 id="group-with-small-multiples">Group with small multiples</h3>
+<p>Five cities is a comfortable case for colours and direct labels. Nine is past the point where colour stops working and the labels collide, ruling out a legible chart either way. <code>cols4all</code> makes that failure concrete: asking <code>misc.okabe</code> for a ninth colour throws a fit and stops. So the visualisation falls back to <code>ggplot2</code>&rsquo;s unvalidated default hue wheel. Direct labels fail the opposite way: nine lines converging on the right edge collide no matter how hard <code>ggrepel</code> works.</p>
+<p>Small multiples let us make sense of patterns within and across groups. By 2015, Austin, Dallas, Houston, and San Antonio are all above $190k, and the next city down, Arlington, trails by twenty thousand dollars. That gap splits the nine markets cleanly: four large markets, five smaller ones. Any other sensible, deliberate faceting would work just as well.</p>
+<details>
+<summary>Show code</summary>
+<pre><code class="language-r">cities9 &lt;- c(&quot;Austin&quot;, &quot;Dallas&quot;, &quot;Houston&quot;, &quot;San Antonio&quot;, &quot;Fort Worth&quot;,
+             &quot;El Paso&quot;, &quot;Arlington&quot;, &quot;Tyler&quot;, &quot;Beaumont&quot;)
+top4 &lt;- c(&quot;Austin&quot;, &quot;Dallas&quot;, &quot;Houston&quot;, &quot;San Antonio&quot;)
+
+d9raw &lt;- txhousing %&gt;%
+  filter(city %in% cities9, year %in% 2000:2015) %&gt;%
+  group_by(city, year) %&gt;%
+  summarise(median_price = mean(median, na.rm = TRUE), .groups = &quot;drop&quot;)
+
+order9 &lt;- d9raw %&gt;% filter(year == max(year)) %&gt;% arrange(desc(median_price)) %&gt;% pull(city)
+d9legend &lt;- d9raw %&gt;% mutate(city = factor(city, levels = order9))
+
+p_legend9 &lt;- ggplot(d9legend, aes(year, median_price, color = city)) +
+  geom_line(linewidth = 0.7) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Median sale price&quot;, color = NULL, title = &quot;With a legend (nine series, unvalidated colours)&quot;) +
+  base_theme +
+  theme(legend.position = &quot;right&quot;,
+        legend.text = element_text(size = 8),
+        plot.title = element_text(size = 10))
+
+d9 &lt;- d9raw %&gt;%
+  mutate(group = factor(if_else(city %in% top4, &quot;The four largest metros&quot;, &quot;Five smaller metros&quot;),
+                         levels = c(&quot;The four largest metros&quot;, &quot;Five smaller metros&quot;)))
+order_lvls &lt;- d9 %&gt;% filter(year == max(year)) %&gt;% arrange(group, desc(median_price)) %&gt;% pull(city)
+d9 &lt;- d9 %&gt;% mutate(city = factor(city, levels = order_lvls))
+pal9 &lt;- setNames(rep(c4a(&quot;misc.okabe&quot;, 5), length.out = 9), order_lvls)
+text_cols9 &lt;- setNames(colorspace::darken(pal9, amount = 0.45), names(pal9))
+last_pts9 &lt;- d9 %&gt;% group_by(city) %&gt;% filter(year == max(year)) %&gt;% mutate(txt_col = text_cols9[city])
+
+p_direct9 &lt;- ggplot(d9, aes(year, median_price, color = city)) +
+  geom_line(linewidth = 0.7, show.legend = FALSE) +
+  geom_point(data = last_pts9, size = 1.6, show.legend = FALSE) +
+  geom_text_repel(data = last_pts9, aes(label = city), color = last_pts9$txt_col,
+                   hjust = 0, direction = &quot;y&quot;, xlim = c(2015, NA),
+                   force = 15, box.padding = 0.5, min.segment.length = 0,
+                   segment.size = 0.3, segment.color = &quot;grey60&quot;, size = 2.7,
+                   max.overlaps = Inf, show.legend = FALSE) +
+  facet_wrap(~group, ncol = 2) +
+  scale_color_manual(values = pal9) +
+  scale_x_continuous(breaks = c(2000, 2005, 2010, 2015), expand = expansion(mult = c(0.02, 0.3))) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Median sale price&quot;, title = &quot;With direct labels, grouped by tier&quot;) +
+  base_theme +
+  theme(strip.text = element_text(face = &quot;bold&quot;, hjust = 0, size = 11),
+        strip.background = element_blank(),
+        panel.spacing = unit(1.3, &quot;lines&quot;),
+        plot.title = element_text(size = 10))
+
+plot_grid(p_legend9, p_direct9, nrow = 2)
+</code></pre>
+</details>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-4-1.png" alt="" width="912" />
+<p>Each panel does the same job the very first chart in this post did, so comparison <em>within</em> a group still works exactly like the five-city version. What faceting adds is comparison <em>across</em> groups: the two panels share a y-axis (the <code>facet_wrap()</code> default, not overridden with <code>scales = &quot;free_y&quot;</code>), so the gap between the tiers stays visible as a gap. And because each panel is self-contained, you can reuse colours across facets, or drop them altogether.</p>
+<h3 id="highlight-the-one-series-that-matters">Highlight the one series that matters</h3>
+<p>Faceting solves &ldquo;too many series&rdquo; when every series matters roughly equally. Often it doesn&rsquo;t: the real story is one or two of them, and the rest exist only to give that story a sense of scale. Sometimes a general trend matters; other times a genuine outlier is the star. Either way, most of the data is background to the few that need to shine. Think of it as the f-stop on a camera, separating foreground from background.</p>
+<p><code>txhousing</code> has 24 Texas cities with complete price data across 2000&ndash;2015, too many for a legend to be any use. All 24, distinctly coloured and keyed:</p>
+<details>
+<summary>Show code</summary>
+<pre><code class="language-r">complete_cities &lt;- txhousing %&gt;%
+  filter(year %in% 2000:2015) %&gt;%
+  group_by(city) %&gt;%
+  summarise(n_na = sum(is.na(median))) %&gt;%
+  filter(n_na == 0) %&gt;%
+  pull(city)
+
+d24 &lt;- txhousing %&gt;%
+  filter(city %in% complete_cities, year %in% 2000:2015) %&gt;%
+  group_by(city, year) %&gt;%
+  summarise(median_price = mean(median, na.rm = TRUE), .groups = &quot;drop&quot;)
+
+p_legend24 &lt;- ggplot(d24, aes(year, median_price, color = city)) +
+  geom_line(linewidth = 0.6) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Median sale price&quot;, color = NULL, title = &quot;With a legend (24 series)&quot;) +
+  base_theme +
+  theme(legend.position = &quot;right&quot;, legend.text = element_text(size = 6),
+        legend.key.height = unit(0.7, &quot;lines&quot;))
+
+highlight &lt;- c(fastest = &quot;Irving&quot;, typical = &quot;Amarillo&quot;)
+pal2 &lt;- setNames(c4a(&quot;misc.okabe&quot;, 2), c(&quot;fastest&quot;, &quot;typical&quot;))
+text_cols2 &lt;- colorspace::darken(pal2, amount = 0.45)
+
+d24h &lt;- d24 %&gt;%
+  mutate(hl = case_when(city == highlight[&quot;fastest&quot;] ~ &quot;fastest&quot;,
+                         city == highlight[&quot;typical&quot;] ~ &quot;typical&quot;,
+                         TRUE ~ &quot;other&quot;))
+last24 &lt;- d24h %&gt;%
+  filter(hl != &quot;other&quot;, year == max(year)) %&gt;%
+  mutate(lab = ifelse(hl == &quot;fastest&quot;, paste0(city, &quot;  (fastest growth)&quot;), paste0(city, &quot;  (typical)&quot;)),
+         txt_col = text_cols2[hl])
+
+p_highlight &lt;- ggplot() +
+  geom_line(data = filter(d24h, hl == &quot;other&quot;), aes(year, median_price, group = city),
+            color = &quot;grey80&quot;, linewidth = 0.5) +
+  geom_line(data = filter(d24h, hl != &quot;other&quot;), aes(year, median_price, color = hl, group = city),
+            linewidth = 1) +
+  geom_point(data = last24, aes(year, median_price, color = hl), size = 2, show.legend = FALSE) +
+  geom_text_repel(data = last24, aes(year, median_price, label = lab), color = last24$txt_col,
+                   hjust = 0, direction = &quot;y&quot;, xlim = c(max(d24$year), NA),
+                   force = 2, box.padding = 0.3, min.segment.length = 0,
+                   segment.size = 0.3, segment.color = &quot;grey60&quot;, size = 3.2) +
+  scale_color_manual(values = c(fastest = pal2[[&quot;fastest&quot;]], typical = pal2[[&quot;typical&quot;]]), guide = &quot;none&quot;) +
+  scale_x_continuous(breaks = c(2000, 2005, 2010, 2015), expand = expansion(mult = c(0.02, 0.55))) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Median sale price&quot;, title = &quot;With two series highlighted and labelled&quot;) +
+  base_theme +
+  theme(plot.margin = margin(5.5, 15, 5.5, 5.5))
+
+plot_grid(p_legend24, p_highlight, nrow = 1)
+</code></pre>
+</details>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-5-1.png" alt="" width="960" />
+<p>A twenty-four-row legend for twenty-four lines is pointless. <code>cols4all</code> refuses outright past eight colours, and even <code>ggplot2</code>&rsquo;s fallback rainbow just produces a wall of near-identical hues matched to a key nobody&rsquo;s going to scroll through. Most of those lines aren&rsquo;t the story anyway: they&rsquo;re there to show that prices broadly rose across Texas over fifteen years, which the grey backdrop already says perfectly well as a shape. What actually needed an identity was which city rose fastest (Irving) and which one stayed closest to typical (Amarillo). So those are the only two drawn in colour, the only two labelled, and the only two a reader is asked to remember. If your text is about these two, leave the rest in the background.</p>
+<h3 id="a-continuous-map">A continuous map</h3>
+<p>Maps make the case even more directly, because the colour-to-value mapping in a continuous legend is genuinely hard to read precisely. Nobody can look at a shade of blue and report a city&rsquo;s price from a colour bar.</p>
+<details>
+<summary>Show code</summary>
+<pre><code class="language-r">
+tx_outline &lt;- states(cb = TRUE, resolution = &quot;20m&quot;, year = 2022, progress_bar = FALSE) %&gt;%
+  filter(STUSPS == &quot;TX&quot;) %&gt;% st_transform(4326)
+
+seq_blue &lt;- rev(c4a(&quot;hcl.blues3&quot;, 13))
+pal_fn &lt;- scales::gradient_n_pal(seq_blue)
+core &lt;- core %&gt;% mutate(fill_hex = pal_fn((price2015 - min(price2015)) / diff(range(price2015))))
+
+p_legend_map &lt;- ggplot() +
+  geom_sf(data = tx_outline, fill = &quot;grey96&quot;, color = &quot;grey80&quot;, linewidth = 0.3) +
+  geom_point(data = core, aes(lon, lat, color = price2015), size = 2.6) +
+  scale_color_gradientn(colors = seq_blue, labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;),
+                         name = &quot;2015 median\nprice&quot;) +
+  theme_void(base_size = 12) +
+  theme(plot.title = element_text(face = &quot;bold&quot;)) +
+  labs(title = &quot;With a legend&quot;)
+
+top3 &lt;- core %&gt;% slice_max(price2015, n = 3)
+bottom3 &lt;- core %&gt;% slice_min(price2015, n = 3)
+core &lt;- core %&gt;%
+  mutate(is_extreme = city %in% c(top3$city, bottom3$city),
+         lab = paste0(city, &quot;  &quot;, scales::dollar(price2015, scale = 1e-3, accuracy = 1, suffix = &quot;k&quot;)))
+
+p_direct_map &lt;- ggplot() +
+  geom_sf(data = tx_outline, fill = &quot;grey96&quot;, color = &quot;grey80&quot;, linewidth = 0.3) +
+  geom_point(data = core, aes(lon, lat, color = price2015), size = 2.6, show.legend = FALSE) +
+  geom_text_repel(data = filter(core, is_extreme), aes(lon, lat, label = lab), color = &quot;black&quot;,
+                   size = 2.8, fontface = &quot;bold&quot;, force = 3, box.padding = 0.4,
+                   min.segment.length = 0, segment.size = 0.3, segment.color = &quot;grey60&quot;,
+                   max.overlaps = Inf) +
+  scale_color_gradientn(colors = seq_blue) +
+  theme_void(base_size = 12) +
+  theme(plot.title = element_text(face = &quot;bold&quot;)) +
+  labs(title = &quot;With selective direct labels&quot;)
+
+plot_grid(p_legend_map, p_direct_map, nrow = 1)
+</code></pre>
+</details>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-6-1.png" alt="" width="960" />
+<p>Two things are doing the work in the right-hand panel. One is choosing the six labelled cities ahead of time to show the extremes (highest and lowest median price), so the reader can interpolate the rest. Austin and Midland turn up as the two highest, which is a real result worth pausing on: Midland&rsquo;s 2015 prices, driven by the Permian Basin oil boom, briefly rivalled Dallas&rsquo;s. That&rsquo;s exactly the kind of specific, nameable fact a legend&rsquo;s colour bar would never surface on its own.</p>
+<p>Second, <code>geom_text_repel()</code> pushes a label off its point and onto the plain map background whenever there&rsquo;s no room on top of it, with a leader line whenever two dots sit close together.</p>
+<p>A few more choices worth noting: each market is a point here, not a polygon. In areal choropleths, large areas dominate visual attention regardless of the value they&rsquo;re actually showing. <a href="https://medium.com/tdebeus/trump-should-ignore-the-mercator-map-when-showing-election-results-52ad2d33b740" target="_blank" rel="noopener">Often this conveys the wrong point entirely</a>.</p>
+<p>Much to the chagrin of my cartographer friends, I also deliberately leave out the north arrow and the scale bar. That is a fight for a different post.</p>
+<h3 id="symbols">Symbols</h3>
+<p>Everything so far has been about colour, but the same argument applies to the shape channel. The 34 markets from the maps above separate, at least partly, on price and sales volume, and a common way to mark a grouping without relying on colour at all is to map it to point shape. That still needs a legend, for the same reason a colour legend does: a shape carries no meaning on its own until it&rsquo;s been decoded against a key.</p>
+<details>
+<summary>Show code</summary>
+<pre><code class="language-r">sales2015 &lt;- txhousing %&gt;% filter(city %in% core$city, year == 2015) %&gt;%
+  group_by(city) %&gt;% summarise(sales2015 = sum(sales, na.rm = TRUE))
+core &lt;- core %&gt;% left_join(sales2015, by = &quot;city&quot;) %&gt;% mutate(log_sales = log10(sales2015))
+shapes6 &lt;- c(16, 17, 15, 18, 3, 4)
+
+fit_lines &lt;- lapply(split(core, core$region), function(d) {
+  m &lt;- lm(price2015 ~ log_sales, data = d)
+  xs &lt;- seq(min(d$log_sales), max(d$log_sales), length.out = 60)
+  data.frame(region = d$region[1], log_sales = xs,
+             price2015 = predict(m, newdata = data.frame(log_sales = xs)))
+}) %&gt;% bind_rows()
+
+marker_pts &lt;- fit_lines %&gt;% group_by(region) %&gt;%
+  slice(round(seq(1, n(), length.out = 4))) %&gt;% ungroup()
+
+p_legend_sym &lt;- ggplot() +
+  geom_point(data = core, aes(log_sales, price2015, shape = region), color = &quot;black&quot;, size = 1.6) +
+  scale_shape_manual(values = shapes6) +
+  scale_x_continuous(breaks = 3:4, labels = function(x) scales::comma(10^x)) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = &quot;2015 home sales (log scale)&quot;, y = &quot;2015 median price&quot;, shape = NULL, title = &quot;With a legend&quot;) +
+  base_theme +
+  theme(legend.position = &quot;right&quot;)
+
+line_ends &lt;- fit_lines %&gt;% group_by(region) %&gt;% slice_max(log_sales, n = 1) %&gt;% ungroup()
+
+# West Texas is the one region worth calling out in colour --- see the text
+# below; everything else stays black, distinguished only by shape. Red is
+# cols4all's misc.okabe vermillion, not base R's harsher &quot;red&quot;, so it stays
+# consistent with every other colour choice in this post
+red &lt;- &quot;#D55E00&quot;
+core_hl       &lt;- core       %&gt;% mutate(hl = if_else(region == &quot;West Texas&quot;, red, &quot;black&quot;))
+fit_lines_hl  &lt;- fit_lines  %&gt;% mutate(hl = if_else(region == &quot;West Texas&quot;, red, &quot;black&quot;))
+marker_pts_hl &lt;- marker_pts %&gt;% mutate(hl = if_else(region == &quot;West Texas&quot;, red, &quot;black&quot;))
+line_ends_hl  &lt;- line_ends  %&gt;% mutate(hl = if_else(region == &quot;West Texas&quot;, red, &quot;black&quot;))
+
+p_direct_sym &lt;- ggplot() +
+  geom_point(data = core_hl, aes(log_sales, price2015, shape = region, color = hl), size = 1.6, show.legend = FALSE) +
+  geom_line(data = fit_lines_hl, aes(log_sales, price2015, group = region, color = hl), linewidth = 0.6, alpha = .5, show.legend = FALSE) +
+  geom_point(data = marker_pts_hl, aes(log_sales, price2015, shape = region, color = hl), size = 2.6, alpha = .5, show.legend = FALSE) +
+  geom_text_repel(data = line_ends_hl, aes(log_sales, price2015, label = region, color = hl),
+                   fontface = &quot;italic&quot;, size = 3.2, hjust = 0, direction = &quot;y&quot;,
+                   xlim = c(max(fit_lines$log_sales) + 0.05, NA),
+                   force = 2, box.padding = 0.3, min.segment.length = 0,
+                   segment.size = 0.3, segment.color = &quot;grey60&quot;, show.legend = FALSE) +
+  scale_color_identity() +
+  scale_shape_manual(values = shapes6) +
+  scale_x_continuous(breaks = 3:4, labels = function(x) scales::comma(10^x),
+                      expand = expansion(mult = c(0.05, 0.55))) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = &quot;2015 home sales (log scale)&quot;, y = &quot;2015 median price&quot;, title = &quot;With direct labels&quot;) +
+  base_theme +
+  theme(plot.margin = margin(5.5, 12, 5.5, 5.5))
+
+plot_grid(p_legend_sym, p_direct_sym, nrow = 1)
+</code></pre>
+</details>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-7-1.png" alt="" width="960" />
+<p>The direct-label version keeps the shapes, so a reader can tell the six lines apart without a key even before reaching a label. If the focus is each group&rsquo;s general trend, keeping these fitted lines earns its place. The West Texas market looks radically different in trend from the rest of the regions and is worth calling out. Showing what each region&rsquo;s data actually does is far more useful than showing which shape is linked to which region.</p>
+<p>In other cases (e.g. clusters that are well separated, or a handful of genuine outliers), calling them out directly &mdash; using standard ellipses, bounding boxes, explicit tagging, etc. &mdash; is worth the effort.</p>
+<h3 id="make-the-legend-do-some-work">Make the legend do some work</h3>
+<p>None of this is to say legends are never useful. But if you&rsquo;re going to keep one, perhaps make it earn its keep. A plain colour bar does the least a legend possibly could: one axis, one relationship, nothing else. Swap the strip for a histogram, coloured with the same scale, and the legend can carry information the map doesn&rsquo;t provide on its own.</p>
+<p>In what follows, reading the dot map hasn&rsquo;t changed at all. What&rsquo;s changed is that the legend itself now says something: most Texas markets sit in a $140k&ndash;180k band, and a handful (Austin, Dallas, Midland) sit well clear of it by themselves. The same trick works for a categorical legend: add a count to each label, sort them, and a flat list of swatches becomes a ranking. I leave this, as an exercise.</p>
+<details>
+<summary>Show code</summary>
+<pre><code class="language-r"># core, tx_outline, seq_blue, and p_legend_map were all built in
+# &quot;A continuous map&quot; above; reused as-is here
+# p_legend_map (built in &quot;A continuous map&quot; above) puts its colour bar on
+# the right by default. Moved to the bottom here, at roughly the same width
+# and position as the histogram inset below, so the two panels are actually
+# comparable side by side rather than differing in layout as well as content
+p_legend_map_bottom &lt;- p_legend_map +
+  labs(color = &quot;2015 median price&quot;) +
+  guides(color = guide_colorbar(barwidth = 12, barheight = 0.5, title.position = &quot;top&quot;, title.hjust = 0.5)) +
+  theme(legend.position = &quot;bottom&quot;, legend.title = element_text(size = 9), legend.text = element_text(size = 8))
+
+p_map_bare &lt;- ggplot() +
+  geom_sf(data = tx_outline, fill = &quot;grey96&quot;, color = &quot;grey80&quot;, linewidth = 0.3) +
+  geom_point(data = core, aes(lon, lat, color = price2015), size = 2.6, show.legend = FALSE) +
+  scale_color_gradientn(colors = seq_blue) +
+  theme_void(base_size = 12) +
+  theme(plot.title = element_text(face = &quot;bold&quot;)) +
+  labs(title = &quot;With a legend that does some work&quot;)
+
+p_hist_legend &lt;- ggplot(core, aes(price2015)) +
+  geom_histogram(aes(fill = after_stat(x), color = after_stat(x)), bins = 55, linewidth = 0.3) +
+  scale_fill_gradientn(colors = seq_blue, guide = &quot;none&quot;) +
+  scale_color_gradientn(colors = seq_blue, guide = &quot;none&quot;) +
+  scale_x_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = &quot;2015 median price&quot;, y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.x = element_text(size = 8, color = &quot;grey40&quot;),
+        axis.title.x = element_text(size = 9, color = &quot;grey30&quot;),
+        axis.line.x = element_line(color = &quot;grey50&quot;, linewidth = 0.3),
+        plot.background = element_rect(fill = &quot;transparent&quot;, color = NA),
+        panel.background = element_rect(fill = &quot;transparent&quot;, color = NA))
+
+# draw_plot() places the histogram as a small inset rather than a full-width
+# panel stacked under the map --- a legend doesn't need to be as wide as the
+# thing it's labelling
+p_right &lt;- ggdraw(p_map_bare) +
+  draw_plot(p_hist_legend, x = 0.08, y = 0.03, width = 0.55, height = 0.17)
+
+plot_grid(p_legend_map_bottom, p_right, nrow = 1)
+</code></pre>
+</details>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-8-1.png" alt="" width="960" />
+<h2 id="conclusions">Conclusions</h2>
+<p>I was tempted to title this post similar to <a href="https://kieranhealy.org/files/papers/fuck-nuance.pdf" target="_blank" rel="noopener">Kieran Healy&rsquo;s article</a>, but thought better of it.
+However, the sentiment carries.</p>
+<p>Make it easy for the reader, not for yourself. Label selectively and judiciously, never exhaustively. Pick the right channel &mdash; symbol, colour, position, text &mdash; for the right message. And in every case, the underlying move is identical: stop asking the reader to hold some arbitrary mapping in their head, and put the name where their eyes already are.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#the-burden-of-legends">The burden of legends</a></li>
+        <li><a href="#remedies">Remedies</a>
+          <ul>
+            <li><a href="#direct-labels-should-be-default">Direct labels should be default</a></li>
+            <li><a href="#a-map-is-no-different">A map is no different</a></li>
+            <li><a href="#draw-attention-to-what-matters">Draw attention to what matters</a></li>
+            <li><a href="#group-with-small-multiples">Group with small multiples</a></li>
+            <li><a href="#highlight-the-one-series-that-matters">Highlight the one series that matters</a></li>
+            <li><a href="#a-continuous-map">A continuous map</a></li>
+            <li><a href="#symbols">Symbols</a></li>
+            <li><a href="#make-the-legend-do-some-work">Make the legend do some work</a></li>
+          </ul>
+        </li>
+        <li><a href="#conclusions">Conclusions</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/my-screed-against-legends/&amp;text=My%20Screed%20Against%20Legends" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/my-screed-against-legends/&amp;t=My%20Screed%20Against%20Legends" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=My%20Screed%20Against%20Legends&amp;body=https://nkaza.github.io/post/my-screed-against-legends/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/my-screed-against-legends/&amp;title=My%20Screed%20Against%20Legends" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=My%20Screed%20Against%20Legends%20https://nkaza.github.io/post/my-screed-against-legends/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/my-screed-against-legends/&amp;title=My%20Screed%20Against%20Legends" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2025 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>
