@@ -347,7 +347,7 @@
         content="2026-09-17T00:00:00&#43;00:00"
       />
     
-    <meta property="article:modified_time" content="2026-09-19T00:00:00&#43;00:00">
+    <meta property="article:modified_time" content="2026-09-20T00:00:00&#43;00:00">
   
 
   
@@ -376,7 +376,7 @@
   "headline": "My Screed Against Legends",
   
   "datePublished": "2026-09-17T00:00:00Z",
-  "dateModified": "2026-09-19T00:00:00Z",
+  "dateModified": "2026-09-20T00:00:00Z",
   
   "author": {
     "@type": "Person",
@@ -915,7 +915,7 @@
           Last updated on
       
     
-    Sep 19, 2026
+    Sep 20, 2026
   </span>
   
 
@@ -1168,64 +1168,67 @@ plot_grid(p_legend_bar, p_slope, nrow = 1)
 <img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-3-1.png" alt="" width="960" />
 <p>Slope graphs, a Tufte invention, let you focus on how individual components change by leaning on positional shift instead of colour. Because 2000 and 2015 are visually connected by a line, its angle tells the reader both the strength and direction of change directly. Colour becomes largely unnecessary, and so does the legend.</p>
 <h3 id="group-with-small-multiples">Group with small multiples</h3>
-<p>Five cities is a comfortable case for colours and direct labels. Nine is past the point where colour stops working and the labels collide, ruling out a legible chart either way. <code>cols4all</code> makes that failure concrete: asking <code>misc.okabe</code> for a ninth colour throws a fit and stops. So the visualisation falls back to <code>ggplot2</code>&rsquo;s unvalidated default hue wheel. Direct labels fail the opposite way: nine lines converging on the right edge collide no matter how hard <code>ggrepel</code> works.</p>
-<p>Small multiples let us make sense of patterns within and across groups. By 2015, Austin, Dallas, Houston, and San Antonio are all above $190k, and the next city down, Arlington, trails by twenty thousand dollars. That gap splits the nine markets cleanly: four large markets, five smaller ones. Any other sensible, deliberate faceting would work just as well.</p>
+<p>Colour breaks down as a <em>grouping</em> device too. Take every Texas market from the region map above with complete price data across the full period, coloured by its region rather than by city: only six colours, but a legend is still needed just to tell which of the six is which. Small multiples solve this more directly than any legend could: facet by region, and the panel&rsquo;s own title says the name outright, no colour to decode at all.</p>
 <details>
 <summary>Show code</summary>
-<pre><code class="language-r">cities9 &lt;- c(&quot;Austin&quot;, &quot;Dallas&quot;, &quot;Houston&quot;, &quot;San Antonio&quot;, &quot;Fort Worth&quot;,
-             &quot;El Paso&quot;, &quot;Arlington&quot;, &quot;Tyler&quot;, &quot;Beaumont&quot;)
-top4 &lt;- c(&quot;Austin&quot;, &quot;Dallas&quot;, &quot;Houston&quot;, &quot;San Antonio&quot;)
+<pre><code class="language-r"># region_df and region_cols were both built in &quot;A map is no different&quot; above;
+# reused as-is here so a region keeps the same colour throughout this post.
+# Restricted to cities with zero missing years 2000--2015, so every line runs
+# the full length of its panel --- no partial series to explain away
+complete_cities_region &lt;- txhousing %&gt;%
+  filter(year %in% 2000:2015) %&gt;%
+  group_by(city) %&gt;%
+  summarise(n_na = sum(is.na(median))) %&gt;%
+  filter(n_na == 0) %&gt;%
+  pull(city)
 
-d9raw &lt;- txhousing %&gt;%
-  filter(city %in% cities9, year %in% 2000:2015) %&gt;%
+d_region &lt;- txhousing %&gt;%
+  filter(city %in% region_df$city, city %in% complete_cities_region, year %in% 2000:2015) %&gt;%
   group_by(city, year) %&gt;%
-  summarise(median_price = mean(median, na.rm = TRUE), .groups = &quot;drop&quot;)
+  summarise(median_price = mean(median, na.rm = TRUE), .groups = &quot;drop&quot;) %&gt;%
+  left_join(region_df, by = &quot;city&quot;)
 
-order9 &lt;- d9raw %&gt;% filter(year == max(year)) %&gt;% arrange(desc(median_price)) %&gt;% pull(city)
-d9legend &lt;- d9raw %&gt;% mutate(city = factor(city, levels = order9))
+last_region &lt;- d_region %&gt;%
+  group_by(city) %&gt;%
+  filter(year == max(year)) %&gt;%
+  ungroup()
 
-p_legend9 &lt;- ggplot(d9legend, aes(year, median_price, color = city)) +
-  geom_line(linewidth = 0.7) +
-  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
-  labs(x = NULL, y = &quot;Median sale price&quot;, color = NULL, title = &quot;With a legend (nine series, unvalidated colours)&quot;) +
-  base_theme +
-  theme(legend.position = &quot;right&quot;,
-        legend.text = element_text(size = 8),
-        plot.title = element_text(size = 10))
-
-d9 &lt;- d9raw %&gt;%
-  mutate(group = factor(if_else(city %in% top4, &quot;The four largest metros&quot;, &quot;Five smaller metros&quot;),
-                         levels = c(&quot;The four largest metros&quot;, &quot;Five smaller metros&quot;)))
-order_lvls &lt;- d9 %&gt;% filter(year == max(year)) %&gt;% arrange(group, desc(median_price)) %&gt;% pull(city)
-d9 &lt;- d9 %&gt;% mutate(city = factor(city, levels = order_lvls))
-pal9 &lt;- setNames(rep(c4a(&quot;misc.okabe&quot;, 5), length.out = 9), order_lvls)
-text_cols9 &lt;- setNames(colorspace::darken(pal9, amount = 0.45), names(pal9))
-last_pts9 &lt;- d9 %&gt;% group_by(city) %&gt;% filter(year == max(year)) %&gt;% mutate(txt_col = text_cols9[city])
-
-p_direct9 &lt;- ggplot(d9, aes(year, median_price, color = city)) +
-  geom_line(linewidth = 0.7, show.legend = FALSE) +
-  geom_point(data = last_pts9, size = 1.6, show.legend = FALSE) +
-  geom_text_repel(data = last_pts9, aes(label = city), color = last_pts9$txt_col,
+p_legend_region &lt;- ggplot(d_region, aes(year, median_price, color = region, group = city)) +
+  geom_line(linewidth = 0.5, alpha = 0.8) +
+  geom_text_repel(data = last_region, aes(label = city), size = 2.1,
                    hjust = 0, direction = &quot;y&quot;, xlim = c(2015, NA),
-                   force = 15, box.padding = 0.5, min.segment.length = 0,
-                   segment.size = 0.3, segment.color = &quot;grey60&quot;, size = 2.7,
-                   max.overlaps = Inf, show.legend = FALSE) +
-  facet_wrap(~group, ncol = 2) +
-  scale_color_manual(values = pal9) +
+                   force = 10, box.padding = 0.15, min.segment.length = 0,
+                   segment.size = 0.25, segment.color = &quot;grey60&quot;,
+                   show.legend = FALSE, max.overlaps = Inf) +
+  scale_color_manual(values = region_cols) +
   scale_x_continuous(breaks = c(2000, 2005, 2010, 2015), expand = expansion(mult = c(0.02, 0.3))) +
   scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
-  labs(x = NULL, y = &quot;Median sale price&quot;, title = &quot;With direct labels, grouped by tier&quot;) +
+  labs(x = NULL, y = &quot;Median sale price&quot;, color = NULL, title = &quot;With a legend, coloured by region&quot;) +
+  base_theme +
+  theme(legend.position = &quot;right&quot;)
+
+p_facet_region &lt;- ggplot(d_region, aes(year, median_price, group = city)) +
+  geom_line(color = &quot;grey30&quot;, linewidth = 0.5, alpha = 0.8) +
+  geom_text_repel(data = last_region, aes(label = city), color = &quot;grey20&quot;,
+                   hjust = 0, direction = &quot;y&quot;, xlim = c(2015, NA),
+                   force = 10, box.padding = 0.2, min.segment.length = 0,
+                   segment.size = 0.25, segment.color = &quot;grey60&quot;, size = 2.1,
+                   max.overlaps = Inf) +
+  facet_wrap(~region, ncol = 3) +
+  scale_x_continuous(breaks = c(2000, 2005, 2010, 2015), expand = expansion(mult = c(0.02, 0.42))) +
+  scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &quot;k&quot;)) +
+  labs(x = NULL, y = &quot;Median sale price&quot;, title = &quot;With small multiples, one panel per region&quot;) +
   base_theme +
   theme(strip.text = element_text(face = &quot;bold&quot;, hjust = 0, size = 11),
         strip.background = element_blank(),
-        panel.spacing = unit(1.3, &quot;lines&quot;),
-        plot.title = element_text(size = 10))
+        panel.spacing = unit(1, &quot;lines&quot;))
 
-plot_grid(p_legend9, p_direct9, nrow = 2)
+plot_grid(p_legend_region, p_facet_region, nrow = 2)
 </code></pre>
 </details>
-<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-4-1.png" alt="" width="912" />
-<p>Each panel does the same job the very first chart in this post did, so comparison <em>within</em> a group still works exactly like the five-city version. What faceting adds is comparison <em>across</em> groups: the two panels share a y-axis (the <code>facet_wrap()</code> default, not overridden with <code>scales = &quot;free_y&quot;</code>), so the gap between the tiers stays visible as a gap. And because each panel is self-contained, you can reuse colours across facets, or drop them altogether.</p>
+<img src="https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-4-1.png" alt="" width="960" />
+<p>Both panels plot exactly the same data; only the encoding changes. On top, colour needs decoding: the reader has to find the right region in the legend, then carry that mapping back across a page of overlapping lines. Below, faceting skips the decoding step entirely. Each panel&rsquo;s own title already says which region it is, so position takes over as the identity channel and colour simply isn&rsquo;t needed. Comparison <em>within</em> a region survives the switch: each panel is really just a smaller version of the very first chart in this post. And because the facets share a y-axis, comparison <em>across</em> regions survives too: Central Texas&rsquo;s markets sit well above East and West Texas&rsquo;s for the whole period, not just by 2015.</p>
+<p>Ideally the facets are in a single row so that they can share the Y-axis, but we are limited by the figure width. It would be useful for the regions that need to be compared to one another are close to each other. I will leave this as an exercise.</p>
 <h3 id="highlight-the-one-series-that-matters">Highlight the one series that matters</h3>
 <p>Faceting solves &ldquo;too many series&rdquo; when every series matters roughly equally. Often it doesn&rsquo;t: the real story is one or two of them, and the rest exist only to give that story a sense of scale. Sometimes a general trend matters; other times a genuine outlier is the star. Either way, most of the data is background to the few that need to shine. Think of it as the f-stop on a camera, separating foreground from background.</p>
 <p><code>txhousing</code> has 24 Texas cities with complete price data across 2000&ndash;2015, too many for a legend to be any use. All 24, distinctly coloured and keyed:</p>
