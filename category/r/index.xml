@@ -87,8 +87,9 @@ plot_grid(p_legend, p_direct, nrow = 1)
 &lt;p&gt;Two details do the work in the right-hand panel. The labels are sorted by where the lines actually end, so they read top-to-bottom in the same order as the lines. Each label is tinted a darkened version of its own city&amp;rsquo;s colour rather than flat black, dark enough to stay legible, close enough to the line&amp;rsquo;s own hue that the label and the dot beside it read as one thing, not a caption the reader has to connect to a colour by hand.&lt;/p&gt;
 &lt;p&gt;Now it&amp;rsquo;s worth asking: is the colour even needed here? Probably not.&lt;/p&gt;
 &lt;h3 id=&#34;a-map-is-no-different&#34;&gt;A map is no different&lt;/h3&gt;
-&lt;p&gt;A map is no different than any other 2D statistical graphic, where XY are locations rather than other variables, such as time and prices. If Texas&amp;rsquo;s counties are divided into regions, a categorical map showing where each region sits and how big it is doesn&amp;rsquo;t really need a legend. &lt;code&gt;tmap&lt;/code&gt; defaults reach for one just as readily as &lt;code&gt;ggplot2&lt;/code&gt;&amp;rsquo;s do. And, we must resist it.&lt;/p&gt;
+&lt;p&gt;A map is no different than any other 2D statistical graphic, where XY are locations rather than other variables, such as time and prices. Take the &lt;a href=&#34;https://trerc.tamu.edu/article/characteristics-of-texas-land-markets-a-regional-analysis/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;seven land-market regions&lt;/a&gt; the Texas Real Estate Research Center at Texas A&amp;amp;M uses to track Texas land markets. The categorical map showing where each region sits and how big it is doesn&amp;rsquo;t really need a legend. &lt;code&gt;tmap&lt;/code&gt; defaults reach for one just as readily as &lt;code&gt;ggplot2&lt;/code&gt;&amp;rsquo;s do. And, we must resist it.&lt;/p&gt;
 &lt;p&gt;We can use the same direct-labelling trick as the charts above. Put the label directly where it matters and the cognitive burden disappears: the right-hand map reads instantly. Nobody has to check which colour means &amp;ldquo;West Texas&amp;rdquo;. The map just says so, over the actual West Texas counties.&lt;/p&gt;
+&lt;p&gt;Colour conflicts, however, do not disappear. Black text is not readily visible on top of dark colours and white text on light colours. So you will need to explicitly figure out how labels are contrasted with background colour categories (see e.g. Panhandle-South Plains.). Furthermore, you will have to worry about line wrapping to make sure that the labels are readable and do not overflow. This is idiosyncratic and distinctive to this dataset with these labels and with this spatial configuration and the author must do the work to make it easy on the reader, rather than rely on general rules.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;Show code&lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(sf)
@@ -96,13 +97,11 @@ library(tigris)
 library(tmap)
 
 # label_ink() picks whichever of ink or white clears more WCAG contrast
-# against a fill --- needed here, and again later, wherever a label sits
-# directly inside a solid-colored region
-rel_lum &amp;lt;- function(hex) {
-  rgb &amp;lt;- grDevices::col2rgb(hex) / 255
-  rgb_lin &amp;lt;- ifelse(rgb &amp;lt;= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055)^2.4)
-  drop(0.2126 * rgb_lin[1, ] + 0.7152 * rgb_lin[2, ] + 0.0722 * rgb_lin[3, ])
-}
+# against a fill, whenever a label sits
+# directly inside a solid-colored region. WCAG relative luminance is exactly
+# the CIE XYZ Y channel, which farver already computes
+
+rel_lum &amp;lt;- function(hex) farver::decode_colour(hex, to = &amp;quot;xyz&amp;quot;)[, &amp;quot;y&amp;quot;] / 100
 contrast_ratio &amp;lt;- function(h1, h2) {
   l &amp;lt;- cbind(rel_lum(h1), rel_lum(h2))
   hi &amp;lt;- pmax(l[, 1], l[, 2]); lo &amp;lt;- pmin(l[, 1], l[, 2])
@@ -112,44 +111,79 @@ label_ink &amp;lt;- function(fill_hex, ink = &amp;quot;black&amp;quot;, white = 
   ifelse(contrast_ratio(fill_hex, ink) &amp;gt;= contrast_ratio(fill_hex, white), ink, white)
 }
 
-# Texas cities grouped into six regions, each with its 2015 median home
-# price attached --- built once here and reused throughout the rest of this
-# post wherever a Texas market needs a location or a price
-regions &amp;lt;- list(
-  &amp;quot;North Texas&amp;quot; = c(&amp;quot;Dallas&amp;quot;, &amp;quot;Fort Worth&amp;quot;, &amp;quot;Arlington&amp;quot;, &amp;quot;Irving&amp;quot;, &amp;quot;Garland&amp;quot;),
-  &amp;quot;Gulf Coast&amp;quot; = c(&amp;quot;Houston&amp;quot;, &amp;quot;Galveston&amp;quot;, &amp;quot;Beaumont&amp;quot;, &amp;quot;Port Arthur&amp;quot;, &amp;quot;Victoria&amp;quot;),
-  &amp;quot;Central Texas&amp;quot; = c(&amp;quot;Austin&amp;quot;, &amp;quot;San Antonio&amp;quot;, &amp;quot;San Marcos&amp;quot;, &amp;quot;Waco&amp;quot;, &amp;quot;Kerrville&amp;quot;),
-  &amp;quot;West Texas&amp;quot; = c(&amp;quot;Amarillo&amp;quot;, &amp;quot;Lubbock&amp;quot;, &amp;quot;Midland&amp;quot;, &amp;quot;Odessa&amp;quot;, &amp;quot;San Angelo&amp;quot;, &amp;quot;Abilene&amp;quot;, &amp;quot;El Paso&amp;quot;, &amp;quot;Wichita Falls&amp;quot;),
-  &amp;quot;Rio Grande Valley&amp;quot; = c(&amp;quot;Laredo&amp;quot;, &amp;quot;McAllen&amp;quot;, &amp;quot;Harlingen&amp;quot;, &amp;quot;Brownsville&amp;quot;, &amp;quot;South Padre Island&amp;quot;, &amp;quot;Corpus Christi&amp;quot;),
-  &amp;quot;East Texas&amp;quot; = c(&amp;quot;Tyler&amp;quot;, &amp;quot;Lufkin&amp;quot;, &amp;quot;Nacogdoches&amp;quot;, &amp;quot;Paris&amp;quot;, &amp;quot;Texarkana&amp;quot;)
+# The seven land-market regions TRERC (the Texas Real Estate Research Center
+# at Texas A&amp;amp;M) tracks Texas land and housing markets by, taken directly from
+# the county-to-region lookup behind trerc.tamu.edu/data/rural-land.
+
+trerc_regions &amp;lt;- list(
+  &amp;quot;Panhandle-South Plains&amp;quot; = c(&amp;quot;Andrews&amp;quot;, &amp;quot;Armstrong&amp;quot;, &amp;quot;Bailey&amp;quot;, &amp;quot;Borden&amp;quot;, &amp;quot;Briscoe&amp;quot;, &amp;quot;Carson&amp;quot;, &amp;quot;Castro&amp;quot;, &amp;quot;Cochran&amp;quot;, &amp;quot;Crosby&amp;quot;, &amp;quot;Dallam&amp;quot;,
+    &amp;quot;Dawson&amp;quot;, &amp;quot;Deaf Smith&amp;quot;, &amp;quot;Ector&amp;quot;, &amp;quot;Floyd&amp;quot;, &amp;quot;Gaines&amp;quot;, &amp;quot;Garza&amp;quot;, &amp;quot;Gray&amp;quot;, &amp;quot;Hale&amp;quot;, &amp;quot;Hansford&amp;quot;, &amp;quot;Hartley&amp;quot;,
+    &amp;quot;Hemphill&amp;quot;, &amp;quot;Hockley&amp;quot;, &amp;quot;Howard&amp;quot;, &amp;quot;Hutchinson&amp;quot;, &amp;quot;Lamb&amp;quot;, &amp;quot;Lipscomb&amp;quot;, &amp;quot;Lubbock&amp;quot;, &amp;quot;Lynn&amp;quot;, &amp;quot;Martin&amp;quot;, &amp;quot;Midland&amp;quot;,
+    &amp;quot;Moore&amp;quot;, &amp;quot;Ochiltree&amp;quot;, &amp;quot;Oldham&amp;quot;, &amp;quot;Parmer&amp;quot;, &amp;quot;Potter&amp;quot;, &amp;quot;Randall&amp;quot;, &amp;quot;Roberts&amp;quot;, &amp;quot;Sherman&amp;quot;, &amp;quot;Swisher&amp;quot;, &amp;quot;Terry&amp;quot;, &amp;quot;Yoakum&amp;quot;),
+  &amp;quot;Far West Texas&amp;quot; = c(&amp;quot;Brewster&amp;quot;, &amp;quot;Crane&amp;quot;, &amp;quot;Culberson&amp;quot;, &amp;quot;El Paso&amp;quot;, &amp;quot;Hudspeth&amp;quot;, &amp;quot;Jeff Davis&amp;quot;, &amp;quot;Loving&amp;quot;, &amp;quot;Pecos&amp;quot;, &amp;quot;Presidio&amp;quot;,
+    &amp;quot;Reeves&amp;quot;, &amp;quot;Terrell&amp;quot;, &amp;quot;Ward&amp;quot;, &amp;quot;Winkler&amp;quot;),
+  &amp;quot;West Texas&amp;quot; = c(&amp;quot;Archer&amp;quot;, &amp;quot;Baylor&amp;quot;, &amp;quot;Childress&amp;quot;, &amp;quot;Clay&amp;quot;, &amp;quot;Coke&amp;quot;, &amp;quot;Collingsworth&amp;quot;, &amp;quot;Concho&amp;quot;, &amp;quot;Cottle&amp;quot;, &amp;quot;Crockett&amp;quot;, &amp;quot;Dickens&amp;quot;,
+    &amp;quot;Donley&amp;quot;, &amp;quot;Edwards&amp;quot;, &amp;quot;Fisher&amp;quot;, &amp;quot;Foard&amp;quot;, &amp;quot;Glasscock&amp;quot;, &amp;quot;Hall&amp;quot;, &amp;quot;Hardeman&amp;quot;, &amp;quot;Haskell&amp;quot;, &amp;quot;Irion&amp;quot;, &amp;quot;Jack&amp;quot;,
+    &amp;quot;Jones&amp;quot;, &amp;quot;Kent&amp;quot;, &amp;quot;King&amp;quot;, &amp;quot;Kinney&amp;quot;, &amp;quot;Knox&amp;quot;, &amp;quot;Mitchell&amp;quot;, &amp;quot;Motley&amp;quot;, &amp;quot;Nolan&amp;quot;, &amp;quot;Reagan&amp;quot;, &amp;quot;Runnels&amp;quot;,
+    &amp;quot;Schleicher&amp;quot;, &amp;quot;Scurry&amp;quot;, &amp;quot;Shackelford&amp;quot;, &amp;quot;Stephens&amp;quot;, &amp;quot;Sterling&amp;quot;, &amp;quot;Stonewall&amp;quot;, &amp;quot;Sutton&amp;quot;, &amp;quot;Taylor&amp;quot;, &amp;quot;Throckmorton&amp;quot;, &amp;quot;Tom Green&amp;quot;,
+    &amp;quot;Upton&amp;quot;, &amp;quot;Val Verde&amp;quot;, &amp;quot;Wheeler&amp;quot;, &amp;quot;Wichita&amp;quot;, &amp;quot;Wilbarger&amp;quot;, &amp;quot;Young&amp;quot;),
+  &amp;quot;Northeast Texas&amp;quot; = c(&amp;quot;Anderson&amp;quot;, &amp;quot;Angelina&amp;quot;, &amp;quot;Bowie&amp;quot;, &amp;quot;Camp&amp;quot;, &amp;quot;Cass&amp;quot;, &amp;quot;Cherokee&amp;quot;, &amp;quot;Collin&amp;quot;, &amp;quot;Cooke&amp;quot;, &amp;quot;Dallas&amp;quot;, &amp;quot;Delta&amp;quot;,
+    &amp;quot;Denton&amp;quot;, &amp;quot;Ellis&amp;quot;, &amp;quot;Fannin&amp;quot;, &amp;quot;Franklin&amp;quot;, &amp;quot;Grayson&amp;quot;, &amp;quot;Gregg&amp;quot;, &amp;quot;Harrison&amp;quot;, &amp;quot;Henderson&amp;quot;, &amp;quot;Hood&amp;quot;, &amp;quot;Hopkins&amp;quot;,
+    &amp;quot;Houston&amp;quot;, &amp;quot;Hunt&amp;quot;, &amp;quot;Jasper&amp;quot;, &amp;quot;Johnson&amp;quot;, &amp;quot;Kaufman&amp;quot;, &amp;quot;Lamar&amp;quot;, &amp;quot;Marion&amp;quot;, &amp;quot;Montague&amp;quot;, &amp;quot;Morris&amp;quot;, &amp;quot;Nacogdoches&amp;quot;,
+    &amp;quot;Newton&amp;quot;, &amp;quot;Palo Pinto&amp;quot;, &amp;quot;Panola&amp;quot;, &amp;quot;Parker&amp;quot;, &amp;quot;Polk&amp;quot;, &amp;quot;Rains&amp;quot;, &amp;quot;Red River&amp;quot;, &amp;quot;Rockwall&amp;quot;, &amp;quot;Rusk&amp;quot;, &amp;quot;Sabine&amp;quot;,
+    &amp;quot;San Augustine&amp;quot;, &amp;quot;Shelby&amp;quot;, &amp;quot;Smith&amp;quot;, &amp;quot;Somervell&amp;quot;, &amp;quot;Tarrant&amp;quot;, &amp;quot;Titus&amp;quot;, &amp;quot;Trinity&amp;quot;, &amp;quot;Tyler&amp;quot;, &amp;quot;Upshur&amp;quot;, &amp;quot;Van Zandt&amp;quot;, &amp;quot;Wise&amp;quot;, &amp;quot;Wood&amp;quot;),
+  &amp;quot;Gulf Coast-Brazos Bottom&amp;quot; = c(&amp;quot;Austin&amp;quot;, &amp;quot;Brazoria&amp;quot;, &amp;quot;Brazos&amp;quot;, &amp;quot;Burleson&amp;quot;, &amp;quot;Calhoun&amp;quot;, &amp;quot;Chambers&amp;quot;, &amp;quot;Colorado&amp;quot;, &amp;quot;DeWitt&amp;quot;, &amp;quot;Fayette&amp;quot;, &amp;quot;Fort Bend&amp;quot;,
+    &amp;quot;Galveston&amp;quot;, &amp;quot;Gonzales&amp;quot;, &amp;quot;Grimes&amp;quot;, &amp;quot;Hardin&amp;quot;, &amp;quot;Harris&amp;quot;, &amp;quot;Jackson&amp;quot;, &amp;quot;Jefferson&amp;quot;, &amp;quot;Lavaca&amp;quot;, &amp;quot;Leon&amp;quot;, &amp;quot;Liberty&amp;quot;,
+    &amp;quot;Madison&amp;quot;, &amp;quot;Matagorda&amp;quot;, &amp;quot;Montgomery&amp;quot;, &amp;quot;Orange&amp;quot;, &amp;quot;Robertson&amp;quot;, &amp;quot;San Jacinto&amp;quot;, &amp;quot;Victoria&amp;quot;, &amp;quot;Walker&amp;quot;, &amp;quot;Waller&amp;quot;, &amp;quot;Washington&amp;quot;, &amp;quot;Wharton&amp;quot;),
+  &amp;quot;South Texas&amp;quot; = c(&amp;quot;Aransas&amp;quot;, &amp;quot;Atascosa&amp;quot;, &amp;quot;Bee&amp;quot;, &amp;quot;Bexar&amp;quot;, &amp;quot;Brooks&amp;quot;, &amp;quot;Cameron&amp;quot;, &amp;quot;Comal&amp;quot;, &amp;quot;Dimmit&amp;quot;, &amp;quot;Duval&amp;quot;, &amp;quot;Frio&amp;quot;,
+    &amp;quot;Goliad&amp;quot;, &amp;quot;Guadalupe&amp;quot;, &amp;quot;Hidalgo&amp;quot;, &amp;quot;Jim Hogg&amp;quot;, &amp;quot;Jim Wells&amp;quot;, &amp;quot;Karnes&amp;quot;, &amp;quot;Kenedy&amp;quot;, &amp;quot;Kleberg&amp;quot;, &amp;quot;La Salle&amp;quot;, &amp;quot;Live Oak&amp;quot;,
+    &amp;quot;Maverick&amp;quot;, &amp;quot;McMullen&amp;quot;, &amp;quot;Medina&amp;quot;, &amp;quot;Nueces&amp;quot;, &amp;quot;Refugio&amp;quot;, &amp;quot;San Patricio&amp;quot;, &amp;quot;Starr&amp;quot;, &amp;quot;Uvalde&amp;quot;, &amp;quot;Webb&amp;quot;, &amp;quot;Willacy&amp;quot;, &amp;quot;Wilson&amp;quot;, &amp;quot;Zapata&amp;quot;, &amp;quot;Zavala&amp;quot;),
+  &amp;quot;Austin-Waco-Hill Country&amp;quot; = c(&amp;quot;Bandera&amp;quot;, &amp;quot;Bastrop&amp;quot;, &amp;quot;Bell&amp;quot;, &amp;quot;Blanco&amp;quot;, &amp;quot;Bosque&amp;quot;, &amp;quot;Brown&amp;quot;, &amp;quot;Burnet&amp;quot;, &amp;quot;Caldwell&amp;quot;, &amp;quot;Callahan&amp;quot;, &amp;quot;Coleman&amp;quot;,
+    &amp;quot;Comanche&amp;quot;, &amp;quot;Coryell&amp;quot;, &amp;quot;Eastland&amp;quot;, &amp;quot;Erath&amp;quot;, &amp;quot;Falls&amp;quot;, &amp;quot;Freestone&amp;quot;, &amp;quot;Gillespie&amp;quot;, &amp;quot;Hamilton&amp;quot;, &amp;quot;Hays&amp;quot;, &amp;quot;Hill&amp;quot;,
+    &amp;quot;Kendall&amp;quot;, &amp;quot;Kerr&amp;quot;, &amp;quot;Kimble&amp;quot;, &amp;quot;Lampasas&amp;quot;, &amp;quot;Lee&amp;quot;, &amp;quot;Limestone&amp;quot;, &amp;quot;Llano&amp;quot;, &amp;quot;Mason&amp;quot;, &amp;quot;McCulloch&amp;quot;, &amp;quot;McLennan&amp;quot;,
+    &amp;quot;Menard&amp;quot;, &amp;quot;Milam&amp;quot;, &amp;quot;Mills&amp;quot;, &amp;quot;Navarro&amp;quot;, &amp;quot;Real&amp;quot;, &amp;quot;San Saba&amp;quot;, &amp;quot;Travis&amp;quot;, &amp;quot;Williamson&amp;quot;)
 )
-region_df &amp;lt;- stack(regions) %&amp;gt;%
-  rename(city = values, region = ind) %&amp;gt;%
-  mutate(city = as.character(city), region = as.character(region))
+county_region_df &amp;lt;- stack(trerc_regions) %&amp;gt;%
+  rename(county = values, region = ind) %&amp;gt;%
+  mutate(county = as.character(county), region = as.character(region))
+
+tx_counties &amp;lt;- counties(state = &amp;quot;TX&amp;quot;, cb = TRUE, year = 2022, progress_bar = FALSE) %&amp;gt;%
+  st_transform(4326)
+tx_counties$region &amp;lt;- county_region_df$region[match(tx_counties$NAME, county_region_df$county)]
+tx_counties$region_wrapped &amp;lt;- gsub(&amp;quot; &amp;quot;, &amp;quot;\n&amp;quot;, tx_counties$region)
+# &amp;quot;Panhandle-South Plains&amp;quot; wraps unevenly at its only space (a 15-character
+# first line), which is wider than the panhandle itself is tall --- break at
+# the hyphen instead for two lines close to the same width
+tx_counties$region_wrapped[tx_counties$region == &amp;quot;Panhandle-South Plains&amp;quot;] &amp;lt;- &amp;quot;Panhandle-\nSouth Plains&amp;quot;
+
+# A handful of Texas markets, one to a few per region --- built once here
+# and reused throughout the rest of this post wherever a Texas market
+# needs a location, a price, or a region
+cities &amp;lt;- c(&amp;quot;Dallas&amp;quot;, &amp;quot;Fort Worth&amp;quot;, &amp;quot;Arlington&amp;quot;, &amp;quot;Irving&amp;quot;, &amp;quot;Garland&amp;quot;,
+  &amp;quot;Houston&amp;quot;, &amp;quot;Galveston&amp;quot;, &amp;quot;Beaumont&amp;quot;, &amp;quot;Port Arthur&amp;quot;, &amp;quot;Victoria&amp;quot;,
+  &amp;quot;Austin&amp;quot;, &amp;quot;San Antonio&amp;quot;, &amp;quot;San Marcos&amp;quot;, &amp;quot;Waco&amp;quot;, &amp;quot;Kerrville&amp;quot;,
+  &amp;quot;Amarillo&amp;quot;, &amp;quot;Lubbock&amp;quot;, &amp;quot;Midland&amp;quot;, &amp;quot;Odessa&amp;quot;, &amp;quot;San Angelo&amp;quot;, &amp;quot;Abilene&amp;quot;, &amp;quot;El Paso&amp;quot;, &amp;quot;Wichita Falls&amp;quot;,
+  &amp;quot;Laredo&amp;quot;, &amp;quot;McAllen&amp;quot;, &amp;quot;Harlingen&amp;quot;, &amp;quot;Brownsville&amp;quot;, &amp;quot;South Padre Island&amp;quot;, &amp;quot;Corpus Christi&amp;quot;,
+  &amp;quot;Tyler&amp;quot;, &amp;quot;Lufkin&amp;quot;, &amp;quot;Nacogdoches&amp;quot;, &amp;quot;Paris&amp;quot;, &amp;quot;Texarkana&amp;quot;)
 
 tx_places &amp;lt;- places(state = &amp;quot;TX&amp;quot;, cb = TRUE, year = 2022, progress_bar = FALSE) %&amp;gt;%
   mutate(base_name = gsub(&amp;quot; city$| CDP$| town$&amp;quot;, &amp;quot;&amp;quot;, NAME)) %&amp;gt;%
-  filter(base_name %in% region_df$city)
+  filter(base_name %in% cities)
 pts &amp;lt;- st_centroid(tx_places) %&amp;gt;% st_transform(4326)
 pts_coords &amp;lt;- st_coordinates(pts)
 pts_df &amp;lt;- pts %&amp;gt;% st_drop_geometry() %&amp;gt;% mutate(lon = pts_coords[, 1], lat = pts_coords[, 2]) %&amp;gt;%
   select(city = base_name, lon, lat)
 
-price2015 &amp;lt;- txhousing %&amp;gt;% filter(city %in% region_df$city, year == 2015) %&amp;gt;%
+# each city&#39;s region comes from which county polygon actually contains it,
+# not from which city happens to be geographically nearest
+region_df &amp;lt;- st_join(pts[&amp;quot;base_name&amp;quot;], tx_counties[&amp;quot;region&amp;quot;]) %&amp;gt;%
+  st_drop_geometry() %&amp;gt;%
+  rename(city = base_name)
+
+price2015 &amp;lt;- txhousing %&amp;gt;% filter(city %in% cities, year == 2015) %&amp;gt;%
   group_by(city) %&amp;gt;% summarise(price2015 = mean(median, na.rm = TRUE))
 
 core &amp;lt;- region_df %&amp;gt;% left_join(pts_df, by = &amp;quot;city&amp;quot;) %&amp;gt;% left_join(price2015, by = &amp;quot;city&amp;quot;)
-
-tx_counties &amp;lt;- counties(state = &amp;quot;TX&amp;quot;, cb = TRUE, year = 2022, progress_bar = FALSE) %&amp;gt;%
-  st_transform(4326)
-county_pts &amp;lt;- st_coordinates(st_centroid(tx_counties))
-city_pts &amp;lt;- as.matrix(core[, c(&amp;quot;lon&amp;quot;, &amp;quot;lat&amp;quot;)])
-nearest_idx &amp;lt;- sapply(seq_len(nrow(county_pts)), function(i) {
-  d &amp;lt;- sqrt((city_pts[, 1] - county_pts[i, 1])^2 + (city_pts[, 2] - county_pts[i, 2])^2)
-  which.min(d)
-})
-tx_counties$region &amp;lt;- core$region[nearest_idx]
-tx_counties$region_wrapped &amp;lt;- gsub(&amp;quot; &amp;quot;, &amp;quot;\n&amp;quot;, tx_counties$region)
 
 region_order &amp;lt;- sort(unique(tx_counties$region))
 region_cols &amp;lt;- setNames(c4a(&amp;quot;misc.okabe&amp;quot;, length(region_order)), region_order)
@@ -160,25 +194,27 @@ m_legend &amp;lt;- tm_shape(tx_counties) +
               col = &amp;quot;white&amp;quot;, lwd = 0.2, fill.legend = tm_legend(title = &amp;quot;Region&amp;quot;)) +
   tm_layout(frame = FALSE) + tm_title(&amp;quot;With a legend&amp;quot;, fontface = &amp;quot;bold&amp;quot;)
 
+# Fix specific issues with labelling, iteratively.
+
 region_diss &amp;lt;- tx_counties %&amp;gt;% group_by(region, region_wrapped) %&amp;gt;%
   summarise(geometry = st_union(geometry), .groups = &amp;quot;drop&amp;quot;) %&amp;gt;% st_centroid()
+region_diss$geometry[region_diss$region == &amp;quot;Panhandle-South Plains&amp;quot;] &amp;lt;-
+  region_diss$geometry[region_diss$region == &amp;quot;Panhandle-South Plains&amp;quot;] + c(0.2, 0)
 
 m_direct &amp;lt;- tm_shape(tx_counties) +
   tm_polygons(fill = &amp;quot;region&amp;quot;, fill.scale = tm_scale_categorical(values = &amp;quot;misc.okabe&amp;quot;),
               col = &amp;quot;white&amp;quot;, lwd = 0.2, fill.legend = tm_legend(show = FALSE)) +
+  tm_shape(region_diss) +
+  tm_text(text = &amp;quot;region_wrapped&amp;quot;, size = 0.8, fontface = &amp;quot;bold&amp;quot;,
+          col = &amp;quot;region&amp;quot;, col.scale = tm_scale_categorical(values = region_txt),
+          col.legend = tm_legend(show = FALSE)) +
   tm_layout(frame = FALSE) + tm_title(&amp;quot;With direct labels&amp;quot;, fontface = &amp;quot;bold&amp;quot;)
-
-for (r in region_order) {
-  rc &amp;lt;- filter(region_diss, region == r)
-  m_direct &amp;lt;- m_direct + tm_shape(rc) +
-    tm_text(&amp;quot;region_wrapped&amp;quot;, size = 0.8, fontface = &amp;quot;bold&amp;quot;, col = region_txt[[r]])
-}
 
 tmap_arrange(m_legend, m_direct, ncol = 2)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-2-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
-&lt;h3 id=&#34;draw-attention-to-what-matters&#34;&gt;Draw attention to what matters&lt;/h3&gt;
+&lt;h3 id=&#34;pick-the-right-channel&#34;&gt;Pick the right channel&lt;/h3&gt;
 &lt;p&gt;Stacked bars are a common way to show a composition changing between two points in time. Total height across two bars is trivial to compare; one segment&amp;rsquo;s height across two bars is not, because every segment except the bottom one sits on a different, shifting baseline. And a legend is needed just to know which colour is which category before any comparison can even start. A slope graph fixes most of these issues.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;Show code&lt;/summary&gt;
@@ -228,7 +264,7 @@ plot_grid(p_legend_bar, p_slope, nrow = 1)
 &lt;img src=&#34;https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-3-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
 &lt;p&gt;Slope graphs, a Tufte invention, let you focus on how individual components change by leaning on positional shift instead of colour. Because 2000 and 2015 are visually connected by a line, its angle tells the reader both the strength and direction of change directly. Colour becomes largely unnecessary, and so does the legend.&lt;/p&gt;
 &lt;h3 id=&#34;group-with-small-multiples&#34;&gt;Group with small multiples&lt;/h3&gt;
-&lt;p&gt;Colour breaks down as a &lt;em&gt;grouping&lt;/em&gt; device too. Take every Texas market from the region map above with complete price data across the full period, coloured by its region rather than by city: only six colours, but a legend is still needed just to tell which of the six is which. Small multiples solve this more directly than any legend could: facet by region, and the panel&amp;rsquo;s own title says the name outright, no colour to decode at all.&lt;/p&gt;
+&lt;p&gt;Colour breaks down as a &lt;em&gt;grouping&lt;/em&gt; device too. Take every Texas market from the region map above with complete price data across the full period, coloured by its region rather than by city: seven colours, and a legend is still needed just to tell which of the seven is which. Small multiples solve this more directly than any legend could: facet by region, and the panel&amp;rsquo;s own title says the name outright, no colour to decode at all.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;Show code&lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# region_df and region_cols were both built in &amp;quot;A map is no different&amp;quot; above;
@@ -274,7 +310,7 @@ p_facet_region &amp;lt;- ggplot(d_region, aes(year, median_price, group = city))
                    force = 10, box.padding = 0.2, min.segment.length = 0,
                    segment.size = 0.25, segment.color = &amp;quot;grey60&amp;quot;, size = 2.1,
                    max.overlaps = Inf) +
-  facet_wrap(~region, ncol = 3) +
+  facet_wrap(~region, ncol = 4) +
   scale_x_continuous(breaks = c(2000, 2005, 2010, 2015), expand = expansion(mult = c(0.02, 0.42))) +
   scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &amp;quot;k&amp;quot;)) +
   labs(x = NULL, y = &amp;quot;Median sale price&amp;quot;, title = &amp;quot;With small multiples, one panel per region&amp;quot;) +
@@ -286,12 +322,13 @@ p_facet_region &amp;lt;- ggplot(d_region, aes(year, median_price, group = city))
 plot_grid(p_legend_region, p_facet_region, nrow = 2)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-4-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
-&lt;p&gt;Both panels plot exactly the same data; only the encoding changes. On top, colour needs decoding: the reader has to find the right region in the legend, then carry that mapping back across a page of overlapping lines. Below, faceting skips the decoding step entirely. Each panel&amp;rsquo;s own title already says which region it is, so position takes over as the identity channel and colour simply isn&amp;rsquo;t needed. Comparison &lt;em&gt;within&lt;/em&gt; a region survives the switch: each panel is really just a smaller version of the very first chart in this post. And because the facets share a y-axis, comparison &lt;em&gt;across&lt;/em&gt; regions survives too: Central Texas&amp;rsquo;s markets sit well above East and West Texas&amp;rsquo;s for the whole period, not just by 2015.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-4-1.png&#34; alt=&#34;&#34; width=&#34;1056&#34; /&gt;
+&lt;p&gt;Both panels plot exactly the same data; only the encoding changes. On top, colour needs decoding: the reader has to find the right region in the legend, then carry that mapping back across a page of overlapping lines. Below, faceting skips the decoding step entirely. Each panel&amp;rsquo;s own title already says which region it is, so position takes over as the identity channel and colour simply isn&amp;rsquo;t needed. Comparison &lt;em&gt;within&lt;/em&gt; a region survives the switch: each panel is really just a smaller version of the very first chart in this post. And because the facets share a y-axis, comparison &lt;em&gt;across&lt;/em&gt; regions survives too: Austin-Waco-Hill Country&amp;rsquo;s markets sit well above West Texas&amp;rsquo;s for the whole period, not just by 2015.&lt;/p&gt;
 &lt;p&gt;Ideally the facets are in a single row so that they can share the Y-axis, but we are limited by the figure width. It would be useful for the regions that need to be compared to one another are close to each other. I will leave this as an exercise.&lt;/p&gt;
-&lt;h3 id=&#34;highlight-the-one-series-that-matters&#34;&gt;Highlight the one series that matters&lt;/h3&gt;
+&lt;p&gt;The facets also highlight the regionalisation issue. In many of the regions, there are only 1 market, it is useful to consider if this regionalisation is the right grouping. I will leave that as an exercise too.&lt;/p&gt;
+&lt;h3 id=&#34;highlight-what-matters&#34;&gt;Highlight what matters&lt;/h3&gt;
 &lt;p&gt;Faceting solves &amp;ldquo;too many series&amp;rdquo; when every series matters roughly equally. Often it doesn&amp;rsquo;t: the real story is one or two of them, and the rest exist only to give that story a sense of scale. Sometimes a general trend matters; other times a genuine outlier is the star. Either way, most of the data is background to the few that need to shine. Think of it as the f-stop on a camera, separating foreground from background.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;txhousing&lt;/code&gt; has 24 Texas cities with complete price data across 2000&amp;ndash;2015, too many for a legend to be any use. All 24, distinctly coloured and keyed:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;txhousing&lt;/code&gt; has 24 Texas cities with complete price data across 2000&amp;ndash;2015, too many for a legend to be any use. All 24, distinctly coloured and keyed. A twenty-four-row legend for twenty-four lines is pointless. &lt;code&gt;cols4all&lt;/code&gt; refuses outright past eight colours, and even &lt;code&gt;ggplot2&lt;/code&gt;&amp;rsquo;s fallback rainbow just produces a wall of near-identical hues matched to a key nobody&amp;rsquo;s going to scroll through. Most of those lines aren&amp;rsquo;t the story anyway: they&amp;rsquo;re there to show that prices broadly rose across Texas over fifteen years, which the grey backdrop already says perfectly well as a shape. What actually needed an identity was which city rose fastest (Irving) and which one stayed closest to typical (Amarillo). So those are the only two drawn in colour, the only two labelled, and the only two a reader is asked to remember. If your text is about these two, leave the rest in the background.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;Show code&lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;complete_cities &amp;lt;- txhousing %&amp;gt;%
@@ -348,8 +385,8 @@ plot_grid(p_legend24, p_highlight, nrow = 1)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-5-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
-&lt;p&gt;A twenty-four-row legend for twenty-four lines is pointless. &lt;code&gt;cols4all&lt;/code&gt; refuses outright past eight colours, and even &lt;code&gt;ggplot2&lt;/code&gt;&amp;rsquo;s fallback rainbow just produces a wall of near-identical hues matched to a key nobody&amp;rsquo;s going to scroll through. Most of those lines aren&amp;rsquo;t the story anyway: they&amp;rsquo;re there to show that prices broadly rose across Texas over fifteen years, which the grey backdrop already says perfectly well as a shape. What actually needed an identity was which city rose fastest (Irving) and which one stayed closest to typical (Amarillo). So those are the only two drawn in colour, the only two labelled, and the only two a reader is asked to remember. If your text is about these two, leave the rest in the background.&lt;/p&gt;
-&lt;h3 id=&#34;label-the-regions-that-matter&#34;&gt;Label the regions that matter&lt;/h3&gt;
+&lt;p&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;label-the-things-that-matter&#34;&gt;Label the things that matter&lt;/h3&gt;
 &lt;p&gt;Maps make the case even more directly, because the colour-to-value mapping in a continuous legend is genuinely hard to read precisely. Nobody can look at a shade of blue and report a city&amp;rsquo;s price from a colour bar.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;Show code&lt;/summary&gt;
@@ -404,9 +441,17 @@ plot_grid(p_legend_map, p_direct_map, nrow = 1)
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;sales2015 &amp;lt;- txhousing %&amp;gt;% filter(city %in% core$city, year == 2015) %&amp;gt;%
   group_by(city) %&amp;gt;% summarise(sales2015 = sum(sales, na.rm = TRUE))
 core &amp;lt;- core %&amp;gt;% left_join(sales2015, by = &amp;quot;city&amp;quot;) %&amp;gt;% mutate(log_sales = log10(sales2015))
-shapes6 &amp;lt;- c(16, 17, 15, 18, 3, 4)
+shapes7 &amp;lt;- c(16, 17, 15, 18, 3, 4, 8)
 
+# Far West Texas has only one city (El Paso), so there&#39;s no line to fit ---
+# min(log_sales) == max(log_sales) would make seq() emit 60 copies of the
+# same point, which then breaks slice_max()/slice() downstream into a flood
+# of duplicate rows for that one region. A single-city region gets its own
+# single point instead.
 fit_lines &amp;lt;- lapply(split(core, core$region), function(d) {
+  if (nrow(d) &amp;lt; 2) {
+    return(data.frame(region = d$region[1], log_sales = d$log_sales, price2015 = d$price2015))
+  }
   m &amp;lt;- lm(price2015 ~ log_sales, data = d)
   xs &amp;lt;- seq(min(d$log_sales), max(d$log_sales), length.out = 60)
   data.frame(region = d$region[1], log_sales = xs,
@@ -414,11 +459,11 @@ fit_lines &amp;lt;- lapply(split(core, core$region), function(d) {
 }) %&amp;gt;% bind_rows()
 
 marker_pts &amp;lt;- fit_lines %&amp;gt;% group_by(region) %&amp;gt;%
-  slice(round(seq(1, n(), length.out = 4))) %&amp;gt;% ungroup()
+  slice(unique(round(seq(1, n(), length.out = 4)))) %&amp;gt;% ungroup()
 
 p_legend_sym &amp;lt;- ggplot() +
   geom_point(data = core, aes(log_sales, price2015, shape = region), color = &amp;quot;black&amp;quot;, size = 1.6) +
-  scale_shape_manual(values = shapes6) +
+  scale_shape_manual(values = shapes7) +
   scale_x_continuous(breaks = 3:4, labels = function(x) scales::comma(10^x)) +
   scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &amp;quot;k&amp;quot;)) +
   labs(x = &amp;quot;2015 home sales (log scale)&amp;quot;, y = &amp;quot;2015 median price&amp;quot;, shape = NULL, title = &amp;quot;With a legend&amp;quot;) +
@@ -427,15 +472,15 @@ p_legend_sym &amp;lt;- ggplot() +
 
 line_ends &amp;lt;- fit_lines %&amp;gt;% group_by(region) %&amp;gt;% slice_max(log_sales, n = 1) %&amp;gt;% ungroup()
 
-# West Texas is the one region worth calling out in colour --- see the text
+# Panhandle-South Plains is the one region worth calling out in colour --- see the text
 # below; everything else stays black, distinguished only by shape. Red is
 # cols4all&#39;s misc.okabe vermillion, not base R&#39;s harsher &amp;quot;red&amp;quot;, so it stays
 # consistent with every other colour choice in this post
 red &amp;lt;- &amp;quot;#D55E00&amp;quot;
-core_hl       &amp;lt;- core       %&amp;gt;% mutate(hl = if_else(region == &amp;quot;West Texas&amp;quot;, red, &amp;quot;black&amp;quot;))
-fit_lines_hl  &amp;lt;- fit_lines  %&amp;gt;% mutate(hl = if_else(region == &amp;quot;West Texas&amp;quot;, red, &amp;quot;black&amp;quot;))
-marker_pts_hl &amp;lt;- marker_pts %&amp;gt;% mutate(hl = if_else(region == &amp;quot;West Texas&amp;quot;, red, &amp;quot;black&amp;quot;))
-line_ends_hl  &amp;lt;- line_ends  %&amp;gt;% mutate(hl = if_else(region == &amp;quot;West Texas&amp;quot;, red, &amp;quot;black&amp;quot;))
+core_hl       &amp;lt;- core       %&amp;gt;% mutate(hl = if_else(region == &amp;quot;Panhandle-South Plains&amp;quot;, red, &amp;quot;black&amp;quot;))
+fit_lines_hl  &amp;lt;- fit_lines  %&amp;gt;% mutate(hl = if_else(region == &amp;quot;Panhandle-South Plains&amp;quot;, red, &amp;quot;black&amp;quot;))
+marker_pts_hl &amp;lt;- marker_pts %&amp;gt;% mutate(hl = if_else(region == &amp;quot;Panhandle-South Plains&amp;quot;, red, &amp;quot;black&amp;quot;))
+line_ends_hl  &amp;lt;- line_ends  %&amp;gt;% mutate(hl = if_else(region == &amp;quot;Panhandle-South Plains&amp;quot;, red, &amp;quot;black&amp;quot;))
 
 p_direct_sym &amp;lt;- ggplot() +
   geom_point(data = core_hl, aes(log_sales, price2015, shape = region, color = hl), size = 1.6, show.legend = FALSE) +
@@ -447,7 +492,7 @@ p_direct_sym &amp;lt;- ggplot() +
                    force = 2, box.padding = 0.3, min.segment.length = 0,
                    segment.size = 0.3, segment.color = &amp;quot;grey60&amp;quot;, show.legend = FALSE) +
   scale_color_identity() +
-  scale_shape_manual(values = shapes6) +
+  scale_shape_manual(values = shapes7) +
   scale_x_continuous(breaks = 3:4, labels = function(x) scales::comma(10^x),
                       expand = expansion(mult = c(0.05, 0.55))) +
   scale_y_continuous(labels = scales::dollar_format(scale = 1e-3, suffix = &amp;quot;k&amp;quot;)) +
@@ -459,7 +504,7 @@ plot_grid(p_legend_sym, p_direct_sym, nrow = 1)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/my-screed-against-legends/index.en_files/figure-html/unnamed-chunk-7-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
-&lt;p&gt;The direct-label version keeps the shapes, so a reader can tell the six lines apart without a key even before reaching a label. If the focus is each group&amp;rsquo;s general trend, keeping these fitted lines earns its place. The West Texas market looks radically different in trend from the rest of the regions and is worth calling out. Showing what each region&amp;rsquo;s data actually does is far more useful than showing which shape is linked to which region.&lt;/p&gt;
+&lt;p&gt;The direct-label version keeps the shapes, so a reader can tell the seven lines apart without a key even before reaching a label. If the focus is each group&amp;rsquo;s general trend, keeping these fitted lines earns its place. Panhandle-South Plains is the one region where price falls as sales rise, the opposite direction from every other region, and is worth calling out. Showing what each region&amp;rsquo;s data actually does is far more useful than showing which shape is linked to which region.&lt;/p&gt;
 &lt;p&gt;In other cases (e.g. clusters that are well separated, or a handful of genuine outliers), calling them out directly using standard ellipses, bounding boxes, explicit tagging, etc., is worth the effort.&lt;/p&gt;
 &lt;h3 id=&#34;make-the-legend-do-some-work&#34;&gt;Make the legend do some work&lt;/h3&gt;
 &lt;p&gt;None of this is to say legends are never useful. But if you&amp;rsquo;re going to keep one, perhaps make it earn its keep. A plain colour bar does the least a legend possibly could: one axis, one relationship, nothing else. Swap the strip for a histogram, coloured with the same scale, and the legend can carry information the map doesn&amp;rsquo;t provide on its own.&lt;/p&gt;
