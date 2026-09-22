@@ -5,12 +5,257 @@
     <link>https://nkaza.github.io/category/object-detection/</link>
       <atom:link href="https://nkaza.github.io/category/object-detection/index.xml" rel="self" type="application/rss+xml" />
     <description>object detection</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Fri, 29 Aug 2025 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Wed, 16 Sep 2026 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
       <title>object detection</title>
       <link>https://nkaza.github.io/category/object-detection/</link>
     </image>
+    
+    <item>
+      <title>Object Detection Without Python (A Pure R Pipeline with YOLO26)</title>
+      <link>https://nkaza.github.io/post/object-detection-without-python/</link>
+      <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/object-detection-without-python/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&#34;&gt;earlier post&lt;/a&gt;, we ran a pre-trained YOLO model from R by reaching into Python with &lt;code&gt;reticulate&lt;/code&gt;: import &lt;code&gt;torch&lt;/code&gt; and &lt;code&gt;ultralytics&lt;/code&gt;, hand a &lt;code&gt;conda&lt;/code&gt; environment to &lt;code&gt;use_condaenv()&lt;/code&gt;, and call the model as if it were an R object. That works, but it means every student needs a working Python environment somewhere reachable from R &amp;mdash; a &lt;code&gt;conda&lt;/code&gt; install, a mapped network drive, an &lt;code&gt;environment.yml&lt;/code&gt; &amp;mdash; before they can detect a single car.&lt;/p&gt;
+&lt;p&gt;This post shows the alternative: doing the entire inference step in R, with no Python at runtime at all. It relies on the R &lt;code&gt;torch&lt;/code&gt; package, which binds directly to &lt;code&gt;libtorch&lt;/code&gt; (the C++ library that PyTorch itself is built on). Once a model has been exported to the TorchScript format, &lt;code&gt;torch::jit_load()&lt;/code&gt; reads it directly &amp;mdash; no &lt;code&gt;reticulate&lt;/code&gt;, no Python interpreter, no environment to activate.&lt;/p&gt;
+&lt;p&gt;There is exactly one Python touchpoint left, and it happens once, outside of R, before this tutorial even begins: exporting the trained model to TorchScript.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pip install ultralytics
+yolo export model=yolo26s.pt format=torchscript imgsz=640
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That produces a single &lt;code&gt;yolo26s.torchscript&lt;/code&gt; file. Everything from here on &amp;mdash; reading images, running the model, drawing boxes, summarising results &amp;mdash; is ordinary R.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    This tutorial uses &lt;a href=&#34;https://docs.ultralytics.com/models/yolo26/&#34;&gt;YOLO26&lt;/a&gt;, the successor to the YOLOv10 model used in the earlier post. YOLO26 ships in n/s/m/l/x sizes (no &amp;ldquo;b&amp;rdquo;, if you&amp;rsquo;re used to YOLOv10&amp;rsquo;s naming); this post uses the small &lt;code&gt;yolo26s&lt;/code&gt; variant. Swap in &lt;code&gt;yolo26m&lt;/code&gt;/&lt;code&gt;l&lt;/code&gt;/&lt;code&gt;x&lt;/code&gt; for more accuracy at the cost of speed, using the same export command above.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;setup&#34;&gt;Setup&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(c(&amp;quot;torch&amp;quot;, &amp;quot;magick&amp;quot;, &amp;quot;tidyverse&amp;quot;, &amp;quot;cowplot&amp;quot;, &amp;quot;exiftoolr&amp;quot;))
+torch::install_torch() # downloads libtorch itself, once
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;torch::install_torch()&lt;/code&gt; downloads the &lt;code&gt;libtorch&lt;/code&gt; binaries for your platform. It&amp;rsquo;s a few hundred megabytes and only needs to happen once per machine, but do it before class if you&amp;rsquo;re on a slow connection.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(torch)
+library(magick)
+library(tidyverse)
+library(cowplot)
+library(exiftoolr)
+library(here)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;data&#34;&gt;Data&lt;/h2&gt;
+&lt;p&gt;We&amp;rsquo;ll use the same &lt;a href=&#34;https://www.dropbox.com/scl/fi/u5t26kwi8t52c16r04qso/geotagged.zip?rlkey=zszxeyd0tdrwubjatwbjhwn3e&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;street-level images from Rio de Janeiro, Brazil&lt;/a&gt; as the earlier post, collected through &lt;a href=&#34;https://kartaview.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kartaview&lt;/a&gt;. See that post&amp;rsquo;s &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/#data&#34;&gt;Data section&lt;/a&gt; for a fuller discussion of the imagery and its EXIF metadata; here we just load the file paths.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img_files &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;rio_kartaview_images&amp;quot;, &amp;quot;geotagged&amp;quot;) %&amp;gt;%
+              list.files(full.names = TRUE, pattern = &amp;quot;\\.jpg$&amp;quot;)
+
+length(img_files)
+# [1] 484
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;loading-the-model&#34;&gt;Loading the model&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;model &amp;lt;- jit_load(&amp;quot;yolo26s.torchscript&amp;quot;) # sits alongside this .Rmarkdown file
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;jit_load()&lt;/code&gt; reads the exported TorchScript graph directly; there&amp;rsquo;s no &lt;code&gt;ultralytics$YOLO()&lt;/code&gt; wrapper here, so we lose some conveniences it provides (like &lt;code&gt;to_df()&lt;/code&gt; from the earlier post) and have to rebuild them ourselves in plain R. That&amp;rsquo;s most of the rest of this post.&lt;/p&gt;
+&lt;p&gt;YOLO26, like most object detectors trained on it, is trained on the COCO (Common Objects in Context) dataset, so its outputs are indexed against COCO&amp;rsquo;s 80 categories. The exported model gives us class indices, not names, so we need the lookup table ourselves &amp;mdash; Ultralytics doesn&amp;rsquo;t ship it inside the TorchScript file the way it does with the Python &lt;code&gt;ultralytics&lt;/code&gt; package.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;coco_names &amp;lt;- c(
+    &amp;quot;person&amp;quot;,&amp;quot;bicycle&amp;quot;,&amp;quot;car&amp;quot;,&amp;quot;motorcycle&amp;quot;,&amp;quot;airplane&amp;quot;,&amp;quot;bus&amp;quot;,&amp;quot;train&amp;quot;,&amp;quot;truck&amp;quot;,&amp;quot;boat&amp;quot;,
+    &amp;quot;traffic light&amp;quot;,&amp;quot;fire hydrant&amp;quot;,&amp;quot;stop sign&amp;quot;,&amp;quot;parking meter&amp;quot;,&amp;quot;bench&amp;quot;,&amp;quot;bird&amp;quot;,&amp;quot;cat&amp;quot;,
+    &amp;quot;dog&amp;quot;,&amp;quot;horse&amp;quot;,&amp;quot;sheep&amp;quot;,&amp;quot;cow&amp;quot;,&amp;quot;elephant&amp;quot;,&amp;quot;bear&amp;quot;,&amp;quot;zebra&amp;quot;,&amp;quot;giraffe&amp;quot;,&amp;quot;backpack&amp;quot;,
+    &amp;quot;umbrella&amp;quot;,&amp;quot;handbag&amp;quot;,&amp;quot;tie&amp;quot;,&amp;quot;suitcase&amp;quot;,&amp;quot;frisbee&amp;quot;,&amp;quot;skis&amp;quot;,&amp;quot;snowboard&amp;quot;,&amp;quot;sports ball&amp;quot;,
+    &amp;quot;kite&amp;quot;,&amp;quot;baseball bat&amp;quot;,&amp;quot;baseball glove&amp;quot;,&amp;quot;skateboard&amp;quot;,&amp;quot;surfboard&amp;quot;,&amp;quot;tennis racket&amp;quot;,
+    &amp;quot;bottle&amp;quot;,&amp;quot;wine glass&amp;quot;,&amp;quot;cup&amp;quot;,&amp;quot;fork&amp;quot;,&amp;quot;knife&amp;quot;,&amp;quot;spoon&amp;quot;,&amp;quot;bowl&amp;quot;,&amp;quot;banana&amp;quot;,&amp;quot;apple&amp;quot;,
+    &amp;quot;sandwich&amp;quot;,&amp;quot;orange&amp;quot;,&amp;quot;broccoli&amp;quot;,&amp;quot;carrot&amp;quot;,&amp;quot;hot dog&amp;quot;,&amp;quot;pizza&amp;quot;,&amp;quot;donut&amp;quot;,&amp;quot;cake&amp;quot;,&amp;quot;chair&amp;quot;,
+    &amp;quot;couch&amp;quot;,&amp;quot;potted plant&amp;quot;,&amp;quot;bed&amp;quot;,&amp;quot;dining table&amp;quot;,&amp;quot;toilet&amp;quot;,&amp;quot;tv&amp;quot;,&amp;quot;laptop&amp;quot;,&amp;quot;mouse&amp;quot;,
+    &amp;quot;remote&amp;quot;,&amp;quot;keyboard&amp;quot;,&amp;quot;cell phone&amp;quot;,&amp;quot;microwave&amp;quot;,&amp;quot;oven&amp;quot;,&amp;quot;toaster&amp;quot;,&amp;quot;sink&amp;quot;,
+    &amp;quot;refrigerator&amp;quot;,&amp;quot;book&amp;quot;,&amp;quot;clock&amp;quot;,&amp;quot;vase&amp;quot;,&amp;quot;scissors&amp;quot;,&amp;quot;teddy bear&amp;quot;,&amp;quot;hair drier&amp;quot;,
+    &amp;quot;toothbrush&amp;quot;
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;preparing-an-image-for-the-model&#34;&gt;Preparing an image for the model&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;ultralytics$YOLO()&lt;/code&gt; in the earlier post quietly resized, padded, and normalised every image before handing it to the network. &lt;code&gt;jit_load()&lt;/code&gt; gives us none of that &amp;mdash; the TorchScript graph expects a specific input shape, and it&amp;rsquo;s on us to produce it.&lt;/p&gt;
+&lt;p&gt;YOLO models are trained on square inputs, so a non-square photo has to be resized to fit inside a square canvas and padded with grey on the remaining sides, rather than stretched &amp;mdash; otherwise every detected box would come out distorted. This is called &lt;em&gt;letterboxing&lt;/em&gt;, by analogy with the black bars added to widescreen video on an old square TV.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;IMG_SIZE    &amp;lt;- 640L
+CONF_THRESH &amp;lt;- 0.5
+PAD_COLOR   &amp;lt;- &amp;quot;#727272&amp;quot;   # 114/255 grey -- Ultralytics&#39; own letterbox pad value
+
+letterbox &amp;lt;- function(path, size = IMG_SIZE) {
+    img  &amp;lt;- image_read(path)
+    info &amp;lt;- image_info(img)
+    w &amp;lt;- info$width; h &amp;lt;- info$height
+    r &amp;lt;- min(size / w, size / h)
+    new_w &amp;lt;- round(w * r); new_h &amp;lt;- round(h * r)
+    resized &amp;lt;- image_resize(img, paste0(new_w, &amp;quot;x&amp;quot;, new_h, &amp;quot;!&amp;quot;))
+
+    pad_w &amp;lt;- size - new_w; pad_h &amp;lt;- size - new_h
+    left  &amp;lt;- pad_w %/% 2L; top &amp;lt;- pad_h %/% 2L
+    canvas &amp;lt;- image_blank(size, size, color = PAD_COLOR)
+    padded &amp;lt;- image_composite(canvas, resized, offset = sprintf(&amp;quot;+%d+%d&amp;quot;, left, top))
+
+    list(image = padded, scale = r, left = left, top = top, orig_w = w, orig_h = h)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We hang on to &lt;code&gt;scale&lt;/code&gt;, &lt;code&gt;left&lt;/code&gt;, and &lt;code&gt;top&lt;/code&gt; because every box the model returns will be in this padded 640×640 space &amp;mdash; we&amp;rsquo;ll need them again to map boxes back to the original image&amp;rsquo;s pixel coordinates.&lt;/p&gt;
+&lt;p&gt;Next, the padded image has to become a tensor: a 4-dimensional array of numbers (batch, channel, height, width) that &lt;code&gt;torch&lt;/code&gt; can feed to the network.&lt;/p&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    This step has a genuine trap in it. &lt;code&gt;magick::image_data()&lt;/code&gt; reports its array&amp;rsquo;s dimensions as &lt;code&gt;(channel, width, height)&lt;/code&gt;, which matches how &lt;em&gt;you index into it&lt;/em&gt; (&lt;code&gt;raw[channel, x, y]&lt;/code&gt;) &amp;mdash; but the underlying byte buffer that &lt;code&gt;as.integer()&lt;/code&gt; reads out is actually laid out &lt;code&gt;(height, width, channel)&lt;/code&gt;, column-major. Reshaping with the dimensions &lt;code&gt;image_data()&lt;/code&gt; reports, the &amp;ldquo;obvious&amp;rdquo; thing to do, silently scrambles the pixels: every box still comes back and parses without error, but confidences quietly collapse (in testing, from around 0.95 to around 0.19) with no warning or error to flag it. A square test image can&amp;rsquo;t catch this, because it can&amp;rsquo;t distinguish a width-major reshape from a height-major one &amp;mdash; you need an asymmetric image and a pixel of known colour at a known, non-symmetric coordinate to notice the bug at all.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;image_to_tensor &amp;lt;- function(img) {
+    raw &amp;lt;- image_data(img, channels = &amp;quot;rgb&amp;quot;)
+    arr &amp;lt;- array(as.integer(raw), dim = rev(dim(raw)))  # true storage order: (H, W, C)
+    arr &amp;lt;- aperm(arr, c(3, 1, 2))                        # -&amp;gt; (C, H, W), what torch expects
+    torch_tensor(arr, dtype = torch_float32())$div(255)$unsqueeze(1)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, since every box comes back in letterboxed 640×640 coordinates, we need the inverse of &lt;code&gt;letterbox()&lt;/code&gt; to place them back onto the original image.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;unletterbox_boxes &amp;lt;- function(boxes, lb) {
+    boxes[, c(1, 3)] &amp;lt;- (boxes[, c(1, 3)] - lb$left) / lb$scale
+    boxes[, c(2, 4)] &amp;lt;- (boxes[, c(2, 4)] - lb$top)  / lb$scale
+    boxes[, 1] &amp;lt;- pmax(boxes[, 1], 0);        boxes[, 2] &amp;lt;- pmax(boxes[, 2], 0)
+    boxes[, 3] &amp;lt;- pmin(boxes[, 3], lb$orig_w); boxes[, 4] &amp;lt;- pmin(boxes[, 4], lb$orig_h)
+    boxes
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;running-the-model-on-a-single-photograph&#34;&gt;Running the model on a single photograph&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detect_image &amp;lt;- function(path, conf_thresh = CONF_THRESH) {
+    lb &amp;lt;- letterbox(path)
+    x  &amp;lt;- image_to_tensor(lb$image)
+
+    out  &amp;lt;- with_no_grad(model(x))    # (1, 300, 6): x1, y1, x2, y2, conf, cls
+    pred &amp;lt;- as.matrix(out$squeeze(1))
+
+    keep &amp;lt;- pred[, 5] &amp;gt; conf_thresh
+    if (!any(keep)) {
+        return(tibble(file = character(), xmin = double(), ymin = double(),
+                       xmax = double(), ymax = double(), conf = double(), class = character()))
+    }
+
+    boxes &amp;lt;- unletterbox_boxes(pred[keep, 1:4, drop = FALSE], lb)
+
+    tibble(
+        file  = path,
+        xmin  = boxes[, 1], ymin = boxes[, 2],
+        xmax  = boxes[, 3], ymax = boxes[, 4],
+        conf  = pred[keep, 5],
+        class = coco_names[pred[keep, 6] + 1]   # export is 0-indexed
+    )
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;if (!any(keep))&lt;/code&gt; branch matters more than it looks. Point this at a wall, a tunnel, or a blank stretch of highway &amp;mdash; not everything in a street-level imagery dataset has a car or a person in it &amp;mdash; and nothing clears the confidence threshold. Returning a tibble with the right columns and zero rows (rather than a bare, columnless &lt;code&gt;tibble()&lt;/code&gt;) means every downstream step &amp;mdash; &lt;code&gt;map_dfr()&lt;/code&gt;, &lt;code&gt;filter()&lt;/code&gt;, plotting &amp;mdash; keeps working whether or not this particular photo had anything detectable in it. It&amp;rsquo;s an easy thing to get wrong the first time and only notice once you run the function over enough real, messy images that one of them comes back empty.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s try it on one photograph.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example_img &amp;lt;- img_files[str_detect(img_files, &amp;quot;1318411189&amp;quot;)]
+detections  &amp;lt;- detect_image(example_img)
+detections %&amp;gt;% select(-file) %&amp;gt;% arrange(desc(conf))
+# # A tibble: 5 x 6
+#    xmin  ymin  xmax  ymax  conf class        
+#   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;        
+# 1 1121. 1567. 1161. 1651. 0.805 traffic light
+# 2 1991. 1048. 2809. 2400. 0.743 person       
+# 3  769. 1999. 1057. 2180. 0.701 bus          
+# 4  310. 2061.  748. 2375. 0.682 car          
+# 5  535. 1998.  812. 2151. 0.649 car
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Five detections, above 0.5 confidence: a person, a bus, two cars, a traffic light. This is the same shape of result &lt;code&gt;to_df()&lt;/code&gt; handed us for free in the earlier post &amp;mdash; we&amp;rsquo;ve just built it ourselves.&lt;/p&gt;
+&lt;h2 id=&#34;plotting-the-detections&#34;&gt;Plotting the detections&lt;/h2&gt;
+&lt;p&gt;The same ggplot coordinate-system mismatch from the earlier post applies here: ggplot&amp;rsquo;s origin is bottom-left with y increasing upward, while image pixel coordinates have their origin top-left with y increasing downward. &lt;code&gt;ymin&lt;/code&gt;/&lt;code&gt;ymax&lt;/code&gt; have to be flipped against the image height before they land in the right place.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_detections &amp;lt;- function(path, dets,
+                            classes_of_interest = c(&amp;quot;car&amp;quot;,&amp;quot;person&amp;quot;,&amp;quot;truck&amp;quot;,&amp;quot;bus&amp;quot;,&amp;quot;motorcycle&amp;quot;,&amp;quot;bicycle&amp;quot;)) {
+    img  &amp;lt;- image_read(path)
+    info &amp;lt;- image_info(img)
+    d &amp;lt;- dets %&amp;gt;% filter(class %in% classes_of_interest)
+
+    ggplot() +
+        annotation_raster(as.raster(img), xmin = 0, xmax = info$width,
+                          ymin = 0, ymax = info$height) +
+        geom_rect(data = d,
+                  aes(xmin = xmin, xmax = xmax,
+                      ymin = info$height - ymax, ymax = info$height - ymin,
+                      color = class),
+                  fill = NA, linewidth = 0.8) +
+        geom_text(data = d,
+                  aes(x = xmin, y = info$height - ymin,
+                      label = sprintf(&amp;quot;%s %.2f&amp;quot;, class, conf)),
+                  color = &amp;quot;white&amp;quot;, size = 3, hjust = 0, vjust = -0.3) +
+        coord_fixed(xlim = c(0, info$width), ylim = c(0, info$height), expand = FALSE) +
+        theme_void() + theme(legend.position = &amp;quot;none&amp;quot;)
+}
+
+plot_detections(example_img, detections)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-12-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;h2 id=&#34;batching-across-images&#34;&gt;Batching across images&lt;/h2&gt;
+&lt;p&gt;The whole point of doing this in R rather than by hand is running it across many images at once, so let&amp;rsquo;s do that &amp;mdash; and pull in the EXIF GPS tags along the way, exactly as the earlier post did.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.seed(42)
+sample_files &amp;lt;- sample(img_files, 20)
+
+detections_all &amp;lt;- map_dfr(sample_files, detect_image)
+
+exif &amp;lt;- exif_read(sample_files, tags = c(&amp;quot;GPSLatitude&amp;quot;, &amp;quot;GPSLongitude&amp;quot;)) %&amp;gt;%
+    as_tibble() %&amp;gt;%
+    select(file = SourceFile, GPSLatitude, GPSLongitude)
+
+detections_all &amp;lt;- detections_all %&amp;gt;% left_join(exif, by = &amp;quot;file&amp;quot;)
+
+summary_counts &amp;lt;- detections_all %&amp;gt;%
+    mutate(file = basename(file)) %&amp;gt;%
+    count(file, class, name = &amp;quot;n&amp;quot;)
+summary_counts
+# # A tibble: 28 x 3
+#    file                                        class      n
+#    &amp;lt;chr&amp;gt;                                       &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;
+#  1 1318425657__3645517_a809e_60c0eff7136f9.jpg car        1
+#  2 1319605281__3652445_9b168_60c1dba250012.jpg bus        1
+#  3 1319605281__3652445_9b168_60c1dba250012.jpg car        1
+#  4 1319605281__3652445_9b168_60c1dba250012.jpg person     1
+#  5 325783917__1304693_e8693_869.jpg            car        4
+#  6 325858321__1304733_4ea5b_1712.jpg           car        4
+#  7 325858793__1304733_4ea5b_1948.jpg           bus        1
+#  8 325858793__1304733_4ea5b_1948.jpg           car        4
+#  9 325961249__1304975_0a9ed_4340.jpg           car        5
+# 10 325961249__1304975_0a9ed_4340.jpg           person     3
+# # i 18 more rows
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detections_all %&amp;gt;% count(class, sort = TRUE)
+# # A tibble: 5 x 2
+#   class             n
+#   &amp;lt;chr&amp;gt;         &amp;lt;int&amp;gt;
+# 1 car              58
+# 2 person           11
+# 3 bus               5
+# 4 traffic light     2
+# 5 bench             1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;car&lt;/code&gt; dominates, as it did in the earlier post&amp;rsquo;s Rio sample &amp;mdash; unsurprising for street-level imagery of a car-oriented corridor.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s a small multiple of six images from that sample, plotted the same way as above, to get a feel for how the model does across a range of scenes.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_list &amp;lt;- map(sample_files[1:6], function(p) {
+  plot_detections(p, detect_image(p))
+})
+plot_grid(plotlist = plot_list, nrow = 2, ncol = 3)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-15-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;Note the empty panels &amp;mdash; a tunnel, a wall glimpsed mid-motion &amp;mdash; where nothing cleared the confidence threshold, and the doubled-up labels where two boxes overlap closely enough that their text collides. Both are exactly the kind of real-world messiness that a single cherry-picked example photo hides.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;Two things worth knowing if you adapt this for your own model:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;jit_load()&lt;/code&gt;&amp;rsquo;d TorchScript modules don&amp;rsquo;t reliably support &lt;code&gt;model$eval()&lt;/code&gt; / &lt;code&gt;model$train(FALSE)&lt;/code&gt; as of &lt;code&gt;torch&lt;/code&gt; 0.17.0 + &lt;code&gt;libtorch&lt;/code&gt; 2.8.0 &amp;mdash; it fails with an internal S3-dispatch error on scripted modules. This particular export is safe to skip that call on: Ultralytics&#39; export log reports the model already &amp;ldquo;fused&amp;rdquo; (BatchNorm folded into the convolution weights, zero gradient layers), and a side-by-side Python comparison calling vs. skipping &lt;code&gt;model.eval()&lt;/code&gt; on the same file gives bit-identical output. If you export a custom or non-fused model, this is worth re-checking rather than assuming.&lt;/li&gt;
+&lt;li&gt;This exact pipeline, run against Ultralytics&#39; own &lt;code&gt;bus.jpg&lt;/code&gt; sample image, matched the Python/&lt;code&gt;ultralytics&lt;/code&gt; package&amp;rsquo;s output closely: 0.97 vs 0.93 confidence on the bus, and 0.94/0.94/0.91/0.72 vs 0.93/0.94/0.44/0.43 on four people in frame. The R and Python paths aren&amp;rsquo;t doing identical floating-point work &amp;mdash; JPEG decoding and resizing differ slightly between &lt;code&gt;magick&lt;/code&gt; and Python&amp;rsquo;s imaging stack &amp;mdash; so don&amp;rsquo;t expect bit-identical confidences, but the two should agree closely enough to trust the R-only path.&lt;/li&gt;
+&lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Lower &lt;code&gt;CONF_THRESH&lt;/code&gt; to 0.25 and re-run the single-image example. What shows up that wasn&amp;rsquo;t there before, and would you trust it?&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;detect_image()&lt;/code&gt; over the full &lt;code&gt;img_files&lt;/code&gt; list (all of them, not just a sample of 20) and map the count of &lt;code&gt;person&lt;/code&gt; detections per image against its GPS coordinates. Where are pedestrians most and least visible in this sample?&lt;/li&gt;
+&lt;li&gt;Compare this model&amp;rsquo;s detections on the same photograph against the YOLOv10 results from the &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&#34;&gt;earlier post&lt;/a&gt;. Do the two models agree on classes and confidences? Where do they diverge?&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;classes_of_interest&lt;/code&gt; filter in &lt;code&gt;plot_detections()&lt;/code&gt; silently drops everything else the model found. Remove the filter for one image &amp;mdash; what else is in a typical street scene that a transportation-focused analysis would otherwise never see?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Dropping &lt;code&gt;reticulate&lt;/code&gt; and a Python environment out of the pipeline trades one kind of complexity for another. There&amp;rsquo;s no &lt;code&gt;conda&lt;/code&gt; environment to set up, no network drive to map, no &lt;code&gt;use_condaenv()&lt;/code&gt; path to get right for Windows versus Mac &amp;mdash; but in exchange, R takes on work that &lt;code&gt;ultralytics$YOLO()&lt;/code&gt; used to do invisibly: letterboxing, tensor layout, box coordinates, even the COCO class names. Getting any one of those wrong, as the pixel-buffer reshape above shows, doesn&amp;rsquo;t necessarily throw an error &amp;mdash; it can just quietly degrade every confidence score and leave you debugging a model, not a bug.&lt;/p&gt;
+&lt;p&gt;That tradeoff aside, the caveats from the earlier post apply just as much here, model architecture notwithstanding. This is still a pre-trained model applied with no fine-tuning, still liable to misclassify, still liable to miss things in fog, poor lighting, or partial occlusion, still trained on a dataset (COCO) whose composition shapes what it notices and what it doesn&amp;rsquo;t. Whether the inference happens in Python or in R has no bearing on any of that. Treat what comes out of either pipeline as a starting point for human review, not a finished count.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Object Detection Using Pre-trained Neural Network Models</title>

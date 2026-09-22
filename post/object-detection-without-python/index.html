@@ -1,0 +1,1705 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction In an earlier post, we ran a pre-trained YOLO model from R by reaching into Python with reticulate: import torch and ultralytics, hand a conda environment to use_condaenv(), and call the model as if it were an R object." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/object-detection-without-python/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.d0a3c4356a76e741a5d37933d707b9e1.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/object-detection-without-python/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/object-detection-without-python/" />
+  <meta property="og:title" content="Object Detection Without Python (A Pure R Pipeline with YOLO26) | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction In an earlier post, we ran a pre-trained YOLO model from R by reaching into Python with reticulate: import torch and ultralytics, hand a conda environment to use_condaenv(), and call the model as if it were an R object." /><meta property="og:image" content="https://nkaza.github.io/post/object-detection-without-python/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/object-detection-without-python/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2026-09-16T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2026-09-16T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/object-detection-without-python/"
+  },
+  "headline": "Object Detection Without Python (A Pure R Pipeline with YOLO26)",
+  
+  "image": [
+    "https://nkaza.github.io/post/object-detection-without-python/featured.png"
+  ],
+  
+  "datePublished": "2026-09-16T00:00:00Z",
+  "dateModified": "2026-09-16T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction In an earlier post, we ran a pre-trained YOLO model from R by reaching into Python with reticulate: import torch and ultralytics, hand a conda environment to use_condaenv(), and call the model as if it were an R object."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Object Detection Without Python (A Pure R Pipeline with YOLO26) | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="4490ca91c3db89f1cca3e806a29e13b7" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Object Detection Without Python (A Pure R Pipeline with YOLO26)</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Sep 16, 2026
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    11 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/r/">R</a>, <a href="/category/object-detection/">object detection</a>, <a href="/category/torch/">torch</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 540px;">
+  <div style="position: relative">
+    <img src="/post/object-detection-without-python/featured_hucaee586ee0ef654ffcf0652582f1e1cf_733575_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="540" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <h2 id="introduction">Introduction</h2>
+<p>In an <a href="/post/object-detection-using-pre-trained-neural-network-models/">earlier post</a>, we ran a pre-trained YOLO model from R by reaching into Python with <code>reticulate</code>: import <code>torch</code> and <code>ultralytics</code>, hand a <code>conda</code> environment to <code>use_condaenv()</code>, and call the model as if it were an R object. That works, but it means every student needs a working Python environment somewhere reachable from R &mdash; a <code>conda</code> install, a mapped network drive, an <code>environment.yml</code> &mdash; before they can detect a single car.</p>
+<p>This post shows the alternative: doing the entire inference step in R, with no Python at runtime at all. It relies on the R <code>torch</code> package, which binds directly to <code>libtorch</code> (the C++ library that PyTorch itself is built on). Once a model has been exported to the TorchScript format, <code>torch::jit_load()</code> reads it directly &mdash; no <code>reticulate</code>, no Python interpreter, no environment to activate.</p>
+<p>There is exactly one Python touchpoint left, and it happens once, outside of R, before this tutorial even begins: exporting the trained model to TorchScript.</p>
+<pre><code class="language-bash">pip install ultralytics
+yolo export model=yolo26s.pt format=torchscript imgsz=640
+</code></pre>
+<p>That produces a single <code>yolo26s.torchscript</code> file. Everything from here on &mdash; reading images, running the model, drawing boxes, summarising results &mdash; is ordinary R.</p>
+<div class="alert alert-note">
+  <div>
+    This tutorial uses <a href="https://docs.ultralytics.com/models/yolo26/">YOLO26</a>, the successor to the YOLOv10 model used in the earlier post. YOLO26 ships in n/s/m/l/x sizes (no &ldquo;b&rdquo;, if you&rsquo;re used to YOLOv10&rsquo;s naming); this post uses the small <code>yolo26s</code> variant. Swap in <code>yolo26m</code>/<code>l</code>/<code>x</code> for more accuracy at the cost of speed, using the same export command above.
+  </div>
+</div>
+<h2 id="setup">Setup</h2>
+<pre><code class="language-r">install.packages(c(&quot;torch&quot;, &quot;magick&quot;, &quot;tidyverse&quot;, &quot;cowplot&quot;, &quot;exiftoolr&quot;))
+torch::install_torch() # downloads libtorch itself, once
+</code></pre>
+<p><code>torch::install_torch()</code> downloads the <code>libtorch</code> binaries for your platform. It&rsquo;s a few hundred megabytes and only needs to happen once per machine, but do it before class if you&rsquo;re on a slow connection.</p>
+<pre><code class="language-r">library(torch)
+library(magick)
+library(tidyverse)
+library(cowplot)
+library(exiftoolr)
+library(here)
+</code></pre>
+<h2 id="data">Data</h2>
+<p>We&rsquo;ll use the same <a href="https://www.dropbox.com/scl/fi/u5t26kwi8t52c16r04qso/geotagged.zip?rlkey=zszxeyd0tdrwubjatwbjhwn3e&amp;dl=0" target="_blank" rel="noopener">street-level images from Rio de Janeiro, Brazil</a> as the earlier post, collected through <a href="https://kartaview.org/" target="_blank" rel="noopener">Kartaview</a>. See that post&rsquo;s <a href="/post/object-detection-using-pre-trained-neural-network-models/#data">Data section</a> for a fuller discussion of the imagery and its EXIF metadata; here we just load the file paths.</p>
+<pre><code class="language-r">img_files &lt;- here(&quot;tutorials_datasets&quot;, &quot;rio_kartaview_images&quot;, &quot;geotagged&quot;) %&gt;%
+              list.files(full.names = TRUE, pattern = &quot;\\.jpg$&quot;)
+
+length(img_files)
+# [1] 484
+</code></pre>
+<h2 id="loading-the-model">Loading the model</h2>
+<pre><code class="language-r">model &lt;- jit_load(&quot;yolo26s.torchscript&quot;) # sits alongside this .Rmarkdown file
+</code></pre>
+<p><code>jit_load()</code> reads the exported TorchScript graph directly; there&rsquo;s no <code>ultralytics$YOLO()</code> wrapper here, so we lose some conveniences it provides (like <code>to_df()</code> from the earlier post) and have to rebuild them ourselves in plain R. That&rsquo;s most of the rest of this post.</p>
+<p>YOLO26, like most object detectors trained on it, is trained on the COCO (Common Objects in Context) dataset, so its outputs are indexed against COCO&rsquo;s 80 categories. The exported model gives us class indices, not names, so we need the lookup table ourselves &mdash; Ultralytics doesn&rsquo;t ship it inside the TorchScript file the way it does with the Python <code>ultralytics</code> package.</p>
+<pre><code class="language-r">coco_names &lt;- c(
+    &quot;person&quot;,&quot;bicycle&quot;,&quot;car&quot;,&quot;motorcycle&quot;,&quot;airplane&quot;,&quot;bus&quot;,&quot;train&quot;,&quot;truck&quot;,&quot;boat&quot;,
+    &quot;traffic light&quot;,&quot;fire hydrant&quot;,&quot;stop sign&quot;,&quot;parking meter&quot;,&quot;bench&quot;,&quot;bird&quot;,&quot;cat&quot;,
+    &quot;dog&quot;,&quot;horse&quot;,&quot;sheep&quot;,&quot;cow&quot;,&quot;elephant&quot;,&quot;bear&quot;,&quot;zebra&quot;,&quot;giraffe&quot;,&quot;backpack&quot;,
+    &quot;umbrella&quot;,&quot;handbag&quot;,&quot;tie&quot;,&quot;suitcase&quot;,&quot;frisbee&quot;,&quot;skis&quot;,&quot;snowboard&quot;,&quot;sports ball&quot;,
+    &quot;kite&quot;,&quot;baseball bat&quot;,&quot;baseball glove&quot;,&quot;skateboard&quot;,&quot;surfboard&quot;,&quot;tennis racket&quot;,
+    &quot;bottle&quot;,&quot;wine glass&quot;,&quot;cup&quot;,&quot;fork&quot;,&quot;knife&quot;,&quot;spoon&quot;,&quot;bowl&quot;,&quot;banana&quot;,&quot;apple&quot;,
+    &quot;sandwich&quot;,&quot;orange&quot;,&quot;broccoli&quot;,&quot;carrot&quot;,&quot;hot dog&quot;,&quot;pizza&quot;,&quot;donut&quot;,&quot;cake&quot;,&quot;chair&quot;,
+    &quot;couch&quot;,&quot;potted plant&quot;,&quot;bed&quot;,&quot;dining table&quot;,&quot;toilet&quot;,&quot;tv&quot;,&quot;laptop&quot;,&quot;mouse&quot;,
+    &quot;remote&quot;,&quot;keyboard&quot;,&quot;cell phone&quot;,&quot;microwave&quot;,&quot;oven&quot;,&quot;toaster&quot;,&quot;sink&quot;,
+    &quot;refrigerator&quot;,&quot;book&quot;,&quot;clock&quot;,&quot;vase&quot;,&quot;scissors&quot;,&quot;teddy bear&quot;,&quot;hair drier&quot;,
+    &quot;toothbrush&quot;
+)
+</code></pre>
+<h2 id="preparing-an-image-for-the-model">Preparing an image for the model</h2>
+<p><code>ultralytics$YOLO()</code> in the earlier post quietly resized, padded, and normalised every image before handing it to the network. <code>jit_load()</code> gives us none of that &mdash; the TorchScript graph expects a specific input shape, and it&rsquo;s on us to produce it.</p>
+<p>YOLO models are trained on square inputs, so a non-square photo has to be resized to fit inside a square canvas and padded with grey on the remaining sides, rather than stretched &mdash; otherwise every detected box would come out distorted. This is called <em>letterboxing</em>, by analogy with the black bars added to widescreen video on an old square TV.</p>
+<pre><code class="language-r">IMG_SIZE    &lt;- 640L
+CONF_THRESH &lt;- 0.5
+PAD_COLOR   &lt;- &quot;#727272&quot;   # 114/255 grey -- Ultralytics' own letterbox pad value
+
+letterbox &lt;- function(path, size = IMG_SIZE) {
+    img  &lt;- image_read(path)
+    info &lt;- image_info(img)
+    w &lt;- info$width; h &lt;- info$height
+    r &lt;- min(size / w, size / h)
+    new_w &lt;- round(w * r); new_h &lt;- round(h * r)
+    resized &lt;- image_resize(img, paste0(new_w, &quot;x&quot;, new_h, &quot;!&quot;))
+
+    pad_w &lt;- size - new_w; pad_h &lt;- size - new_h
+    left  &lt;- pad_w %/% 2L; top &lt;- pad_h %/% 2L
+    canvas &lt;- image_blank(size, size, color = PAD_COLOR)
+    padded &lt;- image_composite(canvas, resized, offset = sprintf(&quot;+%d+%d&quot;, left, top))
+
+    list(image = padded, scale = r, left = left, top = top, orig_w = w, orig_h = h)
+}
+</code></pre>
+<p>We hang on to <code>scale</code>, <code>left</code>, and <code>top</code> because every box the model returns will be in this padded 640×640 space &mdash; we&rsquo;ll need them again to map boxes back to the original image&rsquo;s pixel coordinates.</p>
+<p>Next, the padded image has to become a tensor: a 4-dimensional array of numbers (batch, channel, height, width) that <code>torch</code> can feed to the network.</p>
+<div class="alert alert-alert">
+  <div>
+    This step has a genuine trap in it. <code>magick::image_data()</code> reports its array&rsquo;s dimensions as <code>(channel, width, height)</code>, which matches how <em>you index into it</em> (<code>raw[channel, x, y]</code>) &mdash; but the underlying byte buffer that <code>as.integer()</code> reads out is actually laid out <code>(height, width, channel)</code>, column-major. Reshaping with the dimensions <code>image_data()</code> reports, the &ldquo;obvious&rdquo; thing to do, silently scrambles the pixels: every box still comes back and parses without error, but confidences quietly collapse (in testing, from around 0.95 to around 0.19) with no warning or error to flag it. A square test image can&rsquo;t catch this, because it can&rsquo;t distinguish a width-major reshape from a height-major one &mdash; you need an asymmetric image and a pixel of known colour at a known, non-symmetric coordinate to notice the bug at all.
+  </div>
+</div>
+<pre><code class="language-r">image_to_tensor &lt;- function(img) {
+    raw &lt;- image_data(img, channels = &quot;rgb&quot;)
+    arr &lt;- array(as.integer(raw), dim = rev(dim(raw)))  # true storage order: (H, W, C)
+    arr &lt;- aperm(arr, c(3, 1, 2))                        # -&gt; (C, H, W), what torch expects
+    torch_tensor(arr, dtype = torch_float32())$div(255)$unsqueeze(1)
+}
+</code></pre>
+<p>Finally, since every box comes back in letterboxed 640×640 coordinates, we need the inverse of <code>letterbox()</code> to place them back onto the original image.</p>
+<pre><code class="language-r">unletterbox_boxes &lt;- function(boxes, lb) {
+    boxes[, c(1, 3)] &lt;- (boxes[, c(1, 3)] - lb$left) / lb$scale
+    boxes[, c(2, 4)] &lt;- (boxes[, c(2, 4)] - lb$top)  / lb$scale
+    boxes[, 1] &lt;- pmax(boxes[, 1], 0);        boxes[, 2] &lt;- pmax(boxes[, 2], 0)
+    boxes[, 3] &lt;- pmin(boxes[, 3], lb$orig_w); boxes[, 4] &lt;- pmin(boxes[, 4], lb$orig_h)
+    boxes
+}
+</code></pre>
+<h2 id="running-the-model-on-a-single-photograph">Running the model on a single photograph</h2>
+<pre><code class="language-r">detect_image &lt;- function(path, conf_thresh = CONF_THRESH) {
+    lb &lt;- letterbox(path)
+    x  &lt;- image_to_tensor(lb$image)
+
+    out  &lt;- with_no_grad(model(x))    # (1, 300, 6): x1, y1, x2, y2, conf, cls
+    pred &lt;- as.matrix(out$squeeze(1))
+
+    keep &lt;- pred[, 5] &gt; conf_thresh
+    if (!any(keep)) {
+        return(tibble(file = character(), xmin = double(), ymin = double(),
+                       xmax = double(), ymax = double(), conf = double(), class = character()))
+    }
+
+    boxes &lt;- unletterbox_boxes(pred[keep, 1:4, drop = FALSE], lb)
+
+    tibble(
+        file  = path,
+        xmin  = boxes[, 1], ymin = boxes[, 2],
+        xmax  = boxes[, 3], ymax = boxes[, 4],
+        conf  = pred[keep, 5],
+        class = coco_names[pred[keep, 6] + 1]   # export is 0-indexed
+    )
+}
+</code></pre>
+<p>The <code>if (!any(keep))</code> branch matters more than it looks. Point this at a wall, a tunnel, or a blank stretch of highway &mdash; not everything in a street-level imagery dataset has a car or a person in it &mdash; and nothing clears the confidence threshold. Returning a tibble with the right columns and zero rows (rather than a bare, columnless <code>tibble()</code>) means every downstream step &mdash; <code>map_dfr()</code>, <code>filter()</code>, plotting &mdash; keeps working whether or not this particular photo had anything detectable in it. It&rsquo;s an easy thing to get wrong the first time and only notice once you run the function over enough real, messy images that one of them comes back empty.</p>
+<p>Let&rsquo;s try it on one photograph.</p>
+<pre><code class="language-r">example_img &lt;- img_files[str_detect(img_files, &quot;1318411189&quot;)]
+detections  &lt;- detect_image(example_img)
+detections %&gt;% select(-file) %&gt;% arrange(desc(conf))
+# # A tibble: 5 x 6
+#    xmin  ymin  xmax  ymax  conf class        
+#   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+# 1 1121. 1567. 1161. 1651. 0.805 traffic light
+# 2 1991. 1048. 2809. 2400. 0.743 person       
+# 3  769. 1999. 1057. 2180. 0.701 bus          
+# 4  310. 2061.  748. 2375. 0.682 car          
+# 5  535. 1998.  812. 2151. 0.649 car
+</code></pre>
+<p>Five detections, above 0.5 confidence: a person, a bus, two cars, a traffic light. This is the same shape of result <code>to_df()</code> handed us for free in the earlier post &mdash; we&rsquo;ve just built it ourselves.</p>
+<h2 id="plotting-the-detections">Plotting the detections</h2>
+<p>The same ggplot coordinate-system mismatch from the earlier post applies here: ggplot&rsquo;s origin is bottom-left with y increasing upward, while image pixel coordinates have their origin top-left with y increasing downward. <code>ymin</code>/<code>ymax</code> have to be flipped against the image height before they land in the right place.</p>
+<pre><code class="language-r">plot_detections &lt;- function(path, dets,
+                            classes_of_interest = c(&quot;car&quot;,&quot;person&quot;,&quot;truck&quot;,&quot;bus&quot;,&quot;motorcycle&quot;,&quot;bicycle&quot;)) {
+    img  &lt;- image_read(path)
+    info &lt;- image_info(img)
+    d &lt;- dets %&gt;% filter(class %in% classes_of_interest)
+
+    ggplot() +
+        annotation_raster(as.raster(img), xmin = 0, xmax = info$width,
+                          ymin = 0, ymax = info$height) +
+        geom_rect(data = d,
+                  aes(xmin = xmin, xmax = xmax,
+                      ymin = info$height - ymax, ymax = info$height - ymin,
+                      color = class),
+                  fill = NA, linewidth = 0.8) +
+        geom_text(data = d,
+                  aes(x = xmin, y = info$height - ymin,
+                      label = sprintf(&quot;%s %.2f&quot;, class, conf)),
+                  color = &quot;white&quot;, size = 3, hjust = 0, vjust = -0.3) +
+        coord_fixed(xlim = c(0, info$width), ylim = c(0, info$height), expand = FALSE) +
+        theme_void() + theme(legend.position = &quot;none&quot;)
+}
+
+plot_detections(example_img, detections)
+</code></pre>
+<img src="https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-12-1.png" alt="" width="672" />
+<h2 id="batching-across-images">Batching across images</h2>
+<p>The whole point of doing this in R rather than by hand is running it across many images at once, so let&rsquo;s do that &mdash; and pull in the EXIF GPS tags along the way, exactly as the earlier post did.</p>
+<pre><code class="language-r">set.seed(42)
+sample_files &lt;- sample(img_files, 20)
+
+detections_all &lt;- map_dfr(sample_files, detect_image)
+
+exif &lt;- exif_read(sample_files, tags = c(&quot;GPSLatitude&quot;, &quot;GPSLongitude&quot;)) %&gt;%
+    as_tibble() %&gt;%
+    select(file = SourceFile, GPSLatitude, GPSLongitude)
+
+detections_all &lt;- detections_all %&gt;% left_join(exif, by = &quot;file&quot;)
+
+summary_counts &lt;- detections_all %&gt;%
+    mutate(file = basename(file)) %&gt;%
+    count(file, class, name = &quot;n&quot;)
+summary_counts
+# # A tibble: 28 x 3
+#    file                                        class      n
+#    &lt;chr&gt;                                       &lt;chr&gt;  &lt;int&gt;
+#  1 1318425657__3645517_a809e_60c0eff7136f9.jpg car        1
+#  2 1319605281__3652445_9b168_60c1dba250012.jpg bus        1
+#  3 1319605281__3652445_9b168_60c1dba250012.jpg car        1
+#  4 1319605281__3652445_9b168_60c1dba250012.jpg person     1
+#  5 325783917__1304693_e8693_869.jpg            car        4
+#  6 325858321__1304733_4ea5b_1712.jpg           car        4
+#  7 325858793__1304733_4ea5b_1948.jpg           bus        1
+#  8 325858793__1304733_4ea5b_1948.jpg           car        4
+#  9 325961249__1304975_0a9ed_4340.jpg           car        5
+# 10 325961249__1304975_0a9ed_4340.jpg           person     3
+# # i 18 more rows
+</code></pre>
+<pre><code class="language-r">detections_all %&gt;% count(class, sort = TRUE)
+# # A tibble: 5 x 2
+#   class             n
+#   &lt;chr&gt;         &lt;int&gt;
+# 1 car              58
+# 2 person           11
+# 3 bus               5
+# 4 traffic light     2
+# 5 bench             1
+</code></pre>
+<p><code>car</code> dominates, as it did in the earlier post&rsquo;s Rio sample &mdash; unsurprising for street-level imagery of a car-oriented corridor.</p>
+<p>Here&rsquo;s a small multiple of six images from that sample, plotted the same way as above, to get a feel for how the model does across a range of scenes.</p>
+<pre><code class="language-r">plot_list &lt;- map(sample_files[1:6], function(p) {
+  plot_detections(p, detect_image(p))
+})
+plot_grid(plotlist = plot_list, nrow = 2, ncol = 3)
+</code></pre>
+<img src="https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-15-1.png" alt="" width="1152" />
+<p>Note the empty panels &mdash; a tunnel, a wall glimpsed mid-motion &mdash; where nothing cleared the confidence threshold, and the doubled-up labels where two boxes overlap closely enough that their text collides. Both are exactly the kind of real-world messiness that a single cherry-picked example photo hides.</p>
+<div class="alert alert-note">
+  <div>
+    <p>Two things worth knowing if you adapt this for your own model:</p>
+<ul>
+<li><code>jit_load()</code>&rsquo;d TorchScript modules don&rsquo;t reliably support <code>model$eval()</code> / <code>model$train(FALSE)</code> as of <code>torch</code> 0.17.0 + <code>libtorch</code> 2.8.0 &mdash; it fails with an internal S3-dispatch error on scripted modules. This particular export is safe to skip that call on: Ultralytics' export log reports the model already &ldquo;fused&rdquo; (BatchNorm folded into the convolution weights, zero gradient layers), and a side-by-side Python comparison calling vs. skipping <code>model.eval()</code> on the same file gives bit-identical output. If you export a custom or non-fused model, this is worth re-checking rather than assuming.</li>
+<li>This exact pipeline, run against Ultralytics' own <code>bus.jpg</code> sample image, matched the Python/<code>ultralytics</code> package&rsquo;s output closely: 0.97 vs 0.93 confidence on the bus, and 0.94/0.94/0.91/0.72 vs 0.93/0.94/0.44/0.43 on four people in frame. The R and Python paths aren&rsquo;t doing identical floating-point work &mdash; JPEG decoding and resizing differ slightly between <code>magick</code> and Python&rsquo;s imaging stack &mdash; so don&rsquo;t expect bit-identical confidences, but the two should agree closely enough to trust the R-only path.</li>
+</ul>
+  </div>
+</div>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Lower <code>CONF_THRESH</code> to 0.25 and re-run the single-image example. What shows up that wasn&rsquo;t there before, and would you trust it?</li>
+<li>Run <code>detect_image()</code> over the full <code>img_files</code> list (all of them, not just a sample of 20) and map the count of <code>person</code> detections per image against its GPS coordinates. Where are pedestrians most and least visible in this sample?</li>
+<li>Compare this model&rsquo;s detections on the same photograph against the YOLOv10 results from the <a href="/post/object-detection-using-pre-trained-neural-network-models/">earlier post</a>. Do the two models agree on classes and confidences? Where do they diverge?</li>
+<li>The <code>classes_of_interest</code> filter in <code>plot_detections()</code> silently drops everything else the model found. Remove the filter for one image &mdash; what else is in a typical street scene that a transportation-focused analysis would otherwise never see?</li>
+</ul>
+<hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>Dropping <code>reticulate</code> and a Python environment out of the pipeline trades one kind of complexity for another. There&rsquo;s no <code>conda</code> environment to set up, no network drive to map, no <code>use_condaenv()</code> path to get right for Windows versus Mac &mdash; but in exchange, R takes on work that <code>ultralytics$YOLO()</code> used to do invisibly: letterboxing, tensor layout, box coordinates, even the COCO class names. Getting any one of those wrong, as the pixel-buffer reshape above shows, doesn&rsquo;t necessarily throw an error &mdash; it can just quietly degrade every confidence score and leave you debugging a model, not a bug.</p>
+<p>That tradeoff aside, the caveats from the earlier post apply just as much here, model architecture notwithstanding. This is still a pre-trained model applied with no fine-tuning, still liable to misclassify, still liable to miss things in fog, poor lighting, or partial occlusion, still trained on a dataset (COCO) whose composition shapes what it notices and what it doesn&rsquo;t. Whether the inference happens in Python or in R has no bearing on any of that. Treat what comes out of either pipeline as a starting point for human review, not a finished count.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#setup">Setup</a></li>
+        <li><a href="#data">Data</a></li>
+        <li><a href="#loading-the-model">Loading the model</a></li>
+        <li><a href="#preparing-an-image-for-the-model">Preparing an image for the model</a></li>
+        <li><a href="#running-the-model-on-a-single-photograph">Running the model on a single photograph</a></li>
+        <li><a href="#plotting-the-detections">Plotting the detections</a></li>
+        <li><a href="#batching-across-images">Batching across images</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/object-detection-without-python/&amp;text=Object%20Detection%20Without%20Python%20%28A%20Pure%20R%20Pipeline%20with%20YOLO26%29" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/object-detection-without-python/&amp;t=Object%20Detection%20Without%20Python%20%28A%20Pure%20R%20Pipeline%20with%20YOLO26%29" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Object%20Detection%20Without%20Python%20%28A%20Pure%20R%20Pipeline%20with%20YOLO26%29&amp;body=https://nkaza.github.io/post/object-detection-without-python/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/object-detection-without-python/&amp;title=Object%20Detection%20Without%20Python%20%28A%20Pure%20R%20Pipeline%20with%20YOLO26%29" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Object%20Detection%20Without%20Python%20%28A%20Pure%20R%20Pipeline%20with%20YOLO26%29%20https://nkaza.github.io/post/object-detection-without-python/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/object-detection-without-python/&amp;title=Object%20Detection%20Without%20Python%20%28A%20Pure%20R%20Pipeline%20with%20YOLO26%29" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/object-detection-using-pre-trained-neural-network-models/">Object Detection Using Pre-trained Neural Network Models</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2025 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

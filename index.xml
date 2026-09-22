@@ -5,7 +5,7 @@
     <link>https://nkaza.github.io/</link>
       <atom:link href="https://nkaza.github.io/index.xml" rel="self" type="application/rss+xml" />
     <description>Nikhil Kaza</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Thu, 17 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Tue, 22 Sep 2026 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
       <title>Nikhil Kaza</title>
@@ -105,6 +105,512 @@ The variance of the distribution is $\sigma^{2}$.
   &lt;summary&gt;What is the parameter $\mu$?&lt;/summary&gt;
   &lt;p&gt;The parameter $\mu$ is the mean or expectation of the distribution.&lt;/p&gt;
 &lt;/details&gt;</description>
+    </item>
+    
+    <item>
+      <title>Urban Analytics in R</title>
+      <link>https://nkaza.github.io/teaching/techniques-course/</link>
+      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/teaching/techniques-course/</guid>
+      <description>&lt;h1 id=&#34;course-description--objectives&#34;&gt;Course Description &amp;amp; Objectives&lt;/h1&gt;
+&lt;p&gt;This course is about different techniques used in assembling, managing, analysing and predicting using heterogeneous data sets in urban environments. These datasets are inherently messy and incomplete. Types of data include, point, polygon, raster, vector, text, image and network data; data sets with high cadence and high spatial resolution.&lt;/p&gt;
+&lt;p&gt;This is a survey course for different techniques and approaches in dealing with these data in R. The objective of these analytical techniques is to inform both short term operational decisions and long term planning in cities. As such, the emphasis is on practical urban data analytics rather than in-depth discussion about the suitability and appropriateness of techniques and their associated theoretical assumptions.&lt;/p&gt;
+&lt;p&gt;Unlike other courses of similar vein, I put inordinate emphasis on data visualisation and communication. The point of data analysis is to tell a compelling story, not to use latest analytical techniques.&lt;/p&gt;
+&lt;p&gt;This is a companion course to &lt;a href=&#34;https://planning.unc.edu/courses/673/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;em&gt;PLAN 562: The Ethics and Politics of New Urban Analytics&lt;/em&gt;&lt;/a&gt; (Seminar), which deals with problems, opportunities and hidden agendas with data generation, analysis and visualisation in urban settings. Students are encouraged to take them both.&lt;/p&gt;
+&lt;h1 id=&#34;course-details&#34;&gt;Course Details&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Instructor:&lt;/strong&gt; &lt;a href=&#34;http://nkaza.github.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Nikhil Kaza&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Classroom:&lt;/strong&gt; New East 101&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hours:&lt;/strong&gt; T 17:00 - 19:30&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Office Hours:&lt;/strong&gt; &lt;a href=&#34;https://go.unc.edu/nkaza-calendar&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://go.unc.edu/nkaza-calendar&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Course Materials:&lt;/strong&gt; &lt;a href=&#34;https://nkaza.github.io/teaching/techniques-course/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://nkaza.github.io/teaching/techniques-course/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;HW &amp;amp; Lab submissions:&lt;/strong&gt; Canvas&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Troubleshooting &amp;amp; Collaboration:&lt;/strong&gt; &lt;a href=&#34;https://stackoverflowteams.com/c/plan672/questions&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://stackoverflowteams.com/c/plan672/questions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;prerequisites--preparation&#34;&gt;Prerequisites &amp;amp; Preparation&lt;/h1&gt;
+&lt;p&gt;The course will move quickly, cover a large number of analytical techniques, data sets, use cases and disciplinary domains. It requires significant investment on the part of the students to learn the technical skills as well as to learn about substantive urban and regional analyses.&lt;/p&gt;
+&lt;p&gt;Much of the work in this course will be done using Open Source Software that is usually free.&lt;/p&gt;
+&lt;p&gt;Over the summer prior to the course, you are/were expected to review the &lt;a href=&#34;https://nkaza.github.io/intro2Rbook/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;materials&lt;/a&gt; in preparation for the course.&lt;/p&gt;
+&lt;p&gt;The course assumes a working knowledge of &lt;a href=&#34;http://www.%20r-project.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt;. R is a programming language and a free software environment for statistical computing and graphics. There are a number of online resources that will help you with getting up to speed with R. You will have to use extensively the documentation, help and examples that R environment provides; i.e. Do not be afraid to use, for example,&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;?qplot
+??randomForest
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;to seek help for specific commands.&lt;/p&gt;
+&lt;p&gt;One disadvantage with R is that it stores all its objects in memory. This means that your computer should have significant RAM to deal with large data sets.&lt;/p&gt;
+&lt;p&gt;Another disadvantage with R is that it has a &lt;a href=&#34;http://cockeyed.com/lessons/learning_curve/learning_curve.php&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;em&gt;shallow learning curve&lt;/em&gt;&lt;/a&gt;. And it has some quirks. In particular, please pay attention to &lt;a href=&#34;https://www.burns-stat.com/pages/Tutor/R_inferno.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R-Inferno&lt;/a&gt;. However, persistence will have long term benefits.&lt;/p&gt;
+&lt;p&gt;You should have an aptitude for debugging computer code, thinking through edge cases in data sets, identifying and dealing with missing data and messy data sets.&lt;/p&gt;
+&lt;p&gt;You should expect that the instructions and help provided may not work on your system due to different configurations, mismatched data types and differences in libraries. You should have an aptitude to troubleshoot the problems and figure out workarounds.&lt;/p&gt;
+&lt;p&gt;It may be helpful to go through the materials from &lt;a href=&#34;https://supermariogiacomazzo.github.io/STOR320_WEBSITE/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;STOR 320: Introduction to Data Science&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;external-it-accounts&#34;&gt;External IT Accounts&lt;/h2&gt;
+&lt;p&gt;While most of the work in the class will be done using R using publicly available data sets, you will need to set up accounts with the following services. Some of them might require billing enabled and most of them would require 2FA. You are responsible for monitoring them and ensuring that the charges are within your budget.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://stackoverflowteams.com/c/plan672&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;StackOverflow for Teams&lt;/a&gt;. This is a private StackOverflow team for the class. You can use this to ask questions and troubleshoot issues with your peers. You should have received an invite to join the team. If you haven’t, please let me know.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/education&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Github Education&lt;/a&gt;. Free access to Copilot in Rstudio and StackOverflow.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://rstudio.cloud%5D&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RStudio Cloud&lt;/a&gt;. Free access to RStudio in the cloud. You can use this to share your code and troubleshoot issues with your peers.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://claude.ai&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Claude&lt;/a&gt;. Free access to Claude for R code generation and troubleshooting.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.census.gov/data/developers/guidance/api-user-guide.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;US Census API&lt;/a&gt;. Free access to US Census data.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Others maybe required for specific portions of the course.&lt;/p&gt;
+&lt;h1 id=&#34;textbooks--readings&#34;&gt;Textbooks &amp;amp; Readings&lt;/h1&gt;
+&lt;p&gt;The following books are used implicitly in the class. You are not required to buy any of them,
+but they are very useful to have on your bookshelf.&lt;/p&gt;
+&lt;p&gt;
+&lt;cite&gt;Brewer, Cynthia A.
+(2015).
+&lt;em&gt;Designing Better Maps: A Guide for GIS Users&lt;/em&gt;.
+2 edition.
+Redlands, California: Esri Press.
+ISBN: 978-1-58948-440-5.&lt;/cite&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;cite&gt;Few, Stephen
+(2015).
+&lt;em&gt;Signal: Understanding What Matters in a World of Noise&lt;/em&gt;.
+Burlingame, California: Analytics Press.
+ISBN: 978-1-938377-05-1.&lt;/cite&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;cite&gt;Tufte, E. R
+(2001).
+&lt;em&gt;The Visual Display of Quantitative Information&lt;/em&gt;.
+Cheshire, CT: Graphics Press.&lt;/cite&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;cite&gt;Wickham, Hadley
+(2016).
+&lt;em&gt;Ggplot2: Elegant Graphics for Data Analysis&lt;/em&gt;.
+Springer-Verlag New York.
+ISBN: 978-3-319-24277-4.
+URL: &lt;a href=&#34;https://ggplot2.tidyverse.org&#34;&gt;https://ggplot2.tidyverse.org&lt;/a&gt;.&lt;/cite&gt;
+&lt;/p&gt;
+&lt;p&gt;All the above books are about principles of information display and design rather than about data analysis techniques. Information visualisation is very important and much more so than analytical techniques though enough attention is not devoted to them. While we may not be using these textbooks explicitly in weekly readings, you are expected to critically engage with the materials and thoughtfully follow the principles laid out in the books throughout the course.&lt;/p&gt;
+&lt;p&gt;For general purpose statistics, I have always enjoyed Tim Harford’s podcast called &lt;a href=&#34;https://www.bbc.co.uk/programmes/p02nrss1/episodes/downloads&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;More or Less&lt;/a&gt;. He has a recent book out that succinctly details the attitudes you want to take towards data analysis and telling stories with data. I highly recommend his new book.&lt;/p&gt;
+&lt;p&gt;
+&lt;cite&gt;Harford, Tim
+(2021).
+&lt;em&gt;The Data Detective: Ten Easy Rules to Make Sense of Statistics&lt;/em&gt;.
+New York: Riverhead Books.
+ISBN: 978-0-593-08459-5.&lt;/cite&gt;
+&lt;/p&gt;
+&lt;p&gt;The following books will get you started on some analytical techniques and can serve as a reference.&lt;/p&gt;
+&lt;p&gt;
+&lt;cite&gt;Bivand, Roger S., Edzer Pebesma, and Virgilio G&amp;lt;U+00F3&amp;gt;mez-Rubio
+(2013).
+&lt;em&gt;Applied Spatial Data Analysis with R&lt;/em&gt;.
+2nd ed. 2013 edition.
+New York Heidelberg Dordrecht London: Springer.
+ISBN: 978-1-4614-7617-7.&lt;/cite&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;cite&gt;Grolemund, Garrett and Hadley Wickham
+(2017).
+&lt;em&gt;R for Data Science&lt;/em&gt;.
+first.
+Sebastapol, CA: O’ Reilly.
+URL: &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;http://r4ds.had.co.nz/&lt;/a&gt; (visited on May. 25, 2018).&lt;/cite&gt;
+&lt;/p&gt;
+&lt;p&gt;The following book is excellent for covering the latest techniques for Geospatial data in R&lt;/p&gt;
+&lt;p&gt;
+&lt;cite&gt;Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow
+(2019).
+&lt;em&gt;Geocomputation with R&lt;/em&gt;.
+1 edition.
+Boca Raton: Chapman and Hall/CRC.
+ISBN: 978-1-138-30451-2.
+URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocompr.robinlovelace.net/&lt;/a&gt; (visited on Dec. 01, 2019).&lt;/cite&gt;
+&lt;/p&gt;
+&lt;h1 id=&#34;course-policies&#34;&gt;Course Policies&lt;/h1&gt;
+&lt;p&gt;The following set of course policies is not meant as an exhaustive list. If in doubt, ask for permission and clarification.&lt;/p&gt;
+&lt;h2 id=&#34;logistics&#34;&gt;Logistics&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;This course relies on learning from one another. Your learning depends on how you help others troubleshoot their code and problems they are having. We will use &lt;a href=&#34;https://en.wikipedia.org/wiki/Cooperative_learning&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;cooperative learning&lt;/a&gt; and &lt;a href=&#34;https://www.dvidshub.net/image/6016859/over-shoulder-training&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;over-the-shoulder learning techniques&lt;/a&gt;. This means you will have cooperatively work together to learn from one another synchronously and asynchronously.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;StackOverflow will be used for troubleshooting. You should have received an invite to join PLAN 672 group on StackOverflow. You can sign in using your Github login or other authentications. You are required to ask questions using a &lt;a href=&#34;https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example#:~:text=Basically%20a%20minimal%20reproducible%20example%20%28MRE%29%20should%20enable,version%2C%20and%20the%20OS%20it%20is%20run%20on.&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Minimum Reproducible Example (MRE)&lt;/a&gt;. To create a MRE, you can also use &lt;a href=&#34;https://rstudio.cloud&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R studio Cloud&lt;/a&gt;. please create an account there (see below). You will be assigned points on both asking and answering these questions which will count towards the grade.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;I don’t need any advance notification for intermittent absences. You should make appropriate judgements based on your health and your peers. However, you are responsible for keeping up with the material. Because the materials are posted on-line and in advance, you should be able to work through the code. If you have issues, please use StackOverflow, Office Hours and other resources available to you.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Canvas will be used for HW, lab and assignment submissions.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You should expect that the datasets may not be available because of server outages or missing links. We will cross those bridges when we get to them.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;deadlines--extension-requests&#34;&gt;Deadlines &amp;amp; Extension Requests&lt;/h2&gt;
+&lt;p&gt;Completed lab session materials are due by the end of lab (8 PM) in Canvas. You only need to submit one lab work for each topic.&lt;/p&gt;
+&lt;p&gt;Homework assigned for the week is due on the deadline specified in Canvas&lt;/p&gt;
+&lt;p&gt;If there is a reason to extend the deadline for the entire class, please discuss with me at least a week ahead and make a cogent case.&lt;/p&gt;
+&lt;p&gt;All labs and homework needs to be submitted as two files 1) a R markdown file (*.Rmd) and 2) html output (*.html) of the Markdown file.&lt;/p&gt;
+&lt;h2 id=&#34;readingsresources&#34;&gt;Readings/Resources&lt;/h2&gt;
+&lt;p&gt;The weekly readings are provided as resources and references. You are not required to read all or any the materials in detail. But the readings are useful to learn the material in depth and troubleshoot some issues. In some cases, the software and techniques in the Resources may be dated. Please use the web to adapt and update them.&lt;/p&gt;
+&lt;h2 id=&#34;llm-use-policy&#34;&gt;LLM use policy&lt;/h2&gt;
+&lt;p&gt;You may use Generative AI (like ChatGPT or Claude) as a technical tutor, syntax checker, or debugger. However, you must remain the sole architect of your data models and analytical decisions.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Permitted Uses&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Debugging errors: Finding typos or syntax bugs&lt;/li&gt;
+&lt;li&gt;Code efficiency: Optimizing existing loops or functions.&lt;/li&gt;
+&lt;li&gt;Syntax lookups: Learning how to use new functions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Prohibited Uses&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Logic outsourcing: Letting LLM choose your analytical parameters and scope.&lt;/li&gt;
+&lt;li&gt;Undisclosed generation: Submitting LLM generated code without attribution.&lt;/li&gt;
+&lt;li&gt;Narrative automation: Using LLMs to write data interpretations or conclusions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    At random times, I will use set up individual oral exams for you to explain and modify your submitted code. Failure to satisfactorily do so, will result in a failing grade for that assignment.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;tutorials&#34;&gt;Tutorials&lt;/h2&gt;
+&lt;p&gt;Often labs are accompanied by tutorials. The tutorials are usually self-contained and self-explanatory. In R, there are multiple ways to achieve the results, each with their own advantages and disadvantages. The tutorials may include different ways of data munging and analysis to expose you to different techniques. It is not implied that one is better than the others, though we all have our own preferences. If in doubt, rely on &lt;a href=&#34;https://www.alexejgossmann.com/benchmarking_r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;benchmarking&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;equipment&#34;&gt;Equipment&lt;/h2&gt;
+&lt;p&gt;We will conduct the class in the New East lab and you are expected to use the computers in the lab. Occasionally we will use other campus resources such as virtuallab and research computing.&lt;/p&gt;
+&lt;p&gt;Your network drive space for this course is at &lt;code&gt;\\storage.unc.edu\cas_a\City_Course\PLAN672\&amp;lt;ONYEN&amp;gt;\&lt;/code&gt;. Each of you have a folder where you can store your work.&lt;/p&gt;
+&lt;p&gt;This space is accessible whether you are &lt;a href=&#34;https://support.microsoft.com/en-us/windows/map-a-network-drive-in-windows-29ce55d1-34e3-a7e2-4801-131475f9557d#ID0EBD=Windows_10&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;on campus&lt;/a&gt; or off campus (&lt;a href=&#34;https://uncch.service-now.com/sp?id=kb_article_view&amp;amp;sysparm_article=KB0010155&amp;amp;sys_kb_id=719db1eddb3fa41070551ffa689619eb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;using VPN&lt;/a&gt;).Please make sure that you are logging in into the Active Directory domain by using &lt;code&gt;AD\&amp;lt;ONYEN&amp;gt;&lt;/code&gt; as your user name. Mac users can follow &lt;a href=&#34;https://it.cornell.edu/computer-recommendations/how-map-drive-mac-os-x&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;these instructions&lt;/a&gt;. If you have other OS, please see me for help.&lt;/p&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    File paths are very important and created more headaches than is necessary in the past. Please pay attention to these! Please ensure that you are using this directory to store your data and files. You can use OneDrive as well, but note that Rstudio might interact with it unexpectedly.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;If you are using your own computer, you should have a computer with at least 16 GB of RAM and a 64-bit operating system. You will also need to install &lt;a href=&#34;https://www.r-project.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt; and &lt;a href=&#34;https://www.rstudio.com/products/rstudio/download/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RStudio&lt;/a&gt;. RStudio is an integrated development environment (IDE) for R that makes it easier to write and run R code.&lt;/p&gt;
+&lt;p&gt;Accessing campus resources requires a &lt;a href=&#34;https://tdx.unc.edu/TDClient/33/Portal/KB/ArticleDet?ID=30&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;VPN&lt;/a&gt; and &lt;a href=&#34;https://tdx.unc.edu/TDClient/33/Portal/KB/ArticleDet?ID=30&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;MFA&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    You will be collecting data using data loggers and sensors. I will provide them and you need to return them, when you are done with the assignment. You are responsible for the equipment and any damage to it. I will withhold grades for the assignments until the equipment is returned.
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;grading&#34;&gt;Grading&lt;/h2&gt;
+&lt;p&gt;While all assignments are posted on this website, they are to be submitted exclusively on Canvas and on time. Please refrain from emailing your submissions to the instructor.&lt;/p&gt;
+&lt;p&gt;I am going to use a ‘Specification Grading’ in this course. The deliverables are as follows:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Ongoing assignments&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Lab reports to be submitted at the end of the class day for the Topic (due 8 PM on class days). (Individual/Collaborative)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;(Mostly) Bi monthly homework (HW) programming assignments (due 5 pm on specific due dates) (Individual/Collaborative)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Ad-hoc major assignments&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Weekly data visualisation critique (Individual)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Data collection and story telling assignment (Group)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Sensor deployment (Group)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Final term project (Individual)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The assignments will be graded on an Satisfactory/Unsatisfactory scale. Satisfactory grade is equivalent to a B+ letter grade. The focus of these assignments is on learning outcomes such as mastery of the material, making innovative connections in the material and on-time submission.&lt;/p&gt;
+&lt;p&gt;Group assignments will get a single grade for the group.&lt;/p&gt;
+&lt;p&gt;You will need to achieve Satisfactory grades on at least 70% of the on-going assignments and 2 of the 4 major assignments to achieve a low passing grade (L/C).Fewer than 50 % Satisfactory grades in the ongoing assignments will automatically result in a failing grade regardless of performance in other assignments. In addition to 80% of the on-going assignments, Satisfactory grades should be achieved in three major assignments for a P/B+. Exceptional performance in the final term project, in addition to Satisfactory grade in at least 90% of other requirements, will result in H/A grade.&lt;/p&gt;
+&lt;p&gt;In addition, discretionary points will be awarded for &lt;em&gt;enhancing collective learning&lt;/em&gt;. These include, but are not limited to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;StackOverflow questions and answers&lt;/li&gt;
+&lt;li&gt;Group participation and management&lt;/li&gt;
+&lt;li&gt;Over the shoulder learning in class&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This grading scale will be adjusted if the deliverables change depending course progress. Equivalent grades for undergraduates are assigned accordingly.&lt;/p&gt;
+&lt;h2 id=&#34;weekly-data-visualisation-critique&#34;&gt;Weekly data visualisation critique.&lt;/h2&gt;
+&lt;p&gt;Every week, one of you will lead a discussion about the critique of data visualisation that is found in the wild. &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:%e2%80%8bx:/r/personal/kaza_ad_unc_edu/Documents/courses/672/signups.xlsx?d=wda8e9b297a1c4b20bb1ea99dd205fdc1&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=kuc1VZ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Signup sheet is here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The purpose is to learn from others’ successes and failures in data visualisation. You will need to find an example of data visualisation in the wild (e.g. newspaper, magazine, website, social media). We will spare 20 minutes of in-class time for this. There is no need to submit a written critique, but the deliverable is leading an effective discussion in class. You will be graded on your ability to lead the discussion through pointed questions and your ability to engage the class about the data visualisation and drawing out lessons.&lt;/p&gt;
+&lt;h2 id=&#34;consent-to-share&#34;&gt;Consent to Share&lt;/h2&gt;
+&lt;p&gt;I am reserving the right to post your ungraded submissions (including HW) in Canvas (restricted to the class) for current and future students, as examples, without comment or recommendation. If you wish to decline to consent, please send me a note. No explanation is necessary and opting out does not affect your grades.&lt;/p&gt;
+&lt;h2 id=&#34;attendance-and-participation&#34;&gt;Attendance and Participation&lt;/h2&gt;
+&lt;p&gt;If you don’t attend classes, but submit the requirements on time, there is no penalty. Continuous absences that affect the progress in the course should be discussed with the instructor to figure out remedial action.&lt;/p&gt;
+&lt;h2 id=&#34;e-mail&#34;&gt;E-mail&lt;/h2&gt;
+&lt;p&gt;An office email group is already set up and all students registered are automatically added. If you have not been receiving email, please let me know.&lt;/p&gt;
+&lt;h2 id=&#34;asynchronous-communication--troubleshooting&#34;&gt;Asynchronous Communication &amp;amp; Troubleshooting&lt;/h2&gt;
+&lt;p&gt;We will use StackOverflow for asynchronous communication and troubleshooting. We can follow guidelines like these that allow you to get to answers quickly:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://stackoverflow.com/help/how-to-ask&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://stackoverflow.com/help/how-to-ask&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://codereview.stackexchange.com/help/how-to-ask&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://codereview.stackexchange.com/help/how-to-ask&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;academic-conduct&#34;&gt;Academic Conduct&lt;/h2&gt;
+&lt;p&gt;I firmly believe in learning from your peers and from others. All homework and lab submissions could benefit from collaborations, however, the submissions are individual. This means that interpreting the data and the results, producing the visualisations, drawing appropriate conclusions from the data, is necessarily individual even when the strategies can be discussed and developed with others. &lt;strong&gt;All help including fragments of borrowed or LLM generated code&lt;/strong&gt;, however, should be explicitly acknowledged. Penalties are imposed for non-attribution. In particular, please pay attention to the copyright restrictions and attribution requirements associated with the R-code that you might find elsewhere.&lt;/p&gt;
+&lt;h2 id=&#34;additional-help&#34;&gt;Additional Help&lt;/h2&gt;
+&lt;p&gt;Please set up a time on &lt;a href=&#34;https://go.unc.edu/nkaza-calendar&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;my calendar&lt;/a&gt; to discuss any additional help you may require.&lt;/p&gt;
+&lt;p&gt;Odum Institute has &lt;a href=&#34;https://odum.unc.edu/research-support/quantitative-analysis/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;walk-in consultations&lt;/a&gt; and some of them have expertise in R.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://library.unc.edu/about/staff/philip-mcdaniel/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Phil McDaniel&lt;/a&gt; and &lt;a href=&#34;https://guides.lib.unc.edu/amandahenley&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Amanda Henley&lt;/a&gt; are excellent resources for tracking down geospatial datasets and troubleshooting issues with them.&lt;/p&gt;
+&lt;p&gt;There are organisations that are devoted to ensuring diversity in the R community. See for example, R-ladies &lt;a href=&#34;https://rladies.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;meetup groups&lt;/a&gt; and &lt;a href=&#34;https://rladies-community-slack.herokuapp.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Slack channels&lt;/a&gt;. Local groups may or may not be active.&lt;/p&gt;
+&lt;h1 id=&#34;schedule-tentative&#34;&gt;Schedule (Tentative)&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;introductory-materials&#34;&gt;Introductory materials&lt;/h2&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;aug-18-tue-introduction-telling-stories-with-data&#34;&gt;Aug 18 (Tue) Introduction. Telling Stories with data&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/data-stories/&#34;&gt;Data Stories&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/introduction-to-r-rmarkdown/&#34;&gt;Introduction to R&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;hw1-is-posted&#34;&gt;HW1 is posted.&lt;/h4&gt;
+&lt;p&gt;Tell a story about air quality data.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;aug-25-tue-tinkercad&#34;&gt;Aug 25 (Tue) TinkerCAD&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://annaengelke.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Anna Engelke&lt;/a&gt; will conduct a TinkerCAD tutorial on how to use the software to design and print 3D models. This is a hands-on session and you will need an account on TinkerCAD. You can sign up for free at &lt;a href=&#34;https://www.tinkercad.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;TinkerCAD&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You will need to have completed BEAM 101 training (both online and in person) by this date.&lt;/li&gt;
+&lt;li&gt;Ideally, you will need to have finished the 3D printer quiz on BEAM Maker Space Trainings Canvas page.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;(Cline 2024)&lt;/li&gt;
+&lt;li&gt;(Erdreich 2024)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;group-assignment-1-posted&#34;&gt;Group Assignment 1 posted.&lt;/h4&gt;
+&lt;h3 id=&#34;sep-1-tue-exploratory-data-analysis--visualisation&#34;&gt;Sep 1 (Tue) Exploratory Data Analysis &amp;amp; Visualisation&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-1&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/exploratory-data-analysis-and-visualisation/&#34;&gt;Starting with tidyverse &amp;amp; ggplot&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-1&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Chapters 7 &amp;amp; 9-16 of &lt;a href=&#34;https://r4ds.had.co.nz/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Grolemund and Wickham 2017)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://dx.doi.org/10.1198/jcgs.2009.07098&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Wickham 2010)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(Tufte 2001)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;sep-8-tue-maps--flows&#34;&gt;Sep 8 (Tue) Maps &amp;amp; Flows&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-2&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/geospatial-data-in-r/&#34;&gt;Geospatial Data in R&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-2&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Chapters 1-8 &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Lovelace, Nowosad, and Muenchow 2019)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;sep-15-tue-maps--flows-contd&#34;&gt;Sep 15 (Tue) Maps &amp;amp; Flows (contd.)&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-3&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/geospatial-data-in-r/&#34;&gt;Geospatial Data in R&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/slides/spatial_with_sf_citibike/spatial_with_sf.html&#34;&gt;Spatial with sf&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-3&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Chapters 1-8 &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Lovelace, Nowosad, and Muenchow 2019)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;hw-2-posted&#34;&gt;HW 2 posted&lt;/h5&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;sep-22-tue-raster-analysis&#34;&gt;Sep 22 (Tue) Raster Analysis&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-4&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/slides/Raster/rasterR_slides.html&#34;&gt;Raster Analysis Slides&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/basic-raster-operations-in-r/&#34;&gt;Basic Raster Analysis in R&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/working-with-drone-imagery/&#34;&gt;Working with Drone Imagery&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-4&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;(Frazier and Singh 2021)&lt;/li&gt;
+&lt;li&gt;(Hijmans 2017)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- *** --&gt;
+&lt;!-- ### Sep 29 (Tue) Analysing Raster Datasets {.tabset} --&gt;
+&lt;!-- #### Tutorials/Slides --&gt;
+&lt;!-- - [Land Suitability Analysis](/post/land-suitabilty-with-ahp-wlc/) --&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;oct-6-tue-advanced-image-processing&#34;&gt;Oct 6 (Tue) Advanced Image Processing&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-5&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/object-detection-without-python/&#34;&gt;Object Detection in Street Scenes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/%20urban-morphology-landscape-metrics/&#34;&gt;Measuring Urban Form&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;oct-13-tue-group-assignment-presentations&#34;&gt;Oct 13 (Tue) Group Assignment Presentations&lt;/h3&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;oct-20-tue-building-urban-sensors-with-raspberry-pi&#34;&gt;Oct 20 (Tue) Building urban sensors with Raspberry Pi&lt;/h3&gt;
+&lt;h5 id=&#34;group-assignment-2-posted&#34;&gt;Group Assignment 2 posted&lt;/h5&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;oct-27-tue-structured-data-from-apis--databases&#34;&gt;Oct 27 (Tue) Structured Data from APIs &amp;amp; Databases&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-6&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/slides/census_geo/census_geo_v2.html&#34;&gt;Census Geographies&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/using-tidycensus-package/&#34;&gt;Using Census APIs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/extracting-data-from-osm&#34;&gt;Using OSM/Google&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-5&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;(Rigaux, Scholl, and Voisard 2002)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;nov-3-tue-scraping-web-for-unstructured-data&#34;&gt;Nov 3 (Tue) Scraping Web for (Un)Structured Data&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-7&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/scraping-craigslist-posts/&#34;&gt;Unstructured Data&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-6&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.r-datacollection.com/bookmaterials.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Munzert et al. 2014)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1080/01944363.2014.980439&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Schweitzer 2014)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0739456X16664789&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing and Waddell 2017)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;nov-10-tue-analysing-text-data&#34;&gt;Nov 10 (Tue) Analysing Text Data&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-8&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/matching-messy-texts/&#34;&gt;Matching Messy Texts&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/&#34;&gt;Structuring Unstructured Texts using Large Language Models&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-7&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.tidytextmining.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing 2019)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://dx.doi.org/10.1111/rsp3.12292&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Chen, Silva, and Reis In press)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;nov-17-tue-networks&#34;&gt;Nov 17 (Tue) Networks&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-9&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/analysing-urban-neworks/&#34;&gt;Network Analysis of Bikeshare systems&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/&#34;&gt;Spatial Relationships as Networks&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-8&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1007/s41109-019-0189-1&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing 2019)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1371/journal.pone.0166083&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Nelson and Rae 2016)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1177/0160017620946082&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Kaza and Nesse 2021)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;resourcesreadings-9&#34;&gt;Resources/Readings&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.03.008&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(McCarty and Kaza 2015)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.02.001&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Watson and Hudson 2015)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi.org/10.3390/geosciences8080275&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Rincón, Khan, and Armenakis 2018)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- ### `r; classDayList[i]` Dimensionality Reduction {.tabset} --&gt;
+&lt;!-- #### Tutorials/Slides --&gt;
+&lt;!-- #### Homework --&gt;
+&lt;!-- - [HW7 Posted] --&gt;
+&lt;!-- #### Resources/Readings --&gt;
+&lt;!-- - [[@frenkelMeasuringUrbanSprawl2008]](https://doi.org/10.1068/b32155) --&gt;
+&lt;!-- - [[@cliftonQuantitativeAnalysisUrban2008]](https://www.tandfonline.com/doi/full/10.1080/17549170801903496) --&gt;
+&lt;!-- - [[@golanGenderedWalkabilityBuilding2019]](https://doi.org/10.5198/jtlu.2019.1472) --&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;nov-24-tue-supervised-classification-with-trees-and-forests&#34;&gt;Nov 24 (Tue) Supervised Classification with Trees and Forests&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-10&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/&#34;&gt;Classifying Remote Sensing Images&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;readingsresources-1&#34;&gt;Readings/Resources&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0042098018789054&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Reades, De Souza, and Hubbard 2019)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1371/journal.pone.0107042&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Stevens et al. 2015)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0265813516659286&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Tribby et al. 2017)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;!-- ### Dec 1 (Tue)  Clustering &amp; Unsupervised Classification {.tabset} --&gt;
+&lt;!-- #### Tutorials/Slides --&gt;
+&lt;!-- - [Mapping Crime Clusters in Manchester](/post/cluster-detection-in-point-data/) --&gt;
+&lt;!-- - [Unsupervised Classification of Non-spatial Data](/post/unsupervised-clustering/) --&gt;
+&lt;!-- #### Resources/Readings --&gt;
+&lt;!-- - [[@batesDoesNeighborhoodReally2006]](https://doi.org/10.1177/0739456X05283254) --&gt;
+&lt;!-- - [[@clappDefiningNeighborhoodBoundaries2006]](https://doi.org/10.1016/j.jue.2005.10.003) --&gt;
+&lt;!-- - Chapters 7 &amp; 9 [@bivandAppliedSpatialData2013] --&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;na-neural-networks--deep-learning&#34;&gt;NA Neural Networks &amp;amp; Deep Learning&lt;/h3&gt;
+&lt;h4 id=&#34;tutorialsslides-11&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;[Deep learning for Image Classification]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;readingsresources-2&#34;&gt;Readings/Resources&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Chapters 1-5 &lt;a href=&#34;https://www.manning.com/books/deep-learning-with-r&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Chollet and Allaire 2018)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1073/pnas.1700035114&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Gebru et al. 2017)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://arxiv.org/abs/1807.07155&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Law, Brooks, and Russell 2019)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;final-project-presentations-exam-day&#34;&gt;Final Project Presentations (Exam Day)&lt;/h3&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;references&#34;&gt;References&lt;/h1&gt;
+&lt;div id=&#34;refs&#34; class=&#34;references csl-bib-body hanging-indent&#34;&gt;
+&lt;div id=&#34;ref-boeingUrbanSpatialOrder2019&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Boeing, Geoff. 2019. “Urban Spatial Order: Street Network Orientation, Configuration, and Entropy.” &lt;em&gt;Applied Network Science&lt;/em&gt; 4 (1): 1–19. &lt;a href=&#34;https://doi.org/10.1007/s41109-019-0189-1&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1007/s41109-019-0189-1&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-boeingNewInsightsRental2017&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Boeing, Geoff, and Paul Waddell. 2017. “New Insights into Rental Housing Markets Across the United States: Web Scraping and Analyzing Craigslist Rental Listings.” &lt;em&gt;Journal of Planning Education and Research&lt;/em&gt; 37 (4): 457–76. &lt;a href=&#34;https://doi.org/10.1177/0739456X16664789&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0739456X16664789&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-chenMeasuringPolicyDebateInpress&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Chen, Yiqiao, Elisabete A. Silva, and José P. Reis. In press. “Measuring Policy Debate in a Regrowing City by Sentiment Analysis Using Online Media Data: A Case Study of Leipzig 2030.” &lt;em&gt;Regional Science Policy &amp;amp; Practice&lt;/em&gt;, In press. &lt;a href=&#34;https://doi.org/10.1111/rsp3.12292&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1111/rsp3.12292&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-cholletDeepLearning2018&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Chollet, Francois, and J. J. Allaire. 2018. &lt;em&gt;Deep Learning with R&lt;/em&gt;. 1 edition. Shelter Island, NY: Manning Publications.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-clineMakeCompleteGuide2024&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Cline, Lydia Sloan. 2024. &lt;em&gt;Make: The Complete Guide to Tinkercad: 17 Projects to Start Designing and Printing in the 3d World&lt;/em&gt;. Erscheinungsort nicht ermittelbar: Make Community, LLC.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-erdreichTakingTinkercadNext2024&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Erdreich, Jason. 2024. &lt;em&gt;Taking Tinkercad to the Next Level: Enhance Your Ability to Design, Model, and 3d Print with One of the Most Intuitive CAD Programs&lt;/em&gt;. Place of publication not identified: Packt Publishing.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-frazierFundamentalsCapturingProcessing2021&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Frazier, Amy, and Kunwar Singh, eds. 2021. &lt;em&gt;Fundamentals of Capturing and Processing Drone Imagery and Data&lt;/em&gt;. Boca Raton: CRC Press.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-gebruUsingDeepLearning2017&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Gebru, Timnit, Jonathan Krause, Yilun Wang, Duyun Chen, Jia Deng, Erez Lieberman Aiden, and Li Fei-Fei. 2017. “Using Deep Learning and Google Street View to Estimate the Demographic Makeup of Neighborhoods Across the United States.” &lt;em&gt;Proceedings of the National Academy of Sciences&lt;/em&gt; 114 (50): 13108–13. &lt;a href=&#34;https://doi.org/10.1073/pnas.1700035114&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1073/pnas.1700035114&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-grolemundDataScience2017&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Grolemund, Garrett, and Hadley Wickham. 2017. &lt;em&gt;R for Data Science&lt;/em&gt;. First. Sebastapol, CA: O’ Reilly. &lt;a href=&#34;http://r4ds.had.co.nz/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;http://r4ds.had.co.nz/&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-hijmansRasterGeographicData2017&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Hijmans, Robert J. 2017. &lt;em&gt;Raster: Geographic Data Analysis and Modeling&lt;/em&gt;. &lt;a href=&#34;https://CRAN.R-project.org/package=raster&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://CRAN.R-project.org/package=raster&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-kazaCharacterizingRegionalStructure2021&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Kaza, Nikhil, and Katherine Nesse. 2021. “Characterizing the Regional Structure in the United States: &lt;span class=&#34;nocase&#34;&gt;A County-based Analysis&lt;/span&gt; of Labor Market Centrality.” &lt;em&gt;International Regional Science Review&lt;/em&gt; 44 (5): 560–81. &lt;a href=&#34;https://doi.org/10.1177/0160017620946082&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0160017620946082&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-lawTakeLookUsing2019a&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Law, Stephen, Piage Brooks, and Chris Russell. 2019. “Take a Look Around: Using Street View and Satellite Images to Estimate House Prices.” &lt;em&gt;ACM Transactions on Intelligent Systems and Technology (TIST)&lt;/em&gt; 10 (5). &lt;a href=&#34;https://dl.acm.org/doi/abs/10.1145/3342240&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://dl.acm.org/doi/abs/10.1145/3342240&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-lovelaceGeocomputation2019&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. &lt;em&gt;Geocomputation with R&lt;/em&gt;. 1 edition. Boca Raton: Chapman and Hall/CRC. &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://geocompr.robinlovelace.net/&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-mccartyUrbanFormAir2015&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;McCarty, J., and N. Kaza. 2015. “Urban Form and Air Quality in the United States.” &lt;em&gt;Landscape and Urban Planning&lt;/em&gt; 139: 168–79. &lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.03.008&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1016/j.landurbplan.2015.03.008&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-munzertAutomatedDataCollection2014a&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Munzert, Simon, Christian Rubba, Peter Meißner, and Dominic Nyhuis. 2014. &lt;em&gt;Automated Data Collection with R: A Practical Guide to Web Scraping and Text Mining&lt;/em&gt;. 1 edition. Chichester, West Sussex, United Kingdom: Wiley.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-nelsonEconomicGeographyUnited2016&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Nelson, Garrett Dash, and Alasdair Rae. 2016. “An Economic Geography of the United States: From Commutes to Megaregions.” &lt;em&gt;PLOS ONE&lt;/em&gt; 11 (11): e0166083. &lt;a href=&#34;https://doi.org/10.1371/journal.pone.0166083&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1371/journal.pone.0166083&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-readesUnderstandingUrbanGentrification2019&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Reades, Jonathan, Jordan De Souza, and Phil Hubbard. 2019. “Understanding Urban Gentrification Through Machine Learning.” &lt;em&gt;Urban Studies&lt;/em&gt; 56 (5): 922–42. &lt;a href=&#34;https://doi.org/10.1177/0042098018789054&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0042098018789054&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-rigauxSpatialDatabasesApplication2002&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Rigaux, Philippe, Michel Scholl, and Agnès Voisard. 2002. &lt;em&gt;Spatial Databases: With Application to GIS&lt;/em&gt;. San Francisco: Morgan Kaufmann.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-rinconFloodRiskMapping2018&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Rincón, Daniela, Usman T. Khan, and Costas Armenakis. 2018. “Flood Risk Mapping Using GIS and Multi-Criteria Analysis: A Greater Toronto Area Case Study.” &lt;em&gt;Geosciences&lt;/em&gt; 8 (8): 275. &lt;a href=&#34;https://doi.org/10.3390/geosciences8080275&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.3390/geosciences8080275&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-schweitzerPlanningSocialMedia2014&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Schweitzer, Lisa. 2014. “Planning and Social Media: A Case Study of Public Transit and Stigma on Twitter.” &lt;em&gt;Journal of the American Planning Association&lt;/em&gt; 80 (3): 218–38. &lt;a href=&#34;https://doi.org/10.1080/01944363.2014.980439&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1080/01944363.2014.980439&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-stevensDisaggregatingCensusData2015&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Stevens, Forrest R., Andrea E. Gaughan, Catherine Linard, and Andrew J. Tatem. 2015. “Disaggregating Census Data for Population Mapping Using Random Forests with Remotely-Sensed and Ancillary Data.” &lt;em&gt;PLOS ONE&lt;/em&gt; 10 (2): e0107042. &lt;a href=&#34;https://doi.org/10.1371/journal.pone.0107042&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1371/journal.pone.0107042&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-tribbyAnalyzingWalkingRoute2017&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Tribby, Calvin P., Harvey J. Miller, Barbara B. Brown, Carol M. Werner, and Ken R. Smith. 2017. “Analyzing Walking Route Choice Through Built Environments Using Random Forests and Discrete Choice Techniques.” &lt;em&gt;Environment &amp;amp; Planning B : Urban Analytics &amp;amp; City Science&lt;/em&gt; 44 (6): 1145–67. &lt;a href=&#34;https://doi.org/10.1177/0265813516659286&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0265813516659286&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-tufteVisualDisplayQuantitative2001&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Tufte, E. R. 2001. &lt;em&gt;The Visual Display of Quantitative Information&lt;/em&gt;. Cheshire, CT: Graphics Press.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-watsonRegionalScaleWind2015&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Watson, Joss J. W., and Malcolm D. Hudson. 2015. “Regional Scale Wind Farm and Solar Farm Suitability Assessment Using &lt;span class=&#34;nocase&#34;&gt;GIS-assisted&lt;/span&gt; Multi-Criteria Evaluation.” &lt;em&gt;Landscape and Urban Planning&lt;/em&gt; 138 (June): 20–31. &lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.02.001&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1016/j.landurbplan.2015.02.001&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-layered-grammar&#34; class=&#34;csl-entry&#34;&gt;
+&lt;p&gt;Wickham, Hadley. 2010. “A Layered Grammar of Graphics.” &lt;em&gt;Journal of Computational and Graphical Statistics&lt;/em&gt; 19 (1): 3–28. &lt;a href=&#34;https://doi.org/10.1198/jcgs.2009.07098&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1198/jcgs.2009.07098&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
     </item>
     
     <item>
@@ -660,507 +1166,247 @@ However, the sentiment carries.&lt;/p&gt;
     </item>
     
     <item>
-      <title>Urban Analytics in R</title>
-      <link>https://nkaza.github.io/teaching/techniques-course/</link>
+      <title>Object Detection Without Python (A Pure R Pipeline with YOLO26)</title>
+      <link>https://nkaza.github.io/post/object-detection-without-python/</link>
       <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
-      <guid>https://nkaza.github.io/teaching/techniques-course/</guid>
-      <description>&lt;h1 id=&#34;course-description--objectives&#34;&gt;Course Description &amp;amp; Objectives&lt;/h1&gt;
-&lt;p&gt;This course is about different techniques used in assembling, managing, analysing and predicting using heterogeneous data sets in urban environments. These datasets are inherently messy and incomplete. Types of data include, point, polygon, raster, vector, text, image and network data; data sets with high cadence and high spatial resolution.&lt;/p&gt;
-&lt;p&gt;This is a survey course for different techniques and approaches in dealing with these data in R. The objective of these analytical techniques is to inform both short term operational decisions and long term planning in cities. As such, the emphasis is on practical urban data analytics rather than in-depth discussion about the suitability and appropriateness of techniques and their associated theoretical assumptions.&lt;/p&gt;
-&lt;p&gt;Unlike other courses of similar vein, I put inordinate emphasis on data visualisation and communication. The point of data analysis is to tell a compelling story, not to use latest analytical techniques.&lt;/p&gt;
-&lt;p&gt;This is a companion course to &lt;a href=&#34;https://planning.unc.edu/courses/673/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;em&gt;PLAN 562: The Ethics and Politics of New Urban Analytics&lt;/em&gt;&lt;/a&gt; (Seminar), which deals with problems, opportunities and hidden agendas with data generation, analysis and visualisation in urban settings. Students are encouraged to take them both.&lt;/p&gt;
-&lt;h1 id=&#34;course-details&#34;&gt;Course Details&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Instructor:&lt;/strong&gt; &lt;a href=&#34;http://nkaza.github.io&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Nikhil Kaza&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Classroom:&lt;/strong&gt; New East 101&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Hours:&lt;/strong&gt; T 17:00 - 19:30&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Office Hours:&lt;/strong&gt; &lt;a href=&#34;https://go.unc.edu/nkaza-calendar&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://go.unc.edu/nkaza-calendar&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Course Materials:&lt;/strong&gt; &lt;a href=&#34;https://nkaza.github.io/teaching/techniques-course/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://nkaza.github.io/teaching/techniques-course/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;HW &amp;amp; Lab submissions:&lt;/strong&gt; Canvas&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Troubleshooting &amp;amp; Collaboration:&lt;/strong&gt; &lt;a href=&#34;https://stackoverflowteams.com/c/plan672/questions&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://stackoverflowteams.com/c/plan672/questions&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1 id=&#34;prerequisites--preparation&#34;&gt;Prerequisites &amp;amp; Preparation&lt;/h1&gt;
-&lt;p&gt;The course will move quickly, cover a large number of analytical techniques, data sets, use cases and disciplinary domains. It requires significant investment on the part of the students to learn the technical skills as well as to learn about substantive urban and regional analyses.&lt;/p&gt;
-&lt;p&gt;Much of the work in this course will be done using Open Source Software that is usually free.&lt;/p&gt;
-&lt;p&gt;Over the summer prior to the course, you are/were expected to review the &lt;a href=&#34;https://nkaza.github.io/intro2Rbook/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;materials&lt;/a&gt; in preparation for the course.&lt;/p&gt;
-&lt;p&gt;The course assumes a working knowledge of &lt;a href=&#34;http://www.%20r-project.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt;. R is a programming language and a free software environment for statistical computing and graphics. There are a number of online resources that will help you with getting up to speed with R. You will have to use extensively the documentation, help and examples that R environment provides; i.e. Do not be afraid to use, for example,&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;?qplot
-??randomForest
+      <guid>https://nkaza.github.io/post/object-detection-without-python/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&#34;&gt;earlier post&lt;/a&gt;, we ran a pre-trained YOLO model from R by reaching into Python with &lt;code&gt;reticulate&lt;/code&gt;: import &lt;code&gt;torch&lt;/code&gt; and &lt;code&gt;ultralytics&lt;/code&gt;, hand a &lt;code&gt;conda&lt;/code&gt; environment to &lt;code&gt;use_condaenv()&lt;/code&gt;, and call the model as if it were an R object. That works, but it means every student needs a working Python environment somewhere reachable from R &amp;mdash; a &lt;code&gt;conda&lt;/code&gt; install, a mapped network drive, an &lt;code&gt;environment.yml&lt;/code&gt; &amp;mdash; before they can detect a single car.&lt;/p&gt;
+&lt;p&gt;This post shows the alternative: doing the entire inference step in R, with no Python at runtime at all. It relies on the R &lt;code&gt;torch&lt;/code&gt; package, which binds directly to &lt;code&gt;libtorch&lt;/code&gt; (the C++ library that PyTorch itself is built on). Once a model has been exported to the TorchScript format, &lt;code&gt;torch::jit_load()&lt;/code&gt; reads it directly &amp;mdash; no &lt;code&gt;reticulate&lt;/code&gt;, no Python interpreter, no environment to activate.&lt;/p&gt;
+&lt;p&gt;There is exactly one Python touchpoint left, and it happens once, outside of R, before this tutorial even begins: exporting the trained model to TorchScript.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pip install ultralytics
+yolo export model=yolo26s.pt format=torchscript imgsz=640
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;to seek help for specific commands.&lt;/p&gt;
-&lt;p&gt;One disadvantage with R is that it stores all its objects in memory. This means that your computer should have significant RAM to deal with large data sets.&lt;/p&gt;
-&lt;p&gt;Another disadvantage with R is that it has a &lt;a href=&#34;http://cockeyed.com/lessons/learning_curve/learning_curve.php&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;em&gt;shallow learning curve&lt;/em&gt;&lt;/a&gt;. And it has some quirks. In particular, please pay attention to &lt;a href=&#34;https://www.burns-stat.com/pages/Tutor/R_inferno.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R-Inferno&lt;/a&gt;. However, persistence will have long term benefits.&lt;/p&gt;
-&lt;p&gt;You should have an aptitude for debugging computer code, thinking through edge cases in data sets, identifying and dealing with missing data and messy data sets.&lt;/p&gt;
-&lt;p&gt;You should expect that the instructions and help provided may not work on your system due to different configurations, mismatched data types and differences in libraries. You should have an aptitude to troubleshoot the problems and figure out workarounds.&lt;/p&gt;
-&lt;p&gt;It may be helpful to go through the materials from &lt;a href=&#34;https://supermariogiacomazzo.github.io/STOR320_WEBSITE/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;STOR 320: Introduction to Data Science&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;external-it-accounts&#34;&gt;External IT Accounts&lt;/h2&gt;
-&lt;p&gt;While most of the work in the class will be done using R using publicly available data sets, you will need to set up accounts with the following services. Some of them might require billing enabled and most of them would require 2FA. You are responsible for monitoring them and ensuring that the charges are within your budget.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://stackoverflowteams.com/c/plan672&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;StackOverflow for Teams&lt;/a&gt;. This is a private StackOverflow team for the class. You can use this to ask questions and troubleshoot issues with your peers. You should have received an invite to join the team. If you haven’t, please let me know.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/education&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Github Education&lt;/a&gt;. Free access to Copilot in Rstudio and StackOverflow.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://rstudio.cloud%5D&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RStudio Cloud&lt;/a&gt;. Free access to RStudio in the cloud. You can use this to share your code and troubleshoot issues with your peers.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://claude.ai&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Claude&lt;/a&gt;. Free access to Claude for R code generation and troubleshooting.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.census.gov/data/developers/guidance/api-user-guide.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;US Census API&lt;/a&gt;. Free access to US Census data.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Others maybe required for specific portions of the course.&lt;/p&gt;
-&lt;h1 id=&#34;textbooks--readings&#34;&gt;Textbooks &amp;amp; Readings&lt;/h1&gt;
-&lt;p&gt;The following books are used implicitly in the class. You are not required to buy any of them,
-but they are very useful to have on your bookshelf.&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Brewer, Cynthia A.
-(2015).
-&lt;em&gt;Designing Better Maps: A Guide for GIS Users&lt;/em&gt;.
-2 edition.
-Redlands, California: Esri Press.
-ISBN: 978-1-58948-440-5.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Few, Stephen
-(2015).
-&lt;em&gt;Signal: Understanding What Matters in a World of Noise&lt;/em&gt;.
-Burlingame, California: Analytics Press.
-ISBN: 978-1-938377-05-1.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Tufte, E. R
-(2001).
-&lt;em&gt;The Visual Display of Quantitative Information&lt;/em&gt;.
-Cheshire, CT: Graphics Press.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Wickham, Hadley
-(2016).
-&lt;em&gt;Ggplot2: Elegant Graphics for Data Analysis&lt;/em&gt;.
-Springer-Verlag New York.
-ISBN: 978-3-319-24277-4.
-URL: &lt;a href=&#34;https://ggplot2.tidyverse.org&#34;&gt;https://ggplot2.tidyverse.org&lt;/a&gt;.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;All the above books are about principles of information display and design rather than about data analysis techniques. Information visualisation is very important and much more so than analytical techniques though enough attention is not devoted to them. While we may not be using these textbooks explicitly in weekly readings, you are expected to critically engage with the materials and thoughtfully follow the principles laid out in the books throughout the course.&lt;/p&gt;
-&lt;p&gt;For general purpose statistics, I have always enjoyed Tim Harford’s podcast called &lt;a href=&#34;https://www.bbc.co.uk/programmes/p02nrss1/episodes/downloads&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;More or Less&lt;/a&gt;. He has a recent book out that succinctly details the attitudes you want to take towards data analysis and telling stories with data. I highly recommend his new book.&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Harford, Tim
-(2021).
-&lt;em&gt;The Data Detective: Ten Easy Rules to Make Sense of Statistics&lt;/em&gt;.
-New York: Riverhead Books.
-ISBN: 978-0-593-08459-5.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;The following books will get you started on some analytical techniques and can serve as a reference.&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Bivand, Roger S., Edzer Pebesma, and Virgilio G&amp;lt;U+00F3&amp;gt;mez-Rubio
-(2013).
-&lt;em&gt;Applied Spatial Data Analysis with R&lt;/em&gt;.
-2nd ed. 2013 edition.
-New York Heidelberg Dordrecht London: Springer.
-ISBN: 978-1-4614-7617-7.&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Grolemund, Garrett and Hadley Wickham
-(2017).
-&lt;em&gt;R for Data Science&lt;/em&gt;.
-first.
-Sebastapol, CA: O’ Reilly.
-URL: &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;http://r4ds.had.co.nz/&lt;/a&gt; (visited on May. 25, 2018).&lt;/cite&gt;
-&lt;/p&gt;
-&lt;p&gt;The following book is excellent for covering the latest techniques for Geospatial data in R&lt;/p&gt;
-&lt;p&gt;
-&lt;cite&gt;Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow
-(2019).
-&lt;em&gt;Geocomputation with R&lt;/em&gt;.
-1 edition.
-Boca Raton: Chapman and Hall/CRC.
-ISBN: 978-1-138-30451-2.
-URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocompr.robinlovelace.net/&lt;/a&gt; (visited on Dec. 01, 2019).&lt;/cite&gt;
-&lt;/p&gt;
-&lt;h1 id=&#34;course-policies&#34;&gt;Course Policies&lt;/h1&gt;
-&lt;p&gt;The following set of course policies is not meant as an exhaustive list. If in doubt, ask for permission and clarification.&lt;/p&gt;
-&lt;h2 id=&#34;logistics&#34;&gt;Logistics&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;This course relies on learning from one another. Your learning depends on how you help others troubleshoot their code and problems they are having. We will use &lt;a href=&#34;https://en.wikipedia.org/wiki/Cooperative_learning&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;cooperative learning&lt;/a&gt; and &lt;a href=&#34;https://www.dvidshub.net/image/6016859/over-shoulder-training&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;over-the-shoulder learning techniques&lt;/a&gt;. This means you will have cooperatively work together to learn from one another synchronously and asynchronously.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;StackOverflow will be used for troubleshooting. You should have received an invite to join PLAN 672 group on StackOverflow. You can sign in using your Github login or other authentications. You are required to ask questions using a &lt;a href=&#34;https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example#:~:text=Basically%20a%20minimal%20reproducible%20example%20%28MRE%29%20should%20enable,version%2C%20and%20the%20OS%20it%20is%20run%20on.&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Minimum Reproducible Example (MRE)&lt;/a&gt;. To create a MRE, you can also use &lt;a href=&#34;https://rstudio.cloud&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R studio Cloud&lt;/a&gt;. please create an account there (see below). You will be assigned points on both asking and answering these questions which will count towards the grade.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;I don’t need any advance notification for intermittent absences. You should make appropriate judgements based on your health and your peers. However, you are responsible for keeping up with the material. Because the materials are posted on-line and in advance, you should be able to work through the code. If you have issues, please use StackOverflow, Office Hours and other resources available to you.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Canvas will be used for HW, lab and assignment submissions.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;You should expect that the datasets may not be available because of server outages or missing links. We will cross those bridges when we get to them.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;deadlines--extension-requests&#34;&gt;Deadlines &amp;amp; Extension Requests&lt;/h2&gt;
-&lt;p&gt;Completed lab session materials are due by the end of lab (8 PM) in Canvas. You only need to submit one lab work for each topic.&lt;/p&gt;
-&lt;p&gt;Homework assigned for the week is due on the deadline specified in Canvas&lt;/p&gt;
-&lt;p&gt;If there is a reason to extend the deadline for the entire class, please discuss with me at least a week ahead and make a cogent case.&lt;/p&gt;
-&lt;p&gt;All labs and homework needs to be submitted as two files 1) a R markdown file (*.Rmd) and 2) html output (*.html) of the Markdown file.&lt;/p&gt;
-&lt;h2 id=&#34;readingsresources&#34;&gt;Readings/Resources&lt;/h2&gt;
-&lt;p&gt;The weekly readings are provided as resources and references. You are not required to read all or any the materials in detail. But the readings are useful to learn the material in depth and troubleshoot some issues. In some cases, the software and techniques in the Resources may be dated. Please use the web to adapt and update them.&lt;/p&gt;
-&lt;h2 id=&#34;llm-use-policy&#34;&gt;LLM use policy&lt;/h2&gt;
-&lt;p&gt;You may use Generative AI (like ChatGPT or Claude) as a technical tutor, syntax checker, or debugger. However, you must remain the sole architect of your data models and analytical decisions.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Permitted Uses&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Debugging errors: Finding typos or syntax bugs&lt;/li&gt;
-&lt;li&gt;Code efficiency: Optimizing existing loops or functions.&lt;/li&gt;
-&lt;li&gt;Syntax lookups: Learning how to use new functions.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Prohibited Uses&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Logic outsourcing: Letting LLM choose your analytical parameters and scope.&lt;/li&gt;
-&lt;li&gt;Undisclosed generation: Submitting LLM generated code without attribution.&lt;/li&gt;
-&lt;li&gt;Narrative automation: Using LLMs to write data interpretations or conclusions.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;alert alert-alert&#34;&gt;
+&lt;p&gt;That produces a single &lt;code&gt;yolo26s.torchscript&lt;/code&gt; file. Everything from here on &amp;mdash; reading images, running the model, drawing boxes, summarising results &amp;mdash; is ordinary R.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    At random times, I will use set up individual oral exams for you to explain and modify your submitted code. Failure to satisfactorily do so, will result in a failing grade for that assignment.
+    This tutorial uses &lt;a href=&#34;https://docs.ultralytics.com/models/yolo26/&#34;&gt;YOLO26&lt;/a&gt;, the successor to the YOLOv10 model used in the earlier post. YOLO26 ships in n/s/m/l/x sizes (no &amp;ldquo;b&amp;rdquo;, if you&amp;rsquo;re used to YOLOv10&amp;rsquo;s naming); this post uses the small &lt;code&gt;yolo26s&lt;/code&gt; variant. Swap in &lt;code&gt;yolo26m&lt;/code&gt;/&lt;code&gt;l&lt;/code&gt;/&lt;code&gt;x&lt;/code&gt; for more accuracy at the cost of speed, using the same export command above.
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;h2 id=&#34;tutorials&#34;&gt;Tutorials&lt;/h2&gt;
-&lt;p&gt;Often labs are accompanied by tutorials. The tutorials are usually self-contained and self-explanatory. In R, there are multiple ways to achieve the results, each with their own advantages and disadvantages. The tutorials may include different ways of data munging and analysis to expose you to different techniques. It is not implied that one is better than the others, though we all have our own preferences. If in doubt, rely on &lt;a href=&#34;https://www.alexejgossmann.com/benchmarking_r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;benchmarking&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;equipment&#34;&gt;Equipment&lt;/h2&gt;
-&lt;p&gt;We will conduct the class in the New East lab and you are expected to use the computers in the lab. Occasionally we will use other campus resources such as virtuallab and research computing.&lt;/p&gt;
-&lt;p&gt;Your network drive space for this course is at &lt;code&gt;\\storage.unc.edu\cas_a\City_Course\PLAN672\&amp;lt;ONYEN&amp;gt;\&lt;/code&gt;. Each of you have a folder where you can store your work.&lt;/p&gt;
-&lt;p&gt;This space is accessible whether you are &lt;a href=&#34;https://support.microsoft.com/en-us/windows/map-a-network-drive-in-windows-29ce55d1-34e3-a7e2-4801-131475f9557d#ID0EBD=Windows_10&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;on campus&lt;/a&gt; or off campus (&lt;a href=&#34;https://uncch.service-now.com/sp?id=kb_article_view&amp;amp;sysparm_article=KB0010155&amp;amp;sys_kb_id=719db1eddb3fa41070551ffa689619eb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;using VPN&lt;/a&gt;).Please make sure that you are logging in into the Active Directory domain by using &lt;code&gt;AD\&amp;lt;ONYEN&amp;gt;&lt;/code&gt; as your user name. Mac users can follow &lt;a href=&#34;https://it.cornell.edu/computer-recommendations/how-map-drive-mac-os-x&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;these instructions&lt;/a&gt;. If you have other OS, please see me for help.&lt;/p&gt;
+&lt;h2 id=&#34;setup&#34;&gt;Setup&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(c(&amp;quot;torch&amp;quot;, &amp;quot;magick&amp;quot;, &amp;quot;tidyverse&amp;quot;, &amp;quot;cowplot&amp;quot;, &amp;quot;exiftoolr&amp;quot;))
+torch::install_torch() # downloads libtorch itself, once
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;torch::install_torch()&lt;/code&gt; downloads the &lt;code&gt;libtorch&lt;/code&gt; binaries for your platform. It&amp;rsquo;s a few hundred megabytes and only needs to happen once per machine, but do it before class if you&amp;rsquo;re on a slow connection.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(torch)
+library(magick)
+library(tidyverse)
+library(cowplot)
+library(exiftoolr)
+library(here)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;data&#34;&gt;Data&lt;/h2&gt;
+&lt;p&gt;We&amp;rsquo;ll use the same &lt;a href=&#34;https://www.dropbox.com/scl/fi/u5t26kwi8t52c16r04qso/geotagged.zip?rlkey=zszxeyd0tdrwubjatwbjhwn3e&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;street-level images from Rio de Janeiro, Brazil&lt;/a&gt; as the earlier post, collected through &lt;a href=&#34;https://kartaview.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kartaview&lt;/a&gt;. See that post&amp;rsquo;s &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/#data&#34;&gt;Data section&lt;/a&gt; for a fuller discussion of the imagery and its EXIF metadata; here we just load the file paths.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img_files &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;rio_kartaview_images&amp;quot;, &amp;quot;geotagged&amp;quot;) %&amp;gt;%
+              list.files(full.names = TRUE, pattern = &amp;quot;\\.jpg$&amp;quot;)
+
+length(img_files)
+# [1] 484
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;loading-the-model&#34;&gt;Loading the model&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;model &amp;lt;- jit_load(&amp;quot;yolo26s.torchscript&amp;quot;) # sits alongside this .Rmarkdown file
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;jit_load()&lt;/code&gt; reads the exported TorchScript graph directly; there&amp;rsquo;s no &lt;code&gt;ultralytics$YOLO()&lt;/code&gt; wrapper here, so we lose some conveniences it provides (like &lt;code&gt;to_df()&lt;/code&gt; from the earlier post) and have to rebuild them ourselves in plain R. That&amp;rsquo;s most of the rest of this post.&lt;/p&gt;
+&lt;p&gt;YOLO26, like most object detectors trained on it, is trained on the COCO (Common Objects in Context) dataset, so its outputs are indexed against COCO&amp;rsquo;s 80 categories. The exported model gives us class indices, not names, so we need the lookup table ourselves &amp;mdash; Ultralytics doesn&amp;rsquo;t ship it inside the TorchScript file the way it does with the Python &lt;code&gt;ultralytics&lt;/code&gt; package.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;coco_names &amp;lt;- c(
+    &amp;quot;person&amp;quot;,&amp;quot;bicycle&amp;quot;,&amp;quot;car&amp;quot;,&amp;quot;motorcycle&amp;quot;,&amp;quot;airplane&amp;quot;,&amp;quot;bus&amp;quot;,&amp;quot;train&amp;quot;,&amp;quot;truck&amp;quot;,&amp;quot;boat&amp;quot;,
+    &amp;quot;traffic light&amp;quot;,&amp;quot;fire hydrant&amp;quot;,&amp;quot;stop sign&amp;quot;,&amp;quot;parking meter&amp;quot;,&amp;quot;bench&amp;quot;,&amp;quot;bird&amp;quot;,&amp;quot;cat&amp;quot;,
+    &amp;quot;dog&amp;quot;,&amp;quot;horse&amp;quot;,&amp;quot;sheep&amp;quot;,&amp;quot;cow&amp;quot;,&amp;quot;elephant&amp;quot;,&amp;quot;bear&amp;quot;,&amp;quot;zebra&amp;quot;,&amp;quot;giraffe&amp;quot;,&amp;quot;backpack&amp;quot;,
+    &amp;quot;umbrella&amp;quot;,&amp;quot;handbag&amp;quot;,&amp;quot;tie&amp;quot;,&amp;quot;suitcase&amp;quot;,&amp;quot;frisbee&amp;quot;,&amp;quot;skis&amp;quot;,&amp;quot;snowboard&amp;quot;,&amp;quot;sports ball&amp;quot;,
+    &amp;quot;kite&amp;quot;,&amp;quot;baseball bat&amp;quot;,&amp;quot;baseball glove&amp;quot;,&amp;quot;skateboard&amp;quot;,&amp;quot;surfboard&amp;quot;,&amp;quot;tennis racket&amp;quot;,
+    &amp;quot;bottle&amp;quot;,&amp;quot;wine glass&amp;quot;,&amp;quot;cup&amp;quot;,&amp;quot;fork&amp;quot;,&amp;quot;knife&amp;quot;,&amp;quot;spoon&amp;quot;,&amp;quot;bowl&amp;quot;,&amp;quot;banana&amp;quot;,&amp;quot;apple&amp;quot;,
+    &amp;quot;sandwich&amp;quot;,&amp;quot;orange&amp;quot;,&amp;quot;broccoli&amp;quot;,&amp;quot;carrot&amp;quot;,&amp;quot;hot dog&amp;quot;,&amp;quot;pizza&amp;quot;,&amp;quot;donut&amp;quot;,&amp;quot;cake&amp;quot;,&amp;quot;chair&amp;quot;,
+    &amp;quot;couch&amp;quot;,&amp;quot;potted plant&amp;quot;,&amp;quot;bed&amp;quot;,&amp;quot;dining table&amp;quot;,&amp;quot;toilet&amp;quot;,&amp;quot;tv&amp;quot;,&amp;quot;laptop&amp;quot;,&amp;quot;mouse&amp;quot;,
+    &amp;quot;remote&amp;quot;,&amp;quot;keyboard&amp;quot;,&amp;quot;cell phone&amp;quot;,&amp;quot;microwave&amp;quot;,&amp;quot;oven&amp;quot;,&amp;quot;toaster&amp;quot;,&amp;quot;sink&amp;quot;,
+    &amp;quot;refrigerator&amp;quot;,&amp;quot;book&amp;quot;,&amp;quot;clock&amp;quot;,&amp;quot;vase&amp;quot;,&amp;quot;scissors&amp;quot;,&amp;quot;teddy bear&amp;quot;,&amp;quot;hair drier&amp;quot;,
+    &amp;quot;toothbrush&amp;quot;
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;preparing-an-image-for-the-model&#34;&gt;Preparing an image for the model&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;ultralytics$YOLO()&lt;/code&gt; in the earlier post quietly resized, padded, and normalised every image before handing it to the network. &lt;code&gt;jit_load()&lt;/code&gt; gives us none of that &amp;mdash; the TorchScript graph expects a specific input shape, and it&amp;rsquo;s on us to produce it.&lt;/p&gt;
+&lt;p&gt;YOLO models are trained on square inputs, so a non-square photo has to be resized to fit inside a square canvas and padded with grey on the remaining sides, rather than stretched &amp;mdash; otherwise every detected box would come out distorted. This is called &lt;em&gt;letterboxing&lt;/em&gt;, by analogy with the black bars added to widescreen video on an old square TV.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;IMG_SIZE    &amp;lt;- 640L
+CONF_THRESH &amp;lt;- 0.5
+PAD_COLOR   &amp;lt;- &amp;quot;#727272&amp;quot;   # 114/255 grey -- Ultralytics&#39; own letterbox pad value
+
+letterbox &amp;lt;- function(path, size = IMG_SIZE) {
+    img  &amp;lt;- image_read(path)
+    info &amp;lt;- image_info(img)
+    w &amp;lt;- info$width; h &amp;lt;- info$height
+    r &amp;lt;- min(size / w, size / h)
+    new_w &amp;lt;- round(w * r); new_h &amp;lt;- round(h * r)
+    resized &amp;lt;- image_resize(img, paste0(new_w, &amp;quot;x&amp;quot;, new_h, &amp;quot;!&amp;quot;))
+
+    pad_w &amp;lt;- size - new_w; pad_h &amp;lt;- size - new_h
+    left  &amp;lt;- pad_w %/% 2L; top &amp;lt;- pad_h %/% 2L
+    canvas &amp;lt;- image_blank(size, size, color = PAD_COLOR)
+    padded &amp;lt;- image_composite(canvas, resized, offset = sprintf(&amp;quot;+%d+%d&amp;quot;, left, top))
+
+    list(image = padded, scale = r, left = left, top = top, orig_w = w, orig_h = h)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We hang on to &lt;code&gt;scale&lt;/code&gt;, &lt;code&gt;left&lt;/code&gt;, and &lt;code&gt;top&lt;/code&gt; because every box the model returns will be in this padded 640×640 space &amp;mdash; we&amp;rsquo;ll need them again to map boxes back to the original image&amp;rsquo;s pixel coordinates.&lt;/p&gt;
+&lt;p&gt;Next, the padded image has to become a tensor: a 4-dimensional array of numbers (batch, channel, height, width) that &lt;code&gt;torch&lt;/code&gt; can feed to the network.&lt;/p&gt;
 &lt;div class=&#34;alert alert-alert&#34;&gt;
   &lt;div&gt;
-    File paths are very important and created more headaches than is necessary in the past. Please pay attention to these! Please ensure that you are using this directory to store your data and files. You can use OneDrive as well, but note that Rstudio might interact with it unexpectedly.
+    This step has a genuine trap in it. &lt;code&gt;magick::image_data()&lt;/code&gt; reports its array&amp;rsquo;s dimensions as &lt;code&gt;(channel, width, height)&lt;/code&gt;, which matches how &lt;em&gt;you index into it&lt;/em&gt; (&lt;code&gt;raw[channel, x, y]&lt;/code&gt;) &amp;mdash; but the underlying byte buffer that &lt;code&gt;as.integer()&lt;/code&gt; reads out is actually laid out &lt;code&gt;(height, width, channel)&lt;/code&gt;, column-major. Reshaping with the dimensions &lt;code&gt;image_data()&lt;/code&gt; reports, the &amp;ldquo;obvious&amp;rdquo; thing to do, silently scrambles the pixels: every box still comes back and parses without error, but confidences quietly collapse (in testing, from around 0.95 to around 0.19) with no warning or error to flag it. A square test image can&amp;rsquo;t catch this, because it can&amp;rsquo;t distinguish a width-major reshape from a height-major one &amp;mdash; you need an asymmetric image and a pixel of known colour at a known, non-symmetric coordinate to notice the bug at all.
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;If you are using your own computer, you should have a computer with at least 16 GB of RAM and a 64-bit operating system. You will also need to install &lt;a href=&#34;https://www.r-project.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;R&lt;/a&gt; and &lt;a href=&#34;https://www.rstudio.com/products/rstudio/download/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RStudio&lt;/a&gt;. RStudio is an integrated development environment (IDE) for R that makes it easier to write and run R code.&lt;/p&gt;
-&lt;p&gt;Accessing campus resources requires a &lt;a href=&#34;https://tdx.unc.edu/TDClient/33/Portal/KB/ArticleDet?ID=30&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;VPN&lt;/a&gt; and &lt;a href=&#34;https://tdx.unc.edu/TDClient/33/Portal/KB/ArticleDet?ID=30&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;MFA&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;alert alert-alert&#34;&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;image_to_tensor &amp;lt;- function(img) {
+    raw &amp;lt;- image_data(img, channels = &amp;quot;rgb&amp;quot;)
+    arr &amp;lt;- array(as.integer(raw), dim = rev(dim(raw)))  # true storage order: (H, W, C)
+    arr &amp;lt;- aperm(arr, c(3, 1, 2))                        # -&amp;gt; (C, H, W), what torch expects
+    torch_tensor(arr, dtype = torch_float32())$div(255)$unsqueeze(1)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, since every box comes back in letterboxed 640×640 coordinates, we need the inverse of &lt;code&gt;letterbox()&lt;/code&gt; to place them back onto the original image.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;unletterbox_boxes &amp;lt;- function(boxes, lb) {
+    boxes[, c(1, 3)] &amp;lt;- (boxes[, c(1, 3)] - lb$left) / lb$scale
+    boxes[, c(2, 4)] &amp;lt;- (boxes[, c(2, 4)] - lb$top)  / lb$scale
+    boxes[, 1] &amp;lt;- pmax(boxes[, 1], 0);        boxes[, 2] &amp;lt;- pmax(boxes[, 2], 0)
+    boxes[, 3] &amp;lt;- pmin(boxes[, 3], lb$orig_w); boxes[, 4] &amp;lt;- pmin(boxes[, 4], lb$orig_h)
+    boxes
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;running-the-model-on-a-single-photograph&#34;&gt;Running the model on a single photograph&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detect_image &amp;lt;- function(path, conf_thresh = CONF_THRESH) {
+    lb &amp;lt;- letterbox(path)
+    x  &amp;lt;- image_to_tensor(lb$image)
+
+    out  &amp;lt;- with_no_grad(model(x))    # (1, 300, 6): x1, y1, x2, y2, conf, cls
+    pred &amp;lt;- as.matrix(out$squeeze(1))
+
+    keep &amp;lt;- pred[, 5] &amp;gt; conf_thresh
+    if (!any(keep)) {
+        return(tibble(file = character(), xmin = double(), ymin = double(),
+                       xmax = double(), ymax = double(), conf = double(), class = character()))
+    }
+
+    boxes &amp;lt;- unletterbox_boxes(pred[keep, 1:4, drop = FALSE], lb)
+
+    tibble(
+        file  = path,
+        xmin  = boxes[, 1], ymin = boxes[, 2],
+        xmax  = boxes[, 3], ymax = boxes[, 4],
+        conf  = pred[keep, 5],
+        class = coco_names[pred[keep, 6] + 1]   # export is 0-indexed
+    )
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;if (!any(keep))&lt;/code&gt; branch matters more than it looks. Point this at a wall, a tunnel, or a blank stretch of highway &amp;mdash; not everything in a street-level imagery dataset has a car or a person in it &amp;mdash; and nothing clears the confidence threshold. Returning a tibble with the right columns and zero rows (rather than a bare, columnless &lt;code&gt;tibble()&lt;/code&gt;) means every downstream step &amp;mdash; &lt;code&gt;map_dfr()&lt;/code&gt;, &lt;code&gt;filter()&lt;/code&gt;, plotting &amp;mdash; keeps working whether or not this particular photo had anything detectable in it. It&amp;rsquo;s an easy thing to get wrong the first time and only notice once you run the function over enough real, messy images that one of them comes back empty.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s try it on one photograph.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example_img &amp;lt;- img_files[str_detect(img_files, &amp;quot;1318411189&amp;quot;)]
+detections  &amp;lt;- detect_image(example_img)
+detections %&amp;gt;% select(-file) %&amp;gt;% arrange(desc(conf))
+# # A tibble: 5 x 6
+#    xmin  ymin  xmax  ymax  conf class        
+#   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;        
+# 1 1121. 1567. 1161. 1651. 0.805 traffic light
+# 2 1991. 1048. 2809. 2400. 0.743 person       
+# 3  769. 1999. 1057. 2180. 0.701 bus          
+# 4  310. 2061.  748. 2375. 0.682 car          
+# 5  535. 1998.  812. 2151. 0.649 car
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Five detections, above 0.5 confidence: a person, a bus, two cars, a traffic light. This is the same shape of result &lt;code&gt;to_df()&lt;/code&gt; handed us for free in the earlier post &amp;mdash; we&amp;rsquo;ve just built it ourselves.&lt;/p&gt;
+&lt;h2 id=&#34;plotting-the-detections&#34;&gt;Plotting the detections&lt;/h2&gt;
+&lt;p&gt;The same ggplot coordinate-system mismatch from the earlier post applies here: ggplot&amp;rsquo;s origin is bottom-left with y increasing upward, while image pixel coordinates have their origin top-left with y increasing downward. &lt;code&gt;ymin&lt;/code&gt;/&lt;code&gt;ymax&lt;/code&gt; have to be flipped against the image height before they land in the right place.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_detections &amp;lt;- function(path, dets,
+                            classes_of_interest = c(&amp;quot;car&amp;quot;,&amp;quot;person&amp;quot;,&amp;quot;truck&amp;quot;,&amp;quot;bus&amp;quot;,&amp;quot;motorcycle&amp;quot;,&amp;quot;bicycle&amp;quot;)) {
+    img  &amp;lt;- image_read(path)
+    info &amp;lt;- image_info(img)
+    d &amp;lt;- dets %&amp;gt;% filter(class %in% classes_of_interest)
+
+    ggplot() +
+        annotation_raster(as.raster(img), xmin = 0, xmax = info$width,
+                          ymin = 0, ymax = info$height) +
+        geom_rect(data = d,
+                  aes(xmin = xmin, xmax = xmax,
+                      ymin = info$height - ymax, ymax = info$height - ymin,
+                      color = class),
+                  fill = NA, linewidth = 0.8) +
+        geom_text(data = d,
+                  aes(x = xmin, y = info$height - ymin,
+                      label = sprintf(&amp;quot;%s %.2f&amp;quot;, class, conf)),
+                  color = &amp;quot;white&amp;quot;, size = 3, hjust = 0, vjust = -0.3) +
+        coord_fixed(xlim = c(0, info$width), ylim = c(0, info$height), expand = FALSE) +
+        theme_void() + theme(legend.position = &amp;quot;none&amp;quot;)
+}
+
+plot_detections(example_img, detections)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-12-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;h2 id=&#34;batching-across-images&#34;&gt;Batching across images&lt;/h2&gt;
+&lt;p&gt;The whole point of doing this in R rather than by hand is running it across many images at once, so let&amp;rsquo;s do that &amp;mdash; and pull in the EXIF GPS tags along the way, exactly as the earlier post did.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.seed(42)
+sample_files &amp;lt;- sample(img_files, 20)
+
+detections_all &amp;lt;- map_dfr(sample_files, detect_image)
+
+exif &amp;lt;- exif_read(sample_files, tags = c(&amp;quot;GPSLatitude&amp;quot;, &amp;quot;GPSLongitude&amp;quot;)) %&amp;gt;%
+    as_tibble() %&amp;gt;%
+    select(file = SourceFile, GPSLatitude, GPSLongitude)
+
+detections_all &amp;lt;- detections_all %&amp;gt;% left_join(exif, by = &amp;quot;file&amp;quot;)
+
+summary_counts &amp;lt;- detections_all %&amp;gt;%
+    mutate(file = basename(file)) %&amp;gt;%
+    count(file, class, name = &amp;quot;n&amp;quot;)
+summary_counts
+# # A tibble: 28 x 3
+#    file                                        class      n
+#    &amp;lt;chr&amp;gt;                                       &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;
+#  1 1318425657__3645517_a809e_60c0eff7136f9.jpg car        1
+#  2 1319605281__3652445_9b168_60c1dba250012.jpg bus        1
+#  3 1319605281__3652445_9b168_60c1dba250012.jpg car        1
+#  4 1319605281__3652445_9b168_60c1dba250012.jpg person     1
+#  5 325783917__1304693_e8693_869.jpg            car        4
+#  6 325858321__1304733_4ea5b_1712.jpg           car        4
+#  7 325858793__1304733_4ea5b_1948.jpg           bus        1
+#  8 325858793__1304733_4ea5b_1948.jpg           car        4
+#  9 325961249__1304975_0a9ed_4340.jpg           car        5
+# 10 325961249__1304975_0a9ed_4340.jpg           person     3
+# # i 18 more rows
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detections_all %&amp;gt;% count(class, sort = TRUE)
+# # A tibble: 5 x 2
+#   class             n
+#   &amp;lt;chr&amp;gt;         &amp;lt;int&amp;gt;
+# 1 car              58
+# 2 person           11
+# 3 bus               5
+# 4 traffic light     2
+# 5 bench             1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;car&lt;/code&gt; dominates, as it did in the earlier post&amp;rsquo;s Rio sample &amp;mdash; unsurprising for street-level imagery of a car-oriented corridor.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s a small multiple of six images from that sample, plotted the same way as above, to get a feel for how the model does across a range of scenes.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_list &amp;lt;- map(sample_files[1:6], function(p) {
+  plot_detections(p, detect_image(p))
+})
+plot_grid(plotlist = plot_list, nrow = 2, ncol = 3)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-15-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;Note the empty panels &amp;mdash; a tunnel, a wall glimpsed mid-motion &amp;mdash; where nothing cleared the confidence threshold, and the doubled-up labels where two boxes overlap closely enough that their text collides. Both are exactly the kind of real-world messiness that a single cherry-picked example photo hides.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    You will be collecting data using data loggers and sensors. I will provide them and you need to return them, when you are done with the assignment. You are responsible for the equipment and any damage to it. I will withhold grades for the assignments until the equipment is returned.
+    &lt;p&gt;Two things worth knowing if you adapt this for your own model:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;jit_load()&lt;/code&gt;&amp;rsquo;d TorchScript modules don&amp;rsquo;t reliably support &lt;code&gt;model$eval()&lt;/code&gt; / &lt;code&gt;model$train(FALSE)&lt;/code&gt; as of &lt;code&gt;torch&lt;/code&gt; 0.17.0 + &lt;code&gt;libtorch&lt;/code&gt; 2.8.0 &amp;mdash; it fails with an internal S3-dispatch error on scripted modules. This particular export is safe to skip that call on: Ultralytics&#39; export log reports the model already &amp;ldquo;fused&amp;rdquo; (BatchNorm folded into the convolution weights, zero gradient layers), and a side-by-side Python comparison calling vs. skipping &lt;code&gt;model.eval()&lt;/code&gt; on the same file gives bit-identical output. If you export a custom or non-fused model, this is worth re-checking rather than assuming.&lt;/li&gt;
+&lt;li&gt;This exact pipeline, run against Ultralytics&#39; own &lt;code&gt;bus.jpg&lt;/code&gt; sample image, matched the Python/&lt;code&gt;ultralytics&lt;/code&gt; package&amp;rsquo;s output closely: 0.97 vs 0.93 confidence on the bus, and 0.94/0.94/0.91/0.72 vs 0.93/0.94/0.44/0.43 on four people in frame. The R and Python paths aren&amp;rsquo;t doing identical floating-point work &amp;mdash; JPEG decoding and resizing differ slightly between &lt;code&gt;magick&lt;/code&gt; and Python&amp;rsquo;s imaging stack &amp;mdash; so don&amp;rsquo;t expect bit-identical confidences, but the two should agree closely enough to trust the R-only path.&lt;/li&gt;
+&lt;/ul&gt;
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;h2 id=&#34;grading&#34;&gt;Grading&lt;/h2&gt;
-&lt;p&gt;While all assignments are posted on this website, they are to be submitted exclusively on Canvas and on time. Please refrain from emailing your submissions to the instructor.&lt;/p&gt;
-&lt;p&gt;I am going to use a ‘Specification Grading’ in this course. The deliverables are as follows:&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Ongoing assignments&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Lab reports to be submitted at the end of the class day for the Topic (due 8 PM on class days). (Individual/Collaborative)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;(Mostly) Bi monthly homework (HW) programming assignments (due 5 pm on specific due dates) (Individual/Collaborative)&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Ad-hoc major assignments&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Weekly data visualisation critique (Individual)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Data collection and story telling assignment (Group)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Sensor deployment (Group)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Final term project (Individual)&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The assignments will be graded on an Satisfactory/Unsatisfactory scale. Satisfactory grade is equivalent to a B+ letter grade. The focus of these assignments is on learning outcomes such as mastery of the material, making innovative connections in the material and on-time submission.&lt;/p&gt;
-&lt;p&gt;Group assignments will get a single grade for the group.&lt;/p&gt;
-&lt;p&gt;You will need to achieve Satisfactory grades on at least 70% of the on-going assignments and 2 of the 4 major assignments to achieve a low passing grade (L/C).Fewer than 50 % Satisfactory grades in the ongoing assignments will automatically result in a failing grade regardless of performance in other assignments. In addition to 80% of the on-going assignments, Satisfactory grades should be achieved in three major assignments for a P/B+. Exceptional performance in the final term project, in addition to Satisfactory grade in at least 90% of other requirements, will result in H/A grade.&lt;/p&gt;
-&lt;p&gt;In addition, discretionary points will be awarded for &lt;em&gt;enhancing collective learning&lt;/em&gt;. These include, but are not limited to:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;StackOverflow questions and answers&lt;/li&gt;
-&lt;li&gt;Group participation and management&lt;/li&gt;
-&lt;li&gt;Over the shoulder learning in class&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;This grading scale will be adjusted if the deliverables change depending course progress. Equivalent grades for undergraduates are assigned accordingly.&lt;/p&gt;
-&lt;h2 id=&#34;weekly-data-visualisation-critique&#34;&gt;Weekly data visualisation critique.&lt;/h2&gt;
-&lt;p&gt;Every week, one of you will lead a discussion about the critique of data visualisation that is found in the wild. &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:%e2%80%8bx:/r/personal/kaza_ad_unc_edu/Documents/courses/672/signups.xlsx?d=wda8e9b297a1c4b20bb1ea99dd205fdc1&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=kuc1VZ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Signup sheet is here&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The purpose is to learn from others’ successes and failures in data visualisation. You will need to find an example of data visualisation in the wild (e.g. newspaper, magazine, website, social media). We will spare 20 minutes of in-class time for this. There is no need to submit a written critique, but the deliverable is leading an effective discussion in class. You will be graded on your ability to lead the discussion through pointed questions and your ability to engage the class about the data visualisation and drawing out lessons.&lt;/p&gt;
-&lt;h2 id=&#34;consent-to-share&#34;&gt;Consent to Share&lt;/h2&gt;
-&lt;p&gt;I am reserving the right to post your ungraded submissions (including HW) in Canvas (restricted to the class) for current and future students, as examples, without comment or recommendation. If you wish to decline to consent, please send me a note. No explanation is necessary and opting out does not affect your grades.&lt;/p&gt;
-&lt;h2 id=&#34;attendance-and-participation&#34;&gt;Attendance and Participation&lt;/h2&gt;
-&lt;p&gt;If you don’t attend classes, but submit the requirements on time, there is no penalty. Continuous absences that affect the progress in the course should be discussed with the instructor to figure out remedial action.&lt;/p&gt;
-&lt;h2 id=&#34;e-mail&#34;&gt;E-mail&lt;/h2&gt;
-&lt;p&gt;An office email group is already set up and all students registered are automatically added. If you have not been receiving email, please let me know.&lt;/p&gt;
-&lt;h2 id=&#34;asynchronous-communication--troubleshooting&#34;&gt;Asynchronous Communication &amp;amp; Troubleshooting&lt;/h2&gt;
-&lt;p&gt;We will use StackOverflow for asynchronous communication and troubleshooting. We can follow guidelines like these that allow you to get to answers quickly:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://stackoverflow.com/help/how-to-ask&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://stackoverflow.com/help/how-to-ask&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://codereview.stackexchange.com/help/how-to-ask&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://codereview.stackexchange.com/help/how-to-ask&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;academic-conduct&#34;&gt;Academic Conduct&lt;/h2&gt;
-&lt;p&gt;I firmly believe in learning from your peers and from others. All homework and lab submissions could benefit from collaborations, however, the submissions are individual. This means that interpreting the data and the results, producing the visualisations, drawing appropriate conclusions from the data, is necessarily individual even when the strategies can be discussed and developed with others. &lt;strong&gt;All help including fragments of borrowed or LLM generated code&lt;/strong&gt;, however, should be explicitly acknowledged. Penalties are imposed for non-attribution. In particular, please pay attention to the copyright restrictions and attribution requirements associated with the R-code that you might find elsewhere.&lt;/p&gt;
-&lt;h2 id=&#34;additional-help&#34;&gt;Additional Help&lt;/h2&gt;
-&lt;p&gt;Please set up a time on &lt;a href=&#34;https://go.unc.edu/nkaza-calendar&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;my calendar&lt;/a&gt; to discuss any additional help you may require.&lt;/p&gt;
-&lt;p&gt;Odum Institute has &lt;a href=&#34;https://odum.unc.edu/research-support/quantitative-analysis/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;walk-in consultations&lt;/a&gt; and some of them have expertise in R.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://library.unc.edu/about/staff/philip-mcdaniel/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Phil McDaniel&lt;/a&gt; and &lt;a href=&#34;https://guides.lib.unc.edu/amandahenley&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Amanda Henley&lt;/a&gt; are excellent resources for tracking down geospatial datasets and troubleshooting issues with them.&lt;/p&gt;
-&lt;p&gt;There are organisations that are devoted to ensuring diversity in the R community. See for example, R-ladies &lt;a href=&#34;https://rladies.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;meetup groups&lt;/a&gt; and &lt;a href=&#34;https://rladies-community-slack.herokuapp.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Slack channels&lt;/a&gt;. Local groups may or may not be active.&lt;/p&gt;
-&lt;h1 id=&#34;schedule-tentative&#34;&gt;Schedule (Tentative)&lt;/h1&gt;
 &lt;hr&gt;
-&lt;h2 id=&#34;introductory-materials&#34;&gt;Introductory materials&lt;/h2&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;aug-18-tue-introduction-telling-stories-with-data&#34;&gt;Aug 18 (Tue) Introduction. Telling Stories with data&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides&#34;&gt;Tutorials/Slides&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/data-stories/&#34;&gt;Data Stories&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/introduction-to-r-rmarkdown/&#34;&gt;Introduction to R&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;hw1-is-posted&#34;&gt;HW1 is posted.&lt;/h4&gt;
-&lt;p&gt;Tell a story about air quality data.&lt;/p&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;aug-25-tue-tinkercad&#34;&gt;Aug 25 (Tue) TinkerCAD&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://annaengelke.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Anna Engelke&lt;/a&gt; will conduct a TinkerCAD tutorial on how to use the software to design and print 3D models. This is a hands-on session and you will need an account on TinkerCAD. You can sign up for free at &lt;a href=&#34;https://www.tinkercad.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;TinkerCAD&lt;/a&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;You will need to have completed BEAM 101 training (both online and in person) by this date.&lt;/li&gt;
-&lt;li&gt;Ideally, you will need to have finished the 3D printer quiz on BEAM Maker Space Trainings Canvas page.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;(Cline 2024)&lt;/li&gt;
-&lt;li&gt;(Erdreich 2024)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;group-assignment-1-posted&#34;&gt;Group Assignment 1 posted.&lt;/h4&gt;
-&lt;h3 id=&#34;sep-1-tue-exploratory-data-analysis--visualisation&#34;&gt;Sep 1 (Tue) Exploratory Data Analysis &amp;amp; Visualisation&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-1&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/exploratory-data-analysis-and-visualisation/&#34;&gt;Starting with tidyverse &amp;amp; ggplot&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-1&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Chapters 7 &amp;amp; 9-16 of &lt;a href=&#34;https://r4ds.had.co.nz/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Grolemund and Wickham 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://dx.doi.org/10.1198/jcgs.2009.07098&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Wickham 2010)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;(Tufte 2001)&lt;/li&gt;
+&lt;li&gt;Lower &lt;code&gt;CONF_THRESH&lt;/code&gt; to 0.25 and re-run the single-image example. What shows up that wasn&amp;rsquo;t there before, and would you trust it?&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;detect_image()&lt;/code&gt; over the full &lt;code&gt;img_files&lt;/code&gt; list (all of them, not just a sample of 20) and map the count of &lt;code&gt;person&lt;/code&gt; detections per image against its GPS coordinates. Where are pedestrians most and least visible in this sample?&lt;/li&gt;
+&lt;li&gt;Compare this model&amp;rsquo;s detections on the same photograph against the YOLOv10 results from the &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&#34;&gt;earlier post&lt;/a&gt;. Do the two models agree on classes and confidences? Where do they diverge?&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;classes_of_interest&lt;/code&gt; filter in &lt;code&gt;plot_detections()&lt;/code&gt; silently drops everything else the model found. Remove the filter for one image &amp;mdash; what else is in a typical street scene that a transportation-focused analysis would otherwise never see?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;h3 id=&#34;sep-8-tue-maps--flows&#34;&gt;Sep 8 (Tue) Maps &amp;amp; Flows&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-2&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/geospatial-data-in-r/&#34;&gt;Geospatial Data in R&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-2&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Chapters 1-8 &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Lovelace, Nowosad, and Muenchow 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;sep-15-tue-maps--flows-contd&#34;&gt;Sep 15 (Tue) Maps &amp;amp; Flows (contd.)&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-3&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/geospatial-data-in-r/&#34;&gt;Geospatial Data in R&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/slides/spatial_with_sf_citibike/spatial_with_sf.html&#34;&gt;Spatial with sf&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-3&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Chapters 1-8 &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Lovelace, Nowosad, and Muenchow 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;hw-2-posted&#34;&gt;HW 2 posted&lt;/h5&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;sep-22-tue-raster-analysis&#34;&gt;Sep 22 (Tue) Raster Analysis&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-4&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/basic-raster-operations-in-r/&#34;&gt;Basic Raster Analysis in R&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/working-with-drone-imagery/&#34;&gt;Working with Drone Imagery&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-4&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;(Frazier and Singh 2021)&lt;/li&gt;
-&lt;li&gt;(Hijmans 2017)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- *** --&gt;
-&lt;!-- ### Sep 29 (Tue) Analysing Raster Datasets {.tabset} --&gt;
-&lt;!-- #### Tutorials/Slides --&gt;
-&lt;!-- - [Land Suitability Analysis](/post/land-suitabilty-with-ahp-wlc/) --&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;oct-6-tue-advanced-image-processing&#34;&gt;Oct 6 (Tue) Advanced Image Processing&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-5&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/object-detection-without-python/&#34;&gt;Object Detection in Street Scenes&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/%20urban-morphology-landscape-metrics/&#34;&gt;Measuring Urban Form&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;oct-13-tue-group-assignment-presentations&#34;&gt;Oct 13 (Tue) Group Assignment Presentations&lt;/h3&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;oct-20-tue-building-urban-sensors-with-raspberry-pi&#34;&gt;Oct 20 (Tue) Building urban sensors with Raspberry Pi&lt;/h3&gt;
-&lt;h5 id=&#34;group-assignment-2-posted&#34;&gt;Group Assignment 2 posted&lt;/h5&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;oct-27-tue-structured-data-from-apis--databases&#34;&gt;Oct 27 (Tue) Structured Data from APIs &amp;amp; Databases&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-6&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/slides/census_geo/census_geo_v2.html&#34;&gt;Census Geographies&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/using-tidycensus-package/&#34;&gt;Using Census APIs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/extracting-data-from-osm&#34;&gt;Using OSM/Google&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-5&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;(Rigaux, Scholl, and Voisard 2002)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;nov-3-tue-scraping-web-for-unstructured-data&#34;&gt;Nov 3 (Tue) Scraping Web for (Un)Structured Data&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-7&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/scraping-craigslist-posts/&#34;&gt;Unstructured Data&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-6&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.r-datacollection.com/bookmaterials.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Munzert et al. 2014)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1080/01944363.2014.980439&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Schweitzer 2014)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0739456X16664789&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing and Waddell 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;nov-10-tue-analysing-text-data&#34;&gt;Nov 10 (Tue) Analysing Text Data&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-8&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/matching-messy-texts/&#34;&gt;Matching Messy Texts&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/&#34;&gt;Structuring Unstructured Texts using Large Language Models&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-7&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.tidytextmining.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://dx.doi.org/10.1111/rsp3.12292&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Chen, Silva, and Reis In press)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;nov-17-tue-networks&#34;&gt;Nov 17 (Tue) Networks&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-9&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/analysing-urban-neworks/&#34;&gt;Network Analysis of Bikeshare systems&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/using-network-ananlysis-to-identify-clusters-of-deprivation/&#34;&gt;Spatial Relationships as Networks&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-8&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1007/s41109-019-0189-1&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Boeing 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1371/journal.pone.0166083&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Nelson and Rae 2016)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1177/0160017620946082&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Kaza and Nesse 2021)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;resourcesreadings-9&#34;&gt;Resources/Readings&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.03.008&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(McCarty and Kaza 2015)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.02.001&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Watson and Hudson 2015)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.3390/geosciences8080275&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Rincón, Khan, and Armenakis 2018)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- ### `r; classDayList[i]` Dimensionality Reduction {.tabset} --&gt;
-&lt;!-- #### Tutorials/Slides --&gt;
-&lt;!-- #### Homework --&gt;
-&lt;!-- - [HW7 Posted] --&gt;
-&lt;!-- #### Resources/Readings --&gt;
-&lt;!-- - [[@frenkelMeasuringUrbanSprawl2008]](https://doi.org/10.1068/b32155) --&gt;
-&lt;!-- - [[@cliftonQuantitativeAnalysisUrban2008]](https://www.tandfonline.com/doi/full/10.1080/17549170801903496) --&gt;
-&lt;!-- - [[@golanGenderedWalkabilityBuilding2019]](https://doi.org/10.5198/jtlu.2019.1472) --&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;nov-24-tue-supervised-classification-with-trees-and-forests&#34;&gt;Nov 24 (Tue) Supervised Classification with Trees and Forests&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-10&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/machine-learning-for-remote-sensing/&#34;&gt;Classifying Remote Sensing Images&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;readingsresources-1&#34;&gt;Readings/Resources&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0042098018789054&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Reades, De Souza, and Hubbard 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1371/journal.pone.0107042&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Stevens et al. 2015)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi-org/10.1177/0265813516659286&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Tribby et al. 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;!-- ### Dec 1 (Tue)  Clustering &amp; Unsupervised Classification {.tabset} --&gt;
-&lt;!-- #### Tutorials/Slides --&gt;
-&lt;!-- - [Mapping Crime Clusters in Manchester](/post/cluster-detection-in-point-data/) --&gt;
-&lt;!-- - [Unsupervised Classification of Non-spatial Data](/post/unsupervised-clustering/) --&gt;
-&lt;!-- #### Resources/Readings --&gt;
-&lt;!-- - [[@batesDoesNeighborhoodReally2006]](https://doi.org/10.1177/0739456X05283254) --&gt;
-&lt;!-- - [[@clappDefiningNeighborhoodBoundaries2006]](https://doi.org/10.1016/j.jue.2005.10.003) --&gt;
-&lt;!-- - Chapters 7 &amp; 9 [@bivandAppliedSpatialData2013] --&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;na-neural-networks--deep-learning&#34;&gt;NA Neural Networks &amp;amp; Deep Learning&lt;/h3&gt;
-&lt;h4 id=&#34;tutorialsslides-11&#34;&gt;Tutorials/Slides&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;[Deep learning for Image Classification]&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;readingsresources-2&#34;&gt;Readings/Resources&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Chapters 1-5 &lt;a href=&#34;https://www.manning.com/books/deep-learning-with-r&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Chollet and Allaire 2018)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doi.org/10.1073/pnas.1700035114&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Gebru et al. 2017)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://arxiv.org/abs/1807.07155&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;(Law, Brooks, and Russell 2019)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;final-project-presentations-exam-day&#34;&gt;Final Project Presentations (Exam Day)&lt;/h3&gt;
-&lt;hr&gt;
-&lt;h1 id=&#34;references&#34;&gt;References&lt;/h1&gt;
-&lt;div id=&#34;refs&#34; class=&#34;references csl-bib-body hanging-indent&#34;&gt;
-&lt;div id=&#34;ref-boeingUrbanSpatialOrder2019&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Boeing, Geoff. 2019. “Urban Spatial Order: Street Network Orientation, Configuration, and Entropy.” &lt;em&gt;Applied Network Science&lt;/em&gt; 4 (1): 1–19. &lt;a href=&#34;https://doi.org/10.1007/s41109-019-0189-1&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1007/s41109-019-0189-1&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-boeingNewInsightsRental2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Boeing, Geoff, and Paul Waddell. 2017. “New Insights into Rental Housing Markets Across the United States: Web Scraping and Analyzing Craigslist Rental Listings.” &lt;em&gt;Journal of Planning Education and Research&lt;/em&gt; 37 (4): 457–76. &lt;a href=&#34;https://doi.org/10.1177/0739456X16664789&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0739456X16664789&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-chenMeasuringPolicyDebateInpress&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Chen, Yiqiao, Elisabete A. Silva, and José P. Reis. In press. “Measuring Policy Debate in a Regrowing City by Sentiment Analysis Using Online Media Data: A Case Study of Leipzig 2030.” &lt;em&gt;Regional Science Policy &amp;amp; Practice&lt;/em&gt;, In press. &lt;a href=&#34;https://doi.org/10.1111/rsp3.12292&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1111/rsp3.12292&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-cholletDeepLearning2018&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Chollet, Francois, and J. J. Allaire. 2018. &lt;em&gt;Deep Learning with R&lt;/em&gt;. 1 edition. Shelter Island, NY: Manning Publications.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-clineMakeCompleteGuide2024&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Cline, Lydia Sloan. 2024. &lt;em&gt;Make: The Complete Guide to Tinkercad: 17 Projects to Start Designing and Printing in the 3d World&lt;/em&gt;. Erscheinungsort nicht ermittelbar: Make Community, LLC.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-erdreichTakingTinkercadNext2024&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Erdreich, Jason. 2024. &lt;em&gt;Taking Tinkercad to the Next Level: Enhance Your Ability to Design, Model, and 3d Print with One of the Most Intuitive CAD Programs&lt;/em&gt;. Place of publication not identified: Packt Publishing.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-frazierFundamentalsCapturingProcessing2021&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Frazier, Amy, and Kunwar Singh, eds. 2021. &lt;em&gt;Fundamentals of Capturing and Processing Drone Imagery and Data&lt;/em&gt;. Boca Raton: CRC Press.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-gebruUsingDeepLearning2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Gebru, Timnit, Jonathan Krause, Yilun Wang, Duyun Chen, Jia Deng, Erez Lieberman Aiden, and Li Fei-Fei. 2017. “Using Deep Learning and Google Street View to Estimate the Demographic Makeup of Neighborhoods Across the United States.” &lt;em&gt;Proceedings of the National Academy of Sciences&lt;/em&gt; 114 (50): 13108–13. &lt;a href=&#34;https://doi.org/10.1073/pnas.1700035114&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1073/pnas.1700035114&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-grolemundDataScience2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Grolemund, Garrett, and Hadley Wickham. 2017. &lt;em&gt;R for Data Science&lt;/em&gt;. First. Sebastapol, CA: O’ Reilly. &lt;a href=&#34;http://r4ds.had.co.nz/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;http://r4ds.had.co.nz/&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-hijmansRasterGeographicData2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Hijmans, Robert J. 2017. &lt;em&gt;Raster: Geographic Data Analysis and Modeling&lt;/em&gt;. &lt;a href=&#34;https://CRAN.R-project.org/package=raster&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://CRAN.R-project.org/package=raster&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-kazaCharacterizingRegionalStructure2021&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Kaza, Nikhil, and Katherine Nesse. 2021. “Characterizing the Regional Structure in the United States: &lt;span class=&#34;nocase&#34;&gt;A County-based Analysis&lt;/span&gt; of Labor Market Centrality.” &lt;em&gt;International Regional Science Review&lt;/em&gt; 44 (5): 560–81. &lt;a href=&#34;https://doi.org/10.1177/0160017620946082&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0160017620946082&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-lawTakeLookUsing2019a&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Law, Stephen, Piage Brooks, and Chris Russell. 2019. “Take a Look Around: Using Street View and Satellite Images to Estimate House Prices.” &lt;em&gt;ACM Transactions on Intelligent Systems and Technology (TIST)&lt;/em&gt; 10 (5). &lt;a href=&#34;https://dl.acm.org/doi/abs/10.1145/3342240&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://dl.acm.org/doi/abs/10.1145/3342240&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-lovelaceGeocomputation2019&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Lovelace, Robin, Jakub Nowosad, and Jannes Muenchow. 2019. &lt;em&gt;Geocomputation with R&lt;/em&gt;. 1 edition. Boca Raton: Chapman and Hall/CRC. &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://geocompr.robinlovelace.net/&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-mccartyUrbanFormAir2015&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;McCarty, J., and N. Kaza. 2015. “Urban Form and Air Quality in the United States.” &lt;em&gt;Landscape and Urban Planning&lt;/em&gt; 139: 168–79. &lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.03.008&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1016/j.landurbplan.2015.03.008&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-munzertAutomatedDataCollection2014a&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Munzert, Simon, Christian Rubba, Peter Meißner, and Dominic Nyhuis. 2014. &lt;em&gt;Automated Data Collection with R: A Practical Guide to Web Scraping and Text Mining&lt;/em&gt;. 1 edition. Chichester, West Sussex, United Kingdom: Wiley.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-nelsonEconomicGeographyUnited2016&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Nelson, Garrett Dash, and Alasdair Rae. 2016. “An Economic Geography of the United States: From Commutes to Megaregions.” &lt;em&gt;PLOS ONE&lt;/em&gt; 11 (11): e0166083. &lt;a href=&#34;https://doi.org/10.1371/journal.pone.0166083&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1371/journal.pone.0166083&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-readesUnderstandingUrbanGentrification2019&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Reades, Jonathan, Jordan De Souza, and Phil Hubbard. 2019. “Understanding Urban Gentrification Through Machine Learning.” &lt;em&gt;Urban Studies&lt;/em&gt; 56 (5): 922–42. &lt;a href=&#34;https://doi.org/10.1177/0042098018789054&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0042098018789054&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-rigauxSpatialDatabasesApplication2002&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Rigaux, Philippe, Michel Scholl, and Agnès Voisard. 2002. &lt;em&gt;Spatial Databases: With Application to GIS&lt;/em&gt;. San Francisco: Morgan Kaufmann.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-rinconFloodRiskMapping2018&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Rincón, Daniela, Usman T. Khan, and Costas Armenakis. 2018. “Flood Risk Mapping Using GIS and Multi-Criteria Analysis: A Greater Toronto Area Case Study.” &lt;em&gt;Geosciences&lt;/em&gt; 8 (8): 275. &lt;a href=&#34;https://doi.org/10.3390/geosciences8080275&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.3390/geosciences8080275&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-schweitzerPlanningSocialMedia2014&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Schweitzer, Lisa. 2014. “Planning and Social Media: A Case Study of Public Transit and Stigma on Twitter.” &lt;em&gt;Journal of the American Planning Association&lt;/em&gt; 80 (3): 218–38. &lt;a href=&#34;https://doi.org/10.1080/01944363.2014.980439&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1080/01944363.2014.980439&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-stevensDisaggregatingCensusData2015&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Stevens, Forrest R., Andrea E. Gaughan, Catherine Linard, and Andrew J. Tatem. 2015. “Disaggregating Census Data for Population Mapping Using Random Forests with Remotely-Sensed and Ancillary Data.” &lt;em&gt;PLOS ONE&lt;/em&gt; 10 (2): e0107042. &lt;a href=&#34;https://doi.org/10.1371/journal.pone.0107042&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1371/journal.pone.0107042&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-tribbyAnalyzingWalkingRoute2017&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Tribby, Calvin P., Harvey J. Miller, Barbara B. Brown, Carol M. Werner, and Ken R. Smith. 2017. “Analyzing Walking Route Choice Through Built Environments Using Random Forests and Discrete Choice Techniques.” &lt;em&gt;Environment &amp;amp; Planning B : Urban Analytics &amp;amp; City Science&lt;/em&gt; 44 (6): 1145–67. &lt;a href=&#34;https://doi.org/10.1177/0265813516659286&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1177/0265813516659286&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-tufteVisualDisplayQuantitative2001&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Tufte, E. R. 2001. &lt;em&gt;The Visual Display of Quantitative Information&lt;/em&gt;. Cheshire, CT: Graphics Press.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-watsonRegionalScaleWind2015&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Watson, Joss J. W., and Malcolm D. Hudson. 2015. “Regional Scale Wind Farm and Solar Farm Suitability Assessment Using &lt;span class=&#34;nocase&#34;&gt;GIS-assisted&lt;/span&gt; Multi-Criteria Evaluation.” &lt;em&gt;Landscape and Urban Planning&lt;/em&gt; 138 (June): 20–31. &lt;a href=&#34;https://doi.org/10.1016/j.landurbplan.2015.02.001&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1016/j.landurbplan.2015.02.001&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;ref-layered-grammar&#34; class=&#34;csl-entry&#34;&gt;
-&lt;p&gt;Wickham, Hadley. 2010. “A Layered Grammar of Graphics.” &lt;em&gt;Journal of Computational and Graphical Statistics&lt;/em&gt; 19 (1): 3–28. &lt;a href=&#34;https://doi.org/10.1198/jcgs.2009.07098&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1198/jcgs.2009.07098&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Dropping &lt;code&gt;reticulate&lt;/code&gt; and a Python environment out of the pipeline trades one kind of complexity for another. There&amp;rsquo;s no &lt;code&gt;conda&lt;/code&gt; environment to set up, no network drive to map, no &lt;code&gt;use_condaenv()&lt;/code&gt; path to get right for Windows versus Mac &amp;mdash; but in exchange, R takes on work that &lt;code&gt;ultralytics$YOLO()&lt;/code&gt; used to do invisibly: letterboxing, tensor layout, box coordinates, even the COCO class names. Getting any one of those wrong, as the pixel-buffer reshape above shows, doesn&amp;rsquo;t necessarily throw an error &amp;mdash; it can just quietly degrade every confidence score and leave you debugging a model, not a bug.&lt;/p&gt;
+&lt;p&gt;That tradeoff aside, the caveats from the earlier post apply just as much here, model architecture notwithstanding. This is still a pre-trained model applied with no fine-tuning, still liable to misclassify, still liable to miss things in fog, poor lighting, or partial occlusion, still trained on a dataset (COCO) whose composition shapes what it notices and what it doesn&amp;rsquo;t. Whether the inference happens in Python or in R has no bearing on any of that. Treat what comes out of either pipeline as a starting point for human review, not a finished count.&lt;/p&gt;
 </description>
     </item>
     
