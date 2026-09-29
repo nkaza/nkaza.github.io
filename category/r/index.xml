@@ -444,7 +444,7 @@ plot_detections(beach, beach_final,  paste(&amp;quot;tiled windows:&amp;quot;, n
     <item>
       <title>Urban Analytics in R</title>
       <link>https://nkaza.github.io/teaching/techniques-course/</link>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/teaching/techniques-course/</guid>
       <description>&lt;h1 id=&#34;course-description--objectives&#34;&gt;Course Description &amp;amp; Objectives&lt;/h1&gt;
 &lt;p&gt;This course is about different techniques used in assembling, managing, analysing and predicting using heterogeneous data sets in urban environments. These datasets are inherently messy and incomplete. Types of data include, point, polygon, raster, vector, text, image and network data; data sets with high cadence and high spatial resolution.&lt;/p&gt;
@@ -760,7 +760,7 @@ URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocomp
 &lt;h4 id=&#34;tutorialsslides-5&#34;&gt;Tutorials/Slides&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/object-detection-without-python/&#34;&gt;Object Detection in Street Scenes&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/%20urban-morphology-landscape-metrics/&#34;&gt;Measuring Urban Form&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/&#34;&gt;Measuring Urban Form&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h3 id=&#34;oct-13-tue-group-assignment-presentations&#34;&gt;Oct 13 (Tue) Group Assignment Presentations&lt;/h3&gt;
@@ -1538,7 +1538,7 @@ library(tidyverse)
 library(exiftoolr)
 library(here)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;All the image handling in this post is done with &lt;code&gt;terra&lt;/code&gt;. It is usually used for satellite imagery and elevation models, but a photograph is also a raster, and every operation we need (reading, resizing, padding, cropping, summarising) is a standard raster operation.The only thing to be mindful of, is that terra&amp;rsquo;s &lt;code&gt;spatRaster&lt;/code&gt; expects a geographic coordinate system and an extent that is usually tied to earth. But as we discussed before, georasters are not the only types of rasters.&lt;/p&gt;
+&lt;p&gt;All the image handling in this post is done with &lt;code&gt;terra&lt;/code&gt;. It is usually used for satellite imagery and elevation models, but a photograph is also a raster, and every operation we need (reading, resizing, padding, cropping, summarising) is a standard raster operation. The only thing to be mindful of, is that terra&amp;rsquo;s &lt;code&gt;spatRaster&lt;/code&gt; expects a geographic coordinate system and an extent that is usually tied to earth. But as we discussed before, georasters are not the only types of rasters.&lt;/p&gt;
 &lt;h2 id=&#34;data&#34;&gt;Data&lt;/h2&gt;
 &lt;p&gt;We&amp;rsquo;ll use the same &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/geotagged.zip?d=w727164624f294adbaeb7f7df1e2700ae&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=M0IlHr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;street-level images from Rio de Janeiro, Brazil&lt;/a&gt; as the earlier post, collected through &lt;a href=&#34;https://kartaview.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kartaview&lt;/a&gt;. See that post&amp;rsquo;s &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/#data&#34;&gt;Data section&lt;/a&gt; for a fuller discussion of the imagery. Download the images and unzip them into your &lt;code&gt;InputData&lt;/code&gt; folder.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img_files_paths &amp;lt;- here(&amp;quot;InputData&amp;quot;, &amp;quot;geotagged&amp;quot;) %&amp;gt;%

@@ -537,238 +537,9 @@ plot_detections(beach, beach_final,  paste(&amp;quot;tiled windows:&amp;quot;, n
     </item>
     
     <item>
-      <title>Do we need to know which way is up?</title>
-      <link>https://nkaza.github.io/post/which-way-is-up/</link>
-      <pubDate>Wed, 23 Sep 2026 00:00:00 +0000</pubDate>
-      <guid>https://nkaza.github.io/post/which-way-is-up/</guid>
-      <description>&lt;p&gt;One of my first jobs in graduate school was building a wayfinding application for a museum, meant to stand in for a docent. I did not do this well (my apologies, Prof. Twidale), but it left me with a lasting interest in how maps do, and mostly do not, convey information. Decades on, I am still working through it.&lt;/p&gt;
-&lt;p&gt;My opinions &lt;a href=&#34;https://nkaza.github.io/post/my-screed-against-legends/&#34;&gt;about legends&lt;/a&gt; are already on record. This time the target is another sacred cow: the north arrow. A small but important minority, &lt;a href=&#34;https://www.esri.com/arcgis-blog/products/arcgis-pro/mapping/north-arrow-necessity&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;John Nelson&lt;/a&gt; among them, argues it is optional and often better left off. Visceral reactions ensued.&lt;/p&gt;
-&lt;p&gt;I side with the minority, partly because most of the maps I make and read are statistical graphics rather than navigational charts. However, I also spend a fair amount of time with cadastral maps, courtesy of a long-running interest in property rights regimes. Furthermore, working in applied computer vision has left me convinced that our mental model of maps needs to stretch past objects to fields (Couclelis&amp;rsquo; distinction). So a post that started out being about north, north arrows and ups has ended up being about materiality, practice, and purpose instead.&lt;/p&gt;
-&lt;h2 id=&#34;how-are-maps-used&#34;&gt;How are maps used?&lt;/h2&gt;
-&lt;p&gt;Rather than treat a map as an artefact with one fixed job, I want to look at the specific practices maps get used for, since each one asks something different of the reader and the author. A north arrow is one among many such orienteering devices at the disposal of both. It may not be the right one, depending on the specifics. Four practices cover most of the ground:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Recognise.&lt;/strong&gt; The map has to make a place or a pattern recognisable. The reader only needs to know where things sit relative to one another. In some senses, this is the Leibnizian conception of space.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Navigate.&lt;/strong&gt; The map has to connect what the reader sees to where they go next, matched against the scene in front of them.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Coordinate.&lt;/strong&gt; The map has to give several people, in different places, a shared reference they can act on together.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Retrace.&lt;/strong&gt; The map has to carry its meaning to someone who was never there, often decades later, and let them find positions on the ground. This is coordination stretched across time rather than space.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Each of these leans on a different frame of reference. &lt;a href=&#34;https://doi.org/10.1017/cbo9780511613609&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Stephen Levinson&lt;/a&gt; and his colleagues catalogued three basic kinds across the world&amp;rsquo;s languages: relative, anchored to the speaker&amp;rsquo;s own body; intrinsic, anchored to some other object; and absolute, anchored to something that stays put no matter which way the speaker turns. Absolute need not mean compass; it just means fixed. So the table below differentiates absolute frames by what they are actually fixed to, and asks what each frame demands of its reader. I have borrowed and stretched Levinson&amp;rsquo;s typology:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Frame&lt;/th&gt;
-&lt;th&gt;Anchored to&lt;/th&gt;
-&lt;th&gt;The reader needs&lt;/th&gt;
-&lt;th&gt;Uses in language&lt;/th&gt;
-&lt;th&gt;Uses in maps&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Relative&lt;/td&gt;
-&lt;td&gt;the reader&amp;rsquo;s own body&lt;/td&gt;
-&lt;td&gt;nothing beyond where they stand and face&lt;/td&gt;
-&lt;td&gt;left and right; in front, behind&lt;/td&gt;
-&lt;td&gt;heading-up phone maps; the WalkNYC sign; Micronesian navigators&amp;rsquo; mental map, in which the islands move past a fixed canoe&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Intrinsic&lt;/td&gt;
-&lt;td&gt;a shared object&lt;/td&gt;
-&lt;td&gt;to see the object&lt;/td&gt;
-&lt;td&gt;the front and back of a building; a ship&amp;rsquo;s port and starboard&lt;/td&gt;
-&lt;td&gt;fireground diagrams with sides A to D&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Viewpoint&lt;/td&gt;
-&lt;td&gt;the side the image is viewed from&lt;/td&gt;
-&lt;td&gt;to know which side, and the display convention&lt;/td&gt;
-&lt;td&gt;AP/PA in human radiographs; dorsal and ventral for animals&lt;/td&gt;
-&lt;td&gt;radiographs with markers&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Topographic&lt;/td&gt;
-&lt;td&gt;the terrain&lt;/td&gt;
-&lt;td&gt;to know the place&lt;/td&gt;
-&lt;td&gt;Tzeltal uphill and downhill; Balinese &lt;em&gt;kaja&lt;/em&gt;(toward the mountains) and &lt;em&gt;kelod&lt;/em&gt; (toward the sea); Manhattan&amp;rsquo;s uptown and downtown&lt;/td&gt;
-&lt;td&gt;New York subway maps, drawn uptown-up&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Cardinal&lt;/td&gt;
-&lt;td&gt;fixed axes: true, magnetic or grid&lt;/td&gt;
-&lt;td&gt;an instrument, and a statement of which north&lt;/td&gt;
-&lt;td&gt;Relatively common use but mean different things&lt;/td&gt;
-&lt;td&gt;a survey plat&amp;rsquo;s &amp;ldquo;grid north per GPS, NAD 83&amp;rdquo;; a wildfire map&amp;rsquo;s grid and datum&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Every frame asks something specific of the reader: a body, an object in view, a known vantage point, familiarity with the place, or, for cardinal directions, an instrument and a stated convention for which north is meant. Which frame a map should use depends entirely on what its readers already share. A navigator shares the scene with the map, so the map can simply face the same way. People coordinating share an object they can all see, such as a building or a fire, and name directions off it. Someone retracing shares nothing but the document itself, so the document has to spell its frame out completely. A statement of north, arrow or grid, is useful when the reader shares no more local frame and can actually go check which way north is.&lt;/p&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-1-1.png&#34; alt=&#34;&#34; width=&#34;1248&#34; /&gt;
-&lt;p&gt;&lt;em&gt;Top left: ACS 2018-2022 5-year estimates, table S1701. Top right: WalkNYC sign, W 42nd Street and 6th Avenue, photo by Tdorante10, CC BY-SA 4.0, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:42nd_St_6th_Av_td_41_-_WalkNYC.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;, cropped. Bottom left: IAP map, Big Grass fire (OR-VAD-260201), 07/29/2026, Complex Incident Management Team 5, via the &lt;a href=&#34;https://ftp.wildfire.gov/public/incident_specific_maps/pacific_nw/2026_Incidents_Oregon/2026_BigGrass/20260729/iap_2026_BigGrass_85x11_ORVAD260201_0729_day.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;National Interagency Fire Center incident map archive&lt;/a&gt;. Bottom right: detail of a survey plat, Section 35, T21N, R12W, Baxter County, Arkansas, Tuck Land Surveying, 2008, U.S. Army Corps of Engineers, Little Rock District, public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Tuck_08002_Corp_Eng_Copy_Plat_-_USACE-p16021coll10-9376.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;It&amp;rsquo;s worth pausing on these four examples and working through what each one is actually doing. The poverty map communicates by leaning on the country&amp;rsquo;s familiar outline plus a handful of place names. The WalkNYC sign communicates in a relative frame, matching what it shows against what the reader can already see. The wildfire map splits the incident into crew assignments and trusts strangers to orient themselves with map and instruments together. The survey plat states exactly which north its bearings use.&lt;/p&gt;
-&lt;p&gt;So the question was never whether a map needs a north arrow. The real question is what the map is for, and what orienteering apparatus that purpose actually requires, if at all. The rest of this post works through the four tasks in turn.&lt;/p&gt;
-&lt;h2 id=&#34;recognise&#34;&gt;Recognise&lt;/h2&gt;
-&lt;p&gt;Critical cartographers, unlike the functionalists, argue that a map&amp;rsquo;s real job is to privilege one view of the world over the others, cementing some political or epistemological relationship or challenging it. Medieval world maps, photographs of the Earth, and the wall map at the front of a schoolroom are all doing the same thing: telling the reader what place this is, letting them recognise shapes, spot patterns, and read geography as a stand-in for politics.&lt;/p&gt;
-&lt;p&gt;Since GIS put mapmaking within reach of anyone with a laptop, most maps made today are statistical graphics, meant to describe a pattern and support a point. A choropleth asks the reader to find a familiar shape and see where the pattern falls inside it; the poverty map above is a standard example. The story runs through Central Appalachia in eastern Kentucky and West Virginia, the Mississippi Delta, Alabama&amp;rsquo;s and the Carolinas&amp;rsquo; Black Belt, the Rio Grande Valley, and the reservation counties of the Navajo Nation and the northern Plains: 56 percent of Oglala Lakota County, South Dakota, on the Pine Ridge reservation, is below the poverty line, against 12.5 percent nationally. That is a story about history and policy, and cardinality has nothing to add to it. The map is north-up because that is the orientation in which readers already know the country&amp;rsquo;s shape, and a handful of region labels do the rest.
-You should probably also ask yourself why areas such as Alaska, Guam and Puerto Rico have been left out. The immediate answer may be cartographic or statistical convenience; but the structural answer is about neglect, erasure and invisibility. That is a different, and equally compelling, story.&lt;/p&gt;
-&lt;h3 id=&#34;unfamiliar-shapes&#34;&gt;Unfamiliar shapes&lt;/h3&gt;
-&lt;p&gt;This may just be my own parochialism showing, but most readers can pick the United States out of a lineup. Far fewer could do the same for Morocco&amp;rsquo;s twelve regions, and the country adds a complication of its own: its south sits largely in Western Sahara, a &lt;a href=&#34;https://www.un.org/dppa/decolonization/en/nsgt&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;disputed territory&lt;/a&gt; that Moroccan statistics fold in and plenty of other maps draw as separate. Even a shape a reader is expected to recognise turns out to depend on who drew the lines and what their political purposes are:&lt;/p&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-2-1.png&#34; alt=&#34;&#34; width=&#34;1056&#34; /&gt;
-&lt;p&gt;&lt;em&gt;Poverty data: Haut-Commissariat au Plan, &lt;a href=&#34;https://www.hcp.ma/file/231435/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;multidimensional poverty mapping, 2014&lt;/a&gt;, from the 2014 census. Region boundaries: &lt;a href=&#34;https://www.geoboundaries.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;geoBoundaries&lt;/a&gt; (gbOpen), ODbL. Neighbouring countries: Natural Earth via the spData package.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;What turns the bare shape on the left into an actual place is context (neighbours, coastlines, a few city names), and that is the whole mechanism by which the map communicates. A north arrow would not add a thing to either panel. With the context filled in, the reader can see poverty running highest inland, in Béni Mellal-Khénifra at 13 percent, and lowest around Casablanca and in the south, against a national rate of 8 percent.&lt;/p&gt;
-&lt;h3 id=&#34;up-is-a-habit&#34;&gt;Up is a habit&lt;/h3&gt;
-&lt;p&gt;Recognition rests on familiarity, and familiarity rests on convention. And north-up is a surprisingly recent convention at that. Medieval Christian maps put east on top, toward paradise (hence &amp;ldquo;orient&amp;rdquo;), with Jerusalem at the centre. Al-Idrisi&amp;rsquo;s 1154 map for Roger II of Sicily put south on top instead. Jerry Brotton traces the whole history in &lt;em&gt;Four Points of the Compass&lt;/em&gt;, including &lt;a href=&#34;https://nextbigideaclub.com/magazine/unexpected-history-four-points-compass-bookbite/53171/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;early Chinese compasses that pointed south&lt;/a&gt; and the long-standing association of east with sacred beginnings. North, it turns out, had to fight its way to the top of the page.&lt;/p&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-3-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
-&lt;p&gt;&lt;em&gt;Left: Hereford Mappa Mundi, c. 1300, with east at the top and Jerusalem near the centre. Public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Hereford_Mappa_Mundi.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. Right: Tabula Rogeriana, al-Idrisi, 1154; reconstruction by Konrad Miller, 1929, keeping the original&amp;rsquo;s south-up orientation. Public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:TabulaRogeriana.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;North-up won out with the magnetic compass, the portolan chart, and Mercator&amp;rsquo;s 1569 projection, over the same centuries as European colonial expansion. The 1884 conference that fixed the prime meridian at Greenwich settled the question of the centre too. These conventions run deep enough that even a photograph taken from space gets turned to obey them: the Apollo 17 crew shot the Blue Marble in 1972 with the &lt;a href=&#34;https://en.wikipedia.org/wiki/The_Blue_Marble&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;South Pole at the top of the frame&lt;/a&gt;. The version NASA actually released, and the one almost everyone has since seen, was rotated so north sits on top instead, in part because the shapes of Arabia and Africa were more recognisable with north up.&lt;/p&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;Two versions of the Blue Marble photograph. On the left, the frame as exposed, with Antarctica at the top and Africa upside down. On the right, the familiar released version, with north up. Africa and Arabia are outlined in red in both.&#34; srcset=&#34;
-               /post/which-way-is-up/images/blue-marble-original-and-released_hucd160f23d1fdcd6887f4df60244de332_415202_a2cbb268a27ac0ad74dc2fdda9ab314d.webp 400w,
-               /post/which-way-is-up/images/blue-marble-original-and-released_hucd160f23d1fdcd6887f4df60244de332_415202_7a5bc6fe47b50e7829220289d4af6423.webp 760w,
-               /post/which-way-is-up/images/blue-marble-original-and-released_hucd160f23d1fdcd6887f4df60244de332_415202_1200x1200_fit_q75_h2_lanczos.webp 1200w&#34;
-               src=&#34;https://nkaza.github.io/post/which-way-is-up/images/blue-marble-original-and-released_hucd160f23d1fdcd6887f4df60244de332_415202_a2cbb268a27ac0ad74dc2fdda9ab314d.webp&#34;
-               width=&#34;760&#34;
-               height=&#34;372&#34;
-               loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-
-&lt;em&gt;Left: AS17-148-22727 in its original orientation, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Apollo_17_Blue_Marble_original_orientation_%28AS17-148-22727%29.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. Right: the released version, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:The_Earth_seen_from_Apollo_17.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. NASA, public domain; both cropped to the disc, with Africa and Arabia outlined in red for this post.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://doi.org/10.3138/928H-787R-3087-5V0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;J.B. Harley&lt;/a&gt; and the critical cartographers who followed him made the larger point: whatever sits at the top and the centre of a map carries a hierarchy along with it, intended or not. Which is a good reason to break the habit occasionally, if only to see what falls out.&lt;/p&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-4-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
-&lt;h3 id=&#34;images-are-maps-too&#34;&gt;Images are maps too&lt;/h3&gt;
-&lt;p&gt;Every map so far in this post has been what Couclelis calls an object view of space: counties, regions, property lines, each one with relatively crisp boundaries. A satellite photograph and an X-ray radiograph are the other view, a field: a continuous surface of measured values, light or radiation or whatever the sensor records, with no boundaries and no names built in, just a projection onto a flat page. Photographs are maps of a field. They can lose exactly what a map of objects loses: which way is up, or down, or north. Sometimes that missing information has to be stated outright, or the picture turned, before a reader can interpret it correctly.&lt;/p&gt;
-&lt;p&gt;Take the example of &lt;a href=&#34;https://science.nasa.gov/blogs/earth-matters/2011/07/12/are-you-ever-fooled-by-relief-inversion&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;relief inversion&lt;/a&gt;, where canyons read as ridges, ridges read as canyons, and geology is turned inside out. The fix is simply to turn the map.&lt;/p&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;Two copies of a satellite image of canyons in Grand Staircase-Escalante, Utah. On the left, north up, the canyons look like raised ridges. On the right, the same image turned upside down, they look like canyons.&#34; srcset=&#34;
-               /post/which-way-is-up/images/relief-inversion-grand-staircase_huc1fc2d20d1801f44a271c5fc1e9db89f_319083_30e8b3d334279cd36b85387434c9a33c.webp 400w,
-               /post/which-way-is-up/images/relief-inversion-grand-staircase_huc1fc2d20d1801f44a271c5fc1e9db89f_319083_70f98ac65574bb097d27a757e9fc4bee.webp 760w,
-               /post/which-way-is-up/images/relief-inversion-grand-staircase_huc1fc2d20d1801f44a271c5fc1e9db89f_319083_1200x1200_fit_q75_h2_lanczos.webp 1200w&#34;
-               src=&#34;https://nkaza.github.io/post/which-way-is-up/images/relief-inversion-grand-staircase_huc1fc2d20d1801f44a271c5fc1e9db89f_319083_30e8b3d334279cd36b85387434c9a33c.webp&#34;
-               width=&#34;760&#34;
-               height=&#34;252&#34;
-               loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-
-&lt;em&gt;Grand Staircase-Escalante National Monument, Utah, north up (left) and turned (right). NASA Earth Observatory, public domain, via &lt;a href=&#34;https://science.nasa.gov/blogs/earth-matters/2011/07/12/are-you-ever-fooled-by-relief-inversion&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Earth Matters&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Sometimes the reader also needs to know which way was down when the image was taken. Mitchell markers contain small lead beads that roll to the lowest point, alongside the usual left/right letter. This is especially useful for horizontal-beam radiographs. Fluid settles in the lowest (dependent) parts of the body and gas rises to the highest (non-dependent) parts, so knowing the patient&amp;rsquo;s orientation lets the reader recognize features like fluid lines or free gas. In the radiograph on the right below, the &amp;ldquo;R&amp;rdquo; marks the patient&amp;rsquo;s right side, and the beads have settled downward, confirming it was a horizontal-beam image rather than the usual vertical beam.&lt;/p&gt;
-&lt;div style=&#34;display: flex; align-items: center; gap: 1em;&#34;&gt;
-&lt;img src=&#34;images/gravity-marker-beads.png&#34; alt=&#34;Two X-ray laterality markers, one blue reading &amp;quot;L&amp;quot; and one red reading &amp;quot;R,&amp;quot; each with a small metal bead visible through a window near the bottom of the frame.&#34; style=&#34;width: 25%;&#34;&gt;
-&lt;img src=&#34;images/radiograph_beads.png&#34; alt=&#34;Radiograph using the beads to describe orientation. Which way is down matters more&#34; style=&#34;width: 75%;&#34;&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;em&gt;Left: gravity-dependent beads inside a pair of Mitchell markers, both settled toward the low point of the frame. Right: a horizontal-beam radiograph in which the beads have settled toward the bottom of the image.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;That need is real, not decorative, which is worth keeping in mind for what comes next: plenty of maps carry a compass for decoration alone.&lt;/p&gt;
-&lt;h3 id=&#34;invented-worlds&#34;&gt;Invented worlds&lt;/h3&gt;
-&lt;p&gt;Even invented worlds mostly go along with the habit. &lt;a href=&#34;https://www.iam8bit.com/products/videogames-world-map&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Edison Yan&amp;rsquo;s &lt;em&gt;Videogames World Map&lt;/em&gt;&lt;/a&gt; stitches together locations from dozens of unrelated game franchises onto a single continent with no shared physics, no coherent rotation, and arguably no real planet underneath it at all. It still carries an ornate compass rose in the corner, because apparently that is simply what a map of a world is required to have. Tolkien&amp;rsquo;s maps of Middle-earth do the same: north at the top, for a world that never needed a magnetic field but definitely relied on Orientalist tropes.&lt;/p&gt;
-&lt;p&gt;Not every invented world goes along with it, and the holdouts are worth paying attention to. For example, Pratchett&amp;rsquo;s Discworld is a flat disc riding on the backs of four elephants standing on a giant turtle (a common cosmological framework in Hindu mythology), and cardinal directions genuinely do not describe it. So the books reach for a frame the geometry actually supports: &lt;a href=&#34;https://wiki.lspace.org/Discworld_%28world%29&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Hubward and Rimward&lt;/a&gt;, toward the disc&amp;rsquo;s centre or its rim, plus Turnwise and Widdershins for the direction the whole disc slowly turns, and against it. Seasoned travellers navigate by feel: warmer means rimwards, colder means hubwards, and dizzy means you have been going widdershins for a while. It is the same topographic move as uptown or &lt;em&gt;kaja&lt;/em&gt;, just built for a world that took its own shape seriously enough to need one.&lt;/p&gt;
-&lt;h3 id=&#34;one-north-arrow-is-wrong-anyway&#34;&gt;One north arrow is wrong anyway&lt;/h3&gt;
-&lt;p&gt;For anything meant to be recognised, orientation is a tool, not an absolute requirement. An arrow announcing north adds nothing to a shape the reader can already recognise on sight. Fine, you might say, it does no harm either; so what exactly is the complaint?&lt;/p&gt;
-&lt;p&gt;Here is a pedantic reason, but one that masks a larger communicative point. On a small-scale map, a single north arrow is not just unnecessary, it is often outright wrong. The county map that opened this post uses an Albers conic projection, the standard choice for national US maps, and on a conic projection true north tilts steadily as you move away from the central meridian, a point &lt;a href=&#34;https://www.esri.com/arcgis-blog/products/arcgis-pro/mapping/north-arrow-necessity&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;John Nelson had already made&lt;/a&gt;. Seattle sits 16 degrees off vertical, Boston 15 degrees the other way, and the one place the arrow is actually correct is somewhere around Kansas (more correctly Houston), which feels appropriate. In practice nobody notices, because the arrow was never doing any of the communicating in the first place.&lt;/p&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-5-1.png&#34; alt=&#34;&#34; width=&#34;1056&#34; /&gt;
-&lt;h2 id=&#34;navigate&#34;&gt;Navigate&lt;/h2&gt;
-&lt;p&gt;Ordinary people, unlike sailors, hardly ever navigate by compass. They learn a place first as landmarks, then as routes strung between them (left at the bank, straight on past the neem tree), and only later, if at all, as a &lt;a href=&#34;https://doi.org/10.1016/s0065-2407%2808%2960007-5&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;coherent layout&lt;/a&gt;. What they actually steer by is whatever scene is in front of them: a street, a landmark, an exit, the direction they happen to be facing.&lt;/p&gt;
-&lt;p&gt;A navigation map&amp;rsquo;s whole job is to connect that scene to the next move, so it works best turned to match it, with the top of the map pointing wherever the reader is actually walking. A turned map then has to say, in terms the reader can check on the spot, which way it has been turned: &amp;ldquo;West&amp;rdquo; along the top edge, &amp;ldquo;Uptown&amp;rdquo; along the right, a you-are-here arrow pointing the way the reader is facing, as on the WalkNYC sign below. A north arrow is one option among these, and rarely the most useful one.&lt;/p&gt;
-&lt;h3 id=&#34;outdoors&#34;&gt;Outdoors&lt;/h3&gt;
-&lt;p&gt;It is tempting to assume that once cardinal directions are easy to check outdoors, people default to using them. They do not. Different communities keep using whatever frame already works for them, cardinal or otherwise. Take the New York City subway map, an object with an unusually well-documented identity crisis. The original 1904 map lays Manhattan on its side, uptown to the right. Vignelli&amp;rsquo;s 1972 diagram, Hertz&amp;rsquo;s geographic 1979 redesign, and the MTA&amp;rsquo;s &lt;a href=&#34;https://www.mta.info/press-release/mta-unveils-first-fully-redesigned-subway-map-half-century&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;2025 return to form&lt;/a&gt; all instead stand Manhattan upright. Partly this is because riders think in uptown and downtown, not north and south. Partly it is because, to a Manhattanite, &lt;a href=&#34;https://saulsteinbergfoundation.org/essay/view-of-the-world-from-9th-avenue/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;the world simply revolves around Manhattan&lt;/a&gt;, other boroughs be damned. But uptown is not north: measured off the avenue centrelines, the island&amp;rsquo;s own street grid runs a full 29 degrees east of true north, a fact most New Yorkers have never needed and will be delighted never to need.&lt;/p&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-6-1.png&#34; alt=&#34;&#34; width=&#34;1056&#34; /&gt;
-&lt;p&gt;&lt;em&gt;1904: New York Subway Souvenir, Burroughs &amp;amp; Co., public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:1904_IRT_NYC_Subwaymap.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;, excerpt. 1972: New York City Transit Authority, scan via &lt;a href=&#34;https://www.geographicus.com/P/AntiqueMap/newyorksubway-vignelli-1972-2&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geographicus&lt;/a&gt;. 2013: MTA, CC BY 2.0, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Official_New_York_City_Subway_Map_2013_vc.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. 2025: photo by Marc A. Hermann / MTA, CC BY 2.0, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:NYCS_map_2025_vc.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;, cropped.&lt;/em&gt;&lt;/p&gt;
-&lt;h3 id=&#34;indoors&#34;&gt;Indoors&lt;/h3&gt;
-&lt;p&gt;Step indoors and the outdoor cues vanish along with the reception bars. Walls hide the sun and the landmarks both, GPS degrades, and it takes only a couple of turns to lose track of which way is which. People reliably &lt;a href=&#34;https://doi.org/10.1177/0963721410383243&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;get lost in libraries, hospitals, and malls&lt;/a&gt;, mostly because of how the building is laid out rather than any failure of their own sense of direction. Two kinds of indoor map show up almost everywhere in response.&lt;/p&gt;
-&lt;p&gt;The first is the directory, whose whole purpose is helping people find things once they are already inside. This one, from the Okinawa Prefectural Museum and Art Museum in Naha, draws the building&amp;rsquo;s three floors stacked on top of one another, connected by the lifts and stairs that actually join them. A red marker on the ground floor announces &amp;ldquo;You are here,&amp;rdquo; the galleries are numbered, and each floor is labelled. Cardinal directions never come up; the building is its own frame.&lt;/p&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;Floor directory at the Okinawa Prefectural Museum and Art Museum, Naha. The right half shows floors 1F, 2F and 3F drawn in perspective and stacked vertically, connected by lift shafts. A red &amp;amp;ldquo;You are here&amp;amp;rdquo; marker sits on the ground floor near the sub-entrance. Galleries are numbered. The left half gives opening hours and visitor rules. There is no north arrow.&#34; srcset=&#34;
-               /post/which-way-is-up/images/okinawa-museum-directory_hub908654f7e6989148b4e4bf55503669b_174181_8bf7c5ff5b77c1c492dae998f2f27501.webp 400w,
-               /post/which-way-is-up/images/okinawa-museum-directory_hub908654f7e6989148b4e4bf55503669b_174181_b360de316688d79141901f52c148a881.webp 760w,
-               /post/which-way-is-up/images/okinawa-museum-directory_hub908654f7e6989148b4e4bf55503669b_174181_1200x1200_fit_q75_h2_lanczos.webp 1200w&#34;
-               src=&#34;https://nkaza.github.io/post/which-way-is-up/images/okinawa-museum-directory_hub908654f7e6989148b4e4bf55503669b_174181_8bf7c5ff5b77c1c492dae998f2f27501.webp&#34;
-               width=&#34;760&#34;
-               height=&#34;513&#34;
-               loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-
-&lt;em&gt;Floor directory, Okinawa Prefectural Museum and Art Museum, Naha, February 2026. Photo by NORTLAUKAU 26088 JP, CC0, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:JP_%E6%B2%96%E7%B9%A9_Okinawa_%E9%82%A3%E9%9C%B8%E5%B8%82_Naha_City_%E6%B2%96%E7%B9%A9%E7%B8%A3%E7%AB%8B_%E6%AD%B7%E5%8F%B2%E5%8D%9A%E7%89%A9%E9%A4%A8_Okinawa_Prefectural_History_Museum_floor_plan_sign_morning_am_February_2026_N13P_02.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;, cropped.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;The second kind is the evacuation plan, where the stakes are considerably higher and the rule has been written down accordingly. The international standard &lt;a href=&#34;https://cdn.standards.iteh.ai/samples/80678/912f683d0fcd4f7481f0c1366e0ddd5a/ISO-23601-2020.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ISO 23601&lt;/a&gt; requires that &amp;ldquo;the orientation of the plan as displayed shall be related to the viewer so that locations on the left of the plan are to the viewer&amp;rsquo;s left and locations on the right of the plan are to the viewer&amp;rsquo;s right.&amp;rdquo; Insisting on cardinal directions here instead (correct, absolute, and useless to someone choking on smoke) is exactly the kind of mistake that gets a standard written against it.&lt;/p&gt;
-&lt;h3 id=&#34;screens-where-pixels-matter&#34;&gt;Screens: where pixels matter&lt;/h3&gt;
-&lt;p&gt;On paper, the reader has to turn the map. On a phone or a car&amp;rsquo;s dashboard, the software turns it for them, and the reader is demoted to a blue arrow fixed at the centre of the screen, much like Micronesian navigators, whose islands sail past. Heading-up display makes the next turn easier to execute; north-up display makes it easier to plan a route and hold a mental &lt;a href=&#34;https://doi.org/10.1207/s15327043hup0504_3&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;picture of the area&lt;/a&gt;. Mapping apps offer both and quietly follow the same rule this whole post has been arguing for: a compass icon shows up only once the map has actually been rotated away from north, and tapping it snaps the map back and makes the icon disappear again. A compass permanently on screen would just be eating space that could otherwise be map, in exchange for telling the reader something true and irrelevant most of the time.&lt;/p&gt;
-&lt;p&gt;Turn-by-turn instructions take this one step further and dispense with the map entirely. &amp;ldquo;In 200 metres, turn left&amp;rdquo; is a purely relative frame: no north, no layout, nothing but the next move from wherever the reader currently stands. It is extremely efficient, and it likely costs something in spatial memory that nobody has fully priced in yet. Virtual reality also demonstrates just how little north matters to a body actually moving through a scene: in &lt;a href=&#34;https://diglib.eg.org/items/3dbe562f-4045-4d70-8c56-4c202be15b4c&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;redirected walking&lt;/a&gt;, the system imperceptibly rotates the virtual world around a walking user, who can be made to circle a small physical room while feeling entirely certain they are walking in a straight line. The system is, in effect, gaslighting the user&amp;rsquo;s inner ear, and we don&amp;rsquo;t seem to mind.&lt;/p&gt;
-&lt;h2 id=&#34;coordinate&#34;&gt;Coordinate&lt;/h2&gt;
-&lt;p&gt;Maps also help coordinate joint action, and whatever frame the people coordinating on it share has to be one every single one of them actually has. The simplest shared frame is an object everyone is standing on or can all see. Sailors set a course by compass but coordinate their own operations by a local frame instead: port and starboard. A fire crew does much the same: everyone on scene can see the building, so the building becomes the frame. The typical standard designates the &amp;ldquo;Alpha&amp;rdquo; side as the front entrance, or failing that, whichever side sits nearest a distinctive landmark, a swimming pool being the standard example, and names every other side relative to it. A firefighter who has spent ten minutes inside a smoke-filled building may have no working idea where north is; a swimming pool, they will remember. Players of team games like Counter-Strike face in every direction simultaneously, so each map gets its own community-agreed &lt;a href=&#34;https://refrag.gg/blog/cs2-map-callouts/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;callouts&lt;/a&gt;, such as &amp;ldquo;long,&amp;rdquo; &amp;ldquo;catwalk,&amp;rdquo; and &amp;ldquo;mid,&amp;rdquo; by which a team can coordinate an entire ambush over voice chat.&lt;/p&gt;
-&lt;p&gt;A wildfire, by contrast, has no front door and no street address. Crews arrive from a dozen different agencies, sometimes from other states entirely, working the ground, flying overhead, or coordinating from a dispatch room. So wildfire maps standardise on the cardinal frame instead, purely so that everyone involved can agree. But like sailors, these crews also lean on a local frame drawn from the fire itself: the &amp;ldquo;head&amp;rdquo; is the fastest-moving edge, and &amp;ldquo;heel&amp;rdquo; and &amp;ldquo;flanks&amp;rdquo; are defined relative to it, a frame with the inconvenient property of redefining itself continuously as wind and fuel shove the head around.&lt;/p&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-7-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
-&lt;p&gt;&lt;em&gt;Left: Figure 2, Montgomery County Fire Chiefs&amp;rsquo; Association, &lt;a href=&#34;http://mcfirechiefs.org/wp-content/uploads/2021/09/MCFCA-Building-Side-Designation-System-final.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Recommended Practice 2007-4&lt;/a&gt;. Right: IAP map, Big Grass fire (OR-VAD-260201), 07/29/2026, Complex Incident Management Team 5, via the &lt;a href=&#34;https://ftp.wildfire.gov/public/incident_specific_maps/pacific_nw/2026_Incidents_Oregon/2026_BigGrass/20260729/iap_2026_BigGrass_85x11_ORVAD260201_0729_day.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;National Interagency Fire Center incident map archive&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Hospitals coordinate on a shared frame for the same reason. The radiologist reading a film and the surgeon later holding a scalpel have to agree on the patient&amp;rsquo;s own right and left, regardless of which way the image or the operating table happens to be facing. The convention is to hang the film as though the reader is standing face to face with the patient, so the patient&amp;rsquo;s actual right, marked &amp;ldquo;Dx&amp;rdquo; in the corner of a chest film, ends up on the viewer&amp;rsquo;s left. Veterinary radiographs keep the same rule: &lt;a href=&#34;https://todaysveterinarypractice.com/radiology-imaging/effects-of-positioning-respiration-and-technique-on-interpretation-of-thoracic-radiographs-of-dogs-and-cats/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&amp;ldquo;the cranial or right side of the patient should always be on the viewer&amp;rsquo;s left.&amp;rdquo;&lt;/a&gt; Reports spell the side out in words as a backup, on top of the marker. Even with both safeguards in place, &lt;a href=&#34;https://doi.org/10.2214/AJR.08.1778&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;laterality errors in radiology reports&lt;/a&gt; remain a recurring, sobering problem.&lt;/p&gt;
-&lt;p&gt;Other creatures manage this coordination without any concept of absolute frame or a map: watch &lt;a href=&#34;https://www.youtube.com/watch?v=bFDGPgXtK-U&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;honeybees dance out directions&lt;/a&gt;, &lt;a href=&#34;https://vimeo.com/103329200&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a thousand robots assemble themselves into a shape&lt;/a&gt;, or &lt;a href=&#34;https://vimeo.com/31158841&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a flock of starlings murmurate&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;retrace&#34;&gt;Retrace&lt;/h2&gt;
-&lt;p&gt;Retracing is coordination stretched across time, and it is the hardest version of the problem, because the reader was never there and none of the shared frames that make ordinary coordination easy are available to fall back on. Much like writing, the map has to carry its entire meaning in fixed, precise convention, and the reader still has to do the work of interpreting it correctly, decades or centuries later. That interpretation turns out to be considerably more fraught than it seems.&lt;/p&gt;
-&lt;h3 id=&#34;plat-surveys&#34;&gt;Plat surveys&lt;/h3&gt;
-&lt;p&gt;A survey plat is a legal record, and its reader (a surveyor, a buyer, a court, potentially a century on) shares nothing with the original surveyor except the document itself and whatever still survives on the ground. American land has been divided up two different ways, and each leans on its own frame.&lt;/p&gt;
-&lt;p&gt;Metes and bounds, the method used in the original colonies, describes a parcel as a walk: from a point of beginning, so many feet on a stated bearing to a stone, then onward to a tree. The frame is cardinal, and the oldest bearings were read straight off a compass, so they point at whatever magnetic north happened to be on that particular afternoon. To repeat the walk correctly, a later surveyor has to know exactly which north was in use, and when. Arkansas&amp;rsquo;s own &lt;a href=&#34;https://www.labor.arkansas.gov/wp-content/uploads/Minimum-STANDARDS-Of-Practice-2020-08-07.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;standards of practice for boundary surveys and plats&lt;/a&gt; require precisely this: every plat needs a &amp;ldquo;north arrow with basis of direction,&amp;rdquo; and if that basis comes from the Arkansas Plane Coordinate System, the plat must name the year of the system&amp;rsquo;s adjustment and the grid zone; if it instead defers to a deed or an earlier plat&amp;rsquo;s record bearing, it must cite the document and specify which boundary line controls. None of these candidates for north stay put for long.&lt;/p&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-8-1.png&#34; alt=&#34;&#34; width=&#34;1104&#34; /&gt;
-&lt;p&gt;&lt;em&gt;Left: survey plat, Section 35, T21N, R12W, Baxter County, Arkansas, Tuck Land Surveying, 2008, U.S. Army Corps of Engineers, Little Rock District, public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Tuck_08002_Corp_Eng_Copy_Plat_-_USACE-p16021coll10-9376.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. Right: computed for the same corner.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;A magnetic bearing taken at the original 1827 post pointed 8.6 degrees east of true north. By the time the brass cap replaced it in 2008, declination here had drifted to 1.3 degrees; today it sits within a quarter degree of true, purely as an accident of timing. Grid north drifts far more slowly over time, but swap out the grid itself and it moves plenty: the state plane zone actually meant for this county disagrees with its neighbour across the Missouri line by nearly a degree, with the next UTM zone over by just under three, and with the CONUS Albers projection (this post&amp;rsquo;s own national map, misapplied here as though it were a local grid) by over two. Run the same coordinates through the British National Grid, built around a transverse Mercator centred on Britain, and grid north tips just over 90 degrees: a confident, precisely computed, entirely meaningless answer to a question that was never coherent to begin with.&lt;/p&gt;
-&lt;p&gt;And the state plane grid itself is due to be redefined again: SPCS2022 will replace the current zones when NAD83 is finally retired in favour of NATRF2022. So on a plat, the north arrow was never there to orient the reader. Its job is to go on the record: which north these bearings were measured against, and on what date, so that whoever comes looking later knows exactly which fiction to reverse-engineer.&lt;/p&gt;
-&lt;p&gt;The Public Land Survey System, which covers most of the American West, only looks cardinal from a distance. Every parcel is named by it, including the one above: Section 35, Township 21 North, Range 12 West. But the law actually anchors the system to the ground rather than to the compass. Corners &lt;a href=&#34;https://www.law.cornell.edu/uscode/text/43/752&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&amp;ldquo;marked in the surveys &amp;hellip; shall be established as the proper corners of sections&amp;rdquo;&lt;/a&gt;, wherever the original survey crew happened to set them, errors and all. The shared frame is the monument itself, the same way the building is the frame at a fire, and that is exactly why the Arkansas corner notes read like a chain of custody rather than a set of coordinates: an 1827 wooden post and two witness trees, inherited and re-verified by five different surveyors, down to a brass cap finally set in 2008.&lt;/p&gt;
-&lt;h3 id=&#34;post-hoc-investigations&#34;&gt;Post-hoc investigations&lt;/h3&gt;
-&lt;p&gt;Once the fire itself is out, the investigation starts: what went wrong, who is liable, what has to change. Those investigation maps are written for readers who were never on scene (investigators, insurers, courts), not for the crews who were. &amp;ldquo;Side Delta&amp;rdquo; meant something precise and immediate to the crew standing there; to everyone downstream, it means nothing until someone translates it back into cardinal directions. Police work runs into the identical need. The National Institute of Justice&amp;rsquo;s &lt;a href=&#34;https://www.ojp.gov/pdffiles1/nij/178280.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;crime scene guide&lt;/a&gt; instructs investigators to sketch the scene &amp;ldquo;indicating north on the sketch.&amp;rdquo; That is the same document doing a completely different job than the one the responding officer needed on arrival.&lt;/p&gt;
-&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;Four practices, several different answers, and not always the ones you would expect. Recognition mostly needs nothing more than a familiar shape and a couple of labels, no compass required. The exception is images with no built-in up of their own: turn a relief-inverted satellite photo the wrong way and canyons read as ridges; skip the beads on a horizontal-beam X-ray and a fluid line becomes unreadable. Both are the same fix, restoring information the image lost when it was flattened, not so anyone can verify it against the world outside, just so a reader can parse the picture correctly. Navigation, on the other hand, needs the map turned to match the reader&amp;rsquo;s own body, and a north arrow shows up only as a footnote to that, when the map has been turned some other way instead. Coordination needs a frame everyone present actually shares, and that frame is usually a building, a fire, or a callout on a game map long before it is a compass bearing. Only retracing, matching a document against the actual ground, genuinely needs a stated, dated north, and even then only because true, magnetic, and grid north each drift, disagree, and occasionally lie outright.&lt;/p&gt;
-&lt;p&gt;None of this makes the north arrow untenable in maps. The trouble starts, as it usually does, in the assumption that a map is a single kind of thing, answerable to a single fixed checklist, regardless of what it happens to be for.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Urban Analytics in R</title>
       <link>https://nkaza.github.io/teaching/techniques-course/</link>
-      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/teaching/techniques-course/</guid>
       <description>&lt;h1 id=&#34;course-description--objectives&#34;&gt;Course Description &amp;amp; Objectives&lt;/h1&gt;
 &lt;p&gt;This course is about different techniques used in assembling, managing, analysing and predicting using heterogeneous data sets in urban environments. These datasets are inherently messy and incomplete. Types of data include, point, polygon, raster, vector, text, image and network data; data sets with high cadence and high spatial resolution.&lt;/p&gt;
@@ -1084,7 +855,7 @@ URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocomp
 &lt;h4 id=&#34;tutorialsslides-5&#34;&gt;Tutorials/Slides&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/object-detection-without-python/&#34;&gt;Object Detection in Street Scenes&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/%20urban-morphology-landscape-metrics/&#34;&gt;Measuring Urban Form&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/urban-morphology-landscape-metrics/&#34;&gt;Measuring Urban Form&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h3 id=&#34;oct-13-tue-group-assignment-presentations&#34;&gt;Oct 13 (Tue) Group Assignment Presentations&lt;/h3&gt;
@@ -1268,6 +1039,235 @@ URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocomp
 &lt;p&gt;Wickham, Hadley. 2010. “A Layered Grammar of Graphics.” &lt;em&gt;Journal of Computational and Graphical Statistics&lt;/em&gt; 19 (1): 3–28. &lt;a href=&#34;https://doi.org/10.1198/jcgs.2009.07098&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1198/jcgs.2009.07098&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Do we need to know which way is up?</title>
+      <link>https://nkaza.github.io/post/which-way-is-up/</link>
+      <pubDate>Wed, 23 Sep 2026 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/which-way-is-up/</guid>
+      <description>&lt;p&gt;One of my first jobs in graduate school was building a wayfinding application for a museum, meant to stand in for a docent. I did not do this well (my apologies, Prof. Twidale), but it left me with a lasting interest in how maps do, and mostly do not, convey information. Decades on, I am still working through it.&lt;/p&gt;
+&lt;p&gt;My opinions &lt;a href=&#34;https://nkaza.github.io/post/my-screed-against-legends/&#34;&gt;about legends&lt;/a&gt; are already on record. This time the target is another sacred cow: the north arrow. A small but important minority, &lt;a href=&#34;https://www.esri.com/arcgis-blog/products/arcgis-pro/mapping/north-arrow-necessity&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;John Nelson&lt;/a&gt; among them, argues it is optional and often better left off. Visceral reactions ensued.&lt;/p&gt;
+&lt;p&gt;I side with the minority, partly because most of the maps I make and read are statistical graphics rather than navigational charts. However, I also spend a fair amount of time with cadastral maps, courtesy of a long-running interest in property rights regimes. Furthermore, working in applied computer vision has left me convinced that our mental model of maps needs to stretch past objects to fields (Couclelis&amp;rsquo; distinction). So a post that started out being about north, north arrows and ups has ended up being about materiality, practice, and purpose instead.&lt;/p&gt;
+&lt;h2 id=&#34;how-are-maps-used&#34;&gt;How are maps used?&lt;/h2&gt;
+&lt;p&gt;Rather than treat a map as an artefact with one fixed job, I want to look at the specific practices maps get used for, since each one asks something different of the reader and the author. A north arrow is one among many such orienteering devices at the disposal of both. It may not be the right one, depending on the specifics. Four practices cover most of the ground:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Recognise.&lt;/strong&gt; The map has to make a place or a pattern recognisable. The reader only needs to know where things sit relative to one another. In some senses, this is the Leibnizian conception of space.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Navigate.&lt;/strong&gt; The map has to connect what the reader sees to where they go next, matched against the scene in front of them.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Coordinate.&lt;/strong&gt; The map has to give several people, in different places, a shared reference they can act on together.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Retrace.&lt;/strong&gt; The map has to carry its meaning to someone who was never there, often decades later, and let them find positions on the ground. This is coordination stretched across time rather than space.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Each of these leans on a different frame of reference. &lt;a href=&#34;https://doi.org/10.1017/cbo9780511613609&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Stephen Levinson&lt;/a&gt; and his colleagues catalogued three basic kinds across the world&amp;rsquo;s languages: relative, anchored to the speaker&amp;rsquo;s own body; intrinsic, anchored to some other object; and absolute, anchored to something that stays put no matter which way the speaker turns. Absolute need not mean compass; it just means fixed. So the table below differentiates absolute frames by what they are actually fixed to, and asks what each frame demands of its reader. I have borrowed and stretched Levinson&amp;rsquo;s typology:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Frame&lt;/th&gt;
+&lt;th&gt;Anchored to&lt;/th&gt;
+&lt;th&gt;The reader needs&lt;/th&gt;
+&lt;th&gt;Uses in language&lt;/th&gt;
+&lt;th&gt;Uses in maps&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Relative&lt;/td&gt;
+&lt;td&gt;the reader&amp;rsquo;s own body&lt;/td&gt;
+&lt;td&gt;nothing beyond where they stand and face&lt;/td&gt;
+&lt;td&gt;left and right; in front, behind&lt;/td&gt;
+&lt;td&gt;heading-up phone maps; the WalkNYC sign; Micronesian navigators&amp;rsquo; mental map, in which the islands move past a fixed canoe&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Intrinsic&lt;/td&gt;
+&lt;td&gt;a shared object&lt;/td&gt;
+&lt;td&gt;to see the object&lt;/td&gt;
+&lt;td&gt;the front and back of a building; a ship&amp;rsquo;s port and starboard&lt;/td&gt;
+&lt;td&gt;fireground diagrams with sides A to D&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Viewpoint&lt;/td&gt;
+&lt;td&gt;the side the image is viewed from&lt;/td&gt;
+&lt;td&gt;to know which side, and the display convention&lt;/td&gt;
+&lt;td&gt;AP/PA in human radiographs; dorsal and ventral for animals&lt;/td&gt;
+&lt;td&gt;radiographs with markers&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Topographic&lt;/td&gt;
+&lt;td&gt;the terrain&lt;/td&gt;
+&lt;td&gt;to know the place&lt;/td&gt;
+&lt;td&gt;Tzeltal uphill and downhill; Balinese &lt;em&gt;kaja&lt;/em&gt;(toward the mountains) and &lt;em&gt;kelod&lt;/em&gt; (toward the sea); Manhattan&amp;rsquo;s uptown and downtown&lt;/td&gt;
+&lt;td&gt;New York subway maps, drawn uptown-up&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Cardinal&lt;/td&gt;
+&lt;td&gt;fixed axes: true, magnetic or grid&lt;/td&gt;
+&lt;td&gt;an instrument, and a statement of which north&lt;/td&gt;
+&lt;td&gt;Relatively common use but mean different things&lt;/td&gt;
+&lt;td&gt;a survey plat&amp;rsquo;s &amp;ldquo;grid north per GPS, NAD 83&amp;rdquo;; a wildfire map&amp;rsquo;s grid and datum&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Every frame asks something specific of the reader: a body, an object in view, a known vantage point, familiarity with the place, or, for cardinal directions, an instrument and a stated convention for which north is meant. Which frame a map should use depends entirely on what its readers already share. A navigator shares the scene with the map, so the map can simply face the same way. People coordinating share an object they can all see, such as a building or a fire, and name directions off it. Someone retracing shares nothing but the document itself, so the document has to spell its frame out completely. A statement of north, arrow or grid, is useful when the reader shares no more local frame and can actually go check which way north is.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-1-1.png&#34; alt=&#34;&#34; width=&#34;1248&#34; /&gt;
+&lt;p&gt;&lt;em&gt;Top left: ACS 2018-2022 5-year estimates, table S1701. Top right: WalkNYC sign, W 42nd Street and 6th Avenue, photo by Tdorante10, CC BY-SA 4.0, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:42nd_St_6th_Av_td_41_-_WalkNYC.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;, cropped. Bottom left: IAP map, Big Grass fire (OR-VAD-260201), 07/29/2026, Complex Incident Management Team 5, via the &lt;a href=&#34;https://ftp.wildfire.gov/public/incident_specific_maps/pacific_nw/2026_Incidents_Oregon/2026_BigGrass/20260729/iap_2026_BigGrass_85x11_ORVAD260201_0729_day.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;National Interagency Fire Center incident map archive&lt;/a&gt;. Bottom right: detail of a survey plat, Section 35, T21N, R12W, Baxter County, Arkansas, Tuck Land Surveying, 2008, U.S. Army Corps of Engineers, Little Rock District, public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Tuck_08002_Corp_Eng_Copy_Plat_-_USACE-p16021coll10-9376.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s worth pausing on these four examples and working through what each one is actually doing. The poverty map communicates by leaning on the country&amp;rsquo;s familiar outline plus a handful of place names. The WalkNYC sign communicates in a relative frame, matching what it shows against what the reader can already see. The wildfire map splits the incident into crew assignments and trusts strangers to orient themselves with map and instruments together. The survey plat states exactly which north its bearings use.&lt;/p&gt;
+&lt;p&gt;So the question was never whether a map needs a north arrow. The real question is what the map is for, and what orienteering apparatus that purpose actually requires, if at all. The rest of this post works through the four tasks in turn.&lt;/p&gt;
+&lt;h2 id=&#34;recognise&#34;&gt;Recognise&lt;/h2&gt;
+&lt;p&gt;Critical cartographers, unlike the functionalists, argue that a map&amp;rsquo;s real job is to privilege one view of the world over the others, cementing some political or epistemological relationship or challenging it. Medieval world maps, photographs of the Earth, and the wall map at the front of a schoolroom are all doing the same thing: telling the reader what place this is, letting them recognise shapes, spot patterns, and read geography as a stand-in for politics.&lt;/p&gt;
+&lt;p&gt;Since GIS put mapmaking within reach of anyone with a laptop, most maps made today are statistical graphics, meant to describe a pattern and support a point. A choropleth asks the reader to find a familiar shape and see where the pattern falls inside it; the poverty map above is a standard example. The story runs through Central Appalachia in eastern Kentucky and West Virginia, the Mississippi Delta, Alabama&amp;rsquo;s and the Carolinas&amp;rsquo; Black Belt, the Rio Grande Valley, and the reservation counties of the Navajo Nation and the northern Plains: 56 percent of Oglala Lakota County, South Dakota, on the Pine Ridge reservation, is below the poverty line, against 12.5 percent nationally. That is a story about history and policy, and cardinality has nothing to add to it. The map is north-up because that is the orientation in which readers already know the country&amp;rsquo;s shape, and a handful of region labels do the rest.
+You should probably also ask yourself why areas such as Alaska, Guam and Puerto Rico have been left out. The immediate answer may be cartographic or statistical convenience; but the structural answer is about neglect, erasure and invisibility. That is a different, and equally compelling, story.&lt;/p&gt;
+&lt;h3 id=&#34;unfamiliar-shapes&#34;&gt;Unfamiliar shapes&lt;/h3&gt;
+&lt;p&gt;This may just be my own parochialism showing, but most readers can pick the United States out of a lineup. Far fewer could do the same for Morocco&amp;rsquo;s twelve regions, and the country adds a complication of its own: its south sits largely in Western Sahara, a &lt;a href=&#34;https://www.un.org/dppa/decolonization/en/nsgt&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;disputed territory&lt;/a&gt; that Moroccan statistics fold in and plenty of other maps draw as separate. Even a shape a reader is expected to recognise turns out to depend on who drew the lines and what their political purposes are:&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-2-1.png&#34; alt=&#34;&#34; width=&#34;1056&#34; /&gt;
+&lt;p&gt;&lt;em&gt;Poverty data: Haut-Commissariat au Plan, &lt;a href=&#34;https://www.hcp.ma/file/231435/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;multidimensional poverty mapping, 2014&lt;/a&gt;, from the 2014 census. Region boundaries: &lt;a href=&#34;https://www.geoboundaries.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;geoBoundaries&lt;/a&gt; (gbOpen), ODbL. Neighbouring countries: Natural Earth via the spData package.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;What turns the bare shape on the left into an actual place is context (neighbours, coastlines, a few city names), and that is the whole mechanism by which the map communicates. A north arrow would not add a thing to either panel. With the context filled in, the reader can see poverty running highest inland, in Béni Mellal-Khénifra at 13 percent, and lowest around Casablanca and in the south, against a national rate of 8 percent.&lt;/p&gt;
+&lt;h3 id=&#34;up-is-a-habit&#34;&gt;Up is a habit&lt;/h3&gt;
+&lt;p&gt;Recognition rests on familiarity, and familiarity rests on convention. And north-up is a surprisingly recent convention at that. Medieval Christian maps put east on top, toward paradise (hence &amp;ldquo;orient&amp;rdquo;), with Jerusalem at the centre. Al-Idrisi&amp;rsquo;s 1154 map for Roger II of Sicily put south on top instead. Jerry Brotton traces the whole history in &lt;em&gt;Four Points of the Compass&lt;/em&gt;, including &lt;a href=&#34;https://nextbigideaclub.com/magazine/unexpected-history-four-points-compass-bookbite/53171/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;early Chinese compasses that pointed south&lt;/a&gt; and the long-standing association of east with sacred beginnings. North, it turns out, had to fight its way to the top of the page.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-3-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;&lt;em&gt;Left: Hereford Mappa Mundi, c. 1300, with east at the top and Jerusalem near the centre. Public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Hereford_Mappa_Mundi.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. Right: Tabula Rogeriana, al-Idrisi, 1154; reconstruction by Konrad Miller, 1929, keeping the original&amp;rsquo;s south-up orientation. Public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:TabulaRogeriana.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;North-up won out with the magnetic compass, the portolan chart, and Mercator&amp;rsquo;s 1569 projection, over the same centuries as European colonial expansion. The 1884 conference that fixed the prime meridian at Greenwich settled the question of the centre too. These conventions run deep enough that even a photograph taken from space gets turned to obey them: the Apollo 17 crew shot the Blue Marble in 1972 with the &lt;a href=&#34;https://en.wikipedia.org/wiki/The_Blue_Marble&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;South Pole at the top of the frame&lt;/a&gt;. The version NASA actually released, and the one almost everyone has since seen, was rotated so north sits on top instead, in part because the shapes of Arabia and Africa were more recognisable with north up.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;Two versions of the Blue Marble photograph. On the left, the frame as exposed, with Antarctica at the top and Africa upside down. On the right, the familiar released version, with north up. Africa and Arabia are outlined in red in both.&#34; srcset=&#34;
+               /post/which-way-is-up/images/blue-marble-original-and-released_hucd160f23d1fdcd6887f4df60244de332_415202_a2cbb268a27ac0ad74dc2fdda9ab314d.webp 400w,
+               /post/which-way-is-up/images/blue-marble-original-and-released_hucd160f23d1fdcd6887f4df60244de332_415202_7a5bc6fe47b50e7829220289d4af6423.webp 760w,
+               /post/which-way-is-up/images/blue-marble-original-and-released_hucd160f23d1fdcd6887f4df60244de332_415202_1200x1200_fit_q75_h2_lanczos.webp 1200w&#34;
+               src=&#34;https://nkaza.github.io/post/which-way-is-up/images/blue-marble-original-and-released_hucd160f23d1fdcd6887f4df60244de332_415202_a2cbb268a27ac0ad74dc2fdda9ab314d.webp&#34;
+               width=&#34;760&#34;
+               height=&#34;372&#34;
+               loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+
+&lt;em&gt;Left: AS17-148-22727 in its original orientation, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Apollo_17_Blue_Marble_original_orientation_%28AS17-148-22727%29.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. Right: the released version, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:The_Earth_seen_from_Apollo_17.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. NASA, public domain; both cropped to the disc, with Africa and Arabia outlined in red for this post.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://doi.org/10.3138/928H-787R-3087-5V0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;J.B. Harley&lt;/a&gt; and the critical cartographers who followed him made the larger point: whatever sits at the top and the centre of a map carries a hierarchy along with it, intended or not. Which is a good reason to break the habit occasionally, if only to see what falls out.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-4-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
+&lt;h3 id=&#34;images-are-maps-too&#34;&gt;Images are maps too&lt;/h3&gt;
+&lt;p&gt;Every map so far in this post has been what Couclelis calls an object view of space: counties, regions, property lines, each one with relatively crisp boundaries. A satellite photograph and an X-ray radiograph are the other view, a field: a continuous surface of measured values, light or radiation or whatever the sensor records, with no boundaries and no names built in, just a projection onto a flat page. Photographs are maps of a field. They can lose exactly what a map of objects loses: which way is up, or down, or north. Sometimes that missing information has to be stated outright, or the picture turned, before a reader can interpret it correctly.&lt;/p&gt;
+&lt;p&gt;Take the example of &lt;a href=&#34;https://science.nasa.gov/blogs/earth-matters/2011/07/12/are-you-ever-fooled-by-relief-inversion&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;relief inversion&lt;/a&gt;, where canyons read as ridges, ridges read as canyons, and geology is turned inside out. The fix is simply to turn the map.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;Two copies of a satellite image of canyons in Grand Staircase-Escalante, Utah. On the left, north up, the canyons look like raised ridges. On the right, the same image turned upside down, they look like canyons.&#34; srcset=&#34;
+               /post/which-way-is-up/images/relief-inversion-grand-staircase_huc1fc2d20d1801f44a271c5fc1e9db89f_319083_30e8b3d334279cd36b85387434c9a33c.webp 400w,
+               /post/which-way-is-up/images/relief-inversion-grand-staircase_huc1fc2d20d1801f44a271c5fc1e9db89f_319083_70f98ac65574bb097d27a757e9fc4bee.webp 760w,
+               /post/which-way-is-up/images/relief-inversion-grand-staircase_huc1fc2d20d1801f44a271c5fc1e9db89f_319083_1200x1200_fit_q75_h2_lanczos.webp 1200w&#34;
+               src=&#34;https://nkaza.github.io/post/which-way-is-up/images/relief-inversion-grand-staircase_huc1fc2d20d1801f44a271c5fc1e9db89f_319083_30e8b3d334279cd36b85387434c9a33c.webp&#34;
+               width=&#34;760&#34;
+               height=&#34;252&#34;
+               loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+
+&lt;em&gt;Grand Staircase-Escalante National Monument, Utah, north up (left) and turned (right). NASA Earth Observatory, public domain, via &lt;a href=&#34;https://science.nasa.gov/blogs/earth-matters/2011/07/12/are-you-ever-fooled-by-relief-inversion&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Earth Matters&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Sometimes the reader also needs to know which way was down when the image was taken. Mitchell markers contain small lead beads that roll to the lowest point, alongside the usual left/right letter. This is especially useful for horizontal-beam radiographs. Fluid settles in the lowest (dependent) parts of the body and gas rises to the highest (non-dependent) parts, so knowing the patient&amp;rsquo;s orientation lets the reader recognize features like fluid lines or free gas. In the radiograph on the right below, the &amp;ldquo;R&amp;rdquo; marks the patient&amp;rsquo;s right side, and the beads have settled downward, confirming it was a horizontal-beam image rather than the usual vertical beam.&lt;/p&gt;
+&lt;div style=&#34;display: flex; align-items: center; gap: 1em;&#34;&gt;
+&lt;img src=&#34;images/gravity-marker-beads.png&#34; alt=&#34;Two X-ray laterality markers, one blue reading &amp;quot;L&amp;quot; and one red reading &amp;quot;R,&amp;quot; each with a small metal bead visible through a window near the bottom of the frame.&#34; style=&#34;width: 25%;&#34;&gt;
+&lt;img src=&#34;images/radiograph_beads.png&#34; alt=&#34;Radiograph using the beads to describe orientation. Which way is down matters more&#34; style=&#34;width: 75%;&#34;&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;em&gt;Left: gravity-dependent beads inside a pair of Mitchell markers, both settled toward the low point of the frame. Right: a horizontal-beam radiograph in which the beads have settled toward the bottom of the image.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;That need is real, not decorative, which is worth keeping in mind for what comes next: plenty of maps carry a compass for decoration alone.&lt;/p&gt;
+&lt;h3 id=&#34;invented-worlds&#34;&gt;Invented worlds&lt;/h3&gt;
+&lt;p&gt;Even invented worlds mostly go along with the habit. &lt;a href=&#34;https://www.iam8bit.com/products/videogames-world-map&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Edison Yan&amp;rsquo;s &lt;em&gt;Videogames World Map&lt;/em&gt;&lt;/a&gt; stitches together locations from dozens of unrelated game franchises onto a single continent with no shared physics, no coherent rotation, and arguably no real planet underneath it at all. It still carries an ornate compass rose in the corner, because apparently that is simply what a map of a world is required to have. Tolkien&amp;rsquo;s maps of Middle-earth do the same: north at the top, for a world that never needed a magnetic field but definitely relied on Orientalist tropes.&lt;/p&gt;
+&lt;p&gt;Not every invented world goes along with it, and the holdouts are worth paying attention to. For example, Pratchett&amp;rsquo;s Discworld is a flat disc riding on the backs of four elephants standing on a giant turtle (a common cosmological framework in Hindu mythology), and cardinal directions genuinely do not describe it. So the books reach for a frame the geometry actually supports: &lt;a href=&#34;https://wiki.lspace.org/Discworld_%28world%29&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Hubward and Rimward&lt;/a&gt;, toward the disc&amp;rsquo;s centre or its rim, plus Turnwise and Widdershins for the direction the whole disc slowly turns, and against it. Seasoned travellers navigate by feel: warmer means rimwards, colder means hubwards, and dizzy means you have been going widdershins for a while. It is the same topographic move as uptown or &lt;em&gt;kaja&lt;/em&gt;, just built for a world that took its own shape seriously enough to need one.&lt;/p&gt;
+&lt;h3 id=&#34;one-north-arrow-is-wrong-anyway&#34;&gt;One north arrow is wrong anyway&lt;/h3&gt;
+&lt;p&gt;For anything meant to be recognised, orientation is a tool, not an absolute requirement. An arrow announcing north adds nothing to a shape the reader can already recognise on sight. Fine, you might say, it does no harm either; so what exactly is the complaint?&lt;/p&gt;
+&lt;p&gt;Here is a pedantic reason, but one that masks a larger communicative point. On a small-scale map, a single north arrow is not just unnecessary, it is often outright wrong. The county map that opened this post uses an Albers conic projection, the standard choice for national US maps, and on a conic projection true north tilts steadily as you move away from the central meridian, a point &lt;a href=&#34;https://www.esri.com/arcgis-blog/products/arcgis-pro/mapping/north-arrow-necessity&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;John Nelson had already made&lt;/a&gt;. Seattle sits 16 degrees off vertical, Boston 15 degrees the other way, and the one place the arrow is actually correct is somewhere around Kansas (more correctly Houston), which feels appropriate. In practice nobody notices, because the arrow was never doing any of the communicating in the first place.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-5-1.png&#34; alt=&#34;&#34; width=&#34;1056&#34; /&gt;
+&lt;h2 id=&#34;navigate&#34;&gt;Navigate&lt;/h2&gt;
+&lt;p&gt;Ordinary people, unlike sailors, hardly ever navigate by compass. They learn a place first as landmarks, then as routes strung between them (left at the bank, straight on past the neem tree), and only later, if at all, as a &lt;a href=&#34;https://doi.org/10.1016/s0065-2407%2808%2960007-5&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;coherent layout&lt;/a&gt;. What they actually steer by is whatever scene is in front of them: a street, a landmark, an exit, the direction they happen to be facing.&lt;/p&gt;
+&lt;p&gt;A navigation map&amp;rsquo;s whole job is to connect that scene to the next move, so it works best turned to match it, with the top of the map pointing wherever the reader is actually walking. A turned map then has to say, in terms the reader can check on the spot, which way it has been turned: &amp;ldquo;West&amp;rdquo; along the top edge, &amp;ldquo;Uptown&amp;rdquo; along the right, a you-are-here arrow pointing the way the reader is facing, as on the WalkNYC sign below. A north arrow is one option among these, and rarely the most useful one.&lt;/p&gt;
+&lt;h3 id=&#34;outdoors&#34;&gt;Outdoors&lt;/h3&gt;
+&lt;p&gt;It is tempting to assume that once cardinal directions are easy to check outdoors, people default to using them. They do not. Different communities keep using whatever frame already works for them, cardinal or otherwise. Take the New York City subway map, an object with an unusually well-documented identity crisis. The original 1904 map lays Manhattan on its side, uptown to the right. Vignelli&amp;rsquo;s 1972 diagram, Hertz&amp;rsquo;s geographic 1979 redesign, and the MTA&amp;rsquo;s &lt;a href=&#34;https://www.mta.info/press-release/mta-unveils-first-fully-redesigned-subway-map-half-century&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;2025 return to form&lt;/a&gt; all instead stand Manhattan upright. Partly this is because riders think in uptown and downtown, not north and south. Partly it is because, to a Manhattanite, &lt;a href=&#34;https://saulsteinbergfoundation.org/essay/view-of-the-world-from-9th-avenue/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;the world simply revolves around Manhattan&lt;/a&gt;, other boroughs be damned. But uptown is not north: measured off the avenue centrelines, the island&amp;rsquo;s own street grid runs a full 29 degrees east of true north, a fact most New Yorkers have never needed and will be delighted never to need.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-6-1.png&#34; alt=&#34;&#34; width=&#34;1056&#34; /&gt;
+&lt;p&gt;&lt;em&gt;1904: New York Subway Souvenir, Burroughs &amp;amp; Co., public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:1904_IRT_NYC_Subwaymap.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;, excerpt. 1972: New York City Transit Authority, scan via &lt;a href=&#34;https://www.geographicus.com/P/AntiqueMap/newyorksubway-vignelli-1972-2&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geographicus&lt;/a&gt;. 2013: MTA, CC BY 2.0, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Official_New_York_City_Subway_Map_2013_vc.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. 2025: photo by Marc A. Hermann / MTA, CC BY 2.0, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:NYCS_map_2025_vc.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;, cropped.&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;indoors&#34;&gt;Indoors&lt;/h3&gt;
+&lt;p&gt;Step indoors and the outdoor cues vanish along with the reception bars. Walls hide the sun and the landmarks both, GPS degrades, and it takes only a couple of turns to lose track of which way is which. People reliably &lt;a href=&#34;https://doi.org/10.1177/0963721410383243&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;get lost in libraries, hospitals, and malls&lt;/a&gt;, mostly because of how the building is laid out rather than any failure of their own sense of direction. Two kinds of indoor map show up almost everywhere in response.&lt;/p&gt;
+&lt;p&gt;The first is the directory, whose whole purpose is helping people find things once they are already inside. This one, from the Okinawa Prefectural Museum and Art Museum in Naha, draws the building&amp;rsquo;s three floors stacked on top of one another, connected by the lifts and stairs that actually join them. A red marker on the ground floor announces &amp;ldquo;You are here,&amp;rdquo; the galleries are numbered, and each floor is labelled. Cardinal directions never come up; the building is its own frame.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;Floor directory at the Okinawa Prefectural Museum and Art Museum, Naha. The right half shows floors 1F, 2F and 3F drawn in perspective and stacked vertically, connected by lift shafts. A red &amp;amp;ldquo;You are here&amp;amp;rdquo; marker sits on the ground floor near the sub-entrance. Galleries are numbered. The left half gives opening hours and visitor rules. There is no north arrow.&#34; srcset=&#34;
+               /post/which-way-is-up/images/okinawa-museum-directory_hub908654f7e6989148b4e4bf55503669b_174181_8bf7c5ff5b77c1c492dae998f2f27501.webp 400w,
+               /post/which-way-is-up/images/okinawa-museum-directory_hub908654f7e6989148b4e4bf55503669b_174181_b360de316688d79141901f52c148a881.webp 760w,
+               /post/which-way-is-up/images/okinawa-museum-directory_hub908654f7e6989148b4e4bf55503669b_174181_1200x1200_fit_q75_h2_lanczos.webp 1200w&#34;
+               src=&#34;https://nkaza.github.io/post/which-way-is-up/images/okinawa-museum-directory_hub908654f7e6989148b4e4bf55503669b_174181_8bf7c5ff5b77c1c492dae998f2f27501.webp&#34;
+               width=&#34;760&#34;
+               height=&#34;513&#34;
+               loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+
+&lt;em&gt;Floor directory, Okinawa Prefectural Museum and Art Museum, Naha, February 2026. Photo by NORTLAUKAU 26088 JP, CC0, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:JP_%E6%B2%96%E7%B9%A9_Okinawa_%E9%82%A3%E9%9C%B8%E5%B8%82_Naha_City_%E6%B2%96%E7%B9%A9%E7%B8%A3%E7%AB%8B_%E6%AD%B7%E5%8F%B2%E5%8D%9A%E7%89%A9%E9%A4%A8_Okinawa_Prefectural_History_Museum_floor_plan_sign_morning_am_February_2026_N13P_02.jpg&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;, cropped.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The second kind is the evacuation plan, where the stakes are considerably higher and the rule has been written down accordingly. The international standard &lt;a href=&#34;https://cdn.standards.iteh.ai/samples/80678/912f683d0fcd4f7481f0c1366e0ddd5a/ISO-23601-2020.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ISO 23601&lt;/a&gt; requires that &amp;ldquo;the orientation of the plan as displayed shall be related to the viewer so that locations on the left of the plan are to the viewer&amp;rsquo;s left and locations on the right of the plan are to the viewer&amp;rsquo;s right.&amp;rdquo; Insisting on cardinal directions here instead (correct, absolute, and useless to someone choking on smoke) is exactly the kind of mistake that gets a standard written against it.&lt;/p&gt;
+&lt;h3 id=&#34;screens-where-pixels-matter&#34;&gt;Screens: where pixels matter&lt;/h3&gt;
+&lt;p&gt;On paper, the reader has to turn the map. On a phone or a car&amp;rsquo;s dashboard, the software turns it for them, and the reader is demoted to a blue arrow fixed at the centre of the screen, much like Micronesian navigators, whose islands sail past. Heading-up display makes the next turn easier to execute; north-up display makes it easier to plan a route and hold a mental &lt;a href=&#34;https://doi.org/10.1207/s15327043hup0504_3&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;picture of the area&lt;/a&gt;. Mapping apps offer both and quietly follow the same rule this whole post has been arguing for: a compass icon shows up only once the map has actually been rotated away from north, and tapping it snaps the map back and makes the icon disappear again. A compass permanently on screen would just be eating space that could otherwise be map, in exchange for telling the reader something true and irrelevant most of the time.&lt;/p&gt;
+&lt;p&gt;Turn-by-turn instructions take this one step further and dispense with the map entirely. &amp;ldquo;In 200 metres, turn left&amp;rdquo; is a purely relative frame: no north, no layout, nothing but the next move from wherever the reader currently stands. It is extremely efficient, and it likely costs something in spatial memory that nobody has fully priced in yet. Virtual reality also demonstrates just how little north matters to a body actually moving through a scene: in &lt;a href=&#34;https://diglib.eg.org/items/3dbe562f-4045-4d70-8c56-4c202be15b4c&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;redirected walking&lt;/a&gt;, the system imperceptibly rotates the virtual world around a walking user, who can be made to circle a small physical room while feeling entirely certain they are walking in a straight line. The system is, in effect, gaslighting the user&amp;rsquo;s inner ear, and we don&amp;rsquo;t seem to mind.&lt;/p&gt;
+&lt;h2 id=&#34;coordinate&#34;&gt;Coordinate&lt;/h2&gt;
+&lt;p&gt;Maps also help coordinate joint action, and whatever frame the people coordinating on it share has to be one every single one of them actually has. The simplest shared frame is an object everyone is standing on or can all see. Sailors set a course by compass but coordinate their own operations by a local frame instead: port and starboard. A fire crew does much the same: everyone on scene can see the building, so the building becomes the frame. The typical standard designates the &amp;ldquo;Alpha&amp;rdquo; side as the front entrance, or failing that, whichever side sits nearest a distinctive landmark, a swimming pool being the standard example, and names every other side relative to it. A firefighter who has spent ten minutes inside a smoke-filled building may have no working idea where north is; a swimming pool, they will remember. Players of team games like Counter-Strike face in every direction simultaneously, so each map gets its own community-agreed &lt;a href=&#34;https://refrag.gg/blog/cs2-map-callouts/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;callouts&lt;/a&gt;, such as &amp;ldquo;long,&amp;rdquo; &amp;ldquo;catwalk,&amp;rdquo; and &amp;ldquo;mid,&amp;rdquo; by which a team can coordinate an entire ambush over voice chat.&lt;/p&gt;
+&lt;p&gt;A wildfire, by contrast, has no front door and no street address. Crews arrive from a dozen different agencies, sometimes from other states entirely, working the ground, flying overhead, or coordinating from a dispatch room. So wildfire maps standardise on the cardinal frame instead, purely so that everyone involved can agree. But like sailors, these crews also lean on a local frame drawn from the fire itself: the &amp;ldquo;head&amp;rdquo; is the fastest-moving edge, and &amp;ldquo;heel&amp;rdquo; and &amp;ldquo;flanks&amp;rdquo; are defined relative to it, a frame with the inconvenient property of redefining itself continuously as wind and fuel shove the head around.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-7-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;&lt;em&gt;Left: Figure 2, Montgomery County Fire Chiefs&amp;rsquo; Association, &lt;a href=&#34;http://mcfirechiefs.org/wp-content/uploads/2021/09/MCFCA-Building-Side-Designation-System-final.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Recommended Practice 2007-4&lt;/a&gt;. Right: IAP map, Big Grass fire (OR-VAD-260201), 07/29/2026, Complex Incident Management Team 5, via the &lt;a href=&#34;https://ftp.wildfire.gov/public/incident_specific_maps/pacific_nw/2026_Incidents_Oregon/2026_BigGrass/20260729/iap_2026_BigGrass_85x11_ORVAD260201_0729_day.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;National Interagency Fire Center incident map archive&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Hospitals coordinate on a shared frame for the same reason. The radiologist reading a film and the surgeon later holding a scalpel have to agree on the patient&amp;rsquo;s own right and left, regardless of which way the image or the operating table happens to be facing. The convention is to hang the film as though the reader is standing face to face with the patient, so the patient&amp;rsquo;s actual right, marked &amp;ldquo;Dx&amp;rdquo; in the corner of a chest film, ends up on the viewer&amp;rsquo;s left. Veterinary radiographs keep the same rule: &lt;a href=&#34;https://todaysveterinarypractice.com/radiology-imaging/effects-of-positioning-respiration-and-technique-on-interpretation-of-thoracic-radiographs-of-dogs-and-cats/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&amp;ldquo;the cranial or right side of the patient should always be on the viewer&amp;rsquo;s left.&amp;rdquo;&lt;/a&gt; Reports spell the side out in words as a backup, on top of the marker. Even with both safeguards in place, &lt;a href=&#34;https://doi.org/10.2214/AJR.08.1778&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;laterality errors in radiology reports&lt;/a&gt; remain a recurring, sobering problem.&lt;/p&gt;
+&lt;p&gt;Other creatures manage this coordination without any concept of absolute frame or a map: watch &lt;a href=&#34;https://www.youtube.com/watch?v=bFDGPgXtK-U&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;honeybees dance out directions&lt;/a&gt;, &lt;a href=&#34;https://vimeo.com/103329200&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a thousand robots assemble themselves into a shape&lt;/a&gt;, or &lt;a href=&#34;https://vimeo.com/31158841&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a flock of starlings murmurate&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;retrace&#34;&gt;Retrace&lt;/h2&gt;
+&lt;p&gt;Retracing is coordination stretched across time, and it is the hardest version of the problem, because the reader was never there and none of the shared frames that make ordinary coordination easy are available to fall back on. Much like writing, the map has to carry its entire meaning in fixed, precise convention, and the reader still has to do the work of interpreting it correctly, decades or centuries later. That interpretation turns out to be considerably more fraught than it seems.&lt;/p&gt;
+&lt;h3 id=&#34;plat-surveys&#34;&gt;Plat surveys&lt;/h3&gt;
+&lt;p&gt;A survey plat is a legal record, and its reader (a surveyor, a buyer, a court, potentially a century on) shares nothing with the original surveyor except the document itself and whatever still survives on the ground. American land has been divided up two different ways, and each leans on its own frame.&lt;/p&gt;
+&lt;p&gt;Metes and bounds, the method used in the original colonies, describes a parcel as a walk: from a point of beginning, so many feet on a stated bearing to a stone, then onward to a tree. The frame is cardinal, and the oldest bearings were read straight off a compass, so they point at whatever magnetic north happened to be on that particular afternoon. To repeat the walk correctly, a later surveyor has to know exactly which north was in use, and when. Arkansas&amp;rsquo;s own &lt;a href=&#34;https://www.labor.arkansas.gov/wp-content/uploads/Minimum-STANDARDS-Of-Practice-2020-08-07.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;standards of practice for boundary surveys and plats&lt;/a&gt; require precisely this: every plat needs a &amp;ldquo;north arrow with basis of direction,&amp;rdquo; and if that basis comes from the Arkansas Plane Coordinate System, the plat must name the year of the system&amp;rsquo;s adjustment and the grid zone; if it instead defers to a deed or an earlier plat&amp;rsquo;s record bearing, it must cite the document and specify which boundary line controls. None of these candidates for north stay put for long.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-8-1.png&#34; alt=&#34;&#34; width=&#34;1104&#34; /&gt;
+&lt;p&gt;&lt;em&gt;Left: survey plat, Section 35, T21N, R12W, Baxter County, Arkansas, Tuck Land Surveying, 2008, U.S. Army Corps of Engineers, Little Rock District, public domain, via &lt;a href=&#34;https://commons.wikimedia.org/wiki/File:Tuck_08002_Corp_Eng_Copy_Plat_-_USACE-p16021coll10-9376.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Wikimedia Commons&lt;/a&gt;. Right: computed for the same corner.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;A magnetic bearing taken at the original 1827 post pointed 8.6 degrees east of true north. By the time the brass cap replaced it in 2008, declination here had drifted to 1.3 degrees; today it sits within a quarter degree of true, purely as an accident of timing. Grid north drifts far more slowly over time, but swap out the grid itself and it moves plenty: the state plane zone actually meant for this county disagrees with its neighbour across the Missouri line by nearly a degree, with the next UTM zone over by just under three, and with the CONUS Albers projection (this post&amp;rsquo;s own national map, misapplied here as though it were a local grid) by over two. Run the same coordinates through the British National Grid, built around a transverse Mercator centred on Britain, and grid north tips just over 90 degrees: a confident, precisely computed, entirely meaningless answer to a question that was never coherent to begin with.&lt;/p&gt;
+&lt;p&gt;And the state plane grid itself is due to be redefined again: SPCS2022 will replace the current zones when NAD83 is finally retired in favour of NATRF2022. So on a plat, the north arrow was never there to orient the reader. Its job is to go on the record: which north these bearings were measured against, and on what date, so that whoever comes looking later knows exactly which fiction to reverse-engineer.&lt;/p&gt;
+&lt;p&gt;The Public Land Survey System, which covers most of the American West, only looks cardinal from a distance. Every parcel is named by it, including the one above: Section 35, Township 21 North, Range 12 West. But the law actually anchors the system to the ground rather than to the compass. Corners &lt;a href=&#34;https://www.law.cornell.edu/uscode/text/43/752&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&amp;ldquo;marked in the surveys &amp;hellip; shall be established as the proper corners of sections&amp;rdquo;&lt;/a&gt;, wherever the original survey crew happened to set them, errors and all. The shared frame is the monument itself, the same way the building is the frame at a fire, and that is exactly why the Arkansas corner notes read like a chain of custody rather than a set of coordinates: an 1827 wooden post and two witness trees, inherited and re-verified by five different surveyors, down to a brass cap finally set in 2008.&lt;/p&gt;
+&lt;h3 id=&#34;post-hoc-investigations&#34;&gt;Post-hoc investigations&lt;/h3&gt;
+&lt;p&gt;Once the fire itself is out, the investigation starts: what went wrong, who is liable, what has to change. Those investigation maps are written for readers who were never on scene (investigators, insurers, courts), not for the crews who were. &amp;ldquo;Side Delta&amp;rdquo; meant something precise and immediate to the crew standing there; to everyone downstream, it means nothing until someone translates it back into cardinal directions. Police work runs into the identical need. The National Institute of Justice&amp;rsquo;s &lt;a href=&#34;https://www.ojp.gov/pdffiles1/nij/178280.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;crime scene guide&lt;/a&gt; instructs investigators to sketch the scene &amp;ldquo;indicating north on the sketch.&amp;rdquo; That is the same document doing a completely different job than the one the responding officer needed on arrival.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Four practices, several different answers, and not always the ones you would expect. Recognition mostly needs nothing more than a familiar shape and a couple of labels, no compass required. The exception is images with no built-in up of their own: turn a relief-inverted satellite photo the wrong way and canyons read as ridges; skip the beads on a horizontal-beam X-ray and a fluid line becomes unreadable. Both are the same fix, restoring information the image lost when it was flattened, not so anyone can verify it against the world outside, just so a reader can parse the picture correctly. Navigation, on the other hand, needs the map turned to match the reader&amp;rsquo;s own body, and a north arrow shows up only as a footnote to that, when the map has been turned some other way instead. Coordination needs a frame everyone present actually shares, and that frame is usually a building, a fire, or a callout on a game map long before it is a compass bearing. Only retracing, matching a document against the actual ground, genuinely needs a stated, dated north, and even then only because true, magnetic, and grid north each drift, disagree, and occasionally lie outright.&lt;/p&gt;
+&lt;p&gt;None of this makes the north arrow untenable in maps. The trouble starts, as it usually does, in the assumption that a map is a single kind of thing, answerable to a single fixed checklist, regardless of what it happens to be for.&lt;/p&gt;
 </description>
     </item>
     
@@ -1862,7 +1862,7 @@ library(tidyverse)
 library(exiftoolr)
 library(here)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;All the image handling in this post is done with &lt;code&gt;terra&lt;/code&gt;. It is usually used for satellite imagery and elevation models, but a photograph is also a raster, and every operation we need (reading, resizing, padding, cropping, summarising) is a standard raster operation.The only thing to be mindful of, is that terra&amp;rsquo;s &lt;code&gt;spatRaster&lt;/code&gt; expects a geographic coordinate system and an extent that is usually tied to earth. But as we discussed before, georasters are not the only types of rasters.&lt;/p&gt;
+&lt;p&gt;All the image handling in this post is done with &lt;code&gt;terra&lt;/code&gt;. It is usually used for satellite imagery and elevation models, but a photograph is also a raster, and every operation we need (reading, resizing, padding, cropping, summarising) is a standard raster operation. The only thing to be mindful of, is that terra&amp;rsquo;s &lt;code&gt;spatRaster&lt;/code&gt; expects a geographic coordinate system and an extent that is usually tied to earth. But as we discussed before, georasters are not the only types of rasters.&lt;/p&gt;
 &lt;h2 id=&#34;data&#34;&gt;Data&lt;/h2&gt;
 &lt;p&gt;We&amp;rsquo;ll use the same &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/geotagged.zip?d=w727164624f294adbaeb7f7df1e2700ae&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=M0IlHr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;street-level images from Rio de Janeiro, Brazil&lt;/a&gt; as the earlier post, collected through &lt;a href=&#34;https://kartaview.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kartaview&lt;/a&gt;. See that post&amp;rsquo;s &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/#data&#34;&gt;Data section&lt;/a&gt; for a fuller discussion of the imagery. Download the images and unzip them into your &lt;code&gt;InputData&lt;/code&gt; folder.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img_files_paths &amp;lt;- here(&amp;quot;InputData&amp;quot;, &amp;quot;geotagged&amp;quot;) %&amp;gt;%
