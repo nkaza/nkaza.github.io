@@ -1,0 +1,1898 @@
+<!DOCTYPE html><html lang="en-us" >
+
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.4.0 for Hugo" />
+  
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  
+  
+
+  
+    <meta name="google-site-verification" content="qq9qzDEmo2CWQJ-GjKaptUQs7Odqb9aHsm4k_yFaVAQ" />
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Nikhil Kaza" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction In the previous post, we ran a pre-trained YOLO26 model on street-level photographs from Rio de Janeiro, entirely in R. The model accepts exactly one input size, 640 × 640 pixels, so every photograph was shrunk to fit." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/tiled-window-object-detection/" />
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css" integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.css" integrity="" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.d0a3c4356a76e741a5d37933d707b9e1.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-121426944-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'UA-121426944-1', { 'anonymize_ip': true });
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://nkaza.github.io/post/tiled-window-object-detection/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  
+  
+
+  
+  
+    
+    
+  
+  <meta property="twitter:card" content="summary_large_image" />
+  
+  <meta property="og:site_name" content="Nikhil Kaza" />
+  <meta property="og:url" content="https://nkaza.github.io/post/tiled-window-object-detection/" />
+  <meta property="og:title" content="Finding Pedestrians with Tiled Windows | Nikhil Kaza" />
+  <meta property="og:description" content="Introduction In the previous post, we ran a pre-trained YOLO26 model on street-level photographs from Rio de Janeiro, entirely in R. The model accepts exactly one input size, 640 × 640 pixels, so every photograph was shrunk to fit." /><meta property="og:image" content="https://nkaza.github.io/post/tiled-window-object-detection/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/tiled-window-object-detection/featured.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2026-09-29T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2026-09-29T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nkaza.github.io/post/tiled-window-object-detection/"
+  },
+  "headline": "Finding Pedestrians with Tiled Windows",
+  
+  "image": [
+    "https://nkaza.github.io/post/tiled-window-object-detection/featured.png"
+  ],
+  
+  "datePublished": "2026-09-29T00:00:00Z",
+  "dateModified": "2026-09-29T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Nikhil Kaza"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nikhil Kaza",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction In the previous post, we ran a pre-trained YOLO26 model on street-level photographs from Rio de Janeiro, entirely in R. The model accepts exactly one input size, 640 × 640 pixels, so every photograph was shrunk to fit."
+}
+</script>
+
+  
+
+  
+
+  
+  
+  
+  
+  
+    <script src="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js" integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css" integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#1565c0",
+          "text": "rgb(255, 255, 255)"
+        },
+        "button": {
+          "background": "rgb(255, 255, 255)",
+          "text": "#1565c0"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "Third party cookies are used on this website. You can disable them on your browser's privacy settings without losing any functionality.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "/privacy/"
+      }
+    })});
+  </script>
+
+
+  
+
+
+
+
+
+  <title>Finding Pedestrians with Tiled Windows | Nikhil Kaza</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="d02d2fcaa4abde4abd5b58615deb8099" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.7e85d6cfe81caeb57cc49452f9b55e03.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="header--fixed">
+  <nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+    <div class="container-xl">
+
+      
+      <div class="d-none d-lg-inline-flex">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+      <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+      
+      <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+        <a class="navbar-brand" href="/">Nikhil Kaza</a>
+      </div>
+      
+
+      
+      
+      <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+        
+        <ul class="navbar-nav d-md-inline-flex">
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#about"><span>Home</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#posts"><span>Posts</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#featured"><span>Publications</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#projects"><span>Projects</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/files/pdfs/cv.pdf"><span>CV</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+              
+              
+              
+                
+              
+              
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="/#contact"><span>Contact</span></a>
+          </li>
+
+          
+          
+
+          
+
+          
+          
+          
+            
+              
+            
+          
+
+          
+
+          
+          
+          
+          
+
+          
+            
+              
+              
+            
+            
+          
+
+          <li class="nav-item">
+            <a class="nav-link " href="https://cse.google.com/cse?cx=003304552390625136873:si-f1ne2ahe" target="_blank" rel="noopener"><span>Search</span></a>
+          </li>
+
+          
+          
+
+        
+
+          
+        </ul>
+      </div>
+
+      <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+        
+        
+          
+        
+
+        
+        
+
+        
+        
+        <li class="nav-item dropdown theme-dropdown">
+          <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item js-set-theme-light">
+              <span>Light</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-dark">
+              <span>Dark</span>
+            </a>
+            <a href="#" class="dropdown-item js-set-theme-auto">
+              <span>Automatic</span>
+            </a>
+          </div>
+        </li>
+        
+
+        
+        
+
+      </ul>
+
+    </div>
+  </nav>
+</header>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+<div class="article-container pt-3">
+  <h1>Finding Pedestrians with Tiled Windows</h1>
+
+  
+
+  
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Sep 29, 2026
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    19 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/r/">R</a>, <a href="/category/object-detection/">object detection</a>, <a href="/category/torch/">torch</a></span>
+  
+
+</div>
+
+  
+
+
+
+
+
+</div>
+
+
+<div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 540px;">
+  <div style="position: relative">
+    <img src="/post/tiled-window-object-detection/featured_hufb2676353a9b345a98feb8f5f70fe7bb_1439713_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="540" alt="" class="featured-image">
+    
+  </div>
+</div>
+
+
+  <div class="article-container">
+    <div class="row">
+      <div class="col-12 col-lg-9 article-style">
+        <h2 id="introduction">Introduction</h2>
+<p>In the <a href="/post/object-detection-without-python/">previous post</a>, we ran a pre-trained YOLO26 model on street-level photographs from Rio de Janeiro, entirely in R. The model accepts exactly one input size, 640 × 640 pixels, so every photograph was shrunk to fit. A 3,232 × 2,424 photograph was reduced by a factor of five in each direction, which means every 25 pixels of the original became one pixel for the model.</p>
+<p>For a car in the foreground, that doesn&rsquo;t matter. For a pedestrian half a block away, it can mean the difference between being counted and being missed. A person who is 100 pixels tall in the photograph is 20 pixels tall by the time the model sees them. Pedestrians are exactly the road users that planners most often want to count and that cameras mounted on cars are most likely to miss.</p>
+<p>This post takes a different approach. Instead of shrinking the whole photograph, we cut it into overlapping <em>tiled windows</em> and look at each one in turn. Each window is 640 × 640 pixels of the original photograph, so the model sees every part of it at full resolution. We then combine the detections from all the windows into a single set, throwing out the duplicates. In the computer vision literature this is known as sliced inference; one widely used implementation is <a href="https://arxiv.org/abs/2202.06934" target="_blank" rel="noopener">SAHI</a>.</p>
+<h2 id="setup">Setup</h2>
+<p>This post uses the same packages, model and class table as the previous one.</p>
+<pre><code class="language-r">library(torch)
+library(terra)
+library(tidyverse)
+library(here)
+</code></pre>
+<p>If you are following along, download the <a href="https://adminliveunc-my.sharepoint.com/:f:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rioimages?d=w8740a28abfdd44d7b7a33640282b7edd&amp;csf=1&amp;web=1&amp;e=0wLsej" target="_blank" rel="noopener">exported model, yolo26s.torchscript</a> and the <a href="/post/object-detection-without-python/coco_classes.csv">COCO class table, coco_classes.csv</a>, and save both in your <code>InputData</code> folder.</p>
+<pre><code class="language-r">model        &lt;- here(&quot;InputData&quot;, &quot;yolo26s.torchscript&quot;) %&gt;% jit_load()
+coco_classes &lt;- here(&quot;InputData&quot;, &quot;coco_classes.csv&quot;) %&gt;% read_csv(show_col_types = FALSE)
+</code></pre>
+<pre><code class="language-r">IMG_SIZE    &lt;- 640L   # the model's fixed input size
+PAD_VALUE   &lt;- 114    # grey padding
+CONF_THRESH &lt;- 0.5
+</code></pre>
+<p>The functions below are the ones we built in the previous post, with one change. They take a raster rather than a file path, because a window is a piece of a raster, not a file. <code>detect_raster()</code> returns only pedestrians (the <code>person</code> class), in the pixel coordinates of whatever raster it was given, with y counting down from the top.</p>
+<pre><code class="language-r">read_photo &lt;- function(path) {
+    r &lt;- rast(path)
+    ext(r) &lt;- ext(0, ncol(r), 0, nrow(r))   # pixel units; GDAL needs an explicit extent
+    names(r) &lt;- c(&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;)
+    r
+}
+
+letterbox &lt;- function(r, size = IMG_SIZE) {
+    w &lt;- ncol(r); h &lt;- nrow(r)
+    ext(r) &lt;- ext(0, w, 0, h)   # local pixel coordinates, even for a window
+
+    scale &lt;- min(size / w, size / h)
+    new_w &lt;- round(w * scale); new_h &lt;- round(h * scale)
+    template &lt;- rast(nrows = new_h, ncols = new_w, nlyrs = 3, extent = ext(r), crs = crs(r))
+    resized &lt;- resample(r, template, method = &quot;average&quot;)
+
+    left &lt;- (size - new_w) %/% 2L; top &lt;- (size - new_h) %/% 2L
+    ext(resized) &lt;- ext(left, left + new_w, size - top - new_h, size - top)
+    padded &lt;- extend(resized, ext(0, size, 0, size), fill = PAD_VALUE)
+
+    list(raster = padded, scale = scale, left = left, top = top)
+}
+
+raster_to_tensor &lt;- function(r) {
+    torch_tensor(aperm(as.array(r), c(3, 1, 2)), dtype = torch_float32())$div(255)$unsqueeze(1)
+}
+
+detect_raster &lt;- function(r, conf_thresh = CONF_THRESH, classes = &quot;person&quot;) {
+    lb &lt;- letterbox(r)
+    pred &lt;- as.matrix(with_no_grad(model(raster_to_tensor(lb$raster)))$squeeze(1))
+
+    keep  &lt;- pred[, 5] &gt; conf_thresh
+    boxes &lt;- pred[keep, 1:4, drop = FALSE]
+    boxes[, c(1, 3)] &lt;- (boxes[, c(1, 3)] - lb$left) / lb$scale
+    boxes[, c(2, 4)] &lt;- (boxes[, c(2, 4)] - lb$top)  / lb$scale
+
+    tibble(
+        xmin = boxes[, 1], ymin = boxes[, 2],
+        xmax = boxes[, 3], ymax = boxes[, 4],
+        conf = pred[keep, 5],
+        class_id = pred[keep, 6]
+    ) %&gt;%
+        left_join(coco_classes, by = &quot;class_id&quot;, relationship = &quot;many-to-one&quot;) %&gt;%
+        filter(class %in% classes)
+}
+
+plot_detections &lt;- function(r, dets, main = NULL, col = &quot;cyan&quot;) {
+    ext(r) &lt;- ext(0, ncol(r), 0, nrow(r))
+    h &lt;- nrow(r)
+    plotRGB(r, mar = c(0, 0, if (is.null(main)) 0 else 1.5, 0))
+    if (!is.null(main)) title(main, line = 0.2, cex.main = 1)
+    if (nrow(dets) == 0) return(invisible())
+    rect(dets$xmin, h - dets$ymax, dets$xmax, h - dets$ymin, border = col, lwd = 1.5)
+}
+</code></pre>
+<h2 id="two-photographs">Two photographs</h2>
+<p>We use the same <a href="https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/geotagged.zip?d=w727164624f294adbaeb7f7df1e2700ae&amp;csf=1&amp;web=1&amp;e=M0IlHr" target="_blank" rel="noopener">street-level images from Rio de Janeiro</a> as the previous post, unzipped into your <code>InputData</code> folder.</p>
+<pre><code class="language-r">img_files_paths &lt;- here(&quot;InputData&quot;, &quot;geotagged&quot;) %&gt;%
+    list.files(full.names = TRUE, pattern = &quot;\\.jpg$&quot;)
+</code></pre>
+<pre><code class="language-r">street_path &lt;- img_files_paths[str_detect(img_files_paths, &quot;1318415481&quot;)]
+beach_path  &lt;- img_files_paths[str_detect(img_files_paths, &quot;1319660481&quot;)]
+
+street &lt;- read_photo(street_path)
+beach  &lt;- read_photo(beach_path)
+dim(street)
+# [1] 2424 3232    3
+dim(beach)
+# [1] 2988 3984    3
+</code></pre>
+<p>The first photograph was taken through the windscreen of a bus on a busy commercial street. The second is a beach, with people scattered along the shoreline at different distances from the camera. Here is what a single pass of the model finds in each.</p>
+<pre><code class="language-r">street_single &lt;- detect_raster(street)
+beach_single  &lt;- detect_raster(beach)
+
+par(mfrow = c(1, 2))
+plot_detections(street, street_single, paste(&quot;street, single pass:&quot;, nrow(street_single)))
+plot_detections(beach,  beach_single,  paste(&quot;beach, single pass:&quot;, nrow(beach_single)))
+</code></pre>
+<img src="https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-9-1.png" alt="" width="1152" />
+<p>In both photographs you can see many more people than the model found.</p>
+<h2 id="what-the-single-pass-loses">What the single pass loses</h2>
+<p>Let&rsquo;s look closely at the pavement on the right of the street photograph, where the model found a few people. We crop a region around those detections, and compare it at full resolution with the same region at the resolution the model actually saw.</p>
+<pre><code class="language-r">h &lt;- nrow(street)
+zoom &lt;- ext(min(street_single$xmin) - 400, max(street_single$xmax) + 300,
+            h - max(street_single$ymax) - 150, h - min(street_single$ymin) + 150)
+zoom &lt;- terra::intersect(zoom, ext(street))   # keep the region inside the photograph
+
+scale &lt;- IMG_SIZE / max(dim(street)[1:2])
+template &lt;- rast(nrows = round(nrow(street) * scale), ncols = round(ncol(street) * scale),
+                 nlyrs = 3, extent = ext(street), crs = crs(street))
+street_seen &lt;- resample(street, template, method = &quot;average&quot;)   # what the model saw
+
+full_crop &lt;- crop(street, zoom)
+seen_crop &lt;- crop(street_seen, zoom)
+dim(full_crop)
+# [1] 532 994   3
+dim(seen_crop)
+# [1] 105 197   3
+</code></pre>
+<p>Because <code>street_seen</code> covers the same extent as <code>street</code>, only with larger cells, the same extent <code>zoom</code> crops the same part of the scene from both. The two crops cover identical ground, but one has 528,808 pixels in each band and the other 20,685.</p>
+<pre><code class="language-r">par(mfrow = c(1, 2))
+plotRGB(full_crop, mar = c(0, 0, 1.5, 0)); title(&quot;full resolution&quot;, line = 0.2)
+plotRGB(seen_crop, mar = c(0, 0, 1.5, 0)); title(&quot;what the model saw&quot;, line = 0.2)
+</code></pre>
+<img src="https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-11-1.png" alt="" width="1152" />
+<p>At the model&rsquo;s resolution, the people on the pavement are blurred into a few blocks of dark cells. You can still tell there is a crowd, because you know what a crowd looks like, but the heads, arms and legs that the model relies on are mostly gone.</p>
+<h2 id="laying-out-the-windows">Laying out the windows</h2>
+<p>We want windows of 640 × 640 pixels, the model&rsquo;s own input size, so that each window reaches the model without being shrunk at all. Neighbouring windows should <em>overlap</em>, so that a person who stands on the boundary between two windows appears whole in at least one of them. We ask for an overlap of at least 20%.</p>
+<pre><code class="language-r">WIN     &lt;- 640L
+OVERLAP &lt;- 0.2
+</code></pre>
+<p>Along one dimension of length <code>n</code>, the first window starts at 0 and the last window must end exactly at <code>n</code>. We need enough windows that consecutive starts are no more than <code>WIN * (1 - OVERLAP)</code> pixels apart, and we space them evenly between the first and the last.</p>
+<pre><code class="language-r">window_starts &lt;- function(n, size = WIN, overlap = OVERLAP) {
+    k &lt;- ceiling((n - size) / (size * (1 - overlap))) + 1   # number of windows
+    round(seq(0, n - size, length.out = k))
+}
+
+window_starts(ncol(street))
+# [1]    0  432  864 1296 1728 2160 2592
+window_starts(nrow(street))
+# [1]    0  446  892 1338 1784
+</code></pre>
+<p>Every window is then a combination of a row start and a column start. <code>expand_grid()</code> creates all combinations.</p>
+<pre><code class="language-r">make_windows &lt;- function(r, size = WIN, overlap = OVERLAP) {
+    expand_grid(row0 = window_starts(nrow(r), size, overlap),
+                col0 = window_starts(ncol(r), size, overlap)) %&gt;%
+        mutate(window = row_number())
+}
+
+street_windows &lt;- make_windows(street)
+street_windows
+# # A tibble: 35 x 3
+#     row0  col0 window
+#    &lt;dbl&gt; &lt;dbl&gt;  &lt;int&gt;
+#  1     0     0      1
+#  2     0   432      2
+#  3     0   864      3
+#  4     0  1296      4
+#  5     0  1728      5
+#  6     0  2160      6
+#  7     0  2592      7
+#  8   446     0      8
+#  9   446   432      9
+# 10   446   864     10
+# # i 25 more rows
+</code></pre>
+<p><code>row0</code> and <code>col0</code> are the image row and column where each window&rsquo;s top-left corner sits. To crop a window from the raster, we need its extent in map coordinates. As in the previous post, image rows count down from the top and map y counts up from the bottom, so the window&rsquo;s top edge, at image row <code>row0</code>, is at map y <code>h - row0</code>.</p>
+<pre><code class="language-r">window_extent &lt;- function(r, row0, col0, size = WIN) {
+    ext(col0, col0 + size, nrow(r) - row0 - size, nrow(r) - row0)
+}
+
+draw_extent &lt;- function(e, ...) {
+    v &lt;- as.vector(e)   # xmin, xmax, ymin, ymax
+    rect(v[1], v[3], v[2], v[4], ...)
+}
+</code></pre>
+<p>To demonstrate, we pick the window that contains the most of the single pass&rsquo;s detections, which is on the pavement.</p>
+<pre><code class="language-r">centres &lt;- street_single %&gt;% mutate(cx = (xmin + xmax) / 2, cy = (ymin + ymax) / 2)
+one &lt;- street_windows %&gt;%
+    mutate(n = map2_int(row0, col0, ~ sum(between(centres$cx, .y, .y + WIN) &amp;
+                                          between(centres$cy, .x, .x + WIN)))) %&gt;%
+    slice_max(n, n = 1, with_ties = FALSE)
+one
+# # A tibble: 1 x 4
+#    row0  col0 window     n
+#   &lt;dbl&gt; &lt;dbl&gt;  &lt;int&gt; &lt;int&gt;
+# 1  1338  2592     28     3
+</code></pre>
+<p>With 35 overlapping windows, drawing all their outlines produces an unreadable mesh. A clearer way to see the layout is itself a raster: a <em>coverage</em> raster, in which each cell holds the number of windows that see it. We make a coarse template covering the photograph, turn each window&rsquo;s extent into a polygon, rasterize it (1 inside the window, 0 outside), and add them up.</p>
+<pre><code class="language-r">coverage &lt;- function(r, windows, res = 8) {
+    template &lt;- rast(ext(r), resolution = res, crs = crs(r))
+    cover &lt;- init(template, 0)
+    for (i in seq_len(nrow(windows))) {
+        e &lt;- window_extent(r, windows$row0[i], windows$col0[i])
+        cover &lt;- cover + rasterize(as.polygons(e, crs = crs(r)), template, background = 0)
+    }
+    cover
+}
+
+street_cover &lt;- coverage(street, street_windows)
+freq(street_cover) %&gt;% mutate(share = count / sum(count))
+#   layer value count     share
+# 1     1     1 50840 0.4153188
+# 2     1     2 56284 0.4597915
+# 3     1     4 15288 0.1248897
+</code></pre>
+<p>Only part of the photograph is seen by a single window. The rest lies in the overlap strips, seen twice, or where four windows meet at a corner.</p>
+<pre><code class="language-r">cover_colors &lt;- c(&quot;1&quot; = &quot;#FFFFB2&quot;, &quot;2&quot; = &quot;#FD8D3C&quot;, &quot;3&quot; = &quot;#E31A1C&quot;, &quot;4&quot; = &quot;#800026&quot;)
+
+plot_coverage &lt;- function(r, cover, main = NULL) {
+    plotRGB(r, mar = c(0, 0, if (is.null(main)) 0 else 1.5, 4))
+    if (!is.null(main)) title(main, line = 0.2)
+    v &lt;- sort(unique(values(cover)))
+    plot(cover, add = TRUE, type = &quot;classes&quot;, col = cover_colors[as.character(v)],
+         alpha = 0.5, plg = list(title = &quot;windows&quot;))
+}
+</code></pre>
+<pre><code class="language-r">plot_coverage(street, street_cover)
+draw_extent(window_extent(street, one$row0, one$col0), border = &quot;yellow&quot;, lwd = 3)
+</code></pre>
+<img src="https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-19-1.png" alt="" width="672" />
+<p>The yellow square is the window we will look at first.</p>
+<p>The model will run once for each window, so this approach costs about 35 times as much computation as a single pass.</p>
+<h2 id="detecting-in-one-window">Detecting in one window</h2>
+<p>Take the highlighted window. Cropping gives a 640 × 640 raster, and <code>detect_raster()</code> returns its detections in the window&rsquo;s own pixel coordinates.</p>
+<pre><code class="language-r">one_rast &lt;- crop(street, window_extent(street, one$row0, one$col0))
+dim(one_rast)
+# [1] 640 640   3
+
+one_dets &lt;- detect_raster(one_rast)
+one_dets
+# # A tibble: 4 x 7
+#     xmin  ymin  xmax  ymax  conf class_id class 
+#    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt; 
+# 1  41.2  132.  174.   306. 0.832        0 person
+# 2   4.45  96.2  59.0  252. 0.776        0 person
+# 3 116.   206.  208.   281. 0.539        0 person
+# 4 417.    55.7 485.   258. 0.514        0 person
+plot_detections(one_rast, one_dets)
+</code></pre>
+<img src="https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-20-1.png" alt="" width="384" />
+<p>At full resolution, the model finds people that the single pass could not. It is not always right, though. The motorcycle&rsquo;s rider is a <code>person</code>, which is correct as far as the COCO categories go, but not a pedestrian. And the smallest box, with the lowest confidence, is on the motorcycle&rsquo;s top case. Keep both in mind: more detail brings more detections, and not all of them are what we want.</p>
+<p>To place these boxes on the full photograph, shift them by the window&rsquo;s position: add <code>col0</code> to the x coordinates and <code>row0</code> to the y coordinates.</p>
+<pre><code class="language-r">one_dets %&gt;%
+    mutate(xmin = xmin + one$col0, xmax = xmax + one$col0,
+           ymin = ymin + one$row0, ymax = ymax + one$row0)
+# # A tibble: 4 x 7
+#    xmin  ymin  xmax  ymax  conf class_id class 
+#   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt; 
+# 1 2633. 1470. 2766. 1644. 0.832        0 person
+# 2 2596. 1434. 2651. 1590. 0.776        0 person
+# 3 2708. 1544. 2800. 1619. 0.539        0 person
+# 4 3009. 1394. 3077. 1596. 0.514        0 person
+</code></pre>
+<h2 id="detecting-in-every-window">Detecting in every window</h2>
+<p>The same steps, applied to every row of the windows table with <code>pmap_dfr()</code>, give the detections from every window in photograph coordinates. We also keep the single-pass detections, labelled as window 0. The single pass still has a job to do: a person close to the camera can be larger than a window, and only the single pass sees them whole.</p>
+<pre><code class="language-r">detect_in_windows &lt;- function(r, windows) {
+    pmap_dfr(windows, function(row0, col0, window) {
+        detect_raster(crop(r, window_extent(r, row0, col0))) %&gt;%
+            mutate(xmin = xmin + col0, xmax = xmax + col0,
+                   ymin = ymin + row0, ymax = ymax + row0,
+                   window = window)
+    })
+}
+
+street_raw &lt;- bind_rows(
+    street_single %&gt;% mutate(window = 0L),
+    detect_in_windows(street, street_windows)
+)
+nrow(street_raw)
+# [1] 34
+</code></pre>
+<pre><code class="language-r">plot_detections(street, street_raw, paste(&quot;all windows:&quot;, nrow(street_raw), &quot;boxes&quot;))
+</code></pre>
+<img src="https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-23-1.png" alt="" width="672" />
+<p>There are 34 boxes, but far fewer people. Because the windows overlap, a person in an overlap zone is detected in two windows, and a person where four windows meet can be detected in four. We need to merge these duplicates into one box per person.</p>
+<h2 id="merging-duplicates">Merging duplicates</h2>
+<h3 id="measuring-overlap">Measuring overlap</h3>
+<p>Two boxes are probably the same person if they overlap a lot. The standard measure of overlap is the <em>intersection over union</em> (IoU): the area the two boxes share, divided by the total area they cover together. It is 1 for identical boxes and 0 for boxes that do not touch.</p>
+<pre><code class="language-r">box_iou &lt;- function(a, b) {
+    iw &lt;- pmax(0, pmin(a$xmax, b$xmax) - pmax(a$xmin, b$xmin))   # width of the intersection
+    ih &lt;- pmax(0, pmin(a$ymax, b$ymax) - pmax(a$ymin, b$ymin))   # height of the intersection
+    inter &lt;- iw * ih
+    area_a &lt;- (a$xmax - a$xmin) * (a$ymax - a$ymin)
+    area_b &lt;- (b$xmax - b$xmin) * (b$ymax - b$ymin)
+    inter / (area_a + area_b - inter)
+}
+</code></pre>
+<p><code>box_iou()</code> compares one box <code>a</code> against any number of boxes <code>b</code>, because <code>pmin()</code> and <code>pmax()</code> work element by element.</p>
+<pre><code class="language-r">toy &lt;- tibble(xmin = c(0, 10, 100), ymin = 0, xmax = c(40, 50, 140), ymax = 100)
+box_iou(toy[1, ], toy)   # itself, a shifted copy, a distant box
+# [1] 1.0 0.6 0.0
+</code></pre>
+<h3 id="non-maximum-suppression">Non-maximum suppression</h3>
+<p><em>Non-maximum suppression</em> (NMS) uses IoU to remove duplicates. Sort the boxes by confidence. Keep the most confident box, and discard every remaining box that overlaps it by more than a threshold. Then move to the next most confident box that is still left, and repeat.</p>
+<pre><code class="language-r">nms &lt;- function(dets, overlap_fn = box_iou, thresh = 0.5) {
+    dets &lt;- arrange(dets, desc(conf))
+    keep &lt;- rep(TRUE, nrow(dets))
+    for (i in seq_len(nrow(dets))) {
+        if (!keep[i]) next
+        rest &lt;- which(keep &amp; seq_len(nrow(dets)) &gt; i)
+        if (length(rest) == 0) next
+        keep[rest[overlap_fn(dets[i, ], dets[rest, ]) &gt; thresh]] &lt;- FALSE
+    }
+    dets[keep, ]
+}
+
+street_iou &lt;- nms(street_raw)
+nrow(street_iou)
+# [1] 18
+</code></pre>
+<pre><code class="language-r">plot_detections(street, street_iou, paste(&quot;NMS with IoU:&quot;, nrow(street_iou)))
+</code></pre>
+<img src="https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-27-1.png" alt="" width="672" />
+<p>That removed most of the duplicates, but look closely at the people on the pavement. Some of them still have a smaller box inside or overlapping a larger one.</p>
+<h3 id="fragments-at-window-edges">Fragments at window edges</h3>
+<p>These leftover boxes are <em>fragments</em>. When a window&rsquo;s edge cuts through a person, the model often still recognises the part it can see, a head and torso without the legs, say, and draws a box around that part only. The same person seen whole in a neighbouring window gets a full-size box. The two boxes overlap a lot, but because one is much smaller than the other, their IoU is low.</p>
+<pre><code class="language-r">toy &lt;- tibble(xmin = c(0, 0), ymin = c(0, 0), xmax = c(40, 40), ymax = c(100, 45))
+box_iou(toy[1, ], toy[2, ])   # a full person and the top 45% of the same person
+# [1] 0.45
+</code></pre>
+<p>IoU is only 0.45, below the threshold, so NMS keeps both.</p>
+<p>One tempting fix is to measure overlap differently: divide the intersection by the area of the <em>smaller</em> box instead of by the union (intersection over smaller, IoS). A fragment lies almost entirely inside the full box, so its IoS is close to 1.</p>
+<pre><code class="language-r">box_ios &lt;- function(a, b) {
+    iw &lt;- pmax(0, pmin(a$xmax, b$xmax) - pmax(a$xmin, b$xmin))
+    ih &lt;- pmax(0, pmin(a$ymax, b$ymax) - pmax(a$ymin, b$ymin))
+    area_a &lt;- (a$xmax - a$xmin) * (a$ymax - a$ymin)
+    area_b &lt;- (b$xmax - b$xmin) * (b$ymax - b$ymin)
+    iw * ih / pmin(area_a, area_b)
+}
+box_ios(toy[1, ], toy[2, ])
+# [1] 1
+</code></pre>
+<p>The trouble is that IoS cannot tell a fragment from a <em>different</em> person partly hidden behind someone else, which is common on a crowded pavement. Two people walking one behind the other can easily give IoS above 0.5, and one of them would be discarded.</p>
+<p>A better fix is to stop fragments from being created in the first place. A box that touches a window&rsquo;s edge is probably a fragment, <em>unless</em> that edge is also the edge of the photograph. And because the windows overlap, a person cut by one window&rsquo;s edge should appear whole in a neighbouring window. So we drop every window detection that comes within a few pixels of an inner window edge.</p>
+<pre><code class="language-r">EDGE_MARGIN &lt;- 4   # pixels
+
+drop_edge_boxes &lt;- function(dets, row0, col0, r, size = WIN, margin = EDGE_MARGIN) {
+    touches &lt;-
+        (dets$xmin &lt; margin        &amp; col0 &gt; 0) |                # left edge, not the photograph's
+        (dets$xmax &gt; size - margin &amp; col0 + size &lt; ncol(r)) |   # right edge
+        (dets$ymin &lt; margin        &amp; row0 &gt; 0) |                # top edge
+        (dets$ymax &gt; size - margin &amp; row0 + size &lt; nrow(r))     # bottom edge
+    dets[!touches, ]
+}
+</code></pre>
+<p>The check has to happen in the window&rsquo;s own coordinates, before the boxes are shifted onto the photograph, so it goes inside the loop over windows.</p>
+<pre><code class="language-r">detect_in_windows &lt;- function(r, windows) {
+    pmap_dfr(windows, function(row0, col0, window) {
+        detect_raster(crop(r, window_extent(r, row0, col0))) %&gt;%
+            drop_edge_boxes(row0, col0, r) %&gt;%
+            mutate(xmin = xmin + col0, xmax = xmax + col0,
+                   ymin = ymin + row0, ymax = ymax + row0,
+                   window = window)
+    })
+}
+
+street_edge &lt;- bind_rows(
+    street_single %&gt;% mutate(window = 0L),
+    detect_in_windows(street, street_windows)
+)
+street_final &lt;- nms(street_edge)
+nrow(street_final)
+# [1] 15
+</code></pre>
+<pre><code class="language-r">par(mfrow = c(1, 2))
+plot_detections(street, street_iou,   paste(&quot;NMS with IoU:&quot;, nrow(street_iou)))
+plot_detections(street, street_final, paste(&quot;edge filter, then NMS with IoU:&quot;, nrow(street_final)))
+</code></pre>
+<img src="https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-32-1.png" alt="" width="1152" />
+<p>The single pass found 3 pedestrians in this photograph. The windows find 15. Most of the new ones are people on the pavement on the right who were too small to recognise at the single pass&rsquo;s resolution.</p>
+<p>Not every new box is a pedestrian. Look at the rear-view mirror at the top of the photograph: the model has found the bus driver&rsquo;s reflection. By the model&rsquo;s standards, that is a correct detection, since there <em>is</em> a person there. For counting pedestrians on the street, it is wrong. More detail helps the model find things, including things you did not want it to find.</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Merge <code>street_raw</code> with <code>nms(street_raw, overlap_fn = box_ios)</code> instead. Compare the result with <code>street_final</code>. Find a place where IoS removed a box that the edge filter kept, and decide which is right.</li>
+<li>Change <code>EDGE_MARGIN</code> to 1 and to 20. How do the results change? Why might a box that belongs to a whole person still come within a few pixels of a window&rsquo;s edge?</li>
+<li>The NMS threshold of 0.5 is a convention. Try 0.3 and 0.7. Which duplicates survive, and which real people are removed?</li>
+<li>How would you exclude the reflection in the mirror? Think about what you know about the scene that the model does not.</li>
+</ul>
+<hr>
+<h2 id="putting-it-together">Putting it together</h2>
+<p>We collect the steps into one function that takes a photograph and returns its merged pedestrian detections.</p>
+<pre><code class="language-r">detect_pedestrians &lt;- function(r, size = WIN, overlap = OVERLAP) {
+    stopifnot(&quot;photograph is smaller than one window&quot; = nrow(r) &gt;= size &amp;&amp; ncol(r) &gt;= size)
+    windows &lt;- make_windows(r, size, overlap)
+    bind_rows(
+        detect_raster(r) %&gt;% mutate(window = 0L),
+        detect_in_windows(r, windows)
+    ) %&gt;%
+        nms()
+}
+
+all.equal(detect_pedestrians(street), street_final)
+# [1] TRUE
+</code></pre>
+<p>The <code>stopifnot()</code> guards an assumption that <code>window_starts()</code> makes silently: that the photograph is at least as large as one window. None of the photographs in this collection is smaller than 640 pixels in either dimension, but a function that crops windows from outside the photograph would not tell you so.</p>
+<p>Now the beach.</p>
+<pre><code class="language-r">beach_final &lt;- detect_pedestrians(beach)
+
+par(mfrow = c(1, 2))
+plot_detections(beach, beach_single, paste(&quot;single pass:&quot;, nrow(beach_single)))
+plot_detections(beach, beach_final,  paste(&quot;tiled windows:&quot;, nrow(beach_final)))
+</code></pre>
+<img src="https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-34-1.png" alt="" width="1152" />
+<p>On the beach, the gain is larger still: 6 people in a single pass and 26 with tiled windows. Most of the new detections are people along the shoreline and under the umbrellas in the distance, who are only a few pixels tall at the single pass&rsquo;s resolution.</p>
+<hr>
+<p><strong>Exercise</strong></p>
+<ul>
+<li>Zoom in on the beach photograph and check the new detections by eye. How many are people? How many are something else (an umbrella pole, a post, a shadow)? How many people are still missed?</li>
+<li>Choose a random sample of 30 photographs from <code>img_files_paths</code>. For each, count pedestrians with a single pass and with <code>detect_pedestrians()</code>. Plot one count against the other. In which kinds of scenes do the windows help most? Remember to keep the photographs with zero pedestrians.</li>
+<li>Time <code>detect_pedestrians()</code> on one photograph with <code>system.time()</code>. How long would the whole collection of 484 photographs take? Is it worth it for your purpose?</li>
+<li>Try windows of 1,280 pixels (so the model sees each window at half resolution) and of 320 pixels (where the model enlarges each window). How do the counts and running times change?</li>
+<li>A person close to the camera may be taller than the overlap between windows, or even taller than a window. Which part of our method is responsible for finding them? What happens if you drop the single pass?</li>
+<li><code>detect_raster()</code> keeps only <code>person</code>. Change <code>classes</code> to include <code>car</code>, <code>bus</code> and <code>truck</code>. What happens to a large vehicle close to the camera, which is cut by several windows? Does the edge filter handle it?</li>
+</ul>
+<hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>A single pass through the model shrinks the photograph to fit the model, and small, distant pedestrians shrink with it until there is nothing left to recognise. Tiled windows let the model see every part of the photograph at full resolution, at the cost of running the model many times and then having to reconcile its answers.</p>
+<p>That reconciliation is where most of the work lies. Overlapping windows produce duplicates, and windows that cut through people produce fragments. Non-maximum suppression removes the duplicates. Dropping boxes that touch an inner window edge removes most of the fragments, as long as the windows overlap enough for every person to appear whole somewhere.</p>
+<p>More detections are not automatically better detections. The same resolution that reveals distant pedestrians also reveals reflections, posters and shapes that only resemble people. The counts from tiled windows are a better starting point than the counts from a single pass, but they are still a starting point for human review, not a finished count.</p>
+
+      </div>
+      <div class="col-12 col-lg-3 docs-toc">
+        <ul class="nav toc-top">
+          <li>
+            <a href="#" id="back_to_top" class="docs-toc-title">
+              Contents
+            </a>
+          </li>
+        </ul>
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#setup">Setup</a></li>
+        <li><a href="#two-photographs">Two photographs</a></li>
+        <li><a href="#what-the-single-pass-loses">What the single pass loses</a></li>
+        <li><a href="#laying-out-the-windows">Laying out the windows</a></li>
+        <li><a href="#detecting-in-one-window">Detecting in one window</a></li>
+        <li><a href="#detecting-in-every-window">Detecting in every window</a></li>
+        <li><a href="#merging-duplicates">Merging duplicates</a>
+          <ul>
+            <li><a href="#measuring-overlap">Measuring overlap</a></li>
+            <li><a href="#non-maximum-suppression">Non-maximum suppression</a></li>
+            <li><a href="#fragments-at-window-edges">Fragments at window edges</a></li>
+          </ul>
+        </li>
+        <li><a href="#putting-it-together">Putting it together</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+      </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+<div class="share-box">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/tiled-window-object-detection/&amp;text=Finding%20Pedestrians%20with%20Tiled%20Windows" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/tiled-window-object-detection/&amp;t=Finding%20Pedestrians%20with%20Tiled%20Windows" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Finding%20Pedestrians%20with%20Tiled%20Windows&amp;body=https://nkaza.github.io/post/tiled-window-object-detection/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/tiled-window-object-detection/&amp;title=Finding%20Pedestrians%20with%20Tiled%20Windows" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Finding%20Pedestrians%20with%20Tiled%20Windows%20https://nkaza.github.io/post/tiled-window-object-detection/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/tiled-window-object-detection/&amp;title=Finding%20Pedestrians%20with%20Tiled%20Windows" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://nkaza.github.io/"><img class="avatar mr-3 avatar-circle" src="/author/nikhil-kaza/avatar_hub3f48de923d36a3a7f2a35d484d2e93d_2804906_270x270_fill_q75_lanczos_center.jpg" alt="Nikhil Kaza"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://nkaza.github.io/">Nikhil Kaza</a></h5>
+      <h6 class="card-subtitle">Professor</h6>
+      <p class="card-text">My research interests include urbanization patterns, local energy policy and equity</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=F0FfN00AAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/nkaza" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://orcid.org/0000-0002-9536-7643" target="_blank" rel="noopener">
+        <i class="ai ai-orcid"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/nikhilkaza/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/object-detection-without-python/">Object Detection with YOLO26 and Torch</a></li>
+      
+      <li><a href="/post/object-detection-using-pre-trained-neural-network-models/">Object Detection Using Pre-trained Neural Network Models</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+  <p class="powered-by">
+    
+      <a href="/privacy/">Privacy Policy</a>
+    
+    
+  </p>
+  
+
+  
+  <p class="powered-by">
+    © 2018-2025 Nikhil Kaza
+  </p>
+  
+
+  
+  
+
+
+
+
+
+  
+  
+  
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  <p class="powered-by copyright-license-text">
+    Except as otherwise noted, this work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank">CC BY SA 4.0</a>, and code samples are licensed under the MIT License.
+  </p>
+  
+
+  <p class="powered-by footer-license-icons">
+    <a href="https://creativecommons.org/licenses/by-sa/4.0" rel="noopener noreferrer" target="_blank" aria-label="Creative Commons">
+      <i class="fab fa-creative-commons fa-2x" aria-hidden="true"></i>
+      <i class="fab fa-creative-commons-by fa-2x" aria-hidden="true"></i>
+      
+      
+        <i class="fab fa-creative-commons-sa fa-2x" aria-hidden="true"></i>
+      
+    </a>
+  </p>
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.39c2c2890f0b42f46fe5d6e8216f4117.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdn.jsdelivr.net/gh/desandro/imagesloaded@v4.1.4/imagesloaded.pkgd.min.js" integrity="sha512-S5PZ9GxJZO16tT9r3WJp/Safn31eu8uWrzglMahDT4dsmgqWonRY9grk3j+3tfuPr9WJNsfooOR7Gi7HL5W2jw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/metafizzy/isotope@v3.0.6/dist/isotope.pkgd.min.js" integrity="sha512-Zq2BOxyhvnRFXu0+WE6ojpZLOU2jdnqbrM1hmVdGzyeCa1DgM3X5Q4A/Is9xA1IkbUeDd7755dNNI/PzSf2Pew==" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js" integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.min.js" integrity="" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js" integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js" integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+
+    
+    
+    
+    <script id="page-data" type="application/json">{"use_headroom":true}</script>
+
+    
+    
+      <script src="/js/wowchemy-headroom.6b73888494485d3b0874ca2ec83f614f.js" type="module"></script>
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.912ac2d390999e2611191259848f756b.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

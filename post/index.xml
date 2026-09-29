@@ -5,12 +5,441 @@
     <link>https://nkaza.github.io/post/</link>
       <atom:link href="https://nkaza.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <description>Posts</description>
-    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Wed, 23 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><copyright>© 2018-2025 Nikhil Kaza</copyright><lastBuildDate>Tue, 29 Sep 2026 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_512x512_fill_lanczos_center_3.png</url>
       <title>Posts</title>
       <link>https://nkaza.github.io/post/</link>
     </image>
+    
+    <item>
+      <title>Finding Pedestrians with Tiled Windows</title>
+      <link>https://nkaza.github.io/post/tiled-window-object-detection/</link>
+      <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
+      <guid>https://nkaza.github.io/post/tiled-window-object-detection/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://nkaza.github.io/post/object-detection-without-python/&#34;&gt;previous post&lt;/a&gt;, we ran a pre-trained YOLO26 model on street-level photographs from Rio de Janeiro, entirely in R. The model accepts exactly one input size, 640 × 640 pixels, so every photograph was shrunk to fit. A 3,232 × 2,424 photograph was reduced by a factor of five in each direction, which means every 25 pixels of the original became one pixel for the model.&lt;/p&gt;
+&lt;p&gt;For a car in the foreground, that doesn&amp;rsquo;t matter. For a pedestrian half a block away, it can mean the difference between being counted and being missed. A person who is 100 pixels tall in the photograph is 20 pixels tall by the time the model sees them. Pedestrians are exactly the road users that planners most often want to count and that cameras mounted on cars are most likely to miss.&lt;/p&gt;
+&lt;p&gt;This post takes a different approach. Instead of shrinking the whole photograph, we cut it into overlapping &lt;em&gt;tiled windows&lt;/em&gt; and look at each one in turn. Each window is 640 × 640 pixels of the original photograph, so the model sees every part of it at full resolution. We then combine the detections from all the windows into a single set, throwing out the duplicates. In the computer vision literature this is known as sliced inference; one widely used implementation is &lt;a href=&#34;https://arxiv.org/abs/2202.06934&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SAHI&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;setup&#34;&gt;Setup&lt;/h2&gt;
+&lt;p&gt;This post uses the same packages, model and class table as the previous one.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(torch)
+library(terra)
+library(tidyverse)
+library(here)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you are following along, download the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:f:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rioimages?d=w8740a28abfdd44d7b7a33640282b7edd&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=0wLsej&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;exported model, yolo26s.torchscript&lt;/a&gt; and the &lt;a href=&#34;https://nkaza.github.io/post/object-detection-without-python/coco_classes.csv&#34;&gt;COCO class table, coco_classes.csv&lt;/a&gt;, and save both in your &lt;code&gt;InputData&lt;/code&gt; folder.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;model        &amp;lt;- here(&amp;quot;InputData&amp;quot;, &amp;quot;yolo26s.torchscript&amp;quot;) %&amp;gt;% jit_load()
+coco_classes &amp;lt;- here(&amp;quot;InputData&amp;quot;, &amp;quot;coco_classes.csv&amp;quot;) %&amp;gt;% read_csv(show_col_types = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;IMG_SIZE    &amp;lt;- 640L   # the model&#39;s fixed input size
+PAD_VALUE   &amp;lt;- 114    # grey padding
+CONF_THRESH &amp;lt;- 0.5
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The functions below are the ones we built in the previous post, with one change. They take a raster rather than a file path, because a window is a piece of a raster, not a file. &lt;code&gt;detect_raster()&lt;/code&gt; returns only pedestrians (the &lt;code&gt;person&lt;/code&gt; class), in the pixel coordinates of whatever raster it was given, with y counting down from the top.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;read_photo &amp;lt;- function(path) {
+    r &amp;lt;- rast(path)
+    ext(r) &amp;lt;- ext(0, ncol(r), 0, nrow(r))   # pixel units; GDAL needs an explicit extent
+    names(r) &amp;lt;- c(&amp;quot;red&amp;quot;, &amp;quot;green&amp;quot;, &amp;quot;blue&amp;quot;)
+    r
+}
+
+letterbox &amp;lt;- function(r, size = IMG_SIZE) {
+    w &amp;lt;- ncol(r); h &amp;lt;- nrow(r)
+    ext(r) &amp;lt;- ext(0, w, 0, h)   # local pixel coordinates, even for a window
+
+    scale &amp;lt;- min(size / w, size / h)
+    new_w &amp;lt;- round(w * scale); new_h &amp;lt;- round(h * scale)
+    template &amp;lt;- rast(nrows = new_h, ncols = new_w, nlyrs = 3, extent = ext(r), crs = crs(r))
+    resized &amp;lt;- resample(r, template, method = &amp;quot;average&amp;quot;)
+
+    left &amp;lt;- (size - new_w) %/% 2L; top &amp;lt;- (size - new_h) %/% 2L
+    ext(resized) &amp;lt;- ext(left, left + new_w, size - top - new_h, size - top)
+    padded &amp;lt;- extend(resized, ext(0, size, 0, size), fill = PAD_VALUE)
+
+    list(raster = padded, scale = scale, left = left, top = top)
+}
+
+raster_to_tensor &amp;lt;- function(r) {
+    torch_tensor(aperm(as.array(r), c(3, 1, 2)), dtype = torch_float32())$div(255)$unsqueeze(1)
+}
+
+detect_raster &amp;lt;- function(r, conf_thresh = CONF_THRESH, classes = &amp;quot;person&amp;quot;) {
+    lb &amp;lt;- letterbox(r)
+    pred &amp;lt;- as.matrix(with_no_grad(model(raster_to_tensor(lb$raster)))$squeeze(1))
+
+    keep  &amp;lt;- pred[, 5] &amp;gt; conf_thresh
+    boxes &amp;lt;- pred[keep, 1:4, drop = FALSE]
+    boxes[, c(1, 3)] &amp;lt;- (boxes[, c(1, 3)] - lb$left) / lb$scale
+    boxes[, c(2, 4)] &amp;lt;- (boxes[, c(2, 4)] - lb$top)  / lb$scale
+
+    tibble(
+        xmin = boxes[, 1], ymin = boxes[, 2],
+        xmax = boxes[, 3], ymax = boxes[, 4],
+        conf = pred[keep, 5],
+        class_id = pred[keep, 6]
+    ) %&amp;gt;%
+        left_join(coco_classes, by = &amp;quot;class_id&amp;quot;, relationship = &amp;quot;many-to-one&amp;quot;) %&amp;gt;%
+        filter(class %in% classes)
+}
+
+plot_detections &amp;lt;- function(r, dets, main = NULL, col = &amp;quot;cyan&amp;quot;) {
+    ext(r) &amp;lt;- ext(0, ncol(r), 0, nrow(r))
+    h &amp;lt;- nrow(r)
+    plotRGB(r, mar = c(0, 0, if (is.null(main)) 0 else 1.5, 0))
+    if (!is.null(main)) title(main, line = 0.2, cex.main = 1)
+    if (nrow(dets) == 0) return(invisible())
+    rect(dets$xmin, h - dets$ymax, dets$xmax, h - dets$ymin, border = col, lwd = 1.5)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;two-photographs&#34;&gt;Two photographs&lt;/h2&gt;
+&lt;p&gt;We use the same &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/geotagged.zip?d=w727164624f294adbaeb7f7df1e2700ae&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=M0IlHr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;street-level images from Rio de Janeiro&lt;/a&gt; as the previous post, unzipped into your &lt;code&gt;InputData&lt;/code&gt; folder.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img_files_paths &amp;lt;- here(&amp;quot;InputData&amp;quot;, &amp;quot;geotagged&amp;quot;) %&amp;gt;%
+    list.files(full.names = TRUE, pattern = &amp;quot;\\.jpg$&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;street_path &amp;lt;- img_files_paths[str_detect(img_files_paths, &amp;quot;1318415481&amp;quot;)]
+beach_path  &amp;lt;- img_files_paths[str_detect(img_files_paths, &amp;quot;1319660481&amp;quot;)]
+
+street &amp;lt;- read_photo(street_path)
+beach  &amp;lt;- read_photo(beach_path)
+dim(street)
+# [1] 2424 3232    3
+dim(beach)
+# [1] 2988 3984    3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The first photograph was taken through the windscreen of a bus on a busy commercial street. The second is a beach, with people scattered along the shoreline at different distances from the camera. Here is what a single pass of the model finds in each.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;street_single &amp;lt;- detect_raster(street)
+beach_single  &amp;lt;- detect_raster(beach)
+
+par(mfrow = c(1, 2))
+plot_detections(street, street_single, paste(&amp;quot;street, single pass:&amp;quot;, nrow(street_single)))
+plot_detections(beach,  beach_single,  paste(&amp;quot;beach, single pass:&amp;quot;, nrow(beach_single)))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-9-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;In both photographs you can see many more people than the model found.&lt;/p&gt;
+&lt;h2 id=&#34;what-the-single-pass-loses&#34;&gt;What the single pass loses&lt;/h2&gt;
+&lt;p&gt;Let&amp;rsquo;s look closely at the pavement on the right of the street photograph, where the model found a few people. We crop a region around those detections, and compare it at full resolution with the same region at the resolution the model actually saw.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;h &amp;lt;- nrow(street)
+zoom &amp;lt;- ext(min(street_single$xmin) - 400, max(street_single$xmax) + 300,
+            h - max(street_single$ymax) - 150, h - min(street_single$ymin) + 150)
+zoom &amp;lt;- terra::intersect(zoom, ext(street))   # keep the region inside the photograph
+
+scale &amp;lt;- IMG_SIZE / max(dim(street)[1:2])
+template &amp;lt;- rast(nrows = round(nrow(street) * scale), ncols = round(ncol(street) * scale),
+                 nlyrs = 3, extent = ext(street), crs = crs(street))
+street_seen &amp;lt;- resample(street, template, method = &amp;quot;average&amp;quot;)   # what the model saw
+
+full_crop &amp;lt;- crop(street, zoom)
+seen_crop &amp;lt;- crop(street_seen, zoom)
+dim(full_crop)
+# [1] 532 994   3
+dim(seen_crop)
+# [1] 105 197   3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Because &lt;code&gt;street_seen&lt;/code&gt; covers the same extent as &lt;code&gt;street&lt;/code&gt;, only with larger cells, the same extent &lt;code&gt;zoom&lt;/code&gt; crops the same part of the scene from both. The two crops cover identical ground, but one has 528,808 pixels in each band and the other 20,685.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;par(mfrow = c(1, 2))
+plotRGB(full_crop, mar = c(0, 0, 1.5, 0)); title(&amp;quot;full resolution&amp;quot;, line = 0.2)
+plotRGB(seen_crop, mar = c(0, 0, 1.5, 0)); title(&amp;quot;what the model saw&amp;quot;, line = 0.2)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-11-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;At the model&amp;rsquo;s resolution, the people on the pavement are blurred into a few blocks of dark cells. You can still tell there is a crowd, because you know what a crowd looks like, but the heads, arms and legs that the model relies on are mostly gone.&lt;/p&gt;
+&lt;h2 id=&#34;laying-out-the-windows&#34;&gt;Laying out the windows&lt;/h2&gt;
+&lt;p&gt;We want windows of 640 × 640 pixels, the model&amp;rsquo;s own input size, so that each window reaches the model without being shrunk at all. Neighbouring windows should &lt;em&gt;overlap&lt;/em&gt;, so that a person who stands on the boundary between two windows appears whole in at least one of them. We ask for an overlap of at least 20%.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;WIN     &amp;lt;- 640L
+OVERLAP &amp;lt;- 0.2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Along one dimension of length &lt;code&gt;n&lt;/code&gt;, the first window starts at 0 and the last window must end exactly at &lt;code&gt;n&lt;/code&gt;. We need enough windows that consecutive starts are no more than &lt;code&gt;WIN * (1 - OVERLAP)&lt;/code&gt; pixels apart, and we space them evenly between the first and the last.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;window_starts &amp;lt;- function(n, size = WIN, overlap = OVERLAP) {
+    k &amp;lt;- ceiling((n - size) / (size * (1 - overlap))) + 1   # number of windows
+    round(seq(0, n - size, length.out = k))
+}
+
+window_starts(ncol(street))
+# [1]    0  432  864 1296 1728 2160 2592
+window_starts(nrow(street))
+# [1]    0  446  892 1338 1784
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Every window is then a combination of a row start and a column start. &lt;code&gt;expand_grid()&lt;/code&gt; creates all combinations.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;make_windows &amp;lt;- function(r, size = WIN, overlap = OVERLAP) {
+    expand_grid(row0 = window_starts(nrow(r), size, overlap),
+                col0 = window_starts(ncol(r), size, overlap)) %&amp;gt;%
+        mutate(window = row_number())
+}
+
+street_windows &amp;lt;- make_windows(street)
+street_windows
+# # A tibble: 35 x 3
+#     row0  col0 window
+#    &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;int&amp;gt;
+#  1     0     0      1
+#  2     0   432      2
+#  3     0   864      3
+#  4     0  1296      4
+#  5     0  1728      5
+#  6     0  2160      6
+#  7     0  2592      7
+#  8   446     0      8
+#  9   446   432      9
+# 10   446   864     10
+# # i 25 more rows
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;row0&lt;/code&gt; and &lt;code&gt;col0&lt;/code&gt; are the image row and column where each window&amp;rsquo;s top-left corner sits. To crop a window from the raster, we need its extent in map coordinates. As in the previous post, image rows count down from the top and map y counts up from the bottom, so the window&amp;rsquo;s top edge, at image row &lt;code&gt;row0&lt;/code&gt;, is at map y &lt;code&gt;h - row0&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;window_extent &amp;lt;- function(r, row0, col0, size = WIN) {
+    ext(col0, col0 + size, nrow(r) - row0 - size, nrow(r) - row0)
+}
+
+draw_extent &amp;lt;- function(e, ...) {
+    v &amp;lt;- as.vector(e)   # xmin, xmax, ymin, ymax
+    rect(v[1], v[3], v[2], v[4], ...)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To demonstrate, we pick the window that contains the most of the single pass&amp;rsquo;s detections, which is on the pavement.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;centres &amp;lt;- street_single %&amp;gt;% mutate(cx = (xmin + xmax) / 2, cy = (ymin + ymax) / 2)
+one &amp;lt;- street_windows %&amp;gt;%
+    mutate(n = map2_int(row0, col0, ~ sum(between(centres$cx, .y, .y + WIN) &amp;amp;
+                                          between(centres$cy, .x, .x + WIN)))) %&amp;gt;%
+    slice_max(n, n = 1, with_ties = FALSE)
+one
+# # A tibble: 1 x 4
+#    row0  col0 window     n
+#   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;
+# 1  1338  2592     28     3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With 35 overlapping windows, drawing all their outlines produces an unreadable mesh. A clearer way to see the layout is itself a raster: a &lt;em&gt;coverage&lt;/em&gt; raster, in which each cell holds the number of windows that see it. We make a coarse template covering the photograph, turn each window&amp;rsquo;s extent into a polygon, rasterize it (1 inside the window, 0 outside), and add them up.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;coverage &amp;lt;- function(r, windows, res = 8) {
+    template &amp;lt;- rast(ext(r), resolution = res, crs = crs(r))
+    cover &amp;lt;- init(template, 0)
+    for (i in seq_len(nrow(windows))) {
+        e &amp;lt;- window_extent(r, windows$row0[i], windows$col0[i])
+        cover &amp;lt;- cover + rasterize(as.polygons(e, crs = crs(r)), template, background = 0)
+    }
+    cover
+}
+
+street_cover &amp;lt;- coverage(street, street_windows)
+freq(street_cover) %&amp;gt;% mutate(share = count / sum(count))
+#   layer value count     share
+# 1     1     1 50840 0.4153188
+# 2     1     2 56284 0.4597915
+# 3     1     4 15288 0.1248897
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Only part of the photograph is seen by a single window. The rest lies in the overlap strips, seen twice, or where four windows meet at a corner.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;cover_colors &amp;lt;- c(&amp;quot;1&amp;quot; = &amp;quot;#FFFFB2&amp;quot;, &amp;quot;2&amp;quot; = &amp;quot;#FD8D3C&amp;quot;, &amp;quot;3&amp;quot; = &amp;quot;#E31A1C&amp;quot;, &amp;quot;4&amp;quot; = &amp;quot;#800026&amp;quot;)
+
+plot_coverage &amp;lt;- function(r, cover, main = NULL) {
+    plotRGB(r, mar = c(0, 0, if (is.null(main)) 0 else 1.5, 4))
+    if (!is.null(main)) title(main, line = 0.2)
+    v &amp;lt;- sort(unique(values(cover)))
+    plot(cover, add = TRUE, type = &amp;quot;classes&amp;quot;, col = cover_colors[as.character(v)],
+         alpha = 0.5, plg = list(title = &amp;quot;windows&amp;quot;))
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_coverage(street, street_cover)
+draw_extent(window_extent(street, one$row0, one$col0), border = &amp;quot;yellow&amp;quot;, lwd = 3)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-19-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;The yellow square is the window we will look at first.&lt;/p&gt;
+&lt;p&gt;The model will run once for each window, so this approach costs about 35 times as much computation as a single pass.&lt;/p&gt;
+&lt;h2 id=&#34;detecting-in-one-window&#34;&gt;Detecting in one window&lt;/h2&gt;
+&lt;p&gt;Take the highlighted window. Cropping gives a 640 × 640 raster, and &lt;code&gt;detect_raster()&lt;/code&gt; returns its detections in the window&amp;rsquo;s own pixel coordinates.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;one_rast &amp;lt;- crop(street, window_extent(street, one$row0, one$col0))
+dim(one_rast)
+# [1] 640 640   3
+
+one_dets &amp;lt;- detect_raster(one_rast)
+one_dets
+# # A tibble: 4 x 7
+#     xmin  ymin  xmax  ymax  conf class_id class 
+#    &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; 
+# 1  41.2  132.  174.   306. 0.832        0 person
+# 2   4.45  96.2  59.0  252. 0.776        0 person
+# 3 116.   206.  208.   281. 0.539        0 person
+# 4 417.    55.7 485.   258. 0.514        0 person
+plot_detections(one_rast, one_dets)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-20-1.png&#34; alt=&#34;&#34; width=&#34;384&#34; /&gt;
+&lt;p&gt;At full resolution, the model finds people that the single pass could not. It is not always right, though. The motorcycle&amp;rsquo;s rider is a &lt;code&gt;person&lt;/code&gt;, which is correct as far as the COCO categories go, but not a pedestrian. And the smallest box, with the lowest confidence, is on the motorcycle&amp;rsquo;s top case. Keep both in mind: more detail brings more detections, and not all of them are what we want.&lt;/p&gt;
+&lt;p&gt;To place these boxes on the full photograph, shift them by the window&amp;rsquo;s position: add &lt;code&gt;col0&lt;/code&gt; to the x coordinates and &lt;code&gt;row0&lt;/code&gt; to the y coordinates.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;one_dets %&amp;gt;%
+    mutate(xmin = xmin + one$col0, xmax = xmax + one$col0,
+           ymin = ymin + one$row0, ymax = ymax + one$row0)
+# # A tibble: 4 x 7
+#    xmin  ymin  xmax  ymax  conf class_id class 
+#   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt; 
+# 1 2633. 1470. 2766. 1644. 0.832        0 person
+# 2 2596. 1434. 2651. 1590. 0.776        0 person
+# 3 2708. 1544. 2800. 1619. 0.539        0 person
+# 4 3009. 1394. 3077. 1596. 0.514        0 person
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;detecting-in-every-window&#34;&gt;Detecting in every window&lt;/h2&gt;
+&lt;p&gt;The same steps, applied to every row of the windows table with &lt;code&gt;pmap_dfr()&lt;/code&gt;, give the detections from every window in photograph coordinates. We also keep the single-pass detections, labelled as window 0. The single pass still has a job to do: a person close to the camera can be larger than a window, and only the single pass sees them whole.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detect_in_windows &amp;lt;- function(r, windows) {
+    pmap_dfr(windows, function(row0, col0, window) {
+        detect_raster(crop(r, window_extent(r, row0, col0))) %&amp;gt;%
+            mutate(xmin = xmin + col0, xmax = xmax + col0,
+                   ymin = ymin + row0, ymax = ymax + row0,
+                   window = window)
+    })
+}
+
+street_raw &amp;lt;- bind_rows(
+    street_single %&amp;gt;% mutate(window = 0L),
+    detect_in_windows(street, street_windows)
+)
+nrow(street_raw)
+# [1] 34
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_detections(street, street_raw, paste(&amp;quot;all windows:&amp;quot;, nrow(street_raw), &amp;quot;boxes&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-23-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;There are 34 boxes, but far fewer people. Because the windows overlap, a person in an overlap zone is detected in two windows, and a person where four windows meet can be detected in four. We need to merge these duplicates into one box per person.&lt;/p&gt;
+&lt;h2 id=&#34;merging-duplicates&#34;&gt;Merging duplicates&lt;/h2&gt;
+&lt;h3 id=&#34;measuring-overlap&#34;&gt;Measuring overlap&lt;/h3&gt;
+&lt;p&gt;Two boxes are probably the same person if they overlap a lot. The standard measure of overlap is the &lt;em&gt;intersection over union&lt;/em&gt; (IoU): the area the two boxes share, divided by the total area they cover together. It is 1 for identical boxes and 0 for boxes that do not touch.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;box_iou &amp;lt;- function(a, b) {
+    iw &amp;lt;- pmax(0, pmin(a$xmax, b$xmax) - pmax(a$xmin, b$xmin))   # width of the intersection
+    ih &amp;lt;- pmax(0, pmin(a$ymax, b$ymax) - pmax(a$ymin, b$ymin))   # height of the intersection
+    inter &amp;lt;- iw * ih
+    area_a &amp;lt;- (a$xmax - a$xmin) * (a$ymax - a$ymin)
+    area_b &amp;lt;- (b$xmax - b$xmin) * (b$ymax - b$ymin)
+    inter / (area_a + area_b - inter)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;box_iou()&lt;/code&gt; compares one box &lt;code&gt;a&lt;/code&gt; against any number of boxes &lt;code&gt;b&lt;/code&gt;, because &lt;code&gt;pmin()&lt;/code&gt; and &lt;code&gt;pmax()&lt;/code&gt; work element by element.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;toy &amp;lt;- tibble(xmin = c(0, 10, 100), ymin = 0, xmax = c(40, 50, 140), ymax = 100)
+box_iou(toy[1, ], toy)   # itself, a shifted copy, a distant box
+# [1] 1.0 0.6 0.0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;non-maximum-suppression&#34;&gt;Non-maximum suppression&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Non-maximum suppression&lt;/em&gt; (NMS) uses IoU to remove duplicates. Sort the boxes by confidence. Keep the most confident box, and discard every remaining box that overlaps it by more than a threshold. Then move to the next most confident box that is still left, and repeat.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;nms &amp;lt;- function(dets, overlap_fn = box_iou, thresh = 0.5) {
+    dets &amp;lt;- arrange(dets, desc(conf))
+    keep &amp;lt;- rep(TRUE, nrow(dets))
+    for (i in seq_len(nrow(dets))) {
+        if (!keep[i]) next
+        rest &amp;lt;- which(keep &amp;amp; seq_len(nrow(dets)) &amp;gt; i)
+        if (length(rest) == 0) next
+        keep[rest[overlap_fn(dets[i, ], dets[rest, ]) &amp;gt; thresh]] &amp;lt;- FALSE
+    }
+    dets[keep, ]
+}
+
+street_iou &amp;lt;- nms(street_raw)
+nrow(street_iou)
+# [1] 18
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_detections(street, street_iou, paste(&amp;quot;NMS with IoU:&amp;quot;, nrow(street_iou)))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-27-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;That removed most of the duplicates, but look closely at the people on the pavement. Some of them still have a smaller box inside or overlapping a larger one.&lt;/p&gt;
+&lt;h3 id=&#34;fragments-at-window-edges&#34;&gt;Fragments at window edges&lt;/h3&gt;
+&lt;p&gt;These leftover boxes are &lt;em&gt;fragments&lt;/em&gt;. When a window&amp;rsquo;s edge cuts through a person, the model often still recognises the part it can see, a head and torso without the legs, say, and draws a box around that part only. The same person seen whole in a neighbouring window gets a full-size box. The two boxes overlap a lot, but because one is much smaller than the other, their IoU is low.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;toy &amp;lt;- tibble(xmin = c(0, 0), ymin = c(0, 0), xmax = c(40, 40), ymax = c(100, 45))
+box_iou(toy[1, ], toy[2, ])   # a full person and the top 45% of the same person
+# [1] 0.45
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;IoU is only 0.45, below the threshold, so NMS keeps both.&lt;/p&gt;
+&lt;p&gt;One tempting fix is to measure overlap differently: divide the intersection by the area of the &lt;em&gt;smaller&lt;/em&gt; box instead of by the union (intersection over smaller, IoS). A fragment lies almost entirely inside the full box, so its IoS is close to 1.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;box_ios &amp;lt;- function(a, b) {
+    iw &amp;lt;- pmax(0, pmin(a$xmax, b$xmax) - pmax(a$xmin, b$xmin))
+    ih &amp;lt;- pmax(0, pmin(a$ymax, b$ymax) - pmax(a$ymin, b$ymin))
+    area_a &amp;lt;- (a$xmax - a$xmin) * (a$ymax - a$ymin)
+    area_b &amp;lt;- (b$xmax - b$xmin) * (b$ymax - b$ymin)
+    iw * ih / pmin(area_a, area_b)
+}
+box_ios(toy[1, ], toy[2, ])
+# [1] 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The trouble is that IoS cannot tell a fragment from a &lt;em&gt;different&lt;/em&gt; person partly hidden behind someone else, which is common on a crowded pavement. Two people walking one behind the other can easily give IoS above 0.5, and one of them would be discarded.&lt;/p&gt;
+&lt;p&gt;A better fix is to stop fragments from being created in the first place. A box that touches a window&amp;rsquo;s edge is probably a fragment, &lt;em&gt;unless&lt;/em&gt; that edge is also the edge of the photograph. And because the windows overlap, a person cut by one window&amp;rsquo;s edge should appear whole in a neighbouring window. So we drop every window detection that comes within a few pixels of an inner window edge.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;EDGE_MARGIN &amp;lt;- 4   # pixels
+
+drop_edge_boxes &amp;lt;- function(dets, row0, col0, r, size = WIN, margin = EDGE_MARGIN) {
+    touches &amp;lt;-
+        (dets$xmin &amp;lt; margin        &amp;amp; col0 &amp;gt; 0) |                # left edge, not the photograph&#39;s
+        (dets$xmax &amp;gt; size - margin &amp;amp; col0 + size &amp;lt; ncol(r)) |   # right edge
+        (dets$ymin &amp;lt; margin        &amp;amp; row0 &amp;gt; 0) |                # top edge
+        (dets$ymax &amp;gt; size - margin &amp;amp; row0 + size &amp;lt; nrow(r))     # bottom edge
+    dets[!touches, ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The check has to happen in the window&amp;rsquo;s own coordinates, before the boxes are shifted onto the photograph, so it goes inside the loop over windows.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detect_in_windows &amp;lt;- function(r, windows) {
+    pmap_dfr(windows, function(row0, col0, window) {
+        detect_raster(crop(r, window_extent(r, row0, col0))) %&amp;gt;%
+            drop_edge_boxes(row0, col0, r) %&amp;gt;%
+            mutate(xmin = xmin + col0, xmax = xmax + col0,
+                   ymin = ymin + row0, ymax = ymax + row0,
+                   window = window)
+    })
+}
+
+street_edge &amp;lt;- bind_rows(
+    street_single %&amp;gt;% mutate(window = 0L),
+    detect_in_windows(street, street_windows)
+)
+street_final &amp;lt;- nms(street_edge)
+nrow(street_final)
+# [1] 15
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;par(mfrow = c(1, 2))
+plot_detections(street, street_iou,   paste(&amp;quot;NMS with IoU:&amp;quot;, nrow(street_iou)))
+plot_detections(street, street_final, paste(&amp;quot;edge filter, then NMS with IoU:&amp;quot;, nrow(street_final)))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-32-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;The single pass found 3 pedestrians in this photograph. The windows find 15. Most of the new ones are people on the pavement on the right who were too small to recognise at the single pass&amp;rsquo;s resolution.&lt;/p&gt;
+&lt;p&gt;Not every new box is a pedestrian. Look at the rear-view mirror at the top of the photograph: the model has found the bus driver&amp;rsquo;s reflection. By the model&amp;rsquo;s standards, that is a correct detection, since there &lt;em&gt;is&lt;/em&gt; a person there. For counting pedestrians on the street, it is wrong. More detail helps the model find things, including things you did not want it to find.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Merge &lt;code&gt;street_raw&lt;/code&gt; with &lt;code&gt;nms(street_raw, overlap_fn = box_ios)&lt;/code&gt; instead. Compare the result with &lt;code&gt;street_final&lt;/code&gt;. Find a place where IoS removed a box that the edge filter kept, and decide which is right.&lt;/li&gt;
+&lt;li&gt;Change &lt;code&gt;EDGE_MARGIN&lt;/code&gt; to 1 and to 20. How do the results change? Why might a box that belongs to a whole person still come within a few pixels of a window&amp;rsquo;s edge?&lt;/li&gt;
+&lt;li&gt;The NMS threshold of 0.5 is a convention. Try 0.3 and 0.7. Which duplicates survive, and which real people are removed?&lt;/li&gt;
+&lt;li&gt;How would you exclude the reflection in the mirror? Think about what you know about the scene that the model does not.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;putting-it-together&#34;&gt;Putting it together&lt;/h2&gt;
+&lt;p&gt;We collect the steps into one function that takes a photograph and returns its merged pedestrian detections.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detect_pedestrians &amp;lt;- function(r, size = WIN, overlap = OVERLAP) {
+    stopifnot(&amp;quot;photograph is smaller than one window&amp;quot; = nrow(r) &amp;gt;= size &amp;amp;&amp;amp; ncol(r) &amp;gt;= size)
+    windows &amp;lt;- make_windows(r, size, overlap)
+    bind_rows(
+        detect_raster(r) %&amp;gt;% mutate(window = 0L),
+        detect_in_windows(r, windows)
+    ) %&amp;gt;%
+        nms()
+}
+
+all.equal(detect_pedestrians(street), street_final)
+# [1] TRUE
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;stopifnot()&lt;/code&gt; guards an assumption that &lt;code&gt;window_starts()&lt;/code&gt; makes silently: that the photograph is at least as large as one window. None of the photographs in this collection is smaller than 640 pixels in either dimension, but a function that crops windows from outside the photograph would not tell you so.&lt;/p&gt;
+&lt;p&gt;Now the beach.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;beach_final &amp;lt;- detect_pedestrians(beach)
+
+par(mfrow = c(1, 2))
+plot_detections(beach, beach_single, paste(&amp;quot;single pass:&amp;quot;, nrow(beach_single)))
+plot_detections(beach, beach_final,  paste(&amp;quot;tiled windows:&amp;quot;, nrow(beach_final)))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tiled-window-object-detection/index.en_files/figure-html/unnamed-chunk-34-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;On the beach, the gain is larger still: 6 people in a single pass and 26 with tiled windows. Most of the new detections are people along the shoreline and under the umbrellas in the distance, who are only a few pixels tall at the single pass&amp;rsquo;s resolution.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Zoom in on the beach photograph and check the new detections by eye. How many are people? How many are something else (an umbrella pole, a post, a shadow)? How many people are still missed?&lt;/li&gt;
+&lt;li&gt;Choose a random sample of 30 photographs from &lt;code&gt;img_files_paths&lt;/code&gt;. For each, count pedestrians with a single pass and with &lt;code&gt;detect_pedestrians()&lt;/code&gt;. Plot one count against the other. In which kinds of scenes do the windows help most? Remember to keep the photographs with zero pedestrians.&lt;/li&gt;
+&lt;li&gt;Time &lt;code&gt;detect_pedestrians()&lt;/code&gt; on one photograph with &lt;code&gt;system.time()&lt;/code&gt;. How long would the whole collection of 484 photographs take? Is it worth it for your purpose?&lt;/li&gt;
+&lt;li&gt;Try windows of 1,280 pixels (so the model sees each window at half resolution) and of 320 pixels (where the model enlarges each window). How do the counts and running times change?&lt;/li&gt;
+&lt;li&gt;A person close to the camera may be taller than the overlap between windows, or even taller than a window. Which part of our method is responsible for finding them? What happens if you drop the single pass?&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;detect_raster()&lt;/code&gt; keeps only &lt;code&gt;person&lt;/code&gt;. Change &lt;code&gt;classes&lt;/code&gt; to include &lt;code&gt;car&lt;/code&gt;, &lt;code&gt;bus&lt;/code&gt; and &lt;code&gt;truck&lt;/code&gt;. What happens to a large vehicle close to the camera, which is cut by several windows? Does the edge filter handle it?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;A single pass through the model shrinks the photograph to fit the model, and small, distant pedestrians shrink with it until there is nothing left to recognise. Tiled windows let the model see every part of the photograph at full resolution, at the cost of running the model many times and then having to reconcile its answers.&lt;/p&gt;
+&lt;p&gt;That reconciliation is where most of the work lies. Overlapping windows produce duplicates, and windows that cut through people produce fragments. Non-maximum suppression removes the duplicates. Dropping boxes that touch an inner window edge removes most of the fragments, as long as the windows overlap enough for every person to appear whole somewhere.&lt;/p&gt;
+&lt;p&gt;More detections are not automatically better detections. The same resolution that reveals distant pedestrians also reveals reflections, posters and shapes that only resemble people. The counts from tiled windows are a better starting point than the counts from a single pass, but they are still a starting point for human review, not a finished count.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Do we need to know which way is up?</title>
@@ -19,7 +448,7 @@
       <guid>https://nkaza.github.io/post/which-way-is-up/</guid>
       <description>&lt;p&gt;One of my first jobs in graduate school was building a wayfinding application for a museum, meant to stand in for a docent. I did not do this well (my apologies, Prof. Twidale), but it left me with a lasting interest in how maps do, and mostly do not, convey information. Decades on, I am still working through it.&lt;/p&gt;
 &lt;p&gt;My opinions &lt;a href=&#34;https://nkaza.github.io/post/my-screed-against-legends/&#34;&gt;about legends&lt;/a&gt; are already on record. This time the target is another sacred cow: the north arrow. A small but important minority, &lt;a href=&#34;https://www.esri.com/arcgis-blog/products/arcgis-pro/mapping/north-arrow-necessity&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;John Nelson&lt;/a&gt; among them, argues it is optional and often better left off. Visceral reactions ensued.&lt;/p&gt;
-&lt;p&gt;I side with the minority, partly because most of the maps I make and read are statistical graphics rather than navigational charts. However, I also spend a fair amount of time with cadastral maps, courtesy of a long-running interest in property rights regimes. Furthermore, working in applied computer vision has left me convinced that our mental model of maps needs to stretch past objects to fields (Couclelis&#39; distinction). So a post that started out being about north, north arrows and ups has ended up being about materiality, practice, and purpose instead.&lt;/p&gt;
+&lt;p&gt;I side with the minority, partly because most of the maps I make and read are statistical graphics rather than navigational charts. However, I also spend a fair amount of time with cadastral maps, courtesy of a long-running interest in property rights regimes. Furthermore, working in applied computer vision has left me convinced that our mental model of maps needs to stretch past objects to fields (Couclelis&amp;rsquo; distinction). So a post that started out being about north, north arrows and ups has ended up being about materiality, practice, and purpose instead.&lt;/p&gt;
 &lt;h2 id=&#34;how-are-maps-used&#34;&gt;How are maps used?&lt;/h2&gt;
 &lt;p&gt;Rather than treat a map as an artefact with one fixed job, I want to look at the specific practices maps get used for, since each one asks something different of the reader and the author. A north arrow is one among many such orienteering devices at the disposal of both. It may not be the right one, depending on the specifics. Four practices cover most of the ground:&lt;/p&gt;
 &lt;ul&gt;
@@ -45,7 +474,7 @@
 &lt;td&gt;the reader&amp;rsquo;s own body&lt;/td&gt;
 &lt;td&gt;nothing beyond where they stand and face&lt;/td&gt;
 &lt;td&gt;left and right; in front, behind&lt;/td&gt;
-&lt;td&gt;heading-up phone maps; the WalkNYC sign; Micronesian navigators&#39; mental map, in which the islands move past a fixed canoe&lt;/td&gt;
+&lt;td&gt;heading-up phone maps; the WalkNYC sign; Micronesian navigators&amp;rsquo; mental map, in which the islands move past a fixed canoe&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;Intrinsic&lt;/td&gt;
@@ -84,7 +513,7 @@
 &lt;p&gt;So the question was never whether a map needs a north arrow. The real question is what the map is for, and what orienteering apparatus that purpose actually requires, if at all. The rest of this post works through the four tasks in turn.&lt;/p&gt;
 &lt;h2 id=&#34;recognise&#34;&gt;Recognise&lt;/h2&gt;
 &lt;p&gt;Critical cartographers, unlike the functionalists, argue that a map&amp;rsquo;s real job is to privilege one view of the world over the others, cementing some political or epistemological relationship or challenging it. Medieval world maps, photographs of the Earth, and the wall map at the front of a schoolroom are all doing the same thing: telling the reader what place this is, letting them recognise shapes, spot patterns, and read geography as a stand-in for politics.&lt;/p&gt;
-&lt;p&gt;Since GIS put mapmaking within reach of anyone with a laptop, most maps made today are statistical graphics, meant to describe a pattern and support a point. A choropleth asks the reader to find a familiar shape and see where the pattern falls inside it; the poverty map above is a standard example. The story runs through Central Appalachia in eastern Kentucky and West Virginia, the Mississippi Delta, Alabama&amp;rsquo;s and the Carolinas&#39; Black Belt, the Rio Grande Valley, and the reservation counties of the Navajo Nation and the northern Plains: 56 percent of Oglala Lakota County, South Dakota, on the Pine Ridge reservation, is below the poverty line, against 12.5 percent nationally. That is a story about history and policy, and cardinality has nothing to add to it. The map is north-up because that is the orientation in which readers already know the country&amp;rsquo;s shape, and a handful of region labels do the rest.
+&lt;p&gt;Since GIS put mapmaking within reach of anyone with a laptop, most maps made today are statistical graphics, meant to describe a pattern and support a point. A choropleth asks the reader to find a familiar shape and see where the pattern falls inside it; the poverty map above is a standard example. The story runs through Central Appalachia in eastern Kentucky and West Virginia, the Mississippi Delta, Alabama&amp;rsquo;s and the Carolinas&amp;rsquo; Black Belt, the Rio Grande Valley, and the reservation counties of the Navajo Nation and the northern Plains: 56 percent of Oglala Lakota County, South Dakota, on the Pine Ridge reservation, is below the poverty line, against 12.5 percent nationally. That is a story about history and policy, and cardinality has nothing to add to it. The map is north-up because that is the orientation in which readers already know the country&amp;rsquo;s shape, and a handful of region labels do the rest.
 You should probably also ask yourself why areas such as Alaska, Guam and Puerto Rico have been left out. The immediate answer may be cartographic or statistical convenience; but the structural answer is about neglect, erasure and invisibility. That is a different, and equally compelling, story.&lt;/p&gt;
 &lt;h3 id=&#34;unfamiliar-shapes&#34;&gt;Unfamiliar shapes&lt;/h3&gt;
 &lt;p&gt;This may just be my own parochialism showing, but most readers can pick the United States out of a lineup. Far fewer could do the same for Morocco&amp;rsquo;s twelve regions, and the country adds a complication of its own: its south sits largely in Western Sahara, a &lt;a href=&#34;https://www.un.org/dppa/decolonization/en/nsgt&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;disputed territory&lt;/a&gt; that Moroccan statistics fold in and plenty of other maps draw as separate. Even a shape a reader is expected to recognise turns out to depend on who drew the lines and what their political purposes are:&lt;/p&gt;
@@ -220,8 +649,8 @@ You should probably also ask yourself why areas such as Alaska, Guam and Puerto 
 &lt;p&gt;Maps also help coordinate joint action, and whatever frame the people coordinating on it share has to be one every single one of them actually has. The simplest shared frame is an object everyone is standing on or can all see. Sailors set a course by compass but coordinate their own operations by a local frame instead: port and starboard. A fire crew does much the same: everyone on scene can see the building, so the building becomes the frame. The typical standard designates the &amp;ldquo;Alpha&amp;rdquo; side as the front entrance, or failing that, whichever side sits nearest a distinctive landmark, a swimming pool being the standard example, and names every other side relative to it. A firefighter who has spent ten minutes inside a smoke-filled building may have no working idea where north is; a swimming pool, they will remember. Players of team games like Counter-Strike face in every direction simultaneously, so each map gets its own community-agreed &lt;a href=&#34;https://refrag.gg/blog/cs2-map-callouts/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;callouts&lt;/a&gt;, such as &amp;ldquo;long,&amp;rdquo; &amp;ldquo;catwalk,&amp;rdquo; and &amp;ldquo;mid,&amp;rdquo; by which a team can coordinate an entire ambush over voice chat.&lt;/p&gt;
 &lt;p&gt;A wildfire, by contrast, has no front door and no street address. Crews arrive from a dozen different agencies, sometimes from other states entirely, working the ground, flying overhead, or coordinating from a dispatch room. So wildfire maps standardise on the cardinal frame instead, purely so that everyone involved can agree. But like sailors, these crews also lean on a local frame drawn from the fire itself: the &amp;ldquo;head&amp;rdquo; is the fastest-moving edge, and &amp;ldquo;heel&amp;rdquo; and &amp;ldquo;flanks&amp;rdquo; are defined relative to it, a frame with the inconvenient property of redefining itself continuously as wind and fuel shove the head around.&lt;/p&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/which-way-is-up/index.en_files/figure-html/unnamed-chunk-7-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
-&lt;p&gt;&lt;em&gt;Left: Figure 2, Montgomery County Fire Chiefs&#39; Association, &lt;a href=&#34;http://mcfirechiefs.org/wp-content/uploads/2021/09/MCFCA-Building-Side-Designation-System-final.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Recommended Practice 2007-4&lt;/a&gt;. Right: IAP map, Big Grass fire (OR-VAD-260201), 07/29/2026, Complex Incident Management Team 5, via the &lt;a href=&#34;https://ftp.wildfire.gov/public/incident_specific_maps/pacific_nw/2026_Incidents_Oregon/2026_BigGrass/20260729/iap_2026_BigGrass_85x11_ORVAD260201_0729_day.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;National Interagency Fire Center incident map archive&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Hospitals coordinate on a shared frame for the same reason. The radiologist reading a film and the surgeon later holding a scalpel have to agree on the patient&amp;rsquo;s own right and left, regardless of which way the image or the operating table happens to be facing. The convention is to hang the film as though the reader is standing face to face with the patient, so the patient&amp;rsquo;s actual right, marked &amp;ldquo;Dx&amp;rdquo; in the corner of a chest film, ends up on the viewer&amp;rsquo;s left. Veterinary radiographs keep the same rule: &lt;a href=&#34;https://todaysveterinarypractice.com/radiology-imaging/effects-of-positioning-respiration-and-technique-on-interpretation-of-thoracic-radiographs-of-dogs-and-cats/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&amp;ldquo;the cranial or right side of the patient should always be on the viewer&amp;rsquo;s left.&amp;quot;&lt;/a&gt; Reports spell the side out in words as a backup, on top of the marker. Even with both safeguards in place, &lt;a href=&#34;https://doi.org/10.2214/AJR.08.1778&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;laterality errors in radiology reports&lt;/a&gt; remain a recurring, sobering problem.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Left: Figure 2, Montgomery County Fire Chiefs&amp;rsquo; Association, &lt;a href=&#34;http://mcfirechiefs.org/wp-content/uploads/2021/09/MCFCA-Building-Side-Designation-System-final.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Recommended Practice 2007-4&lt;/a&gt;. Right: IAP map, Big Grass fire (OR-VAD-260201), 07/29/2026, Complex Incident Management Team 5, via the &lt;a href=&#34;https://ftp.wildfire.gov/public/incident_specific_maps/pacific_nw/2026_Incidents_Oregon/2026_BigGrass/20260729/iap_2026_BigGrass_85x11_ORVAD260201_0729_day.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;National Interagency Fire Center incident map archive&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Hospitals coordinate on a shared frame for the same reason. The radiologist reading a film and the surgeon later holding a scalpel have to agree on the patient&amp;rsquo;s own right and left, regardless of which way the image or the operating table happens to be facing. The convention is to hang the film as though the reader is standing face to face with the patient, so the patient&amp;rsquo;s actual right, marked &amp;ldquo;Dx&amp;rdquo; in the corner of a chest film, ends up on the viewer&amp;rsquo;s left. Veterinary radiographs keep the same rule: &lt;a href=&#34;https://todaysveterinarypractice.com/radiology-imaging/effects-of-positioning-respiration-and-technique-on-interpretation-of-thoracic-radiographs-of-dogs-and-cats/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&amp;ldquo;the cranial or right side of the patient should always be on the viewer&amp;rsquo;s left.&amp;rdquo;&lt;/a&gt; Reports spell the side out in words as a backup, on top of the marker. Even with both safeguards in place, &lt;a href=&#34;https://doi.org/10.2214/AJR.08.1778&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;laterality errors in radiology reports&lt;/a&gt; remain a recurring, sobering problem.&lt;/p&gt;
 &lt;p&gt;Other creatures manage this coordination without any concept of absolute frame or a map: watch &lt;a href=&#34;https://www.youtube.com/watch?v=bFDGPgXtK-U&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;honeybees dance out directions&lt;/a&gt;, &lt;a href=&#34;https://vimeo.com/103329200&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a thousand robots assemble themselves into a shape&lt;/a&gt;, or &lt;a href=&#34;https://vimeo.com/31158841&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a flock of starlings murmurate&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;retrace&#34;&gt;Retrace&lt;/h2&gt;
 &lt;p&gt;Retracing is coordination stretched across time, and it is the hardest version of the problem, because the reader was never there and none of the shared frames that make ordinary coordination easy are available to fall back on. Much like writing, the map has to carry its entire meaning in fixed, precise convention, and the reader still has to do the work of interpreting it correctly, decades or centuries later. That interpretation turns out to be considerably more fraught than it seems.&lt;/p&gt;
@@ -794,247 +1223,1021 @@ However, the sentiment carries.&lt;/p&gt;
     </item>
     
     <item>
-      <title>Object Detection Without Python (A Pure R Pipeline with YOLO26)</title>
+      <title>Object Detection with YOLO26 and Torch</title>
       <link>https://nkaza.github.io/post/object-detection-without-python/</link>
       <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/object-detection-without-python/</guid>
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&#34;&gt;earlier post&lt;/a&gt;, we ran a pre-trained YOLO model from R by reaching into Python with &lt;code&gt;reticulate&lt;/code&gt;: import &lt;code&gt;torch&lt;/code&gt; and &lt;code&gt;ultralytics&lt;/code&gt;, hand a &lt;code&gt;conda&lt;/code&gt; environment to &lt;code&gt;use_condaenv()&lt;/code&gt;, and call the model as if it were an R object. That works, but it means every student needs a working Python environment somewhere reachable from R &amp;mdash; a &lt;code&gt;conda&lt;/code&gt; install, a mapped network drive, an &lt;code&gt;environment.yml&lt;/code&gt; &amp;mdash; before they can detect a single car.&lt;/p&gt;
-&lt;p&gt;This post shows the alternative: doing the entire inference step in R, with no Python at runtime at all. It relies on the R &lt;code&gt;torch&lt;/code&gt; package, which binds directly to &lt;code&gt;libtorch&lt;/code&gt; (the C++ library that PyTorch itself is built on). Once a model has been exported to the TorchScript format, &lt;code&gt;torch::jit_load()&lt;/code&gt; reads it directly &amp;mdash; no &lt;code&gt;reticulate&lt;/code&gt;, no Python interpreter, no environment to activate.&lt;/p&gt;
-&lt;p&gt;There is exactly one Python touchpoint left, and it happens once, outside of R, before this tutorial even begins: exporting the trained model to TorchScript.&lt;/p&gt;
+&lt;p&gt;In an &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&#34;&gt;earlier post&lt;/a&gt;, we used a pre-trained YOLO model from R by reaching into Python with &lt;code&gt;reticulate&lt;/code&gt;: import &lt;code&gt;torch&lt;/code&gt; and &lt;code&gt;ultralytics&lt;/code&gt;, hand a &lt;code&gt;conda&lt;/code&gt; environment to &lt;code&gt;use_condaenv()&lt;/code&gt;, and call the model as if it were an R object. In this post, I want to examine how we can dispense with the Python requirement. The objective is still the same: take an image (a raster) and see if you can detect objects such as cars, persons and bicycles in the image and locate them. Some elements are repeated from the previous post for the sake of completeness.&lt;/p&gt;
+&lt;p&gt;Object detection often uses deep learning, though other computer vision tools are occasionally used. Deep learning is a technique that uses neural networks that are &amp;lsquo;deep&amp;rsquo; (multiple layers) as opposed to shallow, single-layer networks. Neural networks are a type of computer model inspired by how the human brain works; they learn patterns from data and use that knowledge to make predictions or recognise things.&lt;/p&gt;
+&lt;p&gt;They require an enormous amount of training data. One of the most widely used datasets for training these models is the COCO dataset (Common Objects in Context), which contains thousands of labelled images featuring everyday scenes with people, vehicles, animals, and more. Because training a neural network from scratch requires a lot of data and computing power, we often use pretrained models (models that have already been trained on datasets like COCO) and then fine-tune them for specific tasks or environments. This makes it easier and faster to apply object detection in real-world settings, including urban planning, without needing to build everything from the ground up. In many instances, you may even skip the fine-tuning step and go straight to inference with an existing model.&lt;/p&gt;
+&lt;p&gt;This post shows the procedure for doing the entire inference step in R with a model that is already trained. It relies on the R &lt;code&gt;torch&lt;/code&gt; package, which binds directly to &lt;code&gt;libtorch&lt;/code&gt; (the C++ library that PyTorch itself is built on). Once a model has been exported to the TorchScript format, &lt;code&gt;torch::jit_load()&lt;/code&gt; reads it directly.&lt;/p&gt;
+&lt;p&gt;The price of dropping Python is that the model no longer prepares images for you. Everything that &lt;code&gt;ultralytics&lt;/code&gt; did quietly (resizing, padding, rearranging pixel values into the layout the network expects, translating boxes back onto the photograph) is now our job. That turns out to be a good way to learn how raster data works. The post proceeds in the following order:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Treat a single photograph as a raster: its grid, bands, pixel values and coordinate system.&lt;/li&gt;
+&lt;li&gt;Transform that one photograph, step by step, into the input the model expects.&lt;/li&gt;
+&lt;li&gt;Run the model, read its raw output, and draw the bounding boxes.&lt;/li&gt;
+&lt;li&gt;Use the boxes to cut the detected objects back out of the raster.&lt;/li&gt;
+&lt;li&gt;Wrap the steps into functions, and test them on photographs that do not fit the assumptions we made along the way.&lt;/li&gt;
+&lt;li&gt;Run the functions across many photographs.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Because Ultralytics produces Python models, we first need to export the model to the TorchScript format. TorchScript compiles a PyTorch model into a static graph that can run independently of the Python runtime. This is the only step that needs Python, and it only needs to happen once. You can download the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:f:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rioimages?d=w8740a28abfdd44d7b7a33640282b7edd&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=0wLsej&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;exported copy&lt;/a&gt; and skip it. Save it in your &lt;code&gt;InputData&lt;/code&gt; folder. I show the export command only for the sake of completeness.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pip install ultralytics
 yolo export model=yolo26s.pt format=torchscript imgsz=640
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;That produces a single &lt;code&gt;yolo26s.torchscript&lt;/code&gt; file. Everything from here on &amp;mdash; reading images, running the model, drawing boxes, summarising results &amp;mdash; is ordinary R.&lt;/p&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    This tutorial uses &lt;a href=&#34;https://docs.ultralytics.com/models/yolo26/&#34;&gt;YOLO26&lt;/a&gt;, the successor to the YOLOv10 model used in the earlier post. YOLO26 ships in n/s/m/l/x sizes (no &amp;ldquo;b&amp;rdquo;, if you&amp;rsquo;re used to YOLOv10&amp;rsquo;s naming); this post uses the small &lt;code&gt;yolo26s&lt;/code&gt; variant. Swap in &lt;code&gt;yolo26m&lt;/code&gt;/&lt;code&gt;l&lt;/code&gt;/&lt;code&gt;x&lt;/code&gt; for more accuracy at the cost of speed, using the same export command above.
+    This tutorial uses &lt;a href=&#34;https://docs.ultralytics.com/models/yolo26/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;YOLO26&lt;/a&gt;. YOLO26 ships in n/s/m/l/x sizes (no &amp;ldquo;b&amp;rdquo;, if you&amp;rsquo;re used to YOLOv10&amp;rsquo;s naming); this post uses the small &lt;code&gt;yolo26s&lt;/code&gt; variant. Swap in &lt;code&gt;yolo26m&lt;/code&gt;/&lt;code&gt;l&lt;/code&gt;/&lt;code&gt;x&lt;/code&gt; for more accuracy at the cost of speed, using the same export command above.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 id=&#34;setup&#34;&gt;Setup&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(c(&amp;quot;torch&amp;quot;, &amp;quot;magick&amp;quot;, &amp;quot;tidyverse&amp;quot;, &amp;quot;cowplot&amp;quot;, &amp;quot;exiftoolr&amp;quot;))
+&lt;p&gt;You might need a few packages that are unusual. &lt;code&gt;torch::install_torch()&lt;/code&gt; downloads the &lt;code&gt;libtorch&lt;/code&gt; binaries for your platform and only needs to be run once.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(c(&amp;quot;torch&amp;quot;, &amp;quot;terra&amp;quot;, &amp;quot;exiftoolr&amp;quot;))
 torch::install_torch() # downloads libtorch itself, once
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;torch::install_torch()&lt;/code&gt; downloads the &lt;code&gt;libtorch&lt;/code&gt; binaries for your platform. It&amp;rsquo;s a few hundred megabytes and only needs to happen once per machine, but do it before class if you&amp;rsquo;re on a slow connection.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(torch)
-library(magick)
+library(terra)
 library(tidyverse)
-library(cowplot)
 library(exiftoolr)
 library(here)
 &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;All the image handling in this post is done with &lt;code&gt;terra&lt;/code&gt;. It is usually used for satellite imagery and elevation models, but a photograph is also a raster, and every operation we need (reading, resizing, padding, cropping, summarising) is a standard raster operation.The only thing to be mindful of, is that terra&amp;rsquo;s &lt;code&gt;spatRaster&lt;/code&gt; expects and geographic coordinate system and an extent that is usually tied to earth. But as we discussed before, georasters are not the only types of rasters.&lt;/p&gt;
 &lt;h2 id=&#34;data&#34;&gt;Data&lt;/h2&gt;
-&lt;p&gt;We&amp;rsquo;ll use the same &lt;a href=&#34;https://www.dropbox.com/scl/fi/u5t26kwi8t52c16r04qso/geotagged.zip?rlkey=zszxeyd0tdrwubjatwbjhwn3e&amp;amp;dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;street-level images from Rio de Janeiro, Brazil&lt;/a&gt; as the earlier post, collected through &lt;a href=&#34;https://kartaview.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kartaview&lt;/a&gt;. See that post&amp;rsquo;s &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/#data&#34;&gt;Data section&lt;/a&gt; for a fuller discussion of the imagery and its EXIF metadata; here we just load the file paths.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img_files &amp;lt;- here(&amp;quot;tutorials_datasets&amp;quot;, &amp;quot;rio_kartaview_images&amp;quot;, &amp;quot;geotagged&amp;quot;) %&amp;gt;%
+&lt;p&gt;We&amp;rsquo;ll use the same &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/geotagged.zip?d=w727164624f294adbaeb7f7df1e2700ae&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=M0IlHr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;street-level images from Rio de Janeiro, Brazil&lt;/a&gt; as the earlier post, collected through &lt;a href=&#34;https://kartaview.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kartaview&lt;/a&gt;. See that post&amp;rsquo;s &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/#data&#34;&gt;Data section&lt;/a&gt; for a fuller discussion of the imagery. Download the images and unzip them into your &lt;code&gt;InputData&lt;/code&gt; folder.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img_files_paths &amp;lt;- here(&amp;quot;InputData&amp;quot;, &amp;quot;geotagged&amp;quot;) %&amp;gt;%
               list.files(full.names = TRUE, pattern = &amp;quot;\\.jpg$&amp;quot;)
-
-length(img_files)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;length(img_files_paths)
 # [1] 484
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;loading-the-model&#34;&gt;Loading the model&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;model &amp;lt;- jit_load(&amp;quot;yolo26s.torchscript&amp;quot;) # sits alongside this .Rmarkdown file
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;jit_load()&lt;/code&gt; reads the exported TorchScript graph directly; there&amp;rsquo;s no &lt;code&gt;ultralytics$YOLO()&lt;/code&gt; wrapper here, so we lose some conveniences it provides (like &lt;code&gt;to_df()&lt;/code&gt; from the earlier post) and have to rebuild them ourselves in plain R. That&amp;rsquo;s most of the rest of this post.&lt;/p&gt;
-&lt;p&gt;YOLO26, like most object detectors trained on it, is trained on the COCO (Common Objects in Context) dataset, so its outputs are indexed against COCO&amp;rsquo;s 80 categories. The exported model gives us class indices, not names, so we need the lookup table ourselves &amp;mdash; Ultralytics doesn&amp;rsquo;t ship it inside the TorchScript file the way it does with the Python &lt;code&gt;ultralytics&lt;/code&gt; package.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;coco_names &amp;lt;- c(
-    &amp;quot;person&amp;quot;,&amp;quot;bicycle&amp;quot;,&amp;quot;car&amp;quot;,&amp;quot;motorcycle&amp;quot;,&amp;quot;airplane&amp;quot;,&amp;quot;bus&amp;quot;,&amp;quot;train&amp;quot;,&amp;quot;truck&amp;quot;,&amp;quot;boat&amp;quot;,
-    &amp;quot;traffic light&amp;quot;,&amp;quot;fire hydrant&amp;quot;,&amp;quot;stop sign&amp;quot;,&amp;quot;parking meter&amp;quot;,&amp;quot;bench&amp;quot;,&amp;quot;bird&amp;quot;,&amp;quot;cat&amp;quot;,
-    &amp;quot;dog&amp;quot;,&amp;quot;horse&amp;quot;,&amp;quot;sheep&amp;quot;,&amp;quot;cow&amp;quot;,&amp;quot;elephant&amp;quot;,&amp;quot;bear&amp;quot;,&amp;quot;zebra&amp;quot;,&amp;quot;giraffe&amp;quot;,&amp;quot;backpack&amp;quot;,
-    &amp;quot;umbrella&amp;quot;,&amp;quot;handbag&amp;quot;,&amp;quot;tie&amp;quot;,&amp;quot;suitcase&amp;quot;,&amp;quot;frisbee&amp;quot;,&amp;quot;skis&amp;quot;,&amp;quot;snowboard&amp;quot;,&amp;quot;sports ball&amp;quot;,
-    &amp;quot;kite&amp;quot;,&amp;quot;baseball bat&amp;quot;,&amp;quot;baseball glove&amp;quot;,&amp;quot;skateboard&amp;quot;,&amp;quot;surfboard&amp;quot;,&amp;quot;tennis racket&amp;quot;,
-    &amp;quot;bottle&amp;quot;,&amp;quot;wine glass&amp;quot;,&amp;quot;cup&amp;quot;,&amp;quot;fork&amp;quot;,&amp;quot;knife&amp;quot;,&amp;quot;spoon&amp;quot;,&amp;quot;bowl&amp;quot;,&amp;quot;banana&amp;quot;,&amp;quot;apple&amp;quot;,
-    &amp;quot;sandwich&amp;quot;,&amp;quot;orange&amp;quot;,&amp;quot;broccoli&amp;quot;,&amp;quot;carrot&amp;quot;,&amp;quot;hot dog&amp;quot;,&amp;quot;pizza&amp;quot;,&amp;quot;donut&amp;quot;,&amp;quot;cake&amp;quot;,&amp;quot;chair&amp;quot;,
-    &amp;quot;couch&amp;quot;,&amp;quot;potted plant&amp;quot;,&amp;quot;bed&amp;quot;,&amp;quot;dining table&amp;quot;,&amp;quot;toilet&amp;quot;,&amp;quot;tv&amp;quot;,&amp;quot;laptop&amp;quot;,&amp;quot;mouse&amp;quot;,
-    &amp;quot;remote&amp;quot;,&amp;quot;keyboard&amp;quot;,&amp;quot;cell phone&amp;quot;,&amp;quot;microwave&amp;quot;,&amp;quot;oven&amp;quot;,&amp;quot;toaster&amp;quot;,&amp;quot;sink&amp;quot;,
-    &amp;quot;refrigerator&amp;quot;,&amp;quot;book&amp;quot;,&amp;quot;clock&amp;quot;,&amp;quot;vase&amp;quot;,&amp;quot;scissors&amp;quot;,&amp;quot;teddy bear&amp;quot;,&amp;quot;hair drier&amp;quot;,
-    &amp;quot;toothbrush&amp;quot;
-)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;preparing-an-image-for-the-model&#34;&gt;Preparing an image for the model&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;ultralytics$YOLO()&lt;/code&gt; in the earlier post quietly resized, padded, and normalised every image before handing it to the network. &lt;code&gt;jit_load()&lt;/code&gt; gives us none of that &amp;mdash; the TorchScript graph expects a specific input shape, and it&amp;rsquo;s on us to produce it.&lt;/p&gt;
-&lt;p&gt;YOLO models are trained on square inputs, so a non-square photo has to be resized to fit inside a square canvas and padded with grey on the remaining sides, rather than stretched &amp;mdash; otherwise every detected box would come out distorted. This is called &lt;em&gt;letterboxing&lt;/em&gt;, by analogy with the black bars added to widescreen video on an old square TV.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;IMG_SIZE    &amp;lt;- 640L
-CONF_THRESH &amp;lt;- 0.5
-PAD_COLOR   &amp;lt;- &amp;quot;#727272&amp;quot;   # 114/255 grey -- Ultralytics&#39; own letterbox pad value
+&lt;p&gt;Say I want to examine some random images instead of viewing the entire 484 image set. I can use a simple &lt;code&gt;for&lt;/code&gt; loop or the more elegant &lt;code&gt;map&lt;/code&gt;. I will demonstrate both:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.seed(123)
 
-letterbox &amp;lt;- function(path, size = IMG_SIZE) {
-    img  &amp;lt;- image_read(path)
-    info &amp;lt;- image_info(img)
-    w &amp;lt;- info$width; h &amp;lt;- info$height
-    r &amp;lt;- min(size / w, size / h)
-    new_w &amp;lt;- round(w * r); new_h &amp;lt;- round(h * r)
-    resized &amp;lt;- image_resize(img, paste0(new_w, &amp;quot;x&amp;quot;, new_h, &amp;quot;!&amp;quot;))
+img_sample_paths &amp;lt;- sample(img_files_paths, 10)
 
-    pad_w &amp;lt;- size - new_w; pad_h &amp;lt;- size - new_h
-    left  &amp;lt;- pad_w %/% 2L; top &amp;lt;- pad_h %/% 2L
-    canvas &amp;lt;- image_blank(size, size, color = PAD_COLOR)
-    padded &amp;lt;- image_composite(canvas, resized, offset = sprintf(&amp;quot;+%d+%d&amp;quot;, left, top))
+list_rasters_loop &amp;lt;- list() # initialise a list
 
-    list(image = padded, scale = r, left = left, top = top, orig_w = w, orig_h = h)
+for (i in 1:length(img_sample_paths)){
+list_rasters_loop[[i]] &amp;lt;- rast(img_sample_paths[i])
 }
+
+list_rasters_map &amp;lt;- map(img_sample_paths, rast)
+
+# rast() reads each image as a raster. 
+all.equal(list_rasters_loop,list_rasters_map)
+# [1] TRUE
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We hang on to &lt;code&gt;scale&lt;/code&gt;, &lt;code&gt;left&lt;/code&gt;, and &lt;code&gt;top&lt;/code&gt; because every box the model returns will be in this padded 640×640 space &amp;mdash; we&amp;rsquo;ll need them again to map boxes back to the original image&amp;rsquo;s pixel coordinates.&lt;/p&gt;
-&lt;p&gt;Next, the padded image has to become a tensor: a 4-dimensional array of numbers (batch, channel, height, width) that &lt;code&gt;torch&lt;/code&gt; can feed to the network.&lt;/p&gt;
-&lt;div class=&#34;alert alert-alert&#34;&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;opar &amp;lt;- par() # save par settings
+par(mfrow = c(2, 5)) # arrange the plots in 2 rows and 5 columns
+walk(list_rasters_map, plotRGB) # walk() is map() for functions called for their side effects, like plotting
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-8-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;par(opar) # reset to original settings
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note the variation in lighting conditions, angles, zoom levels, focus and occlusions. This is typical of street-level imagery and can pose challenges for object detection models. Also note the differences in urban settings such as highway, commercial corridor, vegetation cover etc.&lt;/p&gt;
+&lt;p&gt;In addition to data within the images, it is useful to look at the metadata associated with the images. In the case of images, metadata can include details such as the date and time the photo was taken, camera type, the camera settings used, and the geographic location (latitude and longitude) where the image was captured. EXIF (Exchangeable Image File Format) is a standard that stores metadata within image files. This information is automatically recorded by most digital cameras and smartphones and we can use the &lt;code&gt;exiftoolr&lt;/code&gt; package to extract it. &lt;code&gt;exiftoolr&lt;/code&gt; requires &lt;code&gt;exiftool&lt;/code&gt; to be installed on your computer. You can find instructions &lt;a href=&#34;https://exiftool.org/install.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt; or uncomment the appropriate line in the code.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# install_exiftool() # Uncomment this line if you don&#39;t have exiftool installed already.
+
+img_metadata &amp;lt;- img_files_paths %&amp;gt;%
+                exif_read(tags = c(&amp;quot;FileName&amp;quot;, &amp;quot;ImageWidth&amp;quot;, &amp;quot;ImageHeight&amp;quot;, &amp;quot;Megapixels&amp;quot;,
+                                   &amp;quot;GPSLatitude&amp;quot;, &amp;quot;GPSLongitude&amp;quot;)) %&amp;gt;%
+                as_tibble() %&amp;gt;%
+                dplyr::select(-SourceFile)
+
+head(img_metadata)
+# # A tibble: 6 x 6
+#   FileName            ImageWidth ImageHeight Megapixels GPSLatitude GPSLongitude
+#   &amp;lt;chr&amp;gt;                    &amp;lt;int&amp;gt;       &amp;lt;int&amp;gt;      &amp;lt;dbl&amp;gt;       &amp;lt;dbl&amp;gt;        &amp;lt;dbl&amp;gt;
+# 1 1318411189__364540~       3232        2424       7.83       -22.9        -43.3
+# 2 1318412961__364542~       3232        2424       7.83       -22.9        -43.3
+# 3 1318413125__364540~       3232        2424       7.83       -22.9        -43.3
+# 4 1318413497__364542~       3232        2424       7.83       -22.8        -43.3
+# 5 1318413949__364542~       3232        2424       7.83       -22.8        -43.3
+# 6 1318414553__364542~       3232        2424       7.83       -22.8        -43.3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    This step has a genuine trap in it. &lt;code&gt;magick::image_data()&lt;/code&gt; reports its array&amp;rsquo;s dimensions as &lt;code&gt;(channel, width, height)&lt;/code&gt;, which matches how &lt;em&gt;you index into it&lt;/em&gt; (&lt;code&gt;raw[channel, x, y]&lt;/code&gt;) &amp;mdash; but the underlying byte buffer that &lt;code&gt;as.integer()&lt;/code&gt; reads out is actually laid out &lt;code&gt;(height, width, channel)&lt;/code&gt;, column-major. Reshaping with the dimensions &lt;code&gt;image_data()&lt;/code&gt; reports, the &amp;ldquo;obvious&amp;rdquo; thing to do, silently scrambles the pixels: every box still comes back and parses without error, but confidences quietly collapse (in testing, from around 0.95 to around 0.19) with no warning or error to flag it. A square test image can&amp;rsquo;t catch this, because it can&amp;rsquo;t distinguish a width-major reshape from a height-major one &amp;mdash; you need an asymmetric image and a pixel of known colour at a known, non-symmetric coordinate to notice the bug at all.
+    The downloaded Kartaview images did not come with GPS coordinates in the EXIF data. I added them from the separate metadata file that came with the images.
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;image_to_tensor &amp;lt;- function(img) {
-    raw &amp;lt;- image_data(img, channels = &amp;quot;rgb&amp;quot;)
-    arr &amp;lt;- array(as.integer(raw), dim = rev(dim(raw)))  # true storage order: (H, W, C)
-    arr &amp;lt;- aperm(arr, c(3, 1, 2))                        # -&amp;gt; (C, H, W), what torch expects
-    torch_tensor(arr, dtype = torch_float32())$div(255)$unsqueeze(1)
+&lt;p&gt;Since we read the metadata for every image rather than just the sample, we can check an assumption that is easy to make. that all the photographs are the same size.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;img_metadata %&amp;gt;% count(ImageWidth, ImageHeight, sort = TRUE)
+# # A tibble: 10 x 3
+#    ImageWidth ImageHeight     n
+#         &amp;lt;int&amp;gt;       &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;
+#  1       3072        1728   387
+#  2       3232        2424    36
+#  3       1920        1080    29
+#  4       3264        1836    14
+#  5       2340        4160     7
+#  6       3984        2988     4
+#  7       4032        3024     4
+#  8       3264        2448     1
+#  9       3840        2160     1
+# 10       5312        2988     1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;They are not. Most images are 3,072 × 1,728 pixels, but there are several other sizes, and a handful of them are taller than they are wide (portrait orientation).  We will build the whole pipeline on one landscape photograph, and these other photographs will test it later.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Visualise the locations of all images. Note any patterns you see in the spatial distribution of images. Does the spatial distribution influence any conclusions you might draw about the urban environment?&lt;/li&gt;
+&lt;li&gt;Notice that this particular dataset does not have the heading of the camera. Or the lens height. Or the yaw. Or any number of other settings that affect the captured image. How might these absences influence your analysis downstream?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;a-photograph-is-a-raster&#34;&gt;A photograph is a raster&lt;/h2&gt;
+&lt;p&gt;A digital photograph is a raster: a rectangular grid of cells (pixels), each holding numbers. The &lt;a href=&#34;https://nkaza.github.io/post/working-with-drone-imagery/#multiple-ways-of-thinking-about-rasters&#34;&gt;post on drone imagery&lt;/a&gt; discusses the several ways to think about rasters. Here we look at one street-level photograph through that lens. We will use the same photograph for the next several sections.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example_path &amp;lt;- img_files_paths[str_detect(img_files_paths, &amp;quot;1318411189&amp;quot;)]
+basename(example_path)
+# [1] &amp;quot;1318411189__3645401_74b21_60c0ec1f7c728.jpg&amp;quot;
+
+(example_rast &amp;lt;- rast(example_path))
+# class       : SpatRaster
+# size        : 2424, 3232, 3  (nrow, ncol, nlyr)
+# resolution  : 1, 1  (x, y)
+# extent      : 0, 3232, 0, 2424  (xmin, xmax, ymin, ymax)
+# coord. ref. : 
+# source      : 1318411189__3645401_74b21_60c0ec1f7c728.jpg
+# colors rgb  : 1, 2, 3
+# names       : 1318411189~c1f7c728_1, 1318411189~c1f7c728_2, 1318411189~c1f7c728_3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;terra&lt;/code&gt; reads the JPEG as a &lt;code&gt;SpatRaster&lt;/code&gt;, the same kind of object it would produce for a satellite image or a digital elevation model. The printout tells us most of what we need:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;size&lt;/strong&gt;: 2,424 rows, 3,232 columns and 3 layers. That is 7,834,368 pixels in each layer.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;layers (bands)&lt;/strong&gt;: a colour photograph has three bands: red, green and blue. Every colour you see is some mix of these three values at that pixel.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;resolution&lt;/strong&gt;: 1 × 1. There is no real-world unit here; one cell is one pixel.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;extent&lt;/strong&gt;: 0 to 3,232 in x, 0 to 2,424 in y. Again, these are pixel units, not metres.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;coord. ref.&lt;/strong&gt;: empty. A photograph taken from a car is not georeferenced. Only the &lt;em&gt;camera location&lt;/em&gt; is known (from the EXIF data); the pixels themselves have no map coordinates. Contrast this with an orthomosaic from a drone, where every pixel can be placed on a map.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;When the three bands are combined as red, green and blue, we get the photograph.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;names(example_rast) &amp;lt;- c(&amp;quot;red&amp;quot;, &amp;quot;green&amp;quot;, &amp;quot;blue&amp;quot;)
+plotRGB(example_rast)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-12-1.png&#34; alt=&#34;&#34; width=&#34;576&#34; /&gt;
+&lt;p&gt;Each pixel holds three integers from 0 to 255 (2^8 - binary 8 bit), one byte per band.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;global(example_rast, c(&amp;quot;min&amp;quot;, &amp;quot;max&amp;quot;, &amp;quot;mean&amp;quot;))
+#       min max     mean
+# red     0 255 121.9481
+# green   0 255 121.4019
+# blue    0 233 121.0659
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The three means are almost the same. This is a foggy day, and most of the photograph (sky, concrete, railings) is some shade of grey, which is what you get when red, green and blue are roughly equal. The distributions of values in the three bands show this directly. We sample a regular grid of pixels rather than use all 7,834,368 of them.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;band_colors &amp;lt;- c(red = &amp;quot;red&amp;quot;, green = &amp;quot;green3&amp;quot;, blue = &amp;quot;blue&amp;quot;)
+
+spatSample(example_rast, 50000, method = &amp;quot;regular&amp;quot;) %&amp;gt;%
+    pivot_longer(everything(), names_to = &amp;quot;band&amp;quot;) %&amp;gt;%
+    ggplot(aes(x = value, colour = band)) +
+    geom_density() +
+    scale_colour_manual(values = band_colors, guide=&#39;none&#39;) +
+    labs(x = &amp;quot;pixel value (0-255)&amp;quot;, y = &amp;quot;density&amp;quot;) +
+    theme_minimal()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-14-1.png&#34; alt=&#34;&#34; width=&#34;576&#34; /&gt;
+&lt;p&gt;The large peak near 190 is the sky. Because the bands overlap so closely, plotting each band on its own would show three near-identical greyscale pictures. The colour in this photograph lives in the small &lt;em&gt;differences&lt;/em&gt; between bands, and rasters make those easy to compute. Arithmetic on rasters works cell by cell, so subtracting one band from another gives a new raster.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;red_minus_blue &amp;lt;- example_rast$red - example_rast$blue
+global(red_minus_blue, quantile, probs = c(0.01, 0.5, 0.99))
+#     X1. X50. X99.
+# red -29    1   17
+
+# saturate the colour scale at +/- 60 so small differences stay visible
+plot(clamp(red_minus_blue, -60, 60), col = hcl.colors(100, &amp;quot;Blue-Red 3&amp;quot;),
+     range = c(-60, 60), axes = FALSE, mar = c(0.5, 0.5, 0.5, 4))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-15-1.png&#34; alt=&#34;&#34; width=&#34;576&#34; /&gt;
+&lt;p&gt;Grey pixels, where red and blue are equal, are white. The woman&amp;rsquo;s teal top is strongly blue. The traffic signals, the brake lights, her face and the yellow Beetle in the lower left are red. The median difference is only 1, and 98% of pixels lie between -29 and 17.&lt;/p&gt;
+&lt;h3 id=&#34;pixel-coordinates-and-map-coordinates&#34;&gt;Pixel coordinates and map coordinates&lt;/h3&gt;
+&lt;p&gt;This is most important detail in this post, so it is worth paying attention to. There are two ways to refer to a location in this raster.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Row and column&lt;/strong&gt; (image convention). Row 1 is the &lt;em&gt;top&lt;/em&gt; of the photograph, and rows increase &lt;em&gt;downward&lt;/em&gt;. This is how cameras, image editors and object detection models count pixels.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;x and y&lt;/strong&gt; (map convention). y = 0 is the &lt;em&gt;bottom&lt;/em&gt; of the extent, and y increases &lt;em&gt;upward&lt;/em&gt;, as it does on a map or a &lt;code&gt;ggplot&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;top_left &amp;lt;- cellFromRowCol(example_rast, row = 1, col = 1)
+example_rast[top_left]        # pixel values of the top-left pixel
+#   red green blue
+# 1 176   172  173
+xyFromCell(example_rast, top_left)   # its x,y coordinates
+#        x      y
+# [1,] 0.5 2423.5
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The top-left pixel has row 1 but a y coordinate of 2,423.5, near the &lt;em&gt;top&lt;/em&gt; of the y axis. Note that &lt;code&gt;.5&lt;/code&gt; refers to the fact that terra puts the pixel coordinate at the center of the pixel rather than at the edge. In general, for a photograph with height &lt;code&gt;h&lt;/code&gt;, an image row coordinate &lt;code&gt;y_img&lt;/code&gt; corresponds to a map y coordinate of &lt;code&gt;h - y_img&lt;/code&gt;. We will need this conversion every time we draw or crop a bounding box, because the model reports boxes in image coordinates rather than map coordinates.&lt;/p&gt;
+&lt;h3 id=&#34;rasters-as-arrays&#34;&gt;Rasters as arrays&lt;/h3&gt;
+&lt;p&gt;A raster with bands is also a three-dimensional array. &lt;code&gt;terra&lt;/code&gt; can give it to us as rows × columns × bands.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example_arr &amp;lt;- as.array(example_rast)
+dim(example_arr)
+# [1] 2424 3232    3
+example_arr[1, 1, ]   # row 1, column 1, all three bands
+# [1] 176 172 173
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;terra&lt;/code&gt; also numbers the cells of a raster with a single index. The numbering runs along the first row from left to right, then along the second row, and so on.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;cellFromRowCol(example_rast, row = 1, col = 1:3)   # first three cells of row 1
+# [1] 1 2 3
+cellFromRowCol(example_rast, row = 2, col = 1)     # first cell of row 2 is ncol+1
+# [1] 3233
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;values()&lt;/code&gt; returns the pixel values as a matrix with one row per cell, in this order, and one column per band.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;head(values(example_rast))
+#      red green blue
+# [1,] 176   172  173
+# [2,] 175   171  172
+# [3,] 174   170  171
+# [4,] 174   170  171
+# [5,] 174   170  171
+# [6,] 174   170  171
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Keep this row-by-row order in mind. R fills arrays and matrices the other way, column by column, and mixing up the two is an easy mistake to make. We will come back to it.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pick a pixel in the sky and a pixel on the road. Use &lt;code&gt;cellFromRowCol()&lt;/code&gt; and indexing to extract their values. Which band distinguishes them most?&lt;/li&gt;
+&lt;li&gt;Compute the mean of the three bands (&lt;code&gt;mean(example_rast)&lt;/code&gt;) and plot it. What have you created? Why might a model that only saw this single band do worse at telling a red bus from a green one?&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;global()&lt;/code&gt; and &lt;code&gt;map_dbl()&lt;/code&gt; to compute the mean brightness of each raster in &lt;code&gt;list_rasters_map&lt;/code&gt;. Do the darker photographs match the ones you picked out by eye?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;a-digression-on-vectors-matrices-and-tensors&#34;&gt;A digression on vectors, matrices and tensors&lt;/h2&gt;
+&lt;p&gt;Before we hand the photograph to the model, it is worth being precise about the containers that numbers live in. The model&amp;rsquo;s input requirements, and the easiest mistakes to make when meeting them, are both about how numbers are arranged rather than what they are.&lt;/p&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/containers-diagram-1.png&#34; alt=&#34;&#34; width=&#34;1104&#34; /&gt;
+&lt;p&gt;The diagram shows the four containers we will use, each built from the one before it by adding a dimension. The tensor is drawn with two images to make the images dimension visible. In this post, the model&amp;rsquo;s input will be a batch of one image.&lt;/p&gt;
+&lt;h3 id=&#34;vectors&#34;&gt;Vectors&lt;/h3&gt;
+&lt;p&gt;A vector is a sequence of numbers with one dimension. The three band values of a single pixel are a vector.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;pixel &amp;lt;- c(176, 172, 173)
+length(pixel)
+# [1] 3
+dim(pixel)   # a plain vector has no dim attribute
+# NULL
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;matrices&#34;&gt;Matrices&lt;/h3&gt;
+&lt;p&gt;A matrix is a vector with a &lt;code&gt;dim&lt;/code&gt; attribute of length 2: rows and columns. The numbers are stored in one long sequence, and the &lt;code&gt;dim&lt;/code&gt; attribute says how to lay them out.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;x &amp;lt;- 1:12
+dim(x) &amp;lt;- c(3, 4)   # the same 12 numbers, now as 3 rows and 4 columns
+x
+#      [,1] [,2] [,3] [,4]
+# [1,]    1    4    7   10
+# [2,]    2    5    8   11
+# [3,]    3    6    9   12
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice the order. R fills a matrix &lt;em&gt;column by column&lt;/em&gt;: 1, 2, 3 go down the first column before 4 starts the second. To fill row by row, you have to ask for it.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;matrix(1:12, nrow = 3, byrow = TRUE)
+#      [,1] [,2] [,3] [,4]
+# [1,]    1    2    3    4
+# [2,]    5    6    7    8
+# [3,]    9   10   11   12
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/fill-order-diagram-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;The line in each grid follows the order in which the numbers are stored. Row by row is the order &lt;code&gt;terra&lt;/code&gt; uses to number cells, which is why the difference matters. A single band of a raster is a matrix of rows × columns.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;red_matrix &amp;lt;- as.matrix(example_rast$red, wide = TRUE)
+dim(red_matrix)
+# [1] 2424 3232
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;arrays&#34;&gt;Arrays&lt;/h3&gt;
+&lt;p&gt;Arrays extend matrices to any number of dimensions. A colour photograph is a 3-dimensional array: rows × columns × bands. Here is a tiny 2 × 3 pixel &amp;ldquo;photograph&amp;rdquo; with three bands, small enough to print.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tiny &amp;lt;- array(seq(10, 180, by = 10), dim = c(2, 3, 3))
+tiny
+# , , 1
+# 
+#      [,1] [,2] [,3]
+# [1,]   10   30   50
+# [2,]   20   40   60
+# 
+# , , 2
+# 
+#      [,1] [,2] [,3]
+# [1,]   70   90  110
+# [2,]   80  100  120
+# 
+# , , 3
+# 
+#      [,1] [,2] [,3]
+# [1,]  130  150  170
+# [2,]  140  160  180
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each index selects along one dimension, and leaving an index empty keeps everything along that dimension.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tiny[, , 1]    # the first band: a 2 x 3 matrix
+#      [,1] [,2] [,3]
+# [1,]   10   30   50
+# [2,]   20   40   60
+tiny[1, 2, ]   # the pixel in row 1, column 2: a vector of 3 band values
+# [1]  30  90 150
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The order of the dimensions is only a convention. &lt;code&gt;aperm()&lt;/code&gt; (array &lt;em&gt;perm&lt;/em&gt;utation) reorders the dimensions and moves the numbers along with them, so every value stays attached to the same pixel and band. Here we put bands first.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tiny_chw &amp;lt;- aperm(tiny, c(3, 1, 2))   # bands, rows, columns
+dim(tiny_chw)
+# [1] 3 2 3
+tiny_chw[, 1, 2]   # the same pixel as tiny[1, 2, ]
+# [1]  30  90 150
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Changing the &lt;code&gt;dim&lt;/code&gt; attribute is a very different operation. It keeps the numbers in their stored order and only changes how they are laid out, so the result has the right shape and the wrong contents.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tiny_wrong &amp;lt;- tiny
+dim(tiny_wrong) &amp;lt;- c(3, 2, 3)   # right shape, numbers not moved
+tiny_wrong[, 1, 2]              # not the pixel we wanted
+# [1] 70 80 90
+identical(tiny_wrong, tiny_chw)
+# [1] FALSE
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When you need to reorder the dimensions of an array, use &lt;code&gt;aperm()&lt;/code&gt;. Resetting &lt;code&gt;dim()&lt;/code&gt; or passing the values to &lt;code&gt;array()&lt;/code&gt; will give you a result of the right shape, with no error, whose numbers have been scrambled.&lt;/p&gt;
+&lt;h3 id=&#34;tensors&#34;&gt;Tensors&lt;/h3&gt;
+&lt;p&gt;A tensor is &lt;code&gt;torch&lt;/code&gt;&amp;rsquo;s version of an array: a grid of numbers with any number of dimensions. There are a few practical differences from an R array.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A tensor is stored and managed by &lt;code&gt;libtorch&lt;/code&gt;, outside R, and can be moved to a graphics card (GPU) for faster computation. Its &lt;code&gt;device&lt;/code&gt; says where it is.&lt;/li&gt;
+&lt;li&gt;Every tensor has a single numeric type, its &lt;code&gt;dtype&lt;/code&gt;. R stores numbers as 8-byte doubles by default. Models usually expect 4-byte floats (&lt;code&gt;float32&lt;/code&gt;), which halves the memory.&lt;/li&gt;
+&lt;li&gt;Operations are usually called as methods with &lt;code&gt;$&lt;/code&gt;, for example &lt;code&gt;x$shape&lt;/code&gt; or &lt;code&gt;x$div(255)&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Image models conventionally put the channels (bands) &lt;em&gt;first&lt;/em&gt;, and expect one more dimension in front for the number of images: images × channels × rows × columns. A single photograph is a batch of one image.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tiny_tensor &amp;lt;- torch_tensor(tiny_chw)
+tiny_tensor$shape
+# [1] 3 2 3
+tiny_tensor$dtype
+# torch_Float
+tiny_tensor$device
+# torch_device(type=&#39;cpu&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;unsqueeze()&lt;/code&gt; adds a dimension of size 1 at the position you give it, and &lt;code&gt;squeeze()&lt;/code&gt; removes one. This is how we turn one image into a batch of one.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tiny_batch &amp;lt;- tiny_tensor$unsqueeze(1)
+tiny_batch$shape
+# [1] 1 3 2 3
+tiny_batch$squeeze(1)$shape
+# [1] 3 2 3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Indexing works as it does for R arrays. In Python, PyTorch counts positions from 0. The R &lt;code&gt;torch&lt;/code&gt; package follows R and counts from 1.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tiny_batch[1, , 1, 2]   # image 1, all bands, row 1, column 2
+# torch_tensor
+#   30
+#   90
+#  150
+# [ CPUFloatType{3} ]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;as.array()&lt;/code&gt; converts a tensor back into an R array.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;dim(as.array(tiny_batch))
+# [1] 1 3 2 3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To summarise the containers we will meet in the rest of the post:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Object&lt;/th&gt;
+&lt;th&gt;Dimensions&lt;/th&gt;
+&lt;th&gt;In this post&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;vector&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;the band values of one pixel&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;matrix&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;one band of the photograph (rows × columns)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;array&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;the photograph (rows × columns × bands)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;tensor&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;the model&amp;rsquo;s input (images × bands × rows × columns)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use &lt;code&gt;aperm()&lt;/code&gt; to turn &lt;code&gt;tiny_chw&lt;/code&gt; back into rows × columns × bands. Check that the result is &lt;code&gt;identical()&lt;/code&gt; to &lt;code&gt;tiny&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;What does &lt;code&gt;torch_tensor(1:5)$dtype&lt;/code&gt; return? Why does it differ from &lt;code&gt;tiny_tensor$dtype&lt;/code&gt;?&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;example_arr&lt;/code&gt; holds 23,503,104 numbers. Use &lt;code&gt;object.size()&lt;/code&gt; to find how much memory it takes as an R array. How much would the same numbers take as a &lt;code&gt;float32&lt;/code&gt; tensor?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;object-detection-with-the-model&#34;&gt;Object detection with the model&lt;/h2&gt;
+&lt;p&gt;Now load the model.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;model &amp;lt;- here(&amp;quot;InputData&amp;quot;, &amp;quot;yolo26s.torchscript&amp;quot;) %&amp;gt;% jit_load()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The input to the model is  a &lt;em&gt;tensor&lt;/em&gt;: a multi-dimensional array of numbers in a specific shape. What happens if we simply give it our photograph?&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;attempt &amp;lt;- example_rast %&amp;gt;% model %&amp;gt;% try(silent =TRUE)
+conditionMessage(attr(attempt, &amp;quot;condition&amp;quot;))
+# [1] &amp;quot;Unsupported type&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;Normally an error stops R, and when knitting a document it stops the whole render. &lt;code&gt;try()&lt;/code&gt; runs an expression and, if it fails, catches the error instead of stopping. The script then carries on.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If the expression succeeds, &lt;code&gt;try()&lt;/code&gt; returns its value as usual.&lt;/li&gt;
+&lt;li&gt;If it fails, &lt;code&gt;try()&lt;/code&gt; returns an object of class &lt;code&gt;&amp;quot;try-error&amp;quot;&lt;/code&gt;. The original error is stored in its &lt;code&gt;&amp;quot;condition&amp;quot;&lt;/code&gt; attribute, and &lt;code&gt;conditionMessage()&lt;/code&gt; extracts the message from it.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;silent = TRUE&lt;/code&gt; stops &lt;code&gt;try()&lt;/code&gt; from also printing the error to the console.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We use &lt;code&gt;try()&lt;/code&gt; here because we &lt;em&gt;expect&lt;/em&gt; these calls to fail and want to look at why. Don&amp;rsquo;t wrap working code in &lt;code&gt;try()&lt;/code&gt; to make errors go away. A caught error is still an error.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The model does not know what a &lt;code&gt;SpatRaster&lt;/code&gt; is. So let&amp;rsquo;s convert the photograph&amp;rsquo;s array into a tensor at its full size. (Step 3 below explains this conversion.)&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;full_size &amp;lt;- torch_tensor(aperm(as.array(example_rast), c(3, 1, 2)))$unsqueeze(1)
+full_size$shape
+# [1]    1    3 2424 3232
+
+attempt &amp;lt;- try(model(full_size), silent = TRUE)
+conditionMessage(attr(attempt, &amp;quot;condition&amp;quot;)) %&amp;gt;% str_extract(&amp;quot;^[^\n]*&amp;quot;)   # first line of a long message
+# [1] &amp;quot;The following operation failed in the TorchScript interpreter.&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It fails again, this time from inside the network. When we exported the model with &lt;code&gt;imgsz=640&lt;/code&gt;, it was fixed to one input shape: 1 image × 3 bands × 640 rows × 640 columns. Any other shape fails. So we need to turn a 3,232 × 2,424 photograph into a 640 × 640 raster without distorting it. There are three steps: resample, pad, and rearrange.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;IMG_SIZE    &amp;lt;- 640L
+PAD_VALUE   &amp;lt;- 114         # grey; Ultralytics&#39; own padding value
+CONF_THRESH &amp;lt;- 0.5
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;step-1-resample&#34;&gt;Step 1: Resample&lt;/h3&gt;
+&lt;p&gt;Resampling changes the number of pixels in a raster. Going from 3,232 columns to 640 means each new pixel summarises roughly a 5 × 5 block of the original ones. We lose detail, and small or distant objects may disappear. This is one reason why detection models are less reliable for things far from the camera.&lt;/p&gt;
+&lt;p&gt;We want to shrink the photograph so that its longer side becomes 640 pixels, and shrink the other side by the same factor, so that a car keeps its shape. For this photograph the width is the longer side.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;w &amp;lt;- ncol(example_rast)
+h &amp;lt;- nrow(example_rast)
+
+scale &amp;lt;- IMG_SIZE / w      # width is the longer side of this photograph
+new_w &amp;lt;- round(w * scale)
+new_h &amp;lt;- round(h * scale)
+c(scale = scale, new_w = new_w, new_h = new_h)
+#       scale       new_w       new_h 
+#   0.1980198 640.0000000 480.0000000
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In &lt;code&gt;terra&lt;/code&gt;, resampling works by describing the raster you want (a &lt;em&gt;template&lt;/em&gt;) and asking &lt;code&gt;resample()&lt;/code&gt; to fill it from the original. The template covers the same extent as the photograph but has only 640 × 480 cells.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ext(example_rast) &amp;lt;- ext(0, w, 0, h)
+
+template &amp;lt;- rast(nrows = new_h, ncols = new_w, nlyrs = 3,
+                 extent = ext(example_rast), crs = crs(example_rast))
+resized &amp;lt;- resample(example_rast, template, method = &amp;quot;average&amp;quot;)
+resized
+# class       : SpatRaster
+# size        : 480, 640, 3  (nrow, ncol, nlyr)
+# resolution  : 5.05, 5.05  (x, y)
+# extent      : 0, 3232, 0, 2424  (xmin, xmax, ymin, ymax)
+# coord. ref. : 
+# source(s)   : memory
+# names       :        red,      green,       blue
+# min values  :          0,   0.580433,   0.537202
+# max values  : 237.533478, 198.148117, 201.772278
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Two details matter here. First, the extent. &lt;code&gt;terra&lt;/code&gt; reports an extent of 0 to 3,232 by 0 to 2,424, but a JPEG does not actually store one. &lt;code&gt;terra&lt;/code&gt; makes it up, and GDAL, which does the resampling, refuses to work on a file with no extent. Setting the extent explicitly with &lt;code&gt;ext()&lt;/code&gt; is enough to satisfy it. Second, the &lt;code&gt;method&lt;/code&gt;. With &lt;code&gt;&amp;quot;average&amp;quot;&lt;/code&gt;, each new cell is the mean of the original cells it covers, which is the natural choice when shrinking an image. &lt;code&gt;&amp;quot;near&amp;quot;&lt;/code&gt; would pick a single original pixel instead, and &lt;code&gt;&amp;quot;bilinear&amp;quot;&lt;/code&gt; would interpolate from the four nearest. Each gives slightly different pixel values, and so slightly different detections.&lt;/p&gt;
+&lt;p&gt;Notice that the resolution is now about 5 × 5: each new cell is about 5 original pixels wide. The extent has not changed, only the number of cells covering it.&lt;/p&gt;
+&lt;h3 id=&#34;step-2-pad&#34;&gt;Step 2: Pad&lt;/h3&gt;
+&lt;p&gt;The resized photograph is 640 × 480, not square. We place it in the middle of a 640 × 640 grey canvas, leaving an equal band of padding at the top and bottom. This is called &lt;em&gt;letterboxing&lt;/em&gt;, by analogy with the black bars added to widescreen video on an old square TV. The alternative, stretching the photograph to 640 × 640, would distort every object in it.&lt;/p&gt;
+&lt;p&gt;In raster terms, padding means &lt;em&gt;extending&lt;/em&gt; a raster to a larger extent and filling the new cells with a constant. First we work out where the photograph should sit, in pixels from the top-left corner of the canvas.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;left &amp;lt;- (IMG_SIZE - new_w) %/% 2L
+top  &amp;lt;- (IMG_SIZE - new_h) %/% 2L
+c(left = left, top = top)
+# left  top 
+#    0   80
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we move the resized raster to that position by giving it a new extent, one unit per cell. The photograph starts &lt;code&gt;top&lt;/code&gt; rows down from the top of the canvas. In map coordinates, where y counts up from the bottom, that puts its upper edge at &lt;code&gt;IMG_SIZE - top&lt;/code&gt; and its lower edge at &lt;code&gt;IMG_SIZE - top - new_h&lt;/code&gt;. This is the image-to-map conversion from earlier, applied to a whole raster.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ext(resized) &amp;lt;- ext(left, left + new_w, IMG_SIZE - top - new_h, IMG_SIZE - top)
+
+padded &amp;lt;- extend(resized, ext(0, IMG_SIZE, 0, IMG_SIZE), fill = PAD_VALUE)
+padded
+# class       : SpatRaster
+# size        : 640, 640, 3  (nrow, ncol, nlyr)
+# resolution  : 1, 1  (x, y)
+# extent      : 0, 640, 0, 640  (xmin, xmax, ymin, ymax)
+# coord. ref. : 
+# source(s)   : memory
+# names       :        red,      green,       blue
+# min values  :          0,   0.580433,   0.537202
+# max values  : 237.533478, 198.148117, 201.772278
+plotRGB(padded)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-40-1.png&#34; alt=&#34;&#34; width=&#34;384&#34; /&gt;
+&lt;p&gt;This is what the model will see. Hold on to &lt;code&gt;scale&lt;/code&gt;, &lt;code&gt;left&lt;/code&gt; and &lt;code&gt;top&lt;/code&gt;. Every box the model returns will be in the coordinates of this padded 640 × 640 image, and we will need these three numbers to map the boxes back onto the original photograph.&lt;/p&gt;
+&lt;h3 id=&#34;step-3-rearrange-into-a-tensor&#34;&gt;Step 3: Rearrange into a tensor&lt;/h3&gt;
+&lt;p&gt;The model wants the values as a 4-dimensional array ordered batch × channel × height × width, with values scaled from 0&amp;ndash;255 to 0&amp;ndash;1. We already know that &lt;code&gt;as.array()&lt;/code&gt; gives us height × width × channel. So we move the channel dimension to the front with &lt;code&gt;aperm()&lt;/code&gt;, divide by 255, and add a batch dimension of size 1.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;padded_arr &amp;lt;- as.array(padded)
+dim(padded_arr)                  # height, width, channel
+# [1] 640 640   3
+
+chw &amp;lt;- aperm(padded_arr, c(3, 1, 2))
+dim(chw)                         # channel, height, width
+# [1]   3 640 640
+
+x &amp;lt;- torch_tensor(chw, dtype = torch_float32())$div(255)$unsqueeze(1)
+x$shape                          # batch, channel, height, width
+# [1]   1   3 640 640
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A quick check that the padding ended up where we think it is. Row 80 (the last padded row) should be grey (114/255 ≈ 0.447) in all three bands, and row 81 should be the first row of the photograph.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;x[1, , top, 1]
+# torch_tensor
+#  0.4471
+#  0.4471
+#  0.4471
+# [ CPUFloatType{3} ]
+x[1, , top + 1, 1]
+# torch_tensor
+#  0.6818
+#  0.6662
+#  0.6702
+# [ CPUFloatType{3} ]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-alert&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;Getting the order of values wrong does not produce an error. Suppose that instead of &lt;code&gt;as.array()&lt;/code&gt;, we took the matrix from &lt;code&gt;values()&lt;/code&gt; and poured it into an array of the right size. &lt;code&gt;values()&lt;/code&gt; lists cells row by row, but &lt;code&gt;array()&lt;/code&gt; fills column by column, so every row of the photograph ends up as a column.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;transposed &amp;lt;- array(values(padded), dim = c(IMG_SIZE, IMG_SIZE, 3))
+dim(transposed)
+# [1] 640 640   3
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;par(mfrow = c(1, 2))
+plotRGB(padded, main = &amp;quot;correct&amp;quot;)
+plotRGB(rast(transposed), main = &amp;quot;transposed&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-44-1.png&#34; alt=&#34;&#34; width=&#34;576&#34; /&gt;
+&lt;p&gt;The dimensions are identical, because the canvas is square, and the model will still happily return boxes for the transposed image, just not the right ones.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;transposed_x &amp;lt;- torch_tensor(aperm(transposed, c(3, 1, 2)), dtype = torch_float32())$div(255)$unsqueeze(1)
+transposed_pred &amp;lt;- as.matrix(with_no_grad(model(transposed_x))$squeeze(1))
+sum(transposed_pred[, 5] &amp;gt; CONF_THRESH)
+# [1] 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A square input cannot reveal this mistake through its dimensions. When in doubt, convert your array back into a raster and look at it.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;running-the-model-on-a-single-photograph&#34;&gt;Running the model on a single photograph&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;out &amp;lt;- with_no_grad(model(x))
+out$shape
+# [1]   1 300   6
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The output is 1 × 300 × 6. YOLO26 always proposes 300 candidate boxes per image, and each one has six numbers. Let&amp;rsquo;s convert it to an R matrix and look at the first few rows.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;pred &amp;lt;- as.matrix(out$squeeze(1))
+colnames(pred) &amp;lt;- c(&amp;quot;x1&amp;quot;, &amp;quot;y1&amp;quot;, &amp;quot;x2&amp;quot;, &amp;quot;y2&amp;quot;, &amp;quot;conf&amp;quot;, &amp;quot;cls&amp;quot;)
+head(pred)
+#             x1       y1       x2       y2      conf cls
+# [1,] 222.09978 390.0912 229.8849 406.8148 0.8062587   9
+# [2,] 152.45433 475.8222 209.2231 511.7309 0.7148697   5
+# [3,] 394.51849 287.5258 556.1880 555.1393 0.7108306   0
+# [4,] 105.64748 475.7938 161.2973 505.6293 0.6558898   2
+# [5,]  61.18729 488.2326 148.1961 550.4704 0.5988283   2
+# [6,] 324.12228 287.8313 556.1091 555.1833 0.4970481   0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;x1, y1&lt;/code&gt; is the top-left corner of a box and &lt;code&gt;x2, y2&lt;/code&gt; is its bottom-right corner, in the pixel coordinates of the &lt;em&gt;padded 640 × 640 image&lt;/em&gt;, with y counting &lt;em&gt;down&lt;/em&gt; from the top.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;conf&lt;/code&gt; is the model&amp;rsquo;s confidence (0&amp;ndash;1) that the box contains an object.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cls&lt;/code&gt; is the index of the object class.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Most of the 300 candidates are junk. The confidence scores fall off quickly.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tibble(conf = pred[, &amp;quot;conf&amp;quot;]) %&amp;gt;%
+  ggplot(aes(x = conf)) +
+  geom_histogram(bins = 50) +
+  geom_vline(xintercept = CONF_THRESH, linetype = &amp;quot;dashed&amp;quot;) +
+  labs(x = &amp;quot;confidence&amp;quot;, y = &amp;quot;number of candidate boxes&amp;quot;) +
+  theme_minimal()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-48-1.png&#34; alt=&#34;&#34; width=&#34;576&#34; /&gt;
+&lt;p&gt;We keep only the candidates above a threshold. The threshold is a choice you make, not something the model tells you. Lower it and you find more objects, and more false ones.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;keep &amp;lt;- pred[, &amp;quot;conf&amp;quot;] &amp;gt; CONF_THRESH
+sum(keep)
+# [1] 5
+pred[keep, ]
+#             x1       y1       x2       y2      conf cls
+# [1,] 222.09978 390.0912 229.8849 406.8148 0.8062587   9
+# [2,] 152.45433 475.8222 209.2231 511.7309 0.7148697   5
+# [3,] 394.51849 287.5258 556.1880 555.1393 0.7108306   0
+# [4,] 105.64748 475.7938 161.2973 505.6293 0.6558898   2
+# [5,]  61.18729 488.2326 148.1961 550.4704 0.5988283   2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The class column contains numbers, not names. YOLO26 was trained on COCO, so the numbers identify COCO&amp;rsquo;s 80 categories. The Python &lt;code&gt;ultralytics&lt;/code&gt; package would look these up for us. Here we need the lookup table ourselves. It is a small CSV file, &lt;a href=&#34;coco_classes.csv&#34;&gt;coco_classes.csv&lt;/a&gt;, with one row per class. Download it into your &lt;code&gt;InputData&lt;/code&gt; folder.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;coco_classes &amp;lt;- here(&#39;InputData&#39;, &#39;coco_classes.csv&#39;) %&amp;gt;% read_csv
+coco_classes
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;# # A tibble: 80 x 2
+#    class_id class        
+#       &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;        
+#  1        0 person       
+#  2        1 bicycle      
+#  3        2 car          
+#  4        3 motorcycle   
+#  5        4 airplane     
+#  6        5 bus          
+#  7        6 train        
+#  8        7 truck        
+#  9        8 boat         
+# 10        9 traffic light
+# # i 70 more rows
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;class_id&lt;/code&gt; column uses the same numbering as the model, which starts at 0. Attaching names to the detections is then a join: each detection is matched to the row of &lt;code&gt;coco_classes&lt;/code&gt; with the same &lt;code&gt;class_id&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tibble(class_id = pred[keep, &amp;quot;cls&amp;quot;]) %&amp;gt;%
+    left_join(coco_classes, by = &amp;quot;class_id&amp;quot;, relationship = &amp;quot;many-to-one&amp;quot;)
+# # A tibble: 5 x 2
+#   class_id class        
+#      &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;        
+# 1        9 traffic light
+# 2        5 bus          
+# 3        0 person       
+# 4        2 car          
+# 5        2 car
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A join matches rows by &lt;em&gt;value&lt;/em&gt;, not by &lt;em&gt;position&lt;/em&gt;, so there is no need to worry that R counts from 1 while the model counts from 0. &lt;code&gt;left_join()&lt;/code&gt; keeps every detection, even one whose number is missing from the table (its &lt;code&gt;class&lt;/code&gt; would be &lt;code&gt;NA&lt;/code&gt;). &lt;code&gt;relationship = &amp;quot;many-to-one&amp;quot;&lt;/code&gt; states what we expect: many detections can share a class, but each detection must match at most one row of the table. If the table ever contained a duplicated &lt;code&gt;class_id&lt;/code&gt;, the join would stop with an error instead of quietly duplicating detections.&lt;/p&gt;
+&lt;h3 id=&#34;mapping-boxes-back-to-the-photograph&#34;&gt;Mapping boxes back to the photograph&lt;/h3&gt;
+&lt;p&gt;The boxes are in padded 640 × 640 coordinates. To place them on the original photograph, we undo the letterboxing in reverse order: subtract the padding, then divide by the scale.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;boxes &amp;lt;- pred[keep, 1:4, drop = FALSE]
+boxes[, c(&amp;quot;x1&amp;quot;, &amp;quot;x2&amp;quot;)] &amp;lt;- (boxes[, c(&amp;quot;x1&amp;quot;, &amp;quot;x2&amp;quot;)] - left) / scale
+boxes[, c(&amp;quot;y1&amp;quot;, &amp;quot;y2&amp;quot;)] &amp;lt;- (boxes[, c(&amp;quot;y1&amp;quot;, &amp;quot;y2&amp;quot;)] - top)  / scale
+
+detections &amp;lt;- tibble(
+    file  = example_path,
+    xmin  = boxes[, &amp;quot;x1&amp;quot;], ymin = boxes[, &amp;quot;y1&amp;quot;],
+    xmax  = boxes[, &amp;quot;x2&amp;quot;], ymax = boxes[, &amp;quot;y2&amp;quot;],
+    conf  = pred[keep, &amp;quot;conf&amp;quot;],
+    class_id = pred[keep, &amp;quot;cls&amp;quot;]
+) %&amp;gt;%
+    left_join(coco_classes, by = &amp;quot;class_id&amp;quot;, relationship = &amp;quot;many-to-one&amp;quot;)
+detections %&amp;gt;% select(-file) %&amp;gt;% arrange(desc(conf))
+# # A tibble: 5 x 7
+#    xmin  ymin  xmax  ymax  conf class_id class        
+#   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;    &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;        
+# 1 1122. 1566. 1161. 1650. 0.806        9 traffic light
+# 2  770. 1999. 1057. 2180. 0.715        5 bus          
+# 3 1992. 1048. 2809. 2399. 0.711        0 person       
+# 4  534. 1999.  815. 2149. 0.656        2 car          
+# 5  309. 2062.  748. 2376. 0.599        2 car
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We now have 5 detections, each with a location in the original 3,232 × 2,424 photograph. Note that &lt;code&gt;ymin&lt;/code&gt; is the &lt;em&gt;top&lt;/em&gt; of each box, because these are still image coordinates.&lt;/p&gt;
+&lt;h2 id=&#34;plotting-the-bounding-boxes&#34;&gt;Plotting the bounding boxes&lt;/h2&gt;
+&lt;p&gt;To draw boxes on the photograph, we need to reconcile the two coordinate conventions from earlier. &lt;code&gt;plotRGB()&lt;/code&gt; draws the raster in map coordinates, with y = 0 at the bottom, so each box&amp;rsquo;s image y coordinates have to be flipped against the photograph&amp;rsquo;s height: &lt;code&gt;h - ymax&lt;/code&gt; becomes the bottom of the box and &lt;code&gt;h - ymin&lt;/code&gt; becomes the top. Base R&amp;rsquo;s &lt;code&gt;rect()&lt;/code&gt; and &lt;code&gt;text()&lt;/code&gt; then draw on top of the raster in those same coordinates.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;class_colors &amp;lt;- c(car = &amp;quot;#E4572E&amp;quot;, person = &amp;quot;#17BEBB&amp;quot;, bus = &amp;quot;#FFC914&amp;quot;,
+                  truck = &amp;quot;#76B041&amp;quot;, motorcycle = &amp;quot;#A05195&amp;quot;, bicycle = &amp;quot;#2E86AB&amp;quot;)
+
+plot_detections &amp;lt;- function(path, dets, classes_of_interest = names(class_colors)) {
+    r &amp;lt;- rast(path)
+    h &amp;lt;- nrow(r)
+    d &amp;lt;- dets %&amp;gt;% filter(class %in% classes_of_interest)
+
+    plotRGB(r, mar = c(0, 0, 0, 0))
+    if (nrow(d) == 0) return(invisible())   # text() fails on zero labels
+    rect(d$xmin, h - d$ymax, d$xmax, h - d$ymin,
+         border = class_colors[d$class], lwd = 2)
+    text(d$xmin, h - d$ymin, sprintf(&amp;quot;%s %.2f&amp;quot;, d$class, d$conf),
+         col = &amp;quot;white&amp;quot;, cex = 0.7, adj = c(0, -0.3))
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Finally, since every box comes back in letterboxed 640×640 coordinates, we need the inverse of &lt;code&gt;letterbox()&lt;/code&gt; to place them back onto the original image.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;unletterbox_boxes &amp;lt;- function(boxes, lb) {
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_detections(example_path, detections)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-55-1.png&#34; alt=&#34;&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;Try removing the &lt;code&gt;h -&lt;/code&gt; from the &lt;code&gt;rect()&lt;/code&gt; call. The boxes will still be drawn, with the right sizes, in the wrong places: mirrored top to bottom.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;div&gt;
+    &lt;p&gt;Two things worth knowing if you adapt this for your own model:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;jit_load()&lt;/code&gt;&amp;rsquo;d TorchScript modules don&amp;rsquo;t reliably support &lt;code&gt;model$eval()&lt;/code&gt; / &lt;code&gt;model$train(FALSE)&lt;/code&gt; as of &lt;code&gt;torch&lt;/code&gt; 0.17.0 + &lt;code&gt;libtorch&lt;/code&gt; 2.8.0; it fails with an internal S3-dispatch error on scripted modules. This particular export is safe to skip that call on: Ultralytics&amp;rsquo; export log reports the model already &amp;ldquo;fused&amp;rdquo; (BatchNorm folded into the convolution weights), and a side-by-side Python comparison calling vs. skipping &lt;code&gt;model.eval()&lt;/code&gt; on the same file gives bit-identical output. If you export a custom or non-fused model, re-check this.&lt;/li&gt;
+&lt;li&gt;On Ultralytics&amp;rsquo; own &lt;code&gt;bus.jpg&lt;/code&gt; sample image, this pipeline and the Python &lt;code&gt;ultralytics&lt;/code&gt; package (running the same TorchScript file) agree closely: 0.97 vs 0.97 confidence on the bus, and 0.94/0.94/0.91/0.71 vs 0.94/0.94/0.91/0.63 on the four people in frame. The two paths decode and resample the image with different libraries (GDAL here, OpenCV in Python), so don&amp;rsquo;t expect bit-identical confidences.&lt;/li&gt;
+&lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;h2 id=&#34;cropping-detections-out-of-the-raster&#34;&gt;Cropping detections out of the raster&lt;/h2&gt;
+&lt;p&gt;A bounding box is a rectangular extent, and cropping a raster to an extent is one of the most common raster operations. Here we use &lt;code&gt;terra::crop()&lt;/code&gt;. As with plotting, the image y coordinates must be flipped into the raster&amp;rsquo;s map y coordinates.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;crop_detection &amp;lt;- function(r, det) {
+    h &amp;lt;- nrow(r)
+    crop(r, ext(det$xmin, det$xmax, h - det$ymax, h - det$ymin))
+}
+
+vehicles &amp;lt;- detections %&amp;gt;% filter(class %in% c(&amp;quot;car&amp;quot;, &amp;quot;bus&amp;quot;, &amp;quot;truck&amp;quot;))
+vehicle_crops &amp;lt;- map(seq_len(nrow(vehicles)), ~ crop_detection(example_rast, vehicles[.x, ]))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;par(mfrow = c(1, length(vehicle_crops)), mar = c(0, 0, 1, 0))
+walk2(vehicle_crops, vehicles$class, ~ plotRGB(.x, main = .y))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-57-1.png&#34; alt=&#34;&#34; width=&#34;864&#34; /&gt;
+&lt;p&gt;Each crop is itself a raster, so anything you can do with a raster, you can do with a detected object. For example, the mean colour of each vehicle, and the share of the photograph each one takes up:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;vehicles %&amp;gt;%
+    mutate(
+        mean_red   = map_dbl(vehicle_crops, ~ global(.x$red,   &amp;quot;mean&amp;quot;)$mean),
+        mean_green = map_dbl(vehicle_crops, ~ global(.x$green, &amp;quot;mean&amp;quot;)$mean),
+        mean_blue  = map_dbl(vehicle_crops, ~ global(.x$blue,  &amp;quot;mean&amp;quot;)$mean),
+        share_of_image = (xmax - xmin) * (ymax - ymin) / (w * h)
+    ) %&amp;gt;%
+    select(class, conf, starts_with(&amp;quot;mean&amp;quot;), share_of_image)
+# # A tibble: 3 x 6
+#   class  conf mean_red mean_green mean_blue share_of_image
+#   &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt;    &amp;lt;dbl&amp;gt;      &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;          &amp;lt;dbl&amp;gt;
+# 1 bus   0.715     72.6       71.8      68.2        0.00664
+# 2 car   0.656     62.1       60.4      55.8        0.00540
+# 3 car   0.599     50.6       49.0      45.0        0.0176
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The share of the image is a crude proxy for distance. Nearby vehicles take up more of the frame than distant ones. It is crude because a bus far away and a car close by can take up the same area.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The object labelled &lt;code&gt;bus&lt;/code&gt; is a Volkswagen Kombi van. Is that label right? What does it tell you about how COCO&amp;rsquo;s categories map onto the vehicles you care about?&lt;/li&gt;
+&lt;li&gt;The larger &lt;code&gt;car&lt;/code&gt; crop also contains most of a yellow Beetle and the bridge railing. Why is the mean a poor summary of an object&amp;rsquo;s colour? What else is inside the box?&lt;/li&gt;
+&lt;li&gt;Crop the person detection instead. How many pixels tall is the person in the original photograph? What would it be in the 640 × 640 image the model saw?&lt;/li&gt;
+&lt;li&gt;Lower &lt;code&gt;CONF_THRESH&lt;/code&gt; to 0.25 and re-run this section. What shows up that wasn&amp;rsquo;t there before, and would you trust it?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;turning-the-steps-into-functions&#34;&gt;Turning the steps into functions&lt;/h2&gt;
+&lt;p&gt;So far, every step has been written for one photograph. To run it on hundreds, we collect the steps into functions. They are a direct copy of the code above, with one change, explained in the next section.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;letterbox &amp;lt;- function(path, size = IMG_SIZE) {
+    r &amp;lt;- rast(path)
+    w &amp;lt;- ncol(r); h &amp;lt;- nrow(r)
+    ext(r) &amp;lt;- ext(0, w, 0, h)
+
+    scale &amp;lt;- min(size / w, size / h)   # longer side becomes `size`
+    new_w &amp;lt;- round(w * scale); new_h &amp;lt;- round(h * scale)
+    template &amp;lt;- rast(nrows = new_h, ncols = new_w, nlyrs = 3, extent = ext(r), crs = crs(r))
+    resized &amp;lt;- resample(r, template, method = &amp;quot;average&amp;quot;)
+
+    left &amp;lt;- (size - new_w) %/% 2L; top &amp;lt;- (size - new_h) %/% 2L
+    ext(resized) &amp;lt;- ext(left, left + new_w, size - top - new_h, size - top)
+    padded &amp;lt;- extend(resized, ext(0, size, 0, size), fill = PAD_VALUE)
+
+    list(raster = padded, scale = scale, left = left, top = top, orig_w = w, orig_h = h)
+}
+
+raster_to_tensor &amp;lt;- function(r) {
+    arr &amp;lt;- as.array(r)   # height, width, channel
+    torch_tensor(aperm(arr, c(3, 1, 2)), dtype = torch_float32())$div(255)$unsqueeze(1)
+}
+
+detect_image &amp;lt;- function(path, conf_thresh = CONF_THRESH) {
+    lb &amp;lt;- letterbox(path)
+    pred &amp;lt;- as.matrix(with_no_grad(model(raster_to_tensor(lb$raster)))$squeeze(1))
+
+    keep  &amp;lt;- pred[, 5] &amp;gt; conf_thresh
+    boxes &amp;lt;- pred[keep, 1:4, drop = FALSE]
     boxes[, c(1, 3)] &amp;lt;- (boxes[, c(1, 3)] - lb$left) / lb$scale
     boxes[, c(2, 4)] &amp;lt;- (boxes[, c(2, 4)] - lb$top)  / lb$scale
-    boxes[, 1] &amp;lt;- pmax(boxes[, 1], 0);        boxes[, 2] &amp;lt;- pmax(boxes[, 2], 0)
-    boxes[, 3] &amp;lt;- pmin(boxes[, 3], lb$orig_w); boxes[, 4] &amp;lt;- pmin(boxes[, 4], lb$orig_h)
-    boxes
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;running-the-model-on-a-single-photograph&#34;&gt;Running the model on a single photograph&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detect_image &amp;lt;- function(path, conf_thresh = CONF_THRESH) {
-    lb &amp;lt;- letterbox(path)
-    x  &amp;lt;- image_to_tensor(lb$image)
-
-    out  &amp;lt;- with_no_grad(model(x))    # (1, 300, 6): x1, y1, x2, y2, conf, cls
-    pred &amp;lt;- as.matrix(out$squeeze(1))
-
-    keep &amp;lt;- pred[, 5] &amp;gt; conf_thresh
-    if (!any(keep)) {
-        return(tibble(file = character(), xmin = double(), ymin = double(),
-                       xmax = double(), ymax = double(), conf = double(), class = character()))
-    }
-
-    boxes &amp;lt;- unletterbox_boxes(pred[keep, 1:4, drop = FALSE], lb)
 
     tibble(
         file  = path,
         xmin  = boxes[, 1], ymin = boxes[, 2],
         xmax  = boxes[, 3], ymax = boxes[, 4],
         conf  = pred[keep, 5],
-        class = coco_names[pred[keep, 6] + 1]   # export is 0-indexed
-    )
+        class_id = pred[keep, 6]
+    ) %&amp;gt;%
+        left_join(coco_classes, by = &amp;quot;class_id&amp;quot;, relationship = &amp;quot;many-to-one&amp;quot;)
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The &lt;code&gt;if (!any(keep))&lt;/code&gt; branch matters more than it looks. Point this at a wall, a tunnel, or a blank stretch of highway &amp;mdash; not everything in a street-level imagery dataset has a car or a person in it &amp;mdash; and nothing clears the confidence threshold. Returning a tibble with the right columns and zero rows (rather than a bare, columnless &lt;code&gt;tibble()&lt;/code&gt;) means every downstream step &amp;mdash; &lt;code&gt;map_dfr()&lt;/code&gt;, &lt;code&gt;filter()&lt;/code&gt;, plotting &amp;mdash; keeps working whether or not this particular photo had anything detectable in it. It&amp;rsquo;s an easy thing to get wrong the first time and only notice once you run the function over enough real, messy images that one of them comes back empty.&lt;/p&gt;
-&lt;p&gt;Let&amp;rsquo;s try it on one photograph.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;example_img &amp;lt;- img_files[str_detect(img_files, &amp;quot;1318411189&amp;quot;)]
-detections  &amp;lt;- detect_image(example_img)
-detections %&amp;gt;% select(-file) %&amp;gt;% arrange(desc(conf))
-# # A tibble: 5 x 6
-#    xmin  ymin  xmax  ymax  conf class        
-#   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;        
-# 1 1121. 1567. 1161. 1651. 0.805 traffic light
-# 2 1991. 1048. 2809. 2400. 0.743 person       
-# 3  769. 1999. 1057. 2180. 0.701 bus          
-# 4  310. 2061.  748. 2375. 0.682 car          
-# 5  535. 1998.  812. 2151. 0.649 car
+&lt;p&gt;Always check a new function against a result you already know. It should reproduce the detections from the previous sections exactly.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;all.equal(detect_image(example_path), detections)
+# [1] TRUE
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Five detections, above 0.5 confidence: a person, a bus, two cars, a traffic light. This is the same shape of result &lt;code&gt;to_df()&lt;/code&gt; handed us for free in the earlier post &amp;mdash; we&amp;rsquo;ve just built it ourselves.&lt;/p&gt;
-&lt;h2 id=&#34;plotting-the-detections&#34;&gt;Plotting the detections&lt;/h2&gt;
-&lt;p&gt;The same ggplot coordinate-system mismatch from the earlier post applies here: ggplot&amp;rsquo;s origin is bottom-left with y increasing upward, while image pixel coordinates have their origin top-left with y increasing downward. &lt;code&gt;ymin&lt;/code&gt;/&lt;code&gt;ymax&lt;/code&gt; have to be flipped against the image height before they land in the right place.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_detections &amp;lt;- function(path, dets,
-                            classes_of_interest = c(&amp;quot;car&amp;quot;,&amp;quot;person&amp;quot;,&amp;quot;truck&amp;quot;,&amp;quot;bus&amp;quot;,&amp;quot;motorcycle&amp;quot;,&amp;quot;bicycle&amp;quot;)) {
-    img  &amp;lt;- image_read(path)
-    info &amp;lt;- image_info(img)
-    d &amp;lt;- dets %&amp;gt;% filter(class %in% classes_of_interest)
+&lt;h2 id=&#34;a-photograph-that-does-not-fit&#34;&gt;A photograph that does not fit&lt;/h2&gt;
+&lt;p&gt;When we worked through the example photograph, we scaled it by its width, because the width was the longer side. That was a fact about one photograph, not about the data. As the table of image sizes showed, some photographs are in portrait orientation. &lt;code&gt;letterbox()&lt;/code&gt; therefore scales by whichever side is &lt;em&gt;longer&lt;/em&gt;, which is the same as taking the smaller of the two scale factors: &lt;code&gt;min(size / w, size / h)&lt;/code&gt;. A landscape photograph is padded at the top and bottom, and a portrait one on the left and right.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;portrait_path &amp;lt;- img_files_paths[str_detect(img_files_paths, &amp;quot;204024303&amp;quot;)]
+portrait_dets &amp;lt;- detect_image(portrait_path)
 
-    ggplot() +
-        annotation_raster(as.raster(img), xmin = 0, xmax = info$width,
-                          ymin = 0, ymax = info$height) +
-        geom_rect(data = d,
-                  aes(xmin = xmin, xmax = xmax,
-                      ymin = info$height - ymax, ymax = info$height - ymin,
-                      color = class),
-                  fill = NA, linewidth = 0.8) +
-        geom_text(data = d,
-                  aes(x = xmin, y = info$height - ymin,
-                      label = sprintf(&amp;quot;%s %.2f&amp;quot;, class, conf)),
-                  color = &amp;quot;white&amp;quot;, size = 3, hjust = 0, vjust = -0.3) +
-        coord_fixed(xlim = c(0, info$width), ylim = c(0, info$height), expand = FALSE) +
-        theme_void() + theme(legend.position = &amp;quot;none&amp;quot;)
-}
-
-plot_detections(example_img, detections)
+par(mfrow = c(1, 2))
+plotRGB(letterbox(portrait_path)$raster)   # what the model sees
+plot_detections(portrait_path, portrait_dets)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-12-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
-&lt;h2 id=&#34;batching-across-images&#34;&gt;Batching across images&lt;/h2&gt;
-&lt;p&gt;The whole point of doing this in R rather than by hand is running it across many images at once, so let&amp;rsquo;s do that &amp;mdash; and pull in the EXIF GPS tags along the way, exactly as the earlier post did.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.seed(42)
-sample_files &amp;lt;- sample(img_files, 20)
-
-detections_all &amp;lt;- map_dfr(sample_files, detect_image)
-
-exif &amp;lt;- exif_read(sample_files, tags = c(&amp;quot;GPSLatitude&amp;quot;, &amp;quot;GPSLongitude&amp;quot;)) %&amp;gt;%
-    as_tibble() %&amp;gt;%
-    select(file = SourceFile, GPSLatitude, GPSLongitude)
-
-detections_all &amp;lt;- detections_all %&amp;gt;% left_join(exif, by = &amp;quot;file&amp;quot;)
-
-summary_counts &amp;lt;- detections_all %&amp;gt;%
-    mutate(file = basename(file)) %&amp;gt;%
-    count(file, class, name = &amp;quot;n&amp;quot;)
-summary_counts
-# # A tibble: 28 x 3
-#    file                                        class      n
-#    &amp;lt;chr&amp;gt;                                       &amp;lt;chr&amp;gt;  &amp;lt;int&amp;gt;
-#  1 1318425657__3645517_a809e_60c0eff7136f9.jpg car        1
-#  2 1319605281__3652445_9b168_60c1dba250012.jpg bus        1
-#  3 1319605281__3652445_9b168_60c1dba250012.jpg car        1
-#  4 1319605281__3652445_9b168_60c1dba250012.jpg person     1
-#  5 325783917__1304693_e8693_869.jpg            car        4
-#  6 325858321__1304733_4ea5b_1712.jpg           car        4
-#  7 325858793__1304733_4ea5b_1948.jpg           bus        1
-#  8 325858793__1304733_4ea5b_1948.jpg           car        4
-#  9 325961249__1304975_0a9ed_4340.jpg           car        5
-# 10 325961249__1304975_0a9ed_4340.jpg           person     3
-# # i 18 more rows
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-61-1.png&#34; alt=&#34;&#34; width=&#34;768&#34; /&gt;
+&lt;p&gt;A pipeline built and tested on one example contains that example&amp;rsquo;s assumptions, whether you wrote them down or not. Test it on the data that differs most from your example before you trust it on the rest.&lt;/p&gt;
+&lt;h3 id=&#34;a-photograph-with-nothing-in-it&#34;&gt;A photograph with nothing in it&lt;/h3&gt;
+&lt;p&gt;Some photographs genuinely contain nothing the model recognises.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;empty_path &amp;lt;- img_files_paths[str_detect(img_files_paths, &amp;quot;1319868701&amp;quot;)]
+detect_image(empty_path)
+# # A tibble: 0 x 8
+# # i 8 variables: file &amp;lt;chr&amp;gt;, xmin &amp;lt;dbl&amp;gt;, ymin &amp;lt;dbl&amp;gt;, xmax &amp;lt;dbl&amp;gt;, ymax &amp;lt;dbl&amp;gt;,
+# #   conf &amp;lt;dbl&amp;gt;, class_id &amp;lt;dbl&amp;gt;, class &amp;lt;chr&amp;gt;
+plotRGB(rast(empty_path))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detections_all %&amp;gt;% count(class, sort = TRUE)
-# # A tibble: 5 x 2
-#   class             n
-#   &amp;lt;chr&amp;gt;         &amp;lt;int&amp;gt;
-# 1 car              58
-# 2 person           11
-# 3 bus               5
-# 4 traffic light     2
-# 5 bench             1
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;car&lt;/code&gt; dominates, as it did in the earlier post&amp;rsquo;s Rio sample &amp;mdash; unsurprising for street-level imagery of a car-oriented corridor.&lt;/p&gt;
-&lt;p&gt;Here&amp;rsquo;s a small multiple of six images from that sample, plotted the same way as above, to get a feel for how the model does across a range of scenes.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot_list &amp;lt;- map(sample_files[1:6], function(p) {
-  plot_detections(p, detect_image(p))
-})
-plot_grid(plotlist = plot_list, nrow = 2, ncol = 3)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-15-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
-&lt;p&gt;Note the empty panels &amp;mdash; a tunnel, a wall glimpsed mid-motion &amp;mdash; where nothing cleared the confidence threshold, and the doubled-up labels where two boxes overlap closely enough that their text collides. Both are exactly the kind of real-world messiness that a single cherry-picked example photo hides.&lt;/p&gt;
-&lt;div class=&#34;alert alert-note&#34;&gt;
-  &lt;div&gt;
-    &lt;p&gt;Two things worth knowing if you adapt this for your own model:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;jit_load()&lt;/code&gt;&amp;rsquo;d TorchScript modules don&amp;rsquo;t reliably support &lt;code&gt;model$eval()&lt;/code&gt; / &lt;code&gt;model$train(FALSE)&lt;/code&gt; as of &lt;code&gt;torch&lt;/code&gt; 0.17.0 + &lt;code&gt;libtorch&lt;/code&gt; 2.8.0 &amp;mdash; it fails with an internal S3-dispatch error on scripted modules. This particular export is safe to skip that call on: Ultralytics&#39; export log reports the model already &amp;ldquo;fused&amp;rdquo; (BatchNorm folded into the convolution weights, zero gradient layers), and a side-by-side Python comparison calling vs. skipping &lt;code&gt;model.eval()&lt;/code&gt; on the same file gives bit-identical output. If you export a custom or non-fused model, this is worth re-checking rather than assuming.&lt;/li&gt;
-&lt;li&gt;This exact pipeline, run against Ultralytics&#39; own &lt;code&gt;bus.jpg&lt;/code&gt; sample image, matched the Python/&lt;code&gt;ultralytics&lt;/code&gt; package&amp;rsquo;s output closely: 0.97 vs 0.93 confidence on the bus, and 0.94/0.94/0.91/0.72 vs 0.93/0.94/0.44/0.43 on four people in frame. The R and Python paths aren&amp;rsquo;t doing identical floating-point work &amp;mdash; JPEG decoding and resizing differ slightly between &lt;code&gt;magick&lt;/code&gt; and Python&amp;rsquo;s imaging stack &amp;mdash; so don&amp;rsquo;t expect bit-identical confidences, but the two should agree closely enough to trust the R-only path.&lt;/li&gt;
-&lt;/ul&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-62-1.png&#34; alt=&#34;&#34; width=&#34;384&#34; /&gt;
+&lt;p&gt;This is a motion-blurred wall. &lt;code&gt;detect_image()&lt;/code&gt; returns a tibble with the right columns and zero rows, which is what we want. &amp;ldquo;Zero detections&amp;rdquo; is a legitimate output. But zero-row results have a way of disappearing when results are combined across images, as we&amp;rsquo;ll see next.&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Lower &lt;code&gt;CONF_THRESH&lt;/code&gt; to 0.25 and re-run the single-image example. What shows up that wasn&amp;rsquo;t there before, and would you trust it?&lt;/li&gt;
-&lt;li&gt;Run &lt;code&gt;detect_image()&lt;/code&gt; over the full &lt;code&gt;img_files&lt;/code&gt; list (all of them, not just a sample of 20) and map the count of &lt;code&gt;person&lt;/code&gt; detections per image against its GPS coordinates. Where are pedestrians most and least visible in this sample?&lt;/li&gt;
+&lt;li&gt;Change &lt;code&gt;scale &amp;lt;- min(size / w, size / h)&lt;/code&gt; in &lt;code&gt;letterbox()&lt;/code&gt; back to &lt;code&gt;scale &amp;lt;- size / w&lt;/code&gt;, the assumption we made for the example photograph, and run &lt;code&gt;detect_image(portrait_path)&lt;/code&gt; inside &lt;code&gt;try()&lt;/code&gt;. Read the error message. Does it tell you what is wrong with your code?&lt;/li&gt;
+&lt;li&gt;When a model complains about its input, check the input. With the width-only scale, what is &lt;code&gt;dim(letterbox(portrait_path)$raster)&lt;/code&gt;? Work out &lt;code&gt;new_h&lt;/code&gt; and &lt;code&gt;top&lt;/code&gt; by hand for this 2,340 × 4,160 photograph. Why doesn&amp;rsquo;t &lt;code&gt;extend()&lt;/code&gt; produce a 640 × 640 raster?&lt;/li&gt;
+&lt;li&gt;Suppose &lt;code&gt;letterbox()&lt;/code&gt; had forced the result to 640 × 640 by cropping it, with &lt;code&gt;crop(padded, ext(0, size, 0, size))&lt;/code&gt;. Plot the result. Which parts of the photograph does the model no longer see? Compare the detections with those from the correct &lt;code&gt;letterbox()&lt;/code&gt;. Why is a pipeline that quietly runs on a cropped image more dangerous than one that stops with an error?&lt;/li&gt;
+&lt;li&gt;Instead of letterboxing, stretch the portrait photograph to 640 × 640 by resampling it to a 640 × 640 template and run the model on it. Are the detections better or worse? How would you have to change the box mapping to handle a stretched image?&lt;/li&gt;
+&lt;li&gt;Change the resampling &lt;code&gt;method&lt;/code&gt; in &lt;code&gt;letterbox()&lt;/code&gt; to &lt;code&gt;&amp;quot;near&amp;quot;&lt;/code&gt; and then &lt;code&gt;&amp;quot;bilinear&amp;quot;&lt;/code&gt;, and rerun the example photograph. Do the detections change? Plot a zoomed-in crop of each resampled raster to see why.&lt;/li&gt;
+&lt;li&gt;Find the images that are neither 3,072 × 1,728 nor portrait in &lt;code&gt;img_metadata&lt;/code&gt;. Check that the letterboxed version of one of them looks right.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;defensive-programming-and-scaling-up&#34;&gt;Defensive programming and scaling up&lt;/h2&gt;
+&lt;p&gt;The portrait photograph showed how far an error can surface from its cause. The mistake was in &lt;code&gt;letterbox()&lt;/code&gt;, but the error came from inside the model and was reported as a problem with &lt;code&gt;as.matrix()&lt;/code&gt;. &lt;em&gt;Defensive programming&lt;/em&gt; means checking your assumptions at the point where your code depends on them, and stopping with a message that names the actual problem.&lt;/p&gt;
+&lt;p&gt;Our pipeline makes several assumptions without saying so:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The file exists.&lt;/li&gt;
+&lt;li&gt;The image has exactly three bands: red, green and blue.&lt;/li&gt;
+&lt;li&gt;Pixel values run from 0 to 255 (8 bits per band), so that dividing by 255 puts them between 0 and 1.&lt;/li&gt;
+&lt;li&gt;The letterboxed raster is exactly 640 × 640 × 3.&lt;/li&gt;
+&lt;li&gt;The model returns 300 candidate boxes with 6 numbers each.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;To see why these matter, let&amp;rsquo;s make two images that break them. A greyscale image has one band. Many scientific and drone images store 16 bits per band, with values from 0 to 65,535. We create both from the example photograph and save them to temporary files.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;grey_path &amp;lt;- file.path(tempdir(), &amp;quot;greyscale.tif&amp;quot;)
+writeRaster(mean(example_rast), grey_path, overwrite = TRUE)   # 1 band
+
+deep_path &amp;lt;- file.path(tempdir(), &amp;quot;16bit.tif&amp;quot;)
+writeRaster(example_rast * 256, deep_path, datatype = &amp;quot;INT2U&amp;quot;, overwrite = TRUE)   # 16-bit values
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The greyscale image fails with the same unhelpful message as the portrait photograph.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;attempt &amp;lt;- try(detect_image(grey_path), silent = TRUE)
+conditionMessage(attr(attempt, &amp;quot;condition&amp;quot;)) %&amp;gt;% str_extract(&amp;quot;^[^\n]*&amp;quot;)
+# [1] &amp;quot;error in evaluating the argument &#39;x&#39; in selecting a method for function &#39;as.matrix&#39;: The following operation failed in the TorchScript interpreter.&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The 16-bit image is worse. It does not fail at all.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detect_image(deep_path)
+# # A tibble: 0 x 8
+# # i 8 variables: file &amp;lt;chr&amp;gt;, xmin &amp;lt;dbl&amp;gt;, ymin &amp;lt;dbl&amp;gt;, xmax &amp;lt;dbl&amp;gt;, ymax &amp;lt;dbl&amp;gt;,
+# #   conf &amp;lt;dbl&amp;gt;, class_id &amp;lt;dbl&amp;gt;, class &amp;lt;chr&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Its pixel values, divided by 255, run up to about 256 instead of 1. The model sees garbage and finds nothing. Without an error, this photograph would silently count as having zero cars.&lt;/p&gt;
+&lt;h3 id=&#34;checking-assumptions&#34;&gt;Checking assumptions&lt;/h3&gt;
+&lt;p&gt;We write two small functions that check assumptions 1&amp;ndash;4, and call &lt;code&gt;stop()&lt;/code&gt; with a clear message when one fails. &lt;code&gt;call. = FALSE&lt;/code&gt; leaves out the function call from the message, which makes it easier to read.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;check_image &amp;lt;- function(path) {
+    if (!file.exists(path)) {
+        stop(&amp;quot;file not found: &amp;quot;, path, call. = FALSE)
+    }
+    r &amp;lt;- rast(path)
+    if (nlyr(r) != 3) {
+        stop(basename(path), &amp;quot; has &amp;quot;, nlyr(r), &amp;quot; band(s); expected 3 (red, green, blue)&amp;quot;, call. = FALSE)
+    }
+    invisible(r)
+}
+
+check_letterbox &amp;lt;- function(lb, size = IMG_SIZE) {
+    d &amp;lt;- dim(lb$raster)
+    if (!identical(as.numeric(d), c(size, size, 3))) {
+        stop(&amp;quot;letterboxed raster is &amp;quot;, paste(d, collapse = &amp;quot; x &amp;quot;),
+             &amp;quot;; the model needs &amp;quot;, size, &amp;quot; x &amp;quot;, size, &amp;quot; x 3&amp;quot;, call. = FALSE)
+    }
+    v &amp;lt;- range(values(lb$raster))
+    if (anyNA(v)) {
+        stop(&amp;quot;letterboxed raster contains missing values&amp;quot;, call. = FALSE)
+    }
+    if (v[1] &amp;lt; 0 || v[2] &amp;gt; 255) {
+        stop(&amp;quot;pixel values run from &amp;quot;, round(v[1]), &amp;quot; to &amp;quot;, round(v[2]),
+             &amp;quot;; expected 0 to 255 (8 bits per band)&amp;quot;, call. = FALSE)
+    }
+    invisible(lb)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The value check runs on the small letterboxed raster rather than on the full photograph. It adds a few milliseconds per image, which is negligible next to the model itself.&lt;/p&gt;
+&lt;p&gt;Now &lt;code&gt;detect_image()&lt;/code&gt; calls the checks before the model does anything. It also checks the shape of the model&amp;rsquo;s output, using &lt;code&gt;stopifnot()&lt;/code&gt;. &lt;code&gt;stopifnot()&lt;/code&gt; stops if any of its conditions is &lt;code&gt;FALSE&lt;/code&gt;, and the name of each condition becomes the error message.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;detect_image &amp;lt;- function(path, conf_thresh = CONF_THRESH) {
+    check_image(path)
+    lb &amp;lt;- check_letterbox(letterbox(path))
+    pred &amp;lt;- as.matrix(with_no_grad(model(raster_to_tensor(lb$raster)))$squeeze(1))
+    stopifnot(&amp;quot;model output is not 300 x 6&amp;quot; = identical(dim(pred), c(300L, 6L)))
+
+    keep  &amp;lt;- pred[, 5] &amp;gt; conf_thresh
+    boxes &amp;lt;- pred[keep, 1:4, drop = FALSE]
+    boxes[, c(1, 3)] &amp;lt;- (boxes[, c(1, 3)] - lb$left) / lb$scale
+    boxes[, c(2, 4)] &amp;lt;- (boxes[, c(2, 4)] - lb$top)  / lb$scale
+
+    tibble(
+        file  = path,
+        xmin  = boxes[, 1], ymin = boxes[, 2],
+        xmax  = boxes[, 3], ymax = boxes[, 4],
+        conf  = pred[keep, 5],
+        class_id = pred[keep, 6]
+    ) %&amp;gt;%
+        left_join(coco_classes, by = &amp;quot;class_id&amp;quot;, relationship = &amp;quot;many-to-one&amp;quot;)
+}
+
+all.equal(detect_image(example_path), detections)   # good images are unaffected
+# [1] TRUE
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each bad input now fails at the point where the assumption is broken, with a message that says what is wrong.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;try(detect_image(&amp;quot;no_such_file.jpg&amp;quot;))
+# Error : file not found: no_such_file.jpg
+try(detect_image(grey_path))
+# Error : greyscale.tif has 1 band(s); expected 3 (red, green, blue)
+try(detect_image(deep_path))
+# Error : pixel values run from 0 to 60809; expected 0 to 255 (8 bits per band)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;keeping-a-batch-running&#34;&gt;Keeping a batch running&lt;/h3&gt;
+&lt;p&gt;Stopping is the right response for a single photograph. It is the wrong response for a batch of 484, where one bad file would stop the whole run. &lt;code&gt;purrr::safely()&lt;/code&gt; wraps a function so that it never stops. Instead, it returns a list with two elements, &lt;code&gt;result&lt;/code&gt; and &lt;code&gt;error&lt;/code&gt;, one of which is always &lt;code&gt;NULL&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;test_files &amp;lt;- c(example_path, portrait_path, grey_path, deep_path, &amp;quot;no_such_file.jpg&amp;quot;)
+results &amp;lt;- map(test_files, safely(detect_image))
+
+tibble(
+    file  = basename(test_files),
+    error = map_chr(results, ~ if (is.null(.x$error)) &amp;quot;&amp;quot; else conditionMessage(.x$error))
+) %&amp;gt;%
+    knitr::kable()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;file&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;error&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;1318411189__3645401_74b21_60c0ec1f7c728.jpg&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;204024303__1129811_162e7_50.jpg&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;greyscale.tif&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;greyscale.tif has 1 band(s); expected 3 (red, green, blue)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;16bit.tif&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;pixel values run from 0 to 60809; expected 0 to 255 (8 bits per band)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;no_such_file.jpg&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;file not found: no_such_file.jpg&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The good images give their detections, and every failure is recorded along with its reason.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;map_dfr(results, &amp;quot;result&amp;quot;) %&amp;gt;% count(file = basename(file), class)
+# # A tibble: 6 x 3
+#   file                                        class             n
+#   &amp;lt;chr&amp;gt;                                       &amp;lt;chr&amp;gt;         &amp;lt;int&amp;gt;
+# 1 1318411189__3645401_74b21_60c0ec1f7c728.jpg bus               1
+# 2 1318411189__3645401_74b21_60c0ec1f7c728.jpg car               2
+# 3 1318411189__3645401_74b21_60c0ec1f7c728.jpg person            1
+# 4 1318411189__3645401_74b21_60c0ec1f7c728.jpg traffic light     1
+# 5 204024303__1129811_162e7_50.jpg             car               2
+# 6 204024303__1129811_162e7_50.jpg             person            1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is different from wrapping code in &lt;code&gt;try()&lt;/code&gt; to make errors go away. A failure is not discarded: it is kept in a table where you can count it, report it, and fix it. A batch that finishes with some failures is useful. A batch that finishes with no failures because they were silently dropped is not.&lt;/p&gt;
+&lt;h3 id=&#34;running-every-photograph&#34;&gt;Running every photograph&lt;/h3&gt;
+&lt;p&gt;With the checks in place, we can run all 484 photographs. This takes a couple of minutes.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;results_all &amp;lt;- map(img_files_paths, safely(detect_image))
+
+failures &amp;lt;- tibble(
+    file  = basename(img_files_paths),
+    error = map_chr(results_all, ~ if (is.null(.x$error)) NA_character_ else conditionMessage(.x$error))
+) %&amp;gt;%
+    filter(!is.na(error))
+
+detections_all &amp;lt;- map_dfr(results_all, &amp;quot;result&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;nrow(failures)
+# [1] 0
+nrow(detections_all)
+# [1] 1980
+detections_all %&amp;gt;% count(class, sort = TRUE)
+# # A tibble: 15 x 2
+#    class             n
+#    &amp;lt;chr&amp;gt;         &amp;lt;int&amp;gt;
+#  1 car            1457
+#  2 person          206
+#  3 bus             121
+#  4 traffic light    87
+#  5 truck            71
+#  6 motorcycle       11
+#  7 bicycle           9
+#  8 umbrella          8
+#  9 backpack          2
+# 10 bench             2
+# 11 fire hydrant      2
+# 12 dog               1
+# 13 handbag           1
+# 14 potted plant      1
+# 15 train             1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;0 of the 484 photographs failed the checks. That is worth reporting: it says that every photograph was checked and passed, not that failures went unrecorded. The model found 1,980 objects. &lt;code&gt;car&lt;/code&gt; dominates, as it did in the earlier post&amp;rsquo;s Rio sample, which is unsurprising for imagery collected from a car. The rare classes at the bottom of the table (umbrellas, a dog, a train) are worth looking at individually. Some will be right and some will be misclassifications.&lt;/p&gt;
+&lt;h3 id=&#34;counting-per-photograph&#34;&gt;Counting per photograph&lt;/h3&gt;
+&lt;p&gt;Suppose we want the number of cars in each photograph. The obvious approach is to count the rows of &lt;code&gt;detections_all&lt;/code&gt; by file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;cars_naive &amp;lt;- detections_all %&amp;gt;%
+    filter(class == &amp;quot;car&amp;quot;) %&amp;gt;%
+    count(file, name = &amp;quot;car&amp;quot;)
+
+nrow(cars_naive)
+# [1] 390
+mean(cars_naive$car)
+# [1] 3.735897
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That table has only 390 rows, not 484. Photographs with no cars (like the wall above) produced no car rows in &lt;code&gt;detections_all&lt;/code&gt;, so they cannot appear in a count of its rows. The mean is the average over photographs &lt;em&gt;that have at least one car&lt;/em&gt;, which is not the same as the average over all photographs.&lt;/p&gt;
+&lt;p&gt;To keep them, we have to say which photographs and which classes &lt;em&gt;should&lt;/em&gt; be there, and fill in the missing combinations with zero. &lt;code&gt;complete()&lt;/code&gt; does exactly this.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;counts &amp;lt;- detections_all %&amp;gt;%
+    filter(class %in% c(&amp;quot;car&amp;quot;, &amp;quot;person&amp;quot;, &amp;quot;bus&amp;quot;)) %&amp;gt;%
+    count(file, class) %&amp;gt;%
+    complete(file = img_files_paths, class = c(&amp;quot;car&amp;quot;, &amp;quot;person&amp;quot;, &amp;quot;bus&amp;quot;), fill = list(n = 0L)) %&amp;gt;%
+    pivot_wider(names_from = class, values_from = n)
+
+nrow(counts)
+# [1] 484
+mean(counts$car)
+# [1] 3.010331
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now there is one row per photograph, and the average number of cars per photograph is 3.01 rather than 3.74.&lt;/p&gt;
+&lt;h3 id=&#34;checking-by-eye&#34;&gt;Checking by eye&lt;/h3&gt;
+&lt;p&gt;Summary tables and maps hide the individual mistakes. Before trusting the numbers, look at a random sample of photographs with their detections.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;set.seed(42)
+check_files &amp;lt;- sample(img_files_paths, 6)
+
+par(mfrow = c(2, 3))
+walk(check_files, function(p) {
+    plot_detections(p, detections_all %&amp;gt;% filter(file == p))
+})
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/object-detection-without-python/index.en_files/figure-html/unnamed-chunk-73-1.png&#34; alt=&#34;&#34; width=&#34;1152&#34; /&gt;
+&lt;p&gt;Note the empty panels (a tunnel, a wall glimpsed mid-motion) where nothing cleared the confidence threshold, the doubled-up labels where two boxes overlap closely enough that their text collides, and the motorcyclist who is detected as a &lt;code&gt;person&lt;/code&gt; but whose motorcycle is not. This is the kind of real-world messiness that a single cherry-picked example photo hides.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Replace &lt;code&gt;scale &amp;lt;- min(size / w, size / h)&lt;/code&gt; in &lt;code&gt;letterbox()&lt;/code&gt; with &lt;code&gt;scale &amp;lt;- size / w&lt;/code&gt; again, and run the new &lt;code&gt;detect_image()&lt;/code&gt; on &lt;code&gt;portrait_path&lt;/code&gt;. Compare the error message with the one you got earlier.&lt;/li&gt;
+&lt;li&gt;Should a 16-bit image be rejected, or converted? Write a version of &lt;code&gt;check_letterbox()&lt;/code&gt; that rescales 16-bit values to 0&amp;ndash;255 instead of stopping. What would you need to know about the image to do this safely?&lt;/li&gt;
+&lt;li&gt;After the boxes are mapped back to the original photograph, add a check that they lie inside it (between 0 and the photograph&amp;rsquo;s width and height). Run it over all the photographs. Do any boxes fall outside? What should the function do when they do?&lt;/li&gt;
+&lt;li&gt;Put the counts on a map. &lt;code&gt;img_metadata&lt;/code&gt; already holds the GPS coordinates of every photograph. Join it to &lt;code&gt;counts&lt;/code&gt; by file name (&lt;code&gt;img_metadata&lt;/code&gt; uses the column &lt;code&gt;FileName&lt;/code&gt;, which is &lt;code&gt;basename(file)&lt;/code&gt;), and use &lt;code&gt;relationship = &amp;quot;one-to-one&amp;quot;&lt;/code&gt; so the join checks that each photograph matches exactly one row. Plot &lt;code&gt;GPSLongitude&lt;/code&gt; against &lt;code&gt;GPSLatitude&lt;/code&gt;, coloured by the number of cars, with &lt;code&gt;coord_quickmap()&lt;/code&gt;. What does the map show, and what does it &lt;em&gt;not&lt;/em&gt; show? Think about the direction the camera was facing, the lighting, the time of day, and whether the car carrying the camera was stuck in traffic.&lt;/li&gt;
+&lt;li&gt;Repeat the map for &lt;code&gt;person&lt;/code&gt; detections. Where are pedestrians most and least visible?&lt;/li&gt;
+&lt;li&gt;Find the photographs with the rare classes (&lt;code&gt;umbrella&lt;/code&gt;, &lt;code&gt;dog&lt;/code&gt;, &lt;code&gt;train&lt;/code&gt; and so on) and plot their detections. How many are correct?&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;classes_of_interest&lt;/code&gt; filter in &lt;code&gt;plot_detections()&lt;/code&gt; silently drops everything else the model found. Remove the filter for one image. What else is in a typical street scene that a transportation-focused analysis would otherwise never see?&lt;/li&gt;
 &lt;li&gt;Compare this model&amp;rsquo;s detections on the same photograph against the YOLOv10 results from the &lt;a href=&#34;https://nkaza.github.io/post/object-detection-using-pre-trained-neural-network-models/&#34;&gt;earlier post&lt;/a&gt;. Do the two models agree on classes and confidences? Where do they diverge?&lt;/li&gt;
-&lt;li&gt;The &lt;code&gt;classes_of_interest&lt;/code&gt; filter in &lt;code&gt;plot_detections()&lt;/code&gt; silently drops everything else the model found. Remove the filter for one image &amp;mdash; what else is in a typical street scene that a transportation-focused analysis would otherwise never see?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;Dropping &lt;code&gt;reticulate&lt;/code&gt; and a Python environment out of the pipeline trades one kind of complexity for another. There&amp;rsquo;s no &lt;code&gt;conda&lt;/code&gt; environment to set up, no network drive to map, no &lt;code&gt;use_condaenv()&lt;/code&gt; path to get right for Windows versus Mac &amp;mdash; but in exchange, R takes on work that &lt;code&gt;ultralytics$YOLO()&lt;/code&gt; used to do invisibly: letterboxing, tensor layout, box coordinates, even the COCO class names. Getting any one of those wrong, as the pixel-buffer reshape above shows, doesn&amp;rsquo;t necessarily throw an error &amp;mdash; it can just quietly degrade every confidence score and leave you debugging a model, not a bug.&lt;/p&gt;
-&lt;p&gt;That tradeoff aside, the caveats from the earlier post apply just as much here, model architecture notwithstanding. This is still a pre-trained model applied with no fine-tuning, still liable to misclassify, still liable to miss things in fog, poor lighting, or partial occlusion, still trained on a dataset (COCO) whose composition shapes what it notices and what it doesn&amp;rsquo;t. Whether the inference happens in Python or in R has no bearing on any of that. Treat what comes out of either pipeline as a starting point for human review, not a finished count.&lt;/p&gt;
+&lt;p&gt;Dropping &lt;code&gt;reticulate&lt;/code&gt; and a Python environment out of the pipeline trades one kind of complexity for another. There&amp;rsquo;s no &lt;code&gt;conda&lt;/code&gt; environment to set up and no &lt;code&gt;use_condaenv()&lt;/code&gt; path to get right for Windows versus Mac. In exchange, R takes on the work that &lt;code&gt;ultralytics$YOLO()&lt;/code&gt; used to do invisibly: resampling, padding, array layout, box coordinates, even the COCO class names. Each of those is a raster operation, and most of them can go wrong without an error: the wrong cell order transposes the photograph, a scale factor chosen for landscape photographs breaks on portrait ones, and a count that starts from the detections forgets the photographs with none. In every case the remedy was the same: look at the raster the model actually received, and test the code on data that doesn&amp;rsquo;t match the example it was written for.&lt;/p&gt;
+&lt;p&gt;The caveats from the earlier post apply just as much here. This is still a pre-trained model applied with no fine-tuning, still liable to misclassify, still liable to miss things in fog, poor lighting, or partial occlusion, still trained on a dataset (COCO) whose composition shapes what it notices and what it doesn&amp;rsquo;t. Whether the inference happens in Python or in R has no bearing on any of that. Treat what comes out of either pipeline as a starting point for human review, not a finished count.&lt;/p&gt;
 </description>
     </item>
     
@@ -1629,7 +2832,7 @@ knitr::kable(comm_compare, digits = 3,
 &lt;p&gt;While the above is a generic way of constructing the query and getting the results using APIs, tidycensus is a package that wraps this all in different convenience functions such as &lt;code&gt;get_decennial&lt;/code&gt; and &lt;code&gt;get_acs&lt;/code&gt;. Note that, this package is tailored only towards US Census and not for any other Census agencies or for that matter other US government data.&lt;/p&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    You should check out Kyle Walker’s excellent book &lt;a href=&#34;https://walker-data.com/census-r/&#34;&gt;Analyzing US Census Data: Methods, Maps, and Models in R&lt;/a&gt;
+    You should check out Kyle Walker’s excellent book &lt;a href=&#34;https://walker-data.com/census-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Analyzing US Census Data: Methods, Maps, and Models in R&lt;/a&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;In the rest of the tutorial, I am going to demonstrate how to download, construct and visualise unemployment rates and poverty rates at a Census tract level. We are going to use the 5 year ACS 2012-2017 data.&lt;/p&gt;
@@ -2794,23 +3997,23 @@ ggplot() +
 &lt;h3 id=&#34;editing-presenting-reworking&#34;&gt;Editing, Presenting, Reworking&lt;/h3&gt;
 &lt;p&gt;A good story is forged in the fires of revision. It evolves. It gets feedback. It gets worse before it gets better. Writing isn’t what comes after analysis. It is integral to it. Through writing, we clarify, wander, connect, and often realise we were wrong, all along. Edit ruthlessly. Kill your darlings. Rework what doesn’t work. Repeat.&lt;/p&gt;
 &lt;h2 id=&#34;an-exercise&#34;&gt;An Exercise&lt;/h2&gt;
-&lt;p&gt;Because I am quirky (a polite way of putting at it), I have been &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/%e2%9d%8c/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gasoline_purchases/kaza_gasconsumption.xlsx?d=w2b4f58cb3d85493d8158b4d64103f3ed&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=r5RIaU&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;writing down information&lt;/a&gt;, whenever gasoline is added to my car.&lt;/p&gt;
+&lt;p&gt;Because I am quirky (a polite way of putting at it), I have been &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:x:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gasoline_purchases/kaza_gasconsumption.xlsx?d=w2b4f58cb3d85493d8158b4d64103f3ed&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=r5RIaU&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;writing down information&lt;/a&gt;, whenever gasoline is added to my car.&lt;/p&gt;
 &lt;p&gt;Take about 30 minutes to explore this data and paint a picture. Use whatever tools, software as you see fit.&lt;/p&gt;
-&lt;p&gt;Here is what Microsoft Copilot &amp;lsquo;thought&amp;rsquo; the story is. Can you do better?&lt;/p&gt;
+&lt;p&gt;Here is what Microsoft Copilot &amp;rsquo;thought&amp;rsquo; the story is. Can you do better?&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;From 2020 through 2022, the vehicle behaved with remarkable consistency. Most fill-ups were about 10 to 12 gallons, and most occurred after roughly 300 to 350 miles, implying fuel economy and driving patterns that barely changed over thousands of miles. The car accumulated approximately 33,000 miles during this period, moving from about 131,000 miles in October 2020 to 164,000 miles by the end of 2022, which works out to roughly 16,000 miles per year. Then 2023 arrives and the pattern breaks. In just the first seven months of the year, the odometer jumps from 164,070 to 175,873 miles, nearly 12,000 miles, a pace about 30% higher than the preceding years. The change is not subtle. January alone contains an unusual cluster of fuel purchases, and March 2023 shows repeated refueling over consecutive days as the vehicle moves from 169,764 to 172,282 miles in less than a month. The data suggest a year of exceptional mobility, when the car was being used far more intensively than before.&lt;/p&gt;
 &lt;p&gt;But the most interesting part of the story is that the surge does not last. After reaching 181,728 miles in May 2024, mileage growth slows dramatically. Over the next eight months, the vehicle adds only about 3,700 miles, a fraction of its earlier pace. Long intervals appear between purchases, including a gap of more than two months during the summer of 2024. At the same time, small purchases become increasingly common: tanks of 5 to 8 gallons begin to appear where full 11-gallon fill-ups once dominated. By the final chapter of the dataset, the car is approaching 198,000 miles, but the real story is not the distance traveled. It is the shift in behavior. The data reveal three distinct regimes: a stable commuting phase through 2022, an unusually high-mobility phase in 2023, and a low-utilization phase beginning in 2024. Without recording a single meeting, move, job change, or life event, the gasoline log captures a major change in how the vehicle, and likely its owner, used time and space.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Storytelling is a skill. It takes practice, reflection, feedback, and a lot of reading. My hope is that this course helps you build that skill. And that you’ll tell stories that matter—stories that change minds, spark action, and maybe, get you that grant.&lt;/p&gt;
-&lt;section class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
 &lt;p&gt;I recongise that this might look inconsistent with the earlier claim that confusion is a valid purpose.  There is a world of difference between confusing and complicating a larger concept, deeply held beliefs.  Your argument needs to be clear, even when it serving the purpose of complication.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;/section&gt;
+&lt;/div&gt;
 </description>
     </item>
     
@@ -3147,7 +4350,7 @@ claude_chat$chat(extraction_prompt3, content_pdf_file(paths[1]), echo =FALSE) %&
 &lt;p&gt;You can also download the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:f:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/nycbikeshare?d=wd92578cfe049423ca237f5559e1a3a42&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=bqeOhx&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;local copy&lt;/a&gt; of the above datasets.&lt;/p&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    Todd Schneider &lt;a href=&#34;http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/&#34;&gt;analysed 22 million NYC bike share trips&lt;/a&gt; of a much larger dataset that this. Check it out.
+    Todd Schneider &lt;a href=&#34;http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;analysed 22 million NYC bike share trips&lt;/a&gt; of a much larger dataset that this. Check it out.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 id=&#34;analyse-bike-stations&#34;&gt;Analyse bike stations&lt;/h2&gt;
@@ -3259,7 +4462,7 @@ prop.table(xtabs(~usertype+gender, data=tripdata), margin=2)
 &lt;p&gt;Let’s plot all the bike stations&lt;/p&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    &lt;p&gt;The maps in this post use CARTO’s Positron basemap, which now requires a free API key. Register for one at &lt;a href=&#34;https://carto.com/basemaps/apikey&#34;&gt;carto.com/basemaps/apikey&lt;/a&gt;.&lt;/p&gt;
+    &lt;p&gt;The maps in this post use CARTO’s Positron basemap, which now requires a free API key. Register for one at &lt;a href=&#34;https://carto.com/basemaps/apikey&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;carto.com/basemaps/apikey&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Once you have a key, add a line to your &lt;code&gt;~/.Renviron&lt;/code&gt; file (create it if it doesn’t already exist): &lt;code&gt;CARTO_API_KEY=your_key_here&lt;/code&gt;, then restart R so &lt;code&gt;Sys.getenv(&amp;quot;CARTO_API_KEY&amp;quot;)&lt;/code&gt; can find it. &lt;code&gt;.Renviron&lt;/code&gt; file is a hidden file on a local computer, so if you chance your computers, you will need to add them again on that computer. This is so that you do not publish your password like keys in your code.&lt;/p&gt;
 &lt;p&gt;You can also use &lt;code&gt;usethis::edit_r_environ()&lt;/code&gt;.&lt;/p&gt;
   &lt;/div&gt;
@@ -3482,7 +4685,7 @@ ggplotly(g1) # Only if you want interactivity
   &lt;div&gt;
     &lt;p&gt;&lt;strong&gt;My war on legends&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;You’ll notice a pattern starting with the plot below, and continuing through the rest of this post: no legends. A legend asks the reader to do real work for every single point or line they want to understand — find the colour in a key off to the side, hold it in memory, then look back at the data and match it up. A direct label puts the answer right where the reader’s eye already is.&lt;/p&gt;
-&lt;p&gt;This isn’t an idiosyncratic preference of mine. &lt;a href=&#34;https://www.edwardtufte.com/&#34;&gt;Edward Tufte&lt;/a&gt; built a career’s worth of argument around maximising the &lt;em&gt;data-ink ratio&lt;/em&gt; — every mark on a chart should earn its place, and a legend is mostly non-data ink sitting between the reader and the point. &lt;a href=&#34;https://www.storytellingwithdata.com/&#34;&gt;Cole Nussbaumer Knaflic&lt;/a&gt;, in &lt;em&gt;Storytelling with Data&lt;/em&gt;, makes eliminating the legend in favour of direct labelling one of her most repeated, concrete pieces of advice. &lt;a href=&#34;https://www.perceptualedge.com/&#34;&gt;Stephen Few&lt;/a&gt; argues much the same for dashboards: strip out anything that doesn’t directly serve the reader’s understanding, legends included.&lt;/p&gt;
+&lt;p&gt;This isn’t an idiosyncratic preference of mine. &lt;a href=&#34;https://www.edwardtufte.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Edward Tufte&lt;/a&gt; built a career’s worth of argument around maximising the &lt;em&gt;data-ink ratio&lt;/em&gt; — every mark on a chart should earn its place, and a legend is mostly non-data ink sitting between the reader and the point. &lt;a href=&#34;https://www.storytellingwithdata.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Cole Nussbaumer Knaflic&lt;/a&gt;, in &lt;em&gt;Storytelling with Data&lt;/em&gt;, makes eliminating the legend in favour of direct labelling one of her most repeated, concrete pieces of advice. &lt;a href=&#34;https://www.perceptualedge.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Stephen Few&lt;/a&gt; argues much the same for dashboards: strip out anything that doesn’t directly serve the reader’s understanding, legends included.&lt;/p&gt;
 &lt;p&gt;None of this means a legend is always wrong. With a dozen categories, direct labels become their own kind of clutter, and a legend is genuinely the better tool. But with two or three categories, or a handful of representative values, it’s worth asking whether the legend is pulling its weight before reaching for one out of habit — which is exactly what we’ll do for the rest of this post’s plots.&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;
@@ -5775,7 +6978,7 @@ county_summary_df
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
     &lt;p&gt;ggplot works by the use of layers. Most of the time, each layer is added using a &lt;code&gt;+&lt;/code&gt; sign. Note that the &lt;code&gt;+&lt;/code&gt; sign should be at the end of the line, not at the beginning of the next line.&lt;/p&gt;
-&lt;p&gt;To understand how the visualisation is constructed using layers, you can build the plot step by step. Just run it line by line without the + at the end and see what outputs it generates. See &lt;a href=&#34;https://nkaza.github.io/slides/bootcamp_day2_1/visual_ggplot.html#&#34;&gt;these slides&lt;/a&gt; for a quick introduction.&lt;/p&gt;
+&lt;p&gt;To understand how the visualisation is constructed using layers, you can build the plot step by step. Just run it line by line without the + at the end and see what outputs it generates. See &lt;a href=&#34;https://nkaza.github.io/slides/bootcamp_day2_1/visual_ggplot.html#&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;these slides&lt;/a&gt; for a quick introduction.&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;Finally, you can add labels to axes and other features.&lt;/p&gt;
@@ -5976,7 +7179,7 @@ and Model Data. Sebastopol, CA: O’ Reilly media,. &lt;a href=&#34;http://r4ds.
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    This post is inspired by &lt;a href=&#34;https://geoffboeing.com/&#34;&gt;Geoff Boeing’s&lt;/a&gt; &lt;a href=&#34;https://geoffboeing.com/2016/11/osmnx-python-street-networks/&#34;&gt;OSMnx&lt;/a&gt; python package. In addition, I drew some notes from &lt;a href=&#34;https://spatialthoughts.com/about/&#34;&gt;Ujaval Gandhi’s&lt;/a&gt; &lt;a href=&#34;https://www.qgistutorials.com/en/docs/3/calculating_intersection_density.html&#34;&gt;QGIS tutorial&lt;/a&gt;.
+    This post is inspired by &lt;a href=&#34;https://geoffboeing.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geoff Boeing’s&lt;/a&gt; &lt;a href=&#34;https://geoffboeing.com/2016/11/osmnx-python-street-networks/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;OSMnx&lt;/a&gt; python package. In addition, I drew some notes from &lt;a href=&#34;https://spatialthoughts.com/about/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ujaval Gandhi’s&lt;/a&gt; &lt;a href=&#34;https://www.qgistutorials.com/en/docs/3/calculating_intersection_density.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;QGIS tutorial&lt;/a&gt;.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;Often one of the key indicators for measuring walkability of a place is the intersection density of road network. In grid networks, roads intersect at regular intervals and are likely to result in more walkable paths than cul-de-sac patterns. Thus planners often use this metric to to measure urban form (see e.g. &lt;a href=&#34;https://enviroatlas.epa.gov/enviroatlas/DataFactSheets/pdf/Supplemental/PedestrianOrientedStreetIntersectionDensity.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;EPA’s EnviroAtlas&lt;/a&gt;). In this post, I am going to demonstrate how to calculate this measure for any place in the world where &lt;a href=&#34;https://www.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Street Map&lt;/a&gt; has a reasonably detailed and accurate street network.&lt;/p&gt;
@@ -5997,7 +7200,7 @@ and Model Data. Sebastopol, CA: O’ Reilly media,. &lt;a href=&#34;http://r4ds.
   &lt;div&gt;
     &lt;p&gt;While the OSM data is comparable to proprietary data sources (e.g.Google Maps and Bing) in its coverage and accuracy, it should be noted that as a collaborative project it has its own unique biases. See for example,&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Das, Maitraye, Brent Hecht, and Darren Gergle. 2019. “The Gendered Geography of Contributions to OpenStreetMap: Complexities in Self-Focus Bias.” In Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems, 1–14. New York, NY, USA: Association for Computing Machinery. &lt;a href=&#34;https://doi.org/10.1145/3290605.3300793&#34;&gt;https://doi.org/10.1145/3290605.3300793&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Das, Maitraye, Brent Hecht, and Darren Gergle. 2019. “The Gendered Geography of Contributions to OpenStreetMap: Complexities in Self-Focus Bias.” In Proceedings of the 2019 CHI Conference on Human Factors in Computing Systems, 1–14. New York, NY, USA: Association for Computing Machinery. &lt;a href=&#34;https://doi.org/10.1145/3290605.3300793&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://doi.org/10.1145/3290605.3300793&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
   &lt;/div&gt;
 &lt;/div&gt;
@@ -6685,7 +7888,7 @@ for (i in 1:nrow(warn_df)){
 &lt;p&gt;An &lt;a href=&#34;https://nkaza.github.io/post/possibilities-and-pitfalls-of-large-language-models/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;entire post&lt;/a&gt; is dedicated to working with Large Language Models. I will not rehash much of it here. However, I will show how I used Claude Anthropic large language model to extract addresses from the pdfs. You will need to get an &lt;a href=&#34;https://docs.claude.com/en/api/admin-api/apikeys/get-api-key&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;API key from Claude&lt;/a&gt;. You can adapt this code for other LLM relatively easily, but your results may vary.&lt;/p&gt;
 &lt;div class=&#34;alert alert-alert&#34;&gt;
   &lt;div&gt;
-    Expect to pay for API usage. At the time of writing, Anthropic charges $0.03 per 1,000 tokens for Claude 4.5. Be sure to monitor your usage. If you don&amp;rsquo;t want to pay, use a local LLM such as llama 3.2 via &lt;a href=&#34;https://ollama.com/&#34;&gt;Ollama&lt;/a&gt;. Expect differences in performance.
+    Expect to pay for API usage. At the time of writing, Anthropic charges $0.03 per 1,000 tokens for Claude 4.5. Be sure to monitor your usage. If you don&amp;rsquo;t want to pay, use a local LLM such as llama 3.2 via &lt;a href=&#34;https://ollama.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ollama&lt;/a&gt;. Expect differences in performance.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
@@ -6765,7 +7968,7 @@ chat_out2
 &lt;p&gt;Extract individual JSON objects from the text. We are going to use &lt;a href=&#34;https://rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Regular Expressions&lt;/a&gt; to search and extract.&lt;/p&gt;
 &lt;div class=&#34;alert alert-alert&#34;&gt;
   &lt;div&gt;
-    Before proceeding, if you are not familiar with Regular Expressions, I highly recommend going through the &lt;a href=&#34;https://regexone.com/&#34;&gt;RegexOne&lt;/a&gt; tutorial. It is free and interactive.
+    Before proceeding, if you are not familiar with Regular Expressions, I highly recommend going through the &lt;a href=&#34;https://regexone.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RegexOne&lt;/a&gt; tutorial. It is free and interactive.
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# The pattern uses DOTALL (?s) to allow &#39;.&#39; to match newlines,
@@ -6784,14 +7987,14 @@ json_blocks_vector &amp;lt;- extracted_matches[, 2]
 &lt;h3 id=&#34;explanation-of-the-regular-expression&#34;&gt;Explanation of the Regular Expression&lt;/h3&gt;
 &lt;p&gt;Here is a breakdown of its components:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&amp;ldquo;(?s)&amp;quot;: This is an inline flag (modifier) that enables the DOTALL (or single-line) mode for the entire regular expression. In this mode, the dot (.) metacharacter matches any single character, including newline characters (\n). By default, the dot usually excludes newlines.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;(?s)&amp;rdquo;: This is an inline flag (modifier) that enables the DOTALL (or single-line) mode for the entire regular expression. In this mode, the dot (.) metacharacter matches any single character, including newline characters (\n). By default, the dot usually excludes newlines.&lt;/li&gt;
 &lt;li&gt;&amp;ldquo;```json\n&amp;rdquo;: This part matches the literal string &amp;ldquo;```json&amp;rdquo; followed by a newline character.&lt;/li&gt;
 &lt;li&gt;(.*?): This is the core of the regex:
 &lt;ul&gt;
-&lt;li&gt;&amp;ldquo;(&amp;rdquo; and &amp;ldquo;)&amp;quot;: These parentheses create a capturing group, which saves the matched text for later use.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;(&amp;rdquo; and &amp;ldquo;)&amp;rdquo;: These parentheses create a capturing group, which saves the matched text for later use.&lt;/li&gt;
 &lt;li&gt;&amp;ldquo;.&amp;rdquo; : In combination with the (?s) flag, this matches any single character, including newlines.&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;*?&amp;quot;: This is a non-greedy (or lazy) quantifier, meaning it matches zero or more occurrences of the preceding element (.) but as few times as possible to allow the rest of the pattern to match. It stops as soon as it encounters the pattern that follows it.&lt;/li&gt;
-&lt;li&gt;&amp;ldquo;\n```&amp;quot;: This matches a literal newline character followed by &amp;ldquo;```&amp;rdquo;, which serves as the end boundary for the non-greedy match.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;*?&amp;rdquo;: This is a non-greedy (or lazy) quantifier, meaning it matches zero or more occurrences of the preceding element (.) but as few times as possible to allow the rest of the pattern to match. It stops as soon as it encounters the pattern that follows it.&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;\n```&amp;rdquo;: This matches a literal newline character followed by &amp;ldquo;```&amp;rdquo;, which serves as the end boundary for the non-greedy match.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
@@ -7189,7 +8392,7 @@ for (i in 1:dim(compnames)[1]){
 &lt;p&gt;As you noticed, a lot of text/string manipulation relies on understanding the linguistic conventions and is an iterative processes. What works in one context may not work in another and you should be prepared to adapt. You will encounter edge cases much more frequently in this type of work, than other kinds of data munging operations. Nonetheless, it is a useful skill to have. In particular, it is useful get familiar with using &lt;a href=&#34;https://www.regexbuddy.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Regular Expressions&lt;/a&gt; to search for patterns within strings. However, use it judiciously.&lt;/p&gt;
 &lt;h2 id=&#34;additional-resources&#34;&gt;Additional Resources&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Silge, Julia, and David Robinson. 2020. Text Mining with R. Sebastapol, CA: O&#39; Reilly. &lt;a href=&#34;https://www.tidytextmining.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://www.tidytextmining.com/&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Silge, Julia, and David Robinson. 2020. Text Mining with R. Sebastapol, CA: O&amp;rsquo; Reilly. &lt;a href=&#34;https://www.tidytextmining.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://www.tidytextmining.com/&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
@@ -7445,7 +8648,7 @@ print(g1)
 &lt;li&gt;arbitrary assignment of weights. (some times these are inconsistent e.g. A&amp;gt;B&amp;gt;C&amp;gt;A). Probably can use AHP to get at inconsistency issues.&lt;/li&gt;
 &lt;li&gt;Global assignment of weights&lt;/li&gt;
 &lt;li&gt;Independence of variables assumed when adding up. This is related to #4.&lt;/li&gt;
-&lt;li&gt;Conversion to a single scale (to create order). This masks the &amp;lsquo;tradeoffs&amp;rsquo; implicit in the weighting scheme.&lt;/li&gt;
+&lt;li&gt;Conversion to a single scale (to create order). This masks the &amp;rsquo;tradeoffs&amp;rsquo; implicit in the weighting scheme.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;I know that you have done some work on this before. Anything else I should be thinking about? and how to correct for some of these issues?&lt;/p&gt;
 &lt;p&gt;My regards to Susan.&lt;/p&gt;
@@ -10545,7 +11748,7 @@ include_graphics(&amp;quot;./img/anaconda.png&amp;quot;) # Change the file path 
 &lt;/div&gt;
 &lt;h3 id=&#34;reading-real-data-into-r&#34;&gt;Reading real data into R&lt;/h3&gt;
 &lt;p&gt;In this course, we are going to follow the tidyverse style of programming and its associated packages. To read a comma separated file (*.csv) we are going to use &lt;code&gt;read_csv&lt;/code&gt; command from &lt;code&gt;tidyverse&lt;/code&gt; package.&lt;/p&gt;
-&lt;p&gt;Download the latest building violations data from &lt;a href=&#34;https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;building violations data&lt;/a&gt; from the Chicago Open Data Portal. For convenience, &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/%e2%9d%8c/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/buildingviolations/Building_Violations.csv?d=w096cf5a7a1214747a47d741180228778&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=T1TAvQ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a local copy downloaded in 2019 is stored here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Download the latest building violations data from &lt;a href=&#34;https://data.cityofchicago.org/Buildings/Building-Violations/22u3-xenr&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;building violations data&lt;/a&gt; from the Chicago Open Data Portal. For convenience, &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:x:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/buildingviolations/Building_Violations.csv?d=w096cf5a7a1214747a47d741180228778&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=T1TAvQ&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;a local copy downloaded in 2019 is stored here&lt;/a&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyverse)
 
 
@@ -11063,10 +12266,10 @@ for (yr2 in 2006:2020){
       <link>https://nkaza.github.io/post/why-do-we-need-journals/</link>
       <pubDate>Sat, 04 May 2019 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/why-do-we-need-journals/</guid>
-      <description>&lt;p&gt;There was a recent email on &lt;a href=&#34;https://groups.google.com/forum/?utm_source=digest&amp;amp;utm_medium=email#!topic/planetnew/8-3W6H7mVTE&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;PLANET Google Groups&lt;/a&gt; asking about what the &amp;lsquo;top journals&amp;rsquo; were in the field. I wrote a response, while not directly answering the question. This post is an elaboration/edit of that post.&lt;/p&gt;
+      <description>&lt;p&gt;There was a recent email on &lt;a href=&#34;https://groups.google.com/forum/?utm_source=digest&amp;amp;utm_medium=email#!topic/planetnew/8-3W6H7mVTE&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;PLANET Google Groups&lt;/a&gt; asking about what the &amp;rsquo;top journals&amp;rsquo; were in the field. I wrote a response, while not directly answering the question. This post is an elaboration/edit of that post.&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;Do we need journals any more? I say this as/has been an associate editor for journals and appreciating the full scope of publication infrastructure that publishers provide. I also appreciate the need for cognitive shortcuts to quickly evaluate the value of research by looking to the reputation of the journal. Perhaps these shortcuts are useful to promotion and tenure committees.&lt;/p&gt;
-&lt;p&gt;But I wonder  what the point of a journal is, from the perspective of the &lt;em&gt;reader&lt;/em&gt;. If we take a journal to be a thematically coherent collection of published research that validates and fixes particular approaches, methods, questions and evidentiary standards for a field, then a quick peek at the some of recent issues of the &amp;lsquo;top&amp;rsquo; journals invalidates this view (save for some special issues).  The methodological and theoretical diversity is quite astounding and should rightly be celebrated. Perhaps, coherence is overrated.&lt;/p&gt;
+&lt;p&gt;But I wonder  what the point of a journal is, from the perspective of the &lt;em&gt;reader&lt;/em&gt;. If we take a journal to be a thematically coherent collection of published research that validates and fixes particular approaches, methods, questions and evidentiary standards for a field, then a quick peek at the some of recent issues of the &amp;rsquo;top&amp;rsquo; journals invalidates this view (save for some special issues).  The methodological and theoretical diversity is quite astounding and should rightly be celebrated. Perhaps, coherence is overrated.&lt;/p&gt;
 &lt;p&gt;One might argue that this diversity is precisely the point. The diversity in the bundle/collection allows for serendipitous discoveries, that the readers would not otherwise find when they are engaged in &amp;lsquo;project-directed&amp;rsquo; reading. However, it has been a minute since I have engaged in a cover-cover reading/skimming of a journal. It is almost never the case, when the journal is largely available through electronic databases through the library and not a paper copy that arrives in my mailbox (forget about going to the stacks). And it is certainly never the case, when I use search engines such as Google Scholar or ResearchGate. In fact, it is because of the imprecise nature of the search results that I found the most useful things in the unlikeliest places, not because of curated collections.&lt;/p&gt;
 &lt;p&gt;We are in an age of the great unbundling. We no longer have to buy cable package subscriptions; we consume individual clips on YouTube. Yet the publishers still insist on selling bundles of bundles to libraries. But the dam is breaking. Universities are requiring self-archiving (largely open access) of journal articles (see &lt;a href=&#34;http://roarmap.eprints.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;http://roarmap.eprints.org/&lt;/a&gt; for a list of policy adopters) . Many authors publish their works on sites such as ResearchGate and Mendeley. Funders are now &lt;a href=&#34;https://www.coalition-s.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;prohibiting publications&lt;/a&gt; in journals that do not provide open access.  Incentives are aligned as well; authors want wide distribution of their articles rather than bundled behind  restricted access. Web, preprint servers (&lt;a href=&#34;http://arxiv.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;arXiv&lt;/a&gt;, &lt;a href=&#34;http://ssrn.com&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SSRN&lt;/a&gt; etc.), social networks (e.g. &lt;a href=&#34;https://www.researchgate.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;ResearchGate&lt;/a&gt;) coupled with reasonably good search engines solve the &amp;lsquo;distribution&amp;rsquo; problem. These new(ish) modes of distribution also solve the matching problem; matching authors to readers. We no longer have to rely on small number of contributors/content creators that published in particular venues (because disciplinary traditions, peer networks etc.). Nor do we have to rely on small audiences within the field, who subscribe to these journals. Journal as a distribution channel is largely passe.&lt;/p&gt;
 &lt;p&gt;So, why publish &lt;em&gt;in&lt;/em&gt; journals at all? This is a different question than why publish journals. Ultimately, this circles back to Tej&amp;rsquo;s inquiry about the reputation of the journal. Journals/editors act as gate keepers, for better or for worse. Just the process of writing for a journal, often sharpens arguments. Revisions demanded by editors and reviewers often make the manuscript better. Being published in a journal, through algorithmic magic, places a work in a more visible position in the search results. These advantages are invisible to the reader. If this is the primary role for a journal then there are number of other models that can be adopted. See &lt;a href=&#34;https://stackoverflow.com/help/why-vote&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;peer voting&lt;/a&gt; in StackOverflow, or &lt;a href=&#34;https://scirate.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SciRate&lt;/a&gt;, for example. Of course, I am not advocating unvetted comments section that is open to all.&lt;/p&gt;
@@ -14724,7 +15927,7 @@ ky_tr_simple$empdens &amp;lt;- ky_tr_simple$C000/(ky_tr_simple$ALAND10) * 10^4 #
 &lt;p&gt;Let us visualise the spatial distribution of employment. Note the use of Quintile colour cuts. There may be other cuts that are more preferable.&lt;/p&gt;
 &lt;div class=&#34;alert alert-warning&#34;&gt;
   &lt;div&gt;
-    The Leaflet package expects all point, line, and shape data to be specified in latitude and longitude using WGS 84 (a.k.a. EPSG:4326). By default, when displaying this data it projects everything to EPSG:3857 and expects that any map tiles are also displayed in EPSG:3857. Other projections are not fully supported. It turns out that Census files are in that coordinate system, however, you may have to pay attention To the projections, when using your own polygon files. See &lt;a href=&#34;https://rstudio.github.io/leaflet/projections.html&#34;&gt;https://rstudio.github.io/leaflet/projections.html&lt;/a&gt;
+    The Leaflet package expects all point, line, and shape data to be specified in latitude and longitude using WGS 84 (a.k.a. EPSG:4326). By default, when displaying this data it projects everything to EPSG:3857 and expects that any map tiles are also displayed in EPSG:3857. Other projections are not fully supported. It turns out that Census files are in that coordinate system, however, you may have to pay attention To the projections, when using your own polygon files. See &lt;a href=&#34;https://rstudio.github.io/leaflet/projections.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;https://rstudio.github.io/leaflet/projections.html&lt;/a&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(leaflet)

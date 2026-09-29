@@ -53,7 +53,7 @@
   
     
   
-  <meta name="description" content="Introduction In this post, I am going to show how one might go about analysing the Bikeshare use in New York city." />
+  <meta name="description" content="Introduction In this post, I am going to show how one might go about analysing the Bikeshare use in New York city. The purpose of this post is to demonstrate how to do some standard exploratory analysis and visualisation of a data set that has some spatial attributes, in open source software primarily in R." />
 
   
   <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/geospatial-data-in-r/" />
@@ -337,7 +337,7 @@
   <meta property="og:site_name" content="Nikhil Kaza" />
   <meta property="og:url" content="https://nkaza.github.io/post/geospatial-data-in-r/" />
   <meta property="og:title" content="Geospatial Data in R | Nikhil Kaza" />
-  <meta property="og:description" content="Introduction In this post, I am going to show how one might go about analysing the Bikeshare use in New York city." /><meta property="og:image" content="https://nkaza.github.io/post/geospatial-data-in-r/featured.png" />
+  <meta property="og:description" content="Introduction In this post, I am going to show how one might go about analysing the Bikeshare use in New York city. The purpose of this post is to demonstrate how to do some standard exploratory analysis and visualisation of a data set that has some spatial attributes, in open source software primarily in R." /><meta property="og:image" content="https://nkaza.github.io/post/geospatial-data-in-r/featured.png" />
     <meta property="twitter:image" content="https://nkaza.github.io/post/geospatial-data-in-r/featured.png" /><meta property="og:locale" content="en-us" />
   
     
@@ -394,7 +394,7 @@
       "url": "https://nkaza.github.io/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_192x192_fill_lanczos_center_3.png"
     }
   },
-  "description": "Introduction In this post, I am going to show how one might go about analysing the Bikeshare use in New York city."
+  "description": "Introduction In this post, I am going to show how one might go about analysing the Bikeshare use in New York city. The purpose of this post is to demonstrate how to do some standard exploratory analysis and visualisation of a data set that has some spatial attributes, in open source software primarily in R."
 }
 </script>
 
@@ -455,7 +455,7 @@
   
   
   
-  <script src="/js/wowchemy-init.min.8f76bdc9e086322ed5147724ebba3d06.js"></script>
+  <script src="/js/wowchemy-init.min.7e85d6cfe81caeb57cc49452f9b55e03.js"></script>
 
   
 
@@ -934,7 +934,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    284 min read
+    38 min read
   </span>
   
 
@@ -1011,7 +1011,7 @@
 <p>You can also download the <a href="https://adminliveunc-my.sharepoint.com/:f:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/nycbikeshare?d=wd92578cfe049423ca237f5559e1a3a42&amp;csf=1&amp;web=1&amp;e=bqeOhx" target="_blank" rel="noopener">local copy</a> of the above datasets.</p>
 <div class="alert alert-note">
   <div>
-    Todd Schneider <a href="http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/">analysed 22 million NYC bike share trips</a> of a much larger dataset that this. Check it out.
+    Todd Schneider <a href="http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/" target="_blank" rel="noopener">analysed 22 million NYC bike share trips</a> of a much larger dataset that this. Check it out.
   </div>
 </div>
 <h2 id="analyse-bike-stations">Analyse bike stations</h2>
@@ -1123,7 +1123,7 @@ prop.table(xtabs(~usertype+gender, data=tripdata), margin=2)
 <p>Let’s plot all the bike stations</p>
 <div class="alert alert-note">
   <div>
-    <p>The maps in this post use CARTO’s Positron basemap, which now requires a free API key. Register for one at <a href="https://carto.com/basemaps/apikey">carto.com/basemaps/apikey</a>.</p>
+    <p>The maps in this post use CARTO’s Positron basemap, which now requires a free API key. Register for one at <a href="https://carto.com/basemaps/apikey" target="_blank" rel="noopener">carto.com/basemaps/apikey</a>.</p>
 <p>Once you have a key, add a line to your <code>~/.Renviron</code> file (create it if it doesn’t already exist): <code>CARTO_API_KEY=your_key_here</code>, then restart R so <code>Sys.getenv(&quot;CARTO_API_KEY&quot;)</code> can find it. <code>.Renviron</code> file is a hidden file on a local computer, so if you chance your computers, you will need to add them again on that computer. This is so that you do not publish your password like keys in your code.</p>
 <p>You can also use <code>usethis::edit_r_environ()</code>.</p>
   </div>
@@ -1346,7 +1346,7 @@ ggplotly(g1) # Only if you want interactivity
   <div>
     <p><strong>My war on legends</strong></p>
 <p>You’ll notice a pattern starting with the plot below, and continuing through the rest of this post: no legends. A legend asks the reader to do real work for every single point or line they want to understand — find the colour in a key off to the side, hold it in memory, then look back at the data and match it up. A direct label puts the answer right where the reader’s eye already is.</p>
-<p>This isn’t an idiosyncratic preference of mine. <a href="https://www.edwardtufte.com/">Edward Tufte</a> built a career’s worth of argument around maximising the <em>data-ink ratio</em> — every mark on a chart should earn its place, and a legend is mostly non-data ink sitting between the reader and the point. <a href="https://www.storytellingwithdata.com/">Cole Nussbaumer Knaflic</a>, in <em>Storytelling with Data</em>, makes eliminating the legend in favour of direct labelling one of her most repeated, concrete pieces of advice. <a href="https://www.perceptualedge.com/">Stephen Few</a> argues much the same for dashboards: strip out anything that doesn’t directly serve the reader’s understanding, legends included.</p>
+<p>This isn’t an idiosyncratic preference of mine. <a href="https://www.edwardtufte.com/" target="_blank" rel="noopener">Edward Tufte</a> built a career’s worth of argument around maximising the <em>data-ink ratio</em> — every mark on a chart should earn its place, and a legend is mostly non-data ink sitting between the reader and the point. <a href="https://www.storytellingwithdata.com/" target="_blank" rel="noopener">Cole Nussbaumer Knaflic</a>, in <em>Storytelling with Data</em>, makes eliminating the legend in favour of direct labelling one of her most repeated, concrete pieces of advice. <a href="https://www.perceptualedge.com/" target="_blank" rel="noopener">Stephen Few</a> argues much the same for dashboards: strip out anything that doesn’t directly serve the reader’s understanding, legends included.</p>
 <p>None of this means a legend is always wrong. With a dozen categories, direct labels become their own kind of clutter, and a legend is genuinely the better tool. But with two or three categories, or a handful of representative values, it’s worth asking whether the legend is pulling its weight before reaching for one out of habit — which is exactly what we’ll do for the rest of this post’s plots.</p>
   </div>
 </div>
@@ -2465,7 +2465,7 @@ g3 &lt;- ggplot(bg_trips_duration)+
       
 
     
-    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+    <script src="/js/vendor-bundle.min.39c2c2890f0b42f46fe5d6e8216f4117.js"></script>
 
     
     
@@ -2554,7 +2554,7 @@ g3 &lt;- ggplot(bg_trips_duration)+
 
     
     
-      <script src="/js/wowchemy-headroom.1cb9e2fc8399acee94eab837265b73bf.js" type="module"></script>
+      <script src="/js/wowchemy-headroom.6b73888494485d3b0874ca2ec83f614f.js" type="module"></script>
     
     
     
@@ -2566,7 +2566,7 @@ g3 &lt;- ggplot(bg_trips_duration)+
       
     
     
-    <script src="/en/js/wowchemy.min.247fd8f54253895301106e3006f53f38.js"></script>
+    <script src="/en/js/wowchemy.min.912ac2d390999e2611191259848f756b.js"></script>
 
     
   <script async defer src="https://buttons.github.io/buttons.js"></script>
