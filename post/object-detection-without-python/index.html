@@ -988,7 +988,7 @@
 <li>Wrap the steps into functions, and test them on photographs that do not fit the assumptions we made along the way.</li>
 <li>Run the functions across many photographs.</li>
 </ol>
-<p>Because Ultralytics produces Python models, we first need to export the model to the TorchScript format. TorchScript compiles a PyTorch model into a static graph that can run independently of the Python runtime. This is the only step that needs Python, and it only needs to happen once. You can download the <a href="https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/models/yolo26s.torchscript?d=w140b165c8d4948fd910e05ad2f421c32&amp;csf=1&amp;web=1&amp;e=JN0udS" target="_blank" rel="noopener">exported copy</a> and skip it. Save it in your <code>InputData</code> folder. I show the export command only for the sake of completeness.</p>
+<p>Because Ultralytics produces Python models, we first need to export the model to the TorchScript format. TorchScript compiles a PyTorch model into a static graph that can run independently of the Python runtime. This is the only step that needs Python, and it only needs to happen once. You can download the <a href="https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/models/yolo26s.torchscript?d=w140b165c8d4948fd910e05ad2f421c32&amp;csf=1&amp;web=1&amp;e=JN0udS" target="_blank" rel="noopener">exported copy</a>. Save it in your <code>InputData</code> folder. I show the export command only for the sake of completeness.</p>
 <pre><code class="language-bash">pip install ultralytics
 yolo export model=yolo26s.pt format=torchscript imgsz=640 nms=False
 </code></pre>
