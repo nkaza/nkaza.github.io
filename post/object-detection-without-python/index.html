@@ -934,7 +934,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    44 min read
+    45 min read
   </span>
   
 
@@ -988,10 +988,11 @@
 <li>Wrap the steps into functions, and test them on photographs that do not fit the assumptions we made along the way.</li>
 <li>Run the functions across many photographs.</li>
 </ol>
-<p>Because Ultralytics produces Python models, we first need to export the model to the TorchScript format. TorchScript compiles a PyTorch model into a static graph that can run independently of the Python runtime. This is the only step that needs Python, and it only needs to happen once. You can download the <a href="https://adminliveunc-my.sharepoint.com/:f:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rioimages?d=w8740a28abfdd44d7b7a33640282b7edd&amp;csf=1&amp;web=1&amp;e=0wLsej" target="_blank" rel="noopener">exported copy</a> and skip it. Save it in your <code>InputData</code> folder. I show the export command only for the sake of completeness.</p>
+<p>Because Ultralytics produces Python models, we first need to export the model to the TorchScript format. TorchScript compiles a PyTorch model into a static graph that can run independently of the Python runtime. This is the only step that needs Python, and it only needs to happen once. You can download the <a href="https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/models/yolo26s.torchscript?d=w140b165c8d4948fd910e05ad2f421c32&amp;csf=1&amp;web=1&amp;e=JN0udS" target="_blank" rel="noopener">exported copy</a> and skip it. Save it in your <code>InputData</code> folder. I show the export command only for the sake of completeness.</p>
 <pre><code class="language-bash">pip install ultralytics
-yolo export model=yolo26s.pt format=torchscript imgsz=640
+yolo export model=yolo26s.pt format=torchscript imgsz=640 nms=False
 </code></pre>
+<p>The <code>nms=False</code> matters. YOLO26 can be exported in two forms. The <em>end-to-end</em> form removes duplicate boxes inside the model and returns at most 300 final detections, each with six numbers: a 1 × 300 × 6 tensor. The other form returns every raw candidate box for 80 classes: a 1 × 84 × 8400 tensor, which then needs a separate duplicate-removal step called non-maximum suppression (NMS). Which form you get by default depends on the version of Ultralytics. Older versions exported the end-to-end form by default, while newer ones export the raw form unless you set <code>nms=False</code>. Setting it explicitly gives the end-to-end form, which is what this post expects, regardless of version.</p>
 <div class="alert alert-note">
   <div>
     This tutorial uses <a href="https://docs.ultralytics.com/models/yolo26/" target="_blank" rel="noopener">YOLO26</a>. YOLO26 ships in n/s/m/l/x sizes (no &ldquo;b&rdquo;, if you&rsquo;re used to YOLOv10&rsquo;s naming); this post uses the small <code>yolo26s</code> variant. Swap in <code>yolo26m</code>/<code>l</code>/<code>x</code> for more accuracy at the cost of speed, using the same export command above.

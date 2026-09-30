@@ -983,7 +983,7 @@ library(terra)
 library(tidyverse)
 library(here)
 </code></pre>
-<p>If you are following along, download the <a href="https://adminliveunc-my.sharepoint.com/:f:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rioimages?d=w8740a28abfdd44d7b7a33640282b7edd&amp;csf=1&amp;web=1&amp;e=0wLsej" target="_blank" rel="noopener">exported model, yolo26s.torchscript</a> and the <a href="/post/object-detection-without-python/coco_classes.csv">COCO class table, coco_classes.csv</a>, and save both in your <code>InputData</code> folder.</p>
+<p>If you are following along, download the <a href="https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/rio_kartaview_images/models/yolo26s.torchscript?d=w140b165c8d4948fd910e05ad2f421c32&amp;csf=1&amp;web=1&amp;e=JN0udS" target="_blank" rel="noopener">exported model, yolo26s.torchscript</a> and the <a href="/post/object-detection-without-python/coco_classes.csv">COCO class table, coco_classes.csv</a>, and save both in your <code>InputData</code> folder.</p>
 <pre><code class="language-r">model        &lt;- here(&quot;InputData&quot;, &quot;yolo26s.torchscript&quot;) %&gt;% jit_load()
 coco_classes &lt;- here(&quot;InputData&quot;, &quot;coco_classes.csv&quot;) %&gt;% read_csv(show_col_types = FALSE)
 </code></pre>
