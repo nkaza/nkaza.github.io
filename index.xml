@@ -966,7 +966,7 @@ Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;county_stats &amp;lt;- function(df, county_name) {
   if (!county_name %in% df$county) stop(&amp;quot;Unknown county: &amp;quot;, county_name)
-  df |&amp;gt;
+  stats &amp;lt;- df |&amp;gt;
     filter(county == county_name) |&amp;gt;
     summarise(county = county_name,
               n_tracts = n(),
@@ -974,6 +974,7 @@ Solution
               pct_growth = round(100 * (sum(pop_2020) - sum(pop_2010)) / sum(pop_2010), 1),
               pop_2020 = sum(pop_2020)) |&amp;gt;
     select(county, n_tracts, pop_2020, density, pct_growth)
+  return(stats)
 }
 county_stats(tracts_dat, &amp;quot;Durham&amp;quot;)
 # # A tibble: 1 x 5
@@ -1041,7 +1042,7 @@ stats_map
 &lt;/table&gt;
 &lt;p&gt;The following function doesn’t work. Run it, read the error, and fix it. There is more than one bug.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;income_class &amp;lt;- function(df, county_income) {
-  df |&amp;gt;
+  classified &amp;lt;- df |&amp;gt;
     left_join(county_income, by = &amp;quot;county&amp;quot;) |&amp;gt;
     mutate(
       ratio = county_med_income / med_income,
@@ -1053,6 +1054,7 @@ stats_map
         &amp;quot;upper&amp;quot;
       }
     )
+  return(classified)
 }
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; &lt;code&gt;if ()&lt;/code&gt; checks one TRUE/FALSE, but a column has one per tract. Check which way the ratio is divided, and what happens to tracts with no income.&lt;/p&gt;
@@ -1061,7 +1063,7 @@ stats_map
 Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;income_class &amp;lt;- function(df, county_income) {
-  df |&amp;gt;
+  classified &amp;lt;- df |&amp;gt;
     left_join(county_income, by = &amp;quot;county&amp;quot;) |&amp;gt;
     mutate(
       ratio = med_income / county_med_income,   # tract over county
@@ -1072,6 +1074,7 @@ Solution
         TRUE ~ &amp;quot;upper&amp;quot;
       )
     )
+  return(classified)
 }
 
 tract_classes &amp;lt;- income_class(tracts_dat, county_income)
@@ -1118,11 +1121,12 @@ Solution
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;describe &amp;lt;- function(df, var) {
   if (!var %in% names(df)) stop(&amp;quot;No column named &amp;quot;, var)
   x &amp;lt;- df[[var]]
-  tibble(variable = var,
-         n_missing = sum(is.na(x)),
-         min = min(x, na.rm = TRUE),
-         median = median(x, na.rm = TRUE),
-         max = max(x, na.rm = TRUE))
+  row &amp;lt;- tibble(variable = var,
+                n_missing = sum(is.na(x)),
+                min = min(x, na.rm = TRUE),
+                median = median(x, na.rm = TRUE),
+                max = max(x, na.rm = TRUE))
+  return(row)
 }
 
 vars &amp;lt;- c(&amp;quot;pop_2010&amp;quot;, &amp;quot;pop_2020&amp;quot;, &amp;quot;households&amp;quot;, &amp;quot;renter_hh&amp;quot;, &amp;quot;med_income&amp;quot;)
@@ -1143,7 +1147,7 @@ map(vars, \(v) describe(tracts_dat, v)) |&amp;gt; list_rbind()
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;h3 id=&#34;exercise-7-maps-and-histograms&#34;&gt;Exercise 7: Maps and histograms&lt;/h3&gt;
-&lt;p&gt;A map (statistical graphic not a function) shows &lt;strong&gt;where&lt;/strong&gt; values are; a histogram shows &lt;strong&gt;how they are distributed&lt;/strong&gt;: whether most tracts cluster in the middle, how long the tail of high incomes is, and how many tracts sit at the extremes. Together they answer questions neither answers alone. Choices about colour scales and breaks change the visual evidence a map produces, so be deliberate about them.&lt;/p&gt;
+&lt;p&gt;A map (statistical graphic not a function) shows &lt;strong&gt;where&lt;/strong&gt; values are; a histogram shows &lt;strong&gt;how they are distributed&lt;/strong&gt;: whether most tracts cluster in the middle, how long the tail of high incomes is, and how many tracts sit at the extremes. Together they answer questions neither answers alone.&lt;/p&gt;
 &lt;p&gt;Join &lt;code&gt;tracts_dat&lt;/code&gt; onto &lt;code&gt;tract_shapes&lt;/code&gt;, write &lt;code&gt;county_map(df, county_name, var)&lt;/code&gt; with &lt;strong&gt;tmap&lt;/strong&gt; and &lt;code&gt;county_hist(df, county_name, var)&lt;/code&gt; with &lt;strong&gt;ggplot2&lt;/strong&gt;, make one map and one histogram of median income per county with &lt;code&gt;map()&lt;/code&gt;, and arrange them in a grid with &lt;strong&gt;cowplot&lt;/strong&gt;: maps on top, histograms below.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; tmap takes column names as strings, so &lt;code&gt;tm_polygons(fill = var)&lt;/code&gt; works as is; ggplot needs &lt;code&gt;aes(x = .data[[var]])&lt;/code&gt;. Start the join from &lt;code&gt;tract_shapes&lt;/code&gt; so the result stays an sf object. Convert each tmap to a grid graphic with &lt;code&gt;tmap_grob()&lt;/code&gt;; &lt;code&gt;cowplot::plot_grid()&lt;/code&gt; accepts grobs and ggplots alike.&lt;/p&gt;
 &lt;details&gt;
@@ -1155,7 +1159,7 @@ Solution
 county_map &amp;lt;- function(df, county_name, var) {
   if (!county_name %in% df$county) stop(&amp;quot;Unknown county: &amp;quot;, county_name)
   d &amp;lt;- filter(df, county == county_name)
-  tm_shape(d) +
+  m &amp;lt;- tm_shape(d) +
     tm_polygons(fill = var, col = NULL,
                 fill.scale = tm_scale_continuous(
                   values = &amp;quot;viridis&amp;quot;,
@@ -1164,15 +1168,17 @@ county_map &amp;lt;- function(df, county_name, var) {
                                         position = tm_pos_out(&amp;quot;center&amp;quot;, &amp;quot;bottom&amp;quot;))) +
     tm_title(county_name) +
     tm_layout(frame = FALSE)
+  return(m)
 }
 
 county_hist &amp;lt;- function(df, county_name, var) {
   d &amp;lt;- filter(df, county == county_name)
-  ggplot(d, aes(x = .data[[var]])) +
+  p &amp;lt;- ggplot(d, aes(x = .data[[var]])) +
     geom_histogram(bins = 15) +
     scale_x_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale())) +
     labs(title = county_name, x = NULL, y = &amp;quot;Tracts&amp;quot;) +
     theme_minimal()
+  return(p)
 }
 
 county_maps &amp;lt;- map(counties, \(cn) county_map(tract_sf, cn, &amp;quot;med_income&amp;quot;) |&amp;gt; tmap_grob())
@@ -1182,6 +1188,7 @@ plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/figure-html/ex7-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
 &lt;/details&gt;
+&lt;p&gt;These solutions provided are one possible solution in R, may be not even the most efficient one. But it would be useful to see if you can best these solutions with your code from an efficiency or a readability perspective.&lt;/p&gt;
 &lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
 &lt;p&gt;The Census API, tidycensus, tigris, and the NHGIS crosswalks make the data easy to get. That ease does not replace careful thought about which data to trust, which denominators make sense, which comparisons are fair across time and place, and how to tell a good story.&lt;/p&gt;
 </description>

@@ -1339,7 +1339,7 @@ Solution
 </summary>
 <pre><code class="language-r">county_stats &lt;- function(df, county_name) {
   if (!county_name %in% df$county) stop(&quot;Unknown county: &quot;, county_name)
-  df |&gt;
+  stats &lt;- df |&gt;
     filter(county == county_name) |&gt;
     summarise(county = county_name,
               n_tracts = n(),
@@ -1347,6 +1347,7 @@ Solution
               pct_growth = round(100 * (sum(pop_2020) - sum(pop_2010)) / sum(pop_2010), 1),
               pop_2020 = sum(pop_2020)) |&gt;
     select(county, n_tracts, pop_2020, density, pct_growth)
+  return(stats)
 }
 county_stats(tracts_dat, &quot;Durham&quot;)
 # # A tibble: 1 x 5
@@ -1414,7 +1415,7 @@ stats_map
 </table>
 <p>The following function doesn’t work. Run it, read the error, and fix it. There is more than one bug.</p>
 <pre><code class="language-r">income_class &lt;- function(df, county_income) {
-  df |&gt;
+  classified &lt;- df |&gt;
     left_join(county_income, by = &quot;county&quot;) |&gt;
     mutate(
       ratio = county_med_income / med_income,
@@ -1426,6 +1427,7 @@ stats_map
         &quot;upper&quot;
       }
     )
+  return(classified)
 }
 </code></pre>
 <p><em>Hint:</em> <code>if ()</code> checks one TRUE/FALSE, but a column has one per tract. Check which way the ratio is divided, and what happens to tracts with no income.</p>
@@ -1434,7 +1436,7 @@ stats_map
 Solution
 </summary>
 <pre><code class="language-r">income_class &lt;- function(df, county_income) {
-  df |&gt;
+  classified &lt;- df |&gt;
     left_join(county_income, by = &quot;county&quot;) |&gt;
     mutate(
       ratio = med_income / county_med_income,   # tract over county
@@ -1445,6 +1447,7 @@ Solution
         TRUE ~ &quot;upper&quot;
       )
     )
+  return(classified)
 }
 
 tract_classes &lt;- income_class(tracts_dat, county_income)
@@ -1491,11 +1494,12 @@ Solution
 <pre><code class="language-r">describe &lt;- function(df, var) {
   if (!var %in% names(df)) stop(&quot;No column named &quot;, var)
   x &lt;- df[[var]]
-  tibble(variable = var,
-         n_missing = sum(is.na(x)),
-         min = min(x, na.rm = TRUE),
-         median = median(x, na.rm = TRUE),
-         max = max(x, na.rm = TRUE))
+  row &lt;- tibble(variable = var,
+                n_missing = sum(is.na(x)),
+                min = min(x, na.rm = TRUE),
+                median = median(x, na.rm = TRUE),
+                max = max(x, na.rm = TRUE))
+  return(row)
 }
 
 vars &lt;- c(&quot;pop_2010&quot;, &quot;pop_2020&quot;, &quot;households&quot;, &quot;renter_hh&quot;, &quot;med_income&quot;)
@@ -1516,7 +1520,7 @@ map(vars, \(v) describe(tracts_dat, v)) |&gt; list_rbind()
 </code></pre>
 </details>
 <h3 id="exercise-7-maps-and-histograms">Exercise 7: Maps and histograms</h3>
-<p>A map (statistical graphic not a function) shows <strong>where</strong> values are; a histogram shows <strong>how they are distributed</strong>: whether most tracts cluster in the middle, how long the tail of high incomes is, and how many tracts sit at the extremes. Together they answer questions neither answers alone. Choices about colour scales and breaks change the visual evidence a map produces, so be deliberate about them.</p>
+<p>A map (statistical graphic not a function) shows <strong>where</strong> values are; a histogram shows <strong>how they are distributed</strong>: whether most tracts cluster in the middle, how long the tail of high incomes is, and how many tracts sit at the extremes. Together they answer questions neither answers alone.</p>
 <p>Join <code>tracts_dat</code> onto <code>tract_shapes</code>, write <code>county_map(df, county_name, var)</code> with <strong>tmap</strong> and <code>county_hist(df, county_name, var)</code> with <strong>ggplot2</strong>, make one map and one histogram of median income per county with <code>map()</code>, and arrange them in a grid with <strong>cowplot</strong>: maps on top, histograms below.</p>
 <p><em>Hint:</em> tmap takes column names as strings, so <code>tm_polygons(fill = var)</code> works as is; ggplot needs <code>aes(x = .data[[var]])</code>. Start the join from <code>tract_shapes</code> so the result stays an sf object. Convert each tmap to a grid graphic with <code>tmap_grob()</code>; <code>cowplot::plot_grid()</code> accepts grobs and ggplots alike.</p>
 <details>
@@ -1528,7 +1532,7 @@ Solution
 county_map &lt;- function(df, county_name, var) {
   if (!county_name %in% df$county) stop(&quot;Unknown county: &quot;, county_name)
   d &lt;- filter(df, county == county_name)
-  tm_shape(d) +
+  m &lt;- tm_shape(d) +
     tm_polygons(fill = var, col = NULL,
                 fill.scale = tm_scale_continuous(
                   values = &quot;viridis&quot;,
@@ -1537,15 +1541,17 @@ county_map &lt;- function(df, county_name, var) {
                                         position = tm_pos_out(&quot;center&quot;, &quot;bottom&quot;))) +
     tm_title(county_name) +
     tm_layout(frame = FALSE)
+  return(m)
 }
 
 county_hist &lt;- function(df, county_name, var) {
   d &lt;- filter(df, county == county_name)
-  ggplot(d, aes(x = .data[[var]])) +
+  p &lt;- ggplot(d, aes(x = .data[[var]])) +
     geom_histogram(bins = 15) +
     scale_x_continuous(labels = scales::label_dollar(scale_cut = scales::cut_short_scale())) +
     labs(title = county_name, x = NULL, y = &quot;Tracts&quot;) +
     theme_minimal()
+  return(p)
 }
 
 county_maps &lt;- map(counties, \(cn) county_map(tract_sf, cn, &quot;med_income&quot;) |&gt; tmap_grob())
@@ -1555,6 +1561,7 @@ plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
 </code></pre>
 <img src="https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/figure-html/ex7-1.png" alt="" width="960" />
 </details>
+<p>These solutions provided are one possible solution in R, may be not even the most efficient one. But it would be useful to see if you can best these solutions with your code from an efficiency or a readability perspective.</p>
 <h2 id="conclusions">Conclusions</h2>
 <p>The Census API, tidycensus, tigris, and the NHGIS crosswalks make the data easy to get. That ease does not replace careful thought about which data to trust, which denominators make sense, which comparisons are fair across time and place, and how to tell a good story.</p>
 
