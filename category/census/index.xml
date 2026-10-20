@@ -24,9 +24,7 @@
 &lt;p&gt;The &lt;a href=&#34;https://nkaza.github.io/post/using-tidycensus-package/&#34;&gt;earlier tidycensus tutorial&lt;/a&gt; showed how to query the Census API and map poverty and unemployment. This one goes a step further: it builds a small but realistic &lt;strong&gt;tract-level dataset&lt;/strong&gt; from several Census sources, and then uses it in a sequence of exercises.&lt;/p&gt;
 &lt;h2 id=&#34;what-an-api-is&#34;&gt;What an API is&lt;/h2&gt;
 &lt;p&gt;An &lt;strong&gt;Application Programming Interface (API)&lt;/strong&gt; is a go-between that lets two programs talk to each other. When a phone app shows you the weather, it sends a structured request to a server, and the server looks up the data, packages it, and sends it back for the app to display. The US Census Bureau runs APIs like this. Instead of downloading spreadsheets by hand, you can ask the Census servers for exactly the variables, years, and places you need, straight from R.&lt;/p&gt;
-&lt;p&gt;You need a free &lt;a href=&#34;https://api.census.gov/data/key_signup.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Census API key&lt;/a&gt;. Keep it private and store it once in R:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;census_api_key(&amp;quot;YOUR_KEY_HERE&amp;quot;, install = TRUE)
-&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Most requests need a free &lt;a href=&#34;https://api.census.gov/data/key_signup.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Census API key&lt;/a&gt;. It identifies you to the server, so keep it private.&lt;/p&gt;
 &lt;h2 id=&#34;querying-census-servers-directly&#34;&gt;Querying Census servers directly&lt;/h2&gt;
 &lt;p&gt;Every Census API request is a web address. With your key in place of &lt;code&gt;YOUR_API_KEY&lt;/code&gt;, this one returns the median household income of every census tract in Orange County from the 2019–2023 American Community Survey:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;https://api.census.gov/data/2023/acs/acs5?get=NAME,B19013_001E&amp;amp;for=tract:*&amp;amp;in=state:37%20county:135&amp;amp;key=YOUR_API_KEY
@@ -42,10 +40,13 @@
 &lt;p&gt;The server answers in JSON, a grid of text whose first row holds the column names. Every API has its own rules, and they change over time, which is one reason code that worked last year can stop working.&lt;/p&gt;
 &lt;h2 id=&#34;tidycensus&#34;&gt;Tidycensus&lt;/h2&gt;
 &lt;p&gt;The &lt;strong&gt;tidycensus&lt;/strong&gt; package wraps the Census API in R functions: &lt;code&gt;get_decennial()&lt;/code&gt; for the census taken every ten years, and &lt;code&gt;get_acs()&lt;/code&gt; for the American Community Survey. They build the request, send it, and return a tidy table, optionally with geometry. Kyle Walker’s &lt;a href=&#34;https://walker-data.com/census-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;em&gt;Analyzing US Census Data&lt;/em&gt;&lt;/a&gt; covers it in depth.&lt;/p&gt;
-&lt;p&gt;The hardest part is usually finding the right variable codes. &lt;code&gt;load_variables()&lt;/code&gt; lists every variable in a dataset so you can search it:&lt;/p&gt;
+&lt;p&gt;Store your key once, and tidycensus adds it to every request:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidycensus)
-
-acs_vars &amp;lt;- load_variables(2023, &amp;quot;acs5&amp;quot;, cache = TRUE)
+census_api_key(&amp;quot;YOUR_API_KEY&amp;quot;, install = TRUE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;install = TRUE&lt;/code&gt; writes the key to your &lt;code&gt;.Renviron&lt;/code&gt; file, so it is available in every future R session.&lt;/p&gt;
+&lt;p&gt;The hardest part is usually finding the right variable codes. &lt;code&gt;load_variables()&lt;/code&gt; lists every variable in a dataset so you can search it:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;acs_vars &amp;lt;- load_variables(2023, &amp;quot;acs5&amp;quot;, cache = TRUE)
 acs_vars |&amp;gt; filter(str_detect(label, &amp;quot;Median household income&amp;quot;))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Two kinds of data are important distinguish:&lt;/p&gt;
