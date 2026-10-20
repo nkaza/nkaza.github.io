@@ -439,7 +439,7 @@ URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocomp
 &lt;h4 id=&#34;tutorialsslides-6&#34;&gt;Tutorials/Slides&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/slides/census_geo/census_geo_v2.html&#34;&gt;Census Geographies&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/building-census-tract-data/&#34;&gt;Building Census Tract Data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://nkaza.github.io/post/tidycensus-nhgis/&#34;&gt;Building Census Tract Data&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
 &lt;h3 id=&#34;oct-27-tue-structured-data-from-apis--databases&#34;&gt;Oct 27 (Tue) Structured Data from APIs &amp;amp; Databases&lt;/h3&gt;
@@ -596,12 +596,12 @@ URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocomp
     
     <item>
       <title>Using Tidycensus and NHGIS in R (version 2)</title>
-      <link>https://nkaza.github.io/post/building-census-tract-data/</link>
+      <link>https://nkaza.github.io/post/tidycensus-nhgis/</link>
       <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
-      <guid>https://nkaza.github.io/post/building-census-tract-data/</guid>
-      <description>&lt;script src=&#34;https://nkaza.github.io/post/building-census-tract-data/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/building-census-tract-data/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/building-census-tract-data/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+      <guid>https://nkaza.github.io/post/tidycensus-nhgis/</guid>
+      <description>&lt;script src=&#34;https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;The &lt;a href=&#34;https://nkaza.github.io/post/using-tidycensus-package/&#34;&gt;earlier tidycensus tutorial&lt;/a&gt; showed how to query the Census API and map poverty and unemployment. This one goes a step further: it builds a small but realistic &lt;strong&gt;tract-level dataset&lt;/strong&gt; from several Census sources, and then uses it in a sequence of exercises.&lt;/p&gt;
 &lt;h2 id=&#34;what-an-api-is&#34;&gt;What an API is&lt;/h2&gt;
@@ -664,7 +664,7 @@ tm_shape(tr_shapes)+
   tm_borders(col=&#39;blue&#39;, lwd=.2)+
   tm_basemap(carto_positron)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/building-census-tract-data/index.en_files/figure-html/shapes-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/figure-html/shapes-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
 &lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
     The map uses CARTO’s Positron basemap, which now requires a free API key. Register for one at &lt;a href=&#34;https://carto.com/basemaps/apikey&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;carto.com/basemaps/apikey&lt;/a&gt;, then add a line to your &lt;code&gt;~/.Renviron&lt;/code&gt; file: &lt;code&gt;CARTO_API_KEY=your_key_here&lt;/code&gt;, and restart R so &lt;code&gt;Sys.getenv(&amp;quot;CARTO_API_KEY&amp;quot;)&lt;/code&gt; can find it. You can also use &lt;code&gt;usethis::edit_r_environ()&lt;/code&gt;. Keeping keys in &lt;code&gt;.Renviron&lt;/code&gt; keeps them out of your code.
@@ -1144,7 +1144,7 @@ county_hists &amp;lt;- map(counties, \(cn) county_hist(tract_sf, cn, &amp;quot;m
 
 plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/building-census-tract-data/index.en_files/figure-html/ex7-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/figure-html/ex7-1.png&#34; alt=&#34;&#34; width=&#34;960&#34; /&gt;
 &lt;/details&gt;
 &lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
 &lt;p&gt;The Census API, tidycensus, tigris, and the NHGIS crosswalks make the data easy to get. That ease does not replace careful thought about which data to trust, which denominators make sense, which comparisons are fair across time and place, and how to tell a good story.&lt;/p&gt;

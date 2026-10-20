@@ -56,7 +56,7 @@
   <meta name="description" content="Using APIs to download Census data" />
 
   
-  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/building-census-tract-data/" />
+  <link rel="alternate" hreflang="en-us" href="https://nkaza.github.io/post/tidycensus-nhgis/" />
 
   
   
@@ -313,7 +313,7 @@
   <link rel="icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_32x32_fill_lanczos_center_3.png" />
   <link rel="apple-touch-icon" type="image/png" href="/media/icon_hu1ca6a6912ef6c300619228a995d3f134_46128_180x180_fill_lanczos_center_3.png" />
 
-  <link rel="canonical" href="https://nkaza.github.io/post/building-census-tract-data/" />
+  <link rel="canonical" href="https://nkaza.github.io/post/tidycensus-nhgis/" />
 
   
   
@@ -335,10 +335,10 @@
   <meta property="twitter:card" content="summary_large_image" />
   
   <meta property="og:site_name" content="Nikhil Kaza" />
-  <meta property="og:url" content="https://nkaza.github.io/post/building-census-tract-data/" />
+  <meta property="og:url" content="https://nkaza.github.io/post/tidycensus-nhgis/" />
   <meta property="og:title" content="Using Tidycensus and NHGIS in R (version 2) | Nikhil Kaza" />
-  <meta property="og:description" content="Using APIs to download Census data" /><meta property="og:image" content="https://nkaza.github.io/post/building-census-tract-data/featured.png" />
-    <meta property="twitter:image" content="https://nkaza.github.io/post/building-census-tract-data/featured.png" /><meta property="og:locale" content="en-us" />
+  <meta property="og:description" content="Using APIs to download Census data" /><meta property="og:image" content="https://nkaza.github.io/post/tidycensus-nhgis/featured.png" />
+    <meta property="twitter:image" content="https://nkaza.github.io/post/tidycensus-nhgis/featured.png" /><meta property="og:locale" content="en-us" />
   
     
       <meta
@@ -370,12 +370,12 @@
   "@type": "BlogPosting",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://nkaza.github.io/post/building-census-tract-data/"
+    "@id": "https://nkaza.github.io/post/tidycensus-nhgis/"
   },
   "headline": "Using Tidycensus and NHGIS in R (version 2)",
   
   "image": [
-    "https://nkaza.github.io/post/building-census-tract-data/featured.png"
+    "https://nkaza.github.io/post/tidycensus-nhgis/featured.png"
   ],
   
   "datePublished": "2026-10-20T00:00:00Z",
@@ -963,7 +963,7 @@
 
 <div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 504px;">
   <div style="position: relative">
-    <img src="/post/building-census-tract-data/featured_hu520939ee981aca52b713c409ad7e9a2b_281765_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="504" alt="" class="featured-image">
+    <img src="/post/tidycensus-nhgis/featured_hu520939ee981aca52b713c409ad7e9a2b_281765_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="504" alt="" class="featured-image">
     
   </div>
 </div>
@@ -972,9 +972,9 @@
   <div class="article-container">
     <div class="row">
       <div class="col-12 col-lg-9 article-style">
-        <script src="https://nkaza.github.io/post/building-census-tract-data/index.en_files/htmlwidgets/htmlwidgets.js"></script>
-<script src="https://nkaza.github.io/post/building-census-tract-data/index.en_files/pymjs/pym.v1.js"></script>
-<script src="https://nkaza.github.io/post/building-census-tract-data/index.en_files/widgetframe-binding/widgetframe.js"></script>
+        <script src="https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/pymjs/pym.v1.js"></script>
+<script src="https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/widgetframe-binding/widgetframe.js"></script>
 <h2 id="introduction">Introduction</h2>
 <p>The <a href="/post/using-tidycensus-package/">earlier tidycensus tutorial</a> showed how to query the Census API and map poverty and unemployment. This one goes a step further: it builds a small but realistic <strong>tract-level dataset</strong> from several Census sources, and then uses it in a sequence of exercises.</p>
 <h2 id="what-an-api-is">What an API is</h2>
@@ -1037,7 +1037,7 @@ tm_shape(tr_shapes)+
   tm_borders(col='blue', lwd=.2)+
   tm_basemap(carto_positron)
 </code></pre>
-<img src="https://nkaza.github.io/post/building-census-tract-data/index.en_files/figure-html/shapes-1.png" alt="" width="672" />
+<img src="https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/figure-html/shapes-1.png" alt="" width="672" />
 <div class="alert alert-note">
   <div>
     The map uses CARTO’s Positron basemap, which now requires a free API key. Register for one at <a href="https://carto.com/basemaps/apikey" target="_blank" rel="noopener">carto.com/basemaps/apikey</a>, then add a line to your <code>~/.Renviron</code> file: <code>CARTO_API_KEY=your_key_here</code>, and restart R so <code>Sys.getenv(&quot;CARTO_API_KEY&quot;)</code> can find it. You can also use <code>usethis::edit_r_environ()</code>. Keeping keys in <code>.Renviron</code> keeps them out of your code.
@@ -1517,7 +1517,7 @@ county_hists &lt;- map(counties, \(cn) county_hist(tract_sf, cn, &quot;med_incom
 
 plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
 </code></pre>
-<img src="https://nkaza.github.io/post/building-census-tract-data/index.en_files/figure-html/ex7-1.png" alt="" width="960" />
+<img src="https://nkaza.github.io/post/tidycensus-nhgis/index.en_files/figure-html/ex7-1.png" alt="" width="960" />
 </details>
 <h2 id="conclusions">Conclusions</h2>
 <p>The Census API, tidycensus, tigris, and the NHGIS crosswalks make the data easy to get. That ease does not replace careful thought about which data to trust, which denominators make sense, which comparisons are fair across time and place, and how to tell a good story.</p>
@@ -1595,7 +1595,7 @@ plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
       
       
       <li>
-        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/building-census-tract-data/&amp;text=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
+        <a href="https://twitter.com/intent/tweet?url=https://nkaza.github.io/post/tidycensus-nhgis/&amp;text=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29" target="_blank" rel="noopener" class="share-btn-twitter" aria-label="twitter">
           <i class="fab fa-twitter"></i>
         </a>
       </li>
@@ -1608,7 +1608,7 @@ plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
       
       
       <li>
-        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/building-census-tract-data/&amp;t=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
+        <a href="https://www.facebook.com/sharer.php?u=https://nkaza.github.io/post/tidycensus-nhgis/&amp;t=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29" target="_blank" rel="noopener" class="share-btn-facebook" aria-label="facebook">
           <i class="fab fa-facebook"></i>
         </a>
       </li>
@@ -1621,7 +1621,7 @@ plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
       
       
       <li>
-        <a href="mailto:?subject=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29&amp;body=https://nkaza.github.io/post/building-census-tract-data/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
+        <a href="mailto:?subject=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29&amp;body=https://nkaza.github.io/post/tidycensus-nhgis/" target="_blank" rel="noopener" class="share-btn-email" aria-label="envelope">
           <i class="fas fa-envelope"></i>
         </a>
       </li>
@@ -1634,7 +1634,7 @@ plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
       
       
       <li>
-        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/building-census-tract-data/&amp;title=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
+        <a href="https://www.linkedin.com/shareArticle?url=https://nkaza.github.io/post/tidycensus-nhgis/&amp;title=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29" target="_blank" rel="noopener" class="share-btn-linkedin" aria-label="linkedin-in">
           <i class="fab fa-linkedin-in"></i>
         </a>
       </li>
@@ -1647,7 +1647,7 @@ plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
       
       
       <li>
-        <a href="whatsapp://send?text=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29%20https://nkaza.github.io/post/building-census-tract-data/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
+        <a href="whatsapp://send?text=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29%20https://nkaza.github.io/post/tidycensus-nhgis/" target="_blank" rel="noopener" class="share-btn-whatsapp" aria-label="whatsapp">
           <i class="fab fa-whatsapp"></i>
         </a>
       </li>
@@ -1660,7 +1660,7 @@ plot_grid(plotlist = c(county_maps, county_hists), nrow = 2)
       
       
       <li>
-        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/building-census-tract-data/&amp;title=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
+        <a href="https://service.weibo.com/share/share.php?url=https://nkaza.github.io/post/tidycensus-nhgis/&amp;title=Using%20Tidycensus%20and%20NHGIS%20in%20R%20%28version%202%29" target="_blank" rel="noopener" class="share-btn-weibo" aria-label="weibo">
           <i class="fab fa-weibo"></i>
         </a>
       </li>
