@@ -992,7 +992,35 @@
 <li><code>in=state:37%20county:135</code> limits it to <strong>North Carolina</strong> (FIPS code 37) and <strong>Orange County</strong> (135). <code>%20</code> is an encoded space.</li>
 <li><code>key=...</code> identifies you. The parts are joined with <code>&amp;</code>.</li>
 </ul>
-<p>The server answers in JSON, a grid of text whose first row holds the column names. Every API has its own rules, and they change over time, which is one reason code that worked last year can stop working.</p>
+<p>When you paste this entire url in the browser, the server answers in JSON, a grid of text whose first row holds the column names. Every API has its own rules. They change over time, which is one reason code that worked last year can stop working.</p>
+<p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<figure  >
+  <div class="d-flex justify-content-center">
+    <div class="w-100" ><img alt="The Census API’s answer in a browser. Tract 116.01 has an income of -666666666, the Census Bureau’s code for an estimate it could not compute." srcset="
+               /post/tidycensus-nhgis/images/census-api-json_hu68858c80fb85f1b0e519c3e2c437124c_311758_aa1a66e052838db7e723868822440282.webp 400w,
+               /post/tidycensus-nhgis/images/census-api-json_hu68858c80fb85f1b0e519c3e2c437124c_311758_8b8fa70e9ee99fdee62efcfd93ac0eaa.webp 760w,
+               /post/tidycensus-nhgis/images/census-api-json_hu68858c80fb85f1b0e519c3e2c437124c_311758_1200x1200_fit_q75_h2_lanczos_3.webp 1200w"
+               src="/post/tidycensus-nhgis/images/census-api-json_hu68858c80fb85f1b0e519c3e2c437124c_311758_aa1a66e052838db7e723868822440282.webp"
+               width="760"
+               height="465"
+               loading="lazy" data-zoomable /></div>
+  </div></figure>
+</p>
 <h2 id="tidycensus">Tidycensus</h2>
 <p>The <strong>tidycensus</strong> package wraps the Census API in R functions: <code>get_decennial()</code> for the census taken every ten years, and <code>get_acs()</code> for the American Community Survey. They build the request, send it, and return a tidy table, optionally with geometry. Kyle Walker’s <a href="https://walker-data.com/census-r/" target="_blank" rel="noopener"><em>Analyzing US Census Data</em></a> covers it in depth.</p>
 <p>Store your key once, and tidycensus adds it to every request:</p>
@@ -1006,10 +1034,11 @@ acs_vars |&gt; filter(str_detect(label, &quot;Median household income&quot;))
 </code></pre>
 <p>Two kinds of data are important distinguish:</p>
 <ul>
-<li><strong>Decennial census counts</strong> (2010, 2020) try to count everyone. Since 2020 they carry deliberate small errors (“differential privacy”) to protect respondents, so very small counts are fuzzy.</li>
-<li><strong>American Communty Survey (ACS) estimates</strong> come from a sample of households pooled over five years. Every estimate has a <strong>margin of error</strong>, and for small areas such as tracts it can be large. This post treats the estimates as if they were exact; real analyses should not.</li>
+<li><strong>Decennial census counts</strong> (2010, 2020 etc.) try to count everyone. Since 2020 they carry deliberate small errors (“differential privacy”) to protect respondents, so very small counts are fuzzy.</li>
+<li><strong>American Communty Survey (ACS) estimates</strong> come from a sample of households pooled over five years. Every estimate has a <strong>margin of error</strong>, and for small areas such as tracts it can be large. This post treats the estimates as if they were exact, when it really should not.</li>
 </ul>
 <h2 id="building-the-dataset">Building the dataset</h2>
+<p>For the sake of simplicity I focus on three counties in North Carolina.</p>
 <pre><code class="language-r">counties &lt;- c(&quot;Durham&quot;, &quot;Orange&quot;, &quot;Wake&quot;)
 </code></pre>
 <h3 id="1-tract-boundaries">1. Tract boundaries</h3>
@@ -1021,7 +1050,7 @@ tr_shapes &lt;- tracts(state = &quot;NC&quot;, county = counties, cb = TRUE, yea
   st_transform(32119) |&gt;
   transmute(GEOID, county = NAMELSADCO |&gt; str_remove(&quot; County&quot;),
             area_sqmi = ALAND |&gt;
-              units::set_units(&quot;m^2&quot;) |&gt;     # ALAND is in square meters
+              units::set_units(&quot;m^2&quot;) |&gt;     # ALAND is land area in square meters
               units::set_units(&quot;mi^2&quot;))    # convert to square miles
 
 tmap_mode('plot')  # static map: interactive maps don't render in .Rmarkdown posts
@@ -1043,28 +1072,32 @@ tm_shape(tr_shapes)+
     The map uses CARTO’s Positron basemap, which now requires a free API key. Register for one at <a href="https://carto.com/basemaps/apikey" target="_blank" rel="noopener">carto.com/basemaps/apikey</a>, then add a line to your <code>~/.Renviron</code> file: <code>CARTO_API_KEY=your_key_here</code>, and restart R so <code>Sys.getenv(&quot;CARTO_API_KEY&quot;)</code> can find it. You can also use <code>usethis::edit_r_environ()</code>. Keeping keys in <code>.Renviron</code> keeps them out of your code.
   </div>
 </div>
-<p><code>st_transform(32119)</code> moves the boundaries into <strong>NC State Plane</strong>, a projection in meters that keeps areas accurate in North Carolina. <code>ALAND</code> is land area in square meters but the units are not defined. The <strong>units</strong> package converts it to square miles: <code>set_units(&quot;m^2&quot;)</code> labels the number with its unit, and <code>set_units(&quot;mi^2&quot;)</code> converts it, so there is no conversion factor to look up or mistype. Water is left out so that lakes don’t dilute population density.</p>
+<p><code>st_transform(32119)</code> moves the boundaries into <strong>NC State Plane</strong>, a projection in meters that keeps areas accurate in North Carolina. <code>ALAND</code> is land area in square meters but the units are not defined. The <strong>units</strong> package converts it to square miles: <code>set_units(&quot;m^2&quot;)</code> labels the number with its unit, and <code>set_units(&quot;mi^2&quot;)</code> converts it, so there is no conversion factor to look up or mistype. Whenever possible, use units to prevent errors, but they also create hiccups when comparing with numbers, so be mindful.</p>
+<p>For example, to find tracts smaller than one square mile, comparing <code>area_sqmi</code> with a plain <code>1</code> fails, because R cannot tell whether <code>1</code> means square miles, acres, or square meters:</p>
+<pre><code class="language-r">tr_shapes |&gt; filter(area_sqmi &lt; 1)
+# Error in `stopifnot()`:
+# i In argument: `area_sqmi &lt; 1`.
+# Caused by error in `Ops.units()`:
+# ! both operands of the expression should be &quot;units&quot; objects
+</code></pre>
+<p>Give the number a unit as well. Any area unit works, and units converts before comparing, so <code>640</code> acres gives the same answer as <code>1</code> square mile:</p>
+<pre><code class="language-r">tr_shapes |&gt; filter(area_sqmi &lt; set_units(1, &quot;mi^2&quot;)) |&gt; nrow()
+# [1] 64
+tr_shapes |&gt; filter(area_sqmi &lt; set_units(640, &quot;acre&quot;)) |&gt; nrow()
+# [1] 64
+</code></pre>
 <h3 id="2-population-in-2020">2. Population in 2020</h3>
 <p>The 2020 redistricting file (<code>sumfile = &quot;pl&quot;</code>) has total population (<code>P1_001N</code>) down to the <strong>block</strong>, the smallest Census geography. Blocks are nested within tracts.</p>
 <pre><code class="language-r">blocks_pop_2020 &lt;- get_decennial(geography = &quot;block&quot;, state = &quot;NC&quot;, county = counties,
                              variables = c(pop = &quot;P1_001N&quot;), year = 2020, sumfile = &quot;pl&quot;,
                              progress_bar = FALSE) |&gt;
   select(GEOID, pop = value)
-blocks_pop_2020
-# # A tibble: 21,212 × 2
-#    GEOID             pop
-#    &lt;chr&gt;           &lt;dbl&gt;
-#  1 370630001011000   108
-#  2 370630001011001    35
-#  3 370630001011002    38
-#  4 370630001011003    43
-#  5 370630001011004    31
-#  6 370630001011005    55
-#  7 370630001011006    64
-#  8 370630001011007    23
-#  9 370630001011008    24
-# 10 370630001011009    37
-# # ℹ 21,202 more rows
+
+glimpse(blocks_pop_2020)
+# Rows: 21,212
+# Columns: 2
+# $ GEOID &lt;chr&gt; &quot;370630001011000&quot;, &quot;370630001011001&quot;, &quot;370630001011002&quot;, &quot;370630~
+# $ pop   &lt;dbl&gt; 108, 35, 38, 43, 31, 55, 64, 23, 24, 37, 68, 39, 104, 50, 52, 48~
 </code></pre>
 <p>A block GEOID is a chain of codes, each nested in the one before:</p>
 <table>
@@ -1100,7 +1133,7 @@ blocks_pop_2020
 </table>
 <p>So the first 11 characters of a block GEOID are the GEOID of the tract it sits in. Because 2020 blocks nest exactly inside 2020 tracts, cutting the GEOID to 11 characters and adding up gives the tract population:</p>
 <pre><code class="language-r">tr_pop_2020 &lt;- blocks_pop_2020 |&gt;
-  mutate(GEOID = substr(GEOID, 1, 11)) |&gt;
+  mutate(GEOID = str_sub(GEOID, 1, 11)) |&gt;
   summarise(pop_2020 = sum(pop, na.rm=T), .by = GEOID)
 glimpse(tr_pop_2020)
 # Rows: 340
@@ -1108,7 +1141,7 @@ glimpse(tr_pop_2020)
 # $ GEOID    &lt;chr&gt; &quot;37063000101&quot;, &quot;37063000102&quot;, &quot;37063000200&quot;, &quot;37063000301&quot;, &quot;~
 # $ pop_2020 &lt;dbl&gt; 3282, 4430, 2893, 2644, 3672, 2564, 2966, 4192, 5507, 3701, 1~
 </code></pre>
-<p>The same trick gives any geography that nests: <code>substr(GEOID, 1, 12)</code> is the block group, and <code>substr(GEOID, 1, 5)</code> the county. As a check, the result matches the tract counts the Census publishes directly:</p>
+<p>The same trick gives any geography that nests: <code>str_sub(GEOID, 1, 12)</code> is the block group, and <code>str_sub(GEOID, 1, 5)</code> the county. As a check, the result matches the tract counts the Census publishes directly:</p>
 <pre><code class="language-r">pop_2020_tr &lt;- get_decennial(geography = &quot;tract&quot;, state = &quot;NC&quot;, county = counties,
                                 variables = c(pop_2020 = &quot;P1_001N&quot;), year = 2020, sumfile = &quot;pl&quot;,
                                 progress_bar = FALSE) |&gt;
@@ -1117,7 +1150,6 @@ glimpse(tr_pop_2020)
 all.equal(arrange(tr_pop_2020, GEOID), arrange(pop_2020_tr, GEOID), check.attributes = FALSE)
 # [1] TRUE
 </code></pre>
-<p>This only works when the small areas nest inside the large ones in the <strong>same</strong> year. The next step needs 2010 counts on 2020 tracts, and 2010 blocks do not nest in 2020 tracts, so cutting GEOIDs is not enough there.</p>
 <h3 id="3-population-in-2010-on-2020-tracts">3. Population in 2010, on 2020 tracts</h3>
 <p>Measuring growth needs the same areas in both years, but <strong>tract boundaries change every decade</strong>. Tracts that grew are split, so one 2010 tract can become two or three 2020 tracts with new GEOIDs; others are merged or redrawn. Joining 2010 and 2020 tables by GEOID would silently drop or mismatch exactly the fastest-growing places.</p>
 <p><a href="https://www.nhgis.org" target="_blank" rel="noopener">IPUMS NHGIS</a> publishes <strong>crosswalks</strong> for this. Census <strong>blocks</strong> are the smallest areas, and the crosswalk gives, for each 2010 block, the share of its population in each 2020 tract. Multiply each 2010 block count by its weight and add up by 2020 tract, and you get the 2010 population on 2020 boundaries. Downloading the crosswalk needs an <a href="https://account.ipums.org/api_keys" target="_blank" rel="noopener">IPUMS API key</a>, set with <code>ipumsr::set_ipums_api_key()</code>.</p>
@@ -1160,7 +1192,7 @@ pop_2010 &lt;- xwalk |&gt;
 </code></pre>
 <p>One Wake (37183) tract went from no residents to about 500. Percent growth from a base that small is enormous which matters in Exercise 1.</p>
 <h3 id="4-households-renters-and-income-from-the-acs">4. Households, renters, and income from the ACS</h3>
-<p>Two ACS tables describe households:</p>
+<p>Two ACS tables describe household characteristics:</p>
 <ul>
 <li><strong>B25003, Tenure</strong>: <code>B25003_001</code> is all occupied housing units (households) and <code>B25003_003</code> those occupied by renters.</li>
 <li><strong>B19013, Median household income</strong> in the past 12 months.</li>
@@ -1190,8 +1222,7 @@ tr_acs_hh_inc |&gt;
 # 5 37183980100          5         5         NA        2              0
 # 6 37183980200          0         0         NA        0              0
 </code></pre>
-<p>Every tract with a missing median income has fewer than ten households; the Census Bureau does not publish a median from so few survey responses. Three of these tracts still have thousands of residents, nearly all of them in group quarters: they are college dormitory tracts around Duke and UNC, which have people but almost no households. The rest are 98xx special land-use tracts with almost no residents at all.</p>
-<p>On a map, the two kinds stand apart: the group quarters tracts sit on the campuses, while the 98xx tracts (RTP and RDU) are large areas with almost no residents. Click a tract to see its numbers.</p>
+<p>Every tract with a missing median income has fewer than ten households; the Census Bureau does not publish a median from so few survey responses. Three of these tracts still have thousands of residents, nearly all of them in group quarters: they are college dormitory tracts around Duke and UNC, which have people but almost no households. The rest are 98xx special land-use tracts (RDU, RTP etc.) with almost no residents at all. Click a tract to see its attributes.</p>
 <pre><code class="language-r">quirk_tracts &lt;- tr_shapes |&gt;
   left_join(tr_acs_hh_inc, by = &quot;GEOID&quot;) |&gt;
   left_join(gq_2020, by = &quot;GEOID&quot;) |&gt;
@@ -1217,7 +1248,7 @@ frameWidget(tmap_leaflet(m_quirks))
 <div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
 <script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index.en_files/figure-html//widgets/widget_acs-quirks-map.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <h3 id="5-county-median-income">5. County median income</h3>
-<p>Housing programs compare incomes with the <strong>area median income</strong> of a region. As a stand-in, we use each county’s median household income:</p>
+<p>Housing programs compare incomes with the <strong>area median income</strong> of a region. As a stand-in, we use each county’s median household income (<strong>B19013_001</strong>):</p>
 <pre><code class="language-r">county_income &lt;- get_acs(geography = &quot;county&quot;, state = &quot;NC&quot;, county = counties, year = 2023,
                          survey = &quot;acs5&quot;, variables = c(county_med_income = &quot;B19013_001&quot;)) |&gt;
   transmute(county = NAME |&gt; str_remove(&quot; County, North Carolina&quot;), county_med_income = estimate)
@@ -1229,7 +1260,7 @@ glimpse(county_income)
 </code></pre>
 <h3 id="6-putting-it-together">6. Putting it together</h3>
 <pre><code class="language-r">tracts_dat &lt;- tr_shapes |&gt;
-  st_drop_geometry() |&gt;
+  st_drop_geometry() |&gt; # needed because of land area is calculated. No need to keep the geometry
   left_join(pop_2010, by = &quot;GEOID&quot;) |&gt;
   left_join(tr_pop_2020, by = &quot;GEOID&quot;) |&gt;
   left_join(tr_acs_hh_inc, by = &quot;GEOID&quot;) |&gt;
@@ -1277,8 +1308,8 @@ fastest
 </code></pre>
 </details>
 <h3 id="exercise-2-renters-and-income">Exercise 2: Renters and income</h3>
-<p>Say you want to create a targeted housing program for neighbourhoods where most households rent and incomes are low. “Low” has to be judged against the local cost of living: the median household income is about $80,000 in Durham County but over $100,000 in Wake. So each tract is compared with <strong>its own county’s</strong> median.</p>
-<p>Create <code>eligible</code>: the tracts where more than half of households rent <strong>and</strong> the tract’s median income is below its county’s median. Include <code>GEOID</code>, <code>county</code>, and <code>renter_share</code> (renter households ÷ households). Leave out tracts with unknown income.</p>
+<p>Say you want to create a targeted housing program for neighbourhoods where most households rent and incomes are low. “Low” has to be judged against the local cost of living: the median household income is about 80,000 usd in Durham County but over 100,000 usd in Wake. So each tract is compared with <strong>its own county’s</strong> median.</p>
+<p>Create <code>eligible</code> tibble: the tracts where more than half of households rent <strong>and</strong> the tract’s median income is below its county’s median. Include <code>GEOID</code>, <code>county</code>, and <code>renter_share</code>. Leave out tracts with unknown income.</p>
 <p><em>Hint:</em> join <code>county_income</code> by <code>county</code> so each tract has its own county median beside it.</p>
 <details>
 <summary>
@@ -1354,7 +1385,7 @@ stats_map
 </code></pre>
 </details>
 <h3 id="exercise-5-fix-the-income-categories">Exercise 5: Fix the income categories</h3>
-<p>The US Department of Housing and Urban Development (HUD) defines eligibility for housing assistance by comparing household income with the <strong>area median income</strong> (AMI): households below 80% of AMI count as “low income,” and many affordable-housing programs serve households up to 120% of AMI. Comparing a tract’s median income with its county’s median is a rough version of this, useful for screening neighbourhoods rather than deciding who qualifies.</p>
+<p>The US Department of Housing and Urban Development (HUD) defines eligibility for housing assistance by comparing household income with the <strong>area median income</strong> (AMI): households below 80% of AMI count as “low income,” and many affordable-housing programs serve households up to 120% of AMI. Comparing a tract’s median income with its county’s median is a rough version of this, useful for screening neighbourhoods.</p>
 <table>
 <thead>
 <tr>
@@ -1381,7 +1412,7 @@ stats_map
 </tr>
 </tbody>
 </table>
-<p>A colleague wrote this function, but it doesn’t work. Run it, read the error, and fix it. There is more than one bug.</p>
+<p>The following function doesn’t work. Run it, read the error, and fix it. There is more than one bug.</p>
 <pre><code class="language-r">income_class &lt;- function(df, county_income) {
   df |&gt;
     left_join(county_income, by = &quot;county&quot;) |&gt;
@@ -1428,7 +1459,7 @@ count(tract_classes, county, income_class) |&gt;
 </code></pre>
 </details>
 <h3 id="exercise-6-refactor-the-summary-table">Exercise 6: Refactor the summary table</h3>
-<p>Before analyzing a new dataset, check each column: how many values are missing, and whether the smallest and largest values make sense. This code builds such a table by copying the same block five times. It runs, but copy-and-paste hides mistakes, and two of the copies are wrong. Can you spot them?</p>
+<p>Before analysing a new dataset, check each column: how many values are missing, and whether the smallest and largest values make sense. This code builds such a table by copying the same block five times. It runs, but copy-and-paste hides mistakes, and two of the copies are wrong. Can you spot them?</p>
 <pre><code class="language-r">pop_2010_stats &lt;- tibble(variable = &quot;pop_2010&quot;, n_missing = sum(is.na(tracts_dat$pop_2010)),
                          min = min(tracts_dat$pop_2010, na.rm = TRUE),
                          median = median(tracts_dat$pop_2010, na.rm = TRUE),
@@ -1451,13 +1482,14 @@ income_stats &lt;- tibble(variable = &quot;med_income&quot;, n_missing = sum(is.
                        max = max(tracts_dat$med_income, na.rm = TRUE))
 summary_table &lt;- bind_rows(pop_2010_stats, pop_2020_stats, households_stats, renter_stats, income_stats)
 </code></pre>
-<p>Rewrite it as a function <code>describe(df, var)</code> that returns one row for the column named <code>var</code>, and build the table by calling it once per variable with <code>map()</code>.</p>
+<p>Rewrite it as a function <code>describe(df, var)</code> that returns one row for the column named <code>var</code> and stops with a clear error if <code>df</code> has no such column, and build the table by calling it once per variable with <code>map()</code>.</p>
 <p><em>Hint:</em> <code>var</code> is a string, so get the column with <code>df[[var]]</code>. <code>map(x, f)</code> passes only one argument; pass the others with an anonymous function, <code>\(v) describe(tracts_dat, v)</code>.</p>
 <details>
 <summary>
 Solution
 </summary>
 <pre><code class="language-r">describe &lt;- function(df, var) {
+  if (!var %in% names(df)) stop(&quot;No column named &quot;, var)
   x &lt;- df[[var]]
   tibble(variable = var,
          n_missing = sum(is.na(x)),
@@ -1477,7 +1509,11 @@ map(vars, \(v) describe(tracts_dat, v)) |&gt; list_rbind()
 # 4 renter_hh          0     0   608    2605
 # 5 med_income         6 23198 90936. 242647
 </code></pre>
-<p>The two bugs: the <code>pop_2020</code> block takes its maximum from <code>pop_2010</code>, and the income block’s median has no <code>na.rm = TRUE</code>, so it comes out <code>NA</code>. With a function, each statistic is written once.</p>
+<p>The two bugs: the <code>pop_2020</code> block takes its maximum from <code>pop_2010</code>, and the income block’s median has no <code>na.rm = TRUE</code>, so it comes out <code>NA</code>. With a function, each statistic is written once. The check matters because <code>df[[var]]</code> quietly returns <code>NULL</code> for a misspelled name, and without the check you get a row with <code>0</code> missing, a minimum of <code>Inf</code>, a maximum of <code>-Inf</code>, and no median column at all, with only warnings to flag it:</p>
+<pre><code class="language-r">describe(tracts_dat, &quot;income&quot;)
+# Error in `describe()`:
+# ! No column named income
+</code></pre>
 </details>
 <h3 id="exercise-7-maps-and-histograms">Exercise 7: Maps and histograms</h3>
 <p>A map (statistical graphic not a function) shows <strong>where</strong> values are; a histogram shows <strong>how they are distributed</strong>: whether most tracts cluster in the middle, how long the tail of high incomes is, and how many tracts sit at the extremes. Together they answer questions neither answers alone. Choices about colour scales and breaks change the visual evidence a map produces, so be deliberate about them.</p>

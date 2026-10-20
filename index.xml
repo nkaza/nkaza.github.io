@@ -619,7 +619,35 @@ URL: &lt;a href=&#34;https://geocompr.robinlovelace.net/&#34;&gt;https://geocomp
 &lt;li&gt;&lt;code&gt;in=state:37%20county:135&lt;/code&gt; limits it to &lt;strong&gt;North Carolina&lt;/strong&gt; (FIPS code 37) and &lt;strong&gt;Orange County&lt;/strong&gt; (135). &lt;code&gt;%20&lt;/code&gt; is an encoded space.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;key=...&lt;/code&gt; identifies you. The parts are joined with &lt;code&gt;&amp;amp;&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The server answers in JSON, a grid of text whose first row holds the column names. Every API has its own rules, and they change over time, which is one reason code that worked last year can stop working.&lt;/p&gt;
+&lt;p&gt;When you paste this entire url in the browser, the server answers in JSON, a grid of text whose first row holds the column names. Every API has its own rules. They change over time, which is one reason code that worked last year can stop working.&lt;/p&gt;
+&lt;p&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;figure  &gt;
+  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
+    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;The Census API’s answer in a browser. Tract 116.01 has an income of -666666666, the Census Bureau’s code for an estimate it could not compute.&#34; srcset=&#34;
+               /post/tidycensus-nhgis/images/census-api-json_hu68858c80fb85f1b0e519c3e2c437124c_311758_aa1a66e052838db7e723868822440282.webp 400w,
+               /post/tidycensus-nhgis/images/census-api-json_hu68858c80fb85f1b0e519c3e2c437124c_311758_8b8fa70e9ee99fdee62efcfd93ac0eaa.webp 760w,
+               /post/tidycensus-nhgis/images/census-api-json_hu68858c80fb85f1b0e519c3e2c437124c_311758_1200x1200_fit_q75_h2_lanczos_3.webp 1200w&#34;
+               src=&#34;https://nkaza.github.io/post/tidycensus-nhgis/images/census-api-json_hu68858c80fb85f1b0e519c3e2c437124c_311758_aa1a66e052838db7e723868822440282.webp&#34;
+               width=&#34;760&#34;
+               height=&#34;465&#34;
+               loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/figure&gt;
+&lt;/p&gt;
 &lt;h2 id=&#34;tidycensus&#34;&gt;Tidycensus&lt;/h2&gt;
 &lt;p&gt;The &lt;strong&gt;tidycensus&lt;/strong&gt; package wraps the Census API in R functions: &lt;code&gt;get_decennial()&lt;/code&gt; for the census taken every ten years, and &lt;code&gt;get_acs()&lt;/code&gt; for the American Community Survey. They build the request, send it, and return a tidy table, optionally with geometry. Kyle Walker’s &lt;a href=&#34;https://walker-data.com/census-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;&lt;em&gt;Analyzing US Census Data&lt;/em&gt;&lt;/a&gt; covers it in depth.&lt;/p&gt;
 &lt;p&gt;Store your key once, and tidycensus adds it to every request:&lt;/p&gt;
@@ -633,10 +661,11 @@ acs_vars |&amp;gt; filter(str_detect(label, &amp;quot;Median household income&am
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Two kinds of data are important distinguish:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Decennial census counts&lt;/strong&gt; (2010, 2020) try to count everyone. Since 2020 they carry deliberate small errors (“differential privacy”) to protect respondents, so very small counts are fuzzy.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;American Communty Survey (ACS) estimates&lt;/strong&gt; come from a sample of households pooled over five years. Every estimate has a &lt;strong&gt;margin of error&lt;/strong&gt;, and for small areas such as tracts it can be large. This post treats the estimates as if they were exact; real analyses should not.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Decennial census counts&lt;/strong&gt; (2010, 2020 etc.) try to count everyone. Since 2020 they carry deliberate small errors (“differential privacy”) to protect respondents, so very small counts are fuzzy.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;American Communty Survey (ACS) estimates&lt;/strong&gt; come from a sample of households pooled over five years. Every estimate has a &lt;strong&gt;margin of error&lt;/strong&gt;, and for small areas such as tracts it can be large. This post treats the estimates as if they were exact, when it really should not.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;building-the-dataset&#34;&gt;Building the dataset&lt;/h2&gt;
+&lt;p&gt;For the sake of simplicity I focus on three counties in North Carolina.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;counties &amp;lt;- c(&amp;quot;Durham&amp;quot;, &amp;quot;Orange&amp;quot;, &amp;quot;Wake&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h3 id=&#34;1-tract-boundaries&#34;&gt;1. Tract boundaries&lt;/h3&gt;
@@ -648,7 +677,7 @@ tr_shapes &amp;lt;- tracts(state = &amp;quot;NC&amp;quot;, county = counties, cb
   st_transform(32119) |&amp;gt;
   transmute(GEOID, county = NAMELSADCO |&amp;gt; str_remove(&amp;quot; County&amp;quot;),
             area_sqmi = ALAND |&amp;gt;
-              units::set_units(&amp;quot;m^2&amp;quot;) |&amp;gt;     # ALAND is in square meters
+              units::set_units(&amp;quot;m^2&amp;quot;) |&amp;gt;     # ALAND is land area in square meters
               units::set_units(&amp;quot;mi^2&amp;quot;))    # convert to square miles
 
 tmap_mode(&#39;plot&#39;)  # static map: interactive maps don&#39;t render in .Rmarkdown posts
@@ -670,28 +699,32 @@ tm_shape(tr_shapes)+
     The map uses CARTO’s Positron basemap, which now requires a free API key. Register for one at &lt;a href=&#34;https://carto.com/basemaps/apikey&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;carto.com/basemaps/apikey&lt;/a&gt;, then add a line to your &lt;code&gt;~/.Renviron&lt;/code&gt; file: &lt;code&gt;CARTO_API_KEY=your_key_here&lt;/code&gt;, and restart R so &lt;code&gt;Sys.getenv(&amp;quot;CARTO_API_KEY&amp;quot;)&lt;/code&gt; can find it. You can also use &lt;code&gt;usethis::edit_r_environ()&lt;/code&gt;. Keeping keys in &lt;code&gt;.Renviron&lt;/code&gt; keeps them out of your code.
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;&lt;code&gt;st_transform(32119)&lt;/code&gt; moves the boundaries into &lt;strong&gt;NC State Plane&lt;/strong&gt;, a projection in meters that keeps areas accurate in North Carolina. &lt;code&gt;ALAND&lt;/code&gt; is land area in square meters but the units are not defined. The &lt;strong&gt;units&lt;/strong&gt; package converts it to square miles: &lt;code&gt;set_units(&amp;quot;m^2&amp;quot;)&lt;/code&gt; labels the number with its unit, and &lt;code&gt;set_units(&amp;quot;mi^2&amp;quot;)&lt;/code&gt; converts it, so there is no conversion factor to look up or mistype. Water is left out so that lakes don’t dilute population density.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;st_transform(32119)&lt;/code&gt; moves the boundaries into &lt;strong&gt;NC State Plane&lt;/strong&gt;, a projection in meters that keeps areas accurate in North Carolina. &lt;code&gt;ALAND&lt;/code&gt; is land area in square meters but the units are not defined. The &lt;strong&gt;units&lt;/strong&gt; package converts it to square miles: &lt;code&gt;set_units(&amp;quot;m^2&amp;quot;)&lt;/code&gt; labels the number with its unit, and &lt;code&gt;set_units(&amp;quot;mi^2&amp;quot;)&lt;/code&gt; converts it, so there is no conversion factor to look up or mistype. Whenever possible, use units to prevent errors, but they also create hiccups when comparing with numbers, so be mindful.&lt;/p&gt;
+&lt;p&gt;For example, to find tracts smaller than one square mile, comparing &lt;code&gt;area_sqmi&lt;/code&gt; with a plain &lt;code&gt;1&lt;/code&gt; fails, because R cannot tell whether &lt;code&gt;1&lt;/code&gt; means square miles, acres, or square meters:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tr_shapes |&amp;gt; filter(area_sqmi &amp;lt; 1)
+# Error in `stopifnot()`:
+# i In argument: `area_sqmi &amp;lt; 1`.
+# Caused by error in `Ops.units()`:
+# ! both operands of the expression should be &amp;quot;units&amp;quot; objects
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Give the number a unit as well. Any area unit works, and units converts before comparing, so &lt;code&gt;640&lt;/code&gt; acres gives the same answer as &lt;code&gt;1&lt;/code&gt; square mile:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tr_shapes |&amp;gt; filter(area_sqmi &amp;lt; set_units(1, &amp;quot;mi^2&amp;quot;)) |&amp;gt; nrow()
+# [1] 64
+tr_shapes |&amp;gt; filter(area_sqmi &amp;lt; set_units(640, &amp;quot;acre&amp;quot;)) |&amp;gt; nrow()
+# [1] 64
+&lt;/code&gt;&lt;/pre&gt;
 &lt;h3 id=&#34;2-population-in-2020&#34;&gt;2. Population in 2020&lt;/h3&gt;
 &lt;p&gt;The 2020 redistricting file (&lt;code&gt;sumfile = &amp;quot;pl&amp;quot;&lt;/code&gt;) has total population (&lt;code&gt;P1_001N&lt;/code&gt;) down to the &lt;strong&gt;block&lt;/strong&gt;, the smallest Census geography. Blocks are nested within tracts.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;blocks_pop_2020 &amp;lt;- get_decennial(geography = &amp;quot;block&amp;quot;, state = &amp;quot;NC&amp;quot;, county = counties,
                              variables = c(pop = &amp;quot;P1_001N&amp;quot;), year = 2020, sumfile = &amp;quot;pl&amp;quot;,
                              progress_bar = FALSE) |&amp;gt;
   select(GEOID, pop = value)
-blocks_pop_2020
-# # A tibble: 21,212 × 2
-#    GEOID             pop
-#    &amp;lt;chr&amp;gt;           &amp;lt;dbl&amp;gt;
-#  1 370630001011000   108
-#  2 370630001011001    35
-#  3 370630001011002    38
-#  4 370630001011003    43
-#  5 370630001011004    31
-#  6 370630001011005    55
-#  7 370630001011006    64
-#  8 370630001011007    23
-#  9 370630001011008    24
-# 10 370630001011009    37
-# # ℹ 21,202 more rows
+
+glimpse(blocks_pop_2020)
+# Rows: 21,212
+# Columns: 2
+# $ GEOID &amp;lt;chr&amp;gt; &amp;quot;370630001011000&amp;quot;, &amp;quot;370630001011001&amp;quot;, &amp;quot;370630001011002&amp;quot;, &amp;quot;370630~
+# $ pop   &amp;lt;dbl&amp;gt; 108, 35, 38, 43, 31, 55, 64, 23, 24, 37, 68, 39, 104, 50, 52, 48~
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;A block GEOID is a chain of codes, each nested in the one before:&lt;/p&gt;
 &lt;table&gt;
@@ -727,7 +760,7 @@ blocks_pop_2020
 &lt;/table&gt;
 &lt;p&gt;So the first 11 characters of a block GEOID are the GEOID of the tract it sits in. Because 2020 blocks nest exactly inside 2020 tracts, cutting the GEOID to 11 characters and adding up gives the tract population:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tr_pop_2020 &amp;lt;- blocks_pop_2020 |&amp;gt;
-  mutate(GEOID = substr(GEOID, 1, 11)) |&amp;gt;
+  mutate(GEOID = str_sub(GEOID, 1, 11)) |&amp;gt;
   summarise(pop_2020 = sum(pop, na.rm=T), .by = GEOID)
 glimpse(tr_pop_2020)
 # Rows: 340
@@ -735,7 +768,7 @@ glimpse(tr_pop_2020)
 # $ GEOID    &amp;lt;chr&amp;gt; &amp;quot;37063000101&amp;quot;, &amp;quot;37063000102&amp;quot;, &amp;quot;37063000200&amp;quot;, &amp;quot;37063000301&amp;quot;, &amp;quot;~
 # $ pop_2020 &amp;lt;dbl&amp;gt; 3282, 4430, 2893, 2644, 3672, 2564, 2966, 4192, 5507, 3701, 1~
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The same trick gives any geography that nests: &lt;code&gt;substr(GEOID, 1, 12)&lt;/code&gt; is the block group, and &lt;code&gt;substr(GEOID, 1, 5)&lt;/code&gt; the county. As a check, the result matches the tract counts the Census publishes directly:&lt;/p&gt;
+&lt;p&gt;The same trick gives any geography that nests: &lt;code&gt;str_sub(GEOID, 1, 12)&lt;/code&gt; is the block group, and &lt;code&gt;str_sub(GEOID, 1, 5)&lt;/code&gt; the county. As a check, the result matches the tract counts the Census publishes directly:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;pop_2020_tr &amp;lt;- get_decennial(geography = &amp;quot;tract&amp;quot;, state = &amp;quot;NC&amp;quot;, county = counties,
                                 variables = c(pop_2020 = &amp;quot;P1_001N&amp;quot;), year = 2020, sumfile = &amp;quot;pl&amp;quot;,
                                 progress_bar = FALSE) |&amp;gt;
@@ -744,7 +777,6 @@ glimpse(tr_pop_2020)
 all.equal(arrange(tr_pop_2020, GEOID), arrange(pop_2020_tr, GEOID), check.attributes = FALSE)
 # [1] TRUE
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This only works when the small areas nest inside the large ones in the &lt;strong&gt;same&lt;/strong&gt; year. The next step needs 2010 counts on 2020 tracts, and 2010 blocks do not nest in 2020 tracts, so cutting GEOIDs is not enough there.&lt;/p&gt;
 &lt;h3 id=&#34;3-population-in-2010-on-2020-tracts&#34;&gt;3. Population in 2010, on 2020 tracts&lt;/h3&gt;
 &lt;p&gt;Measuring growth needs the same areas in both years, but &lt;strong&gt;tract boundaries change every decade&lt;/strong&gt;. Tracts that grew are split, so one 2010 tract can become two or three 2020 tracts with new GEOIDs; others are merged or redrawn. Joining 2010 and 2020 tables by GEOID would silently drop or mismatch exactly the fastest-growing places.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://www.nhgis.org&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;IPUMS NHGIS&lt;/a&gt; publishes &lt;strong&gt;crosswalks&lt;/strong&gt; for this. Census &lt;strong&gt;blocks&lt;/strong&gt; are the smallest areas, and the crosswalk gives, for each 2010 block, the share of its population in each 2020 tract. Multiply each 2010 block count by its weight and add up by 2020 tract, and you get the 2010 population on 2020 boundaries. Downloading the crosswalk needs an &lt;a href=&#34;https://account.ipums.org/api_keys&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;IPUMS API key&lt;/a&gt;, set with &lt;code&gt;ipumsr::set_ipums_api_key()&lt;/code&gt;.&lt;/p&gt;
@@ -787,7 +819,7 @@ pop_2010 &amp;lt;- xwalk |&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;One Wake (37183) tract went from no residents to about 500. Percent growth from a base that small is enormous which matters in Exercise 1.&lt;/p&gt;
 &lt;h3 id=&#34;4-households-renters-and-income-from-the-acs&#34;&gt;4. Households, renters, and income from the ACS&lt;/h3&gt;
-&lt;p&gt;Two ACS tables describe households:&lt;/p&gt;
+&lt;p&gt;Two ACS tables describe household characteristics:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;B25003, Tenure&lt;/strong&gt;: &lt;code&gt;B25003_001&lt;/code&gt; is all occupied housing units (households) and &lt;code&gt;B25003_003&lt;/code&gt; those occupied by renters.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;B19013, Median household income&lt;/strong&gt; in the past 12 months.&lt;/li&gt;
@@ -817,8 +849,7 @@ tr_acs_hh_inc |&amp;gt;
 # 5 37183980100          5         5         NA        2              0
 # 6 37183980200          0         0         NA        0              0
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Every tract with a missing median income has fewer than ten households; the Census Bureau does not publish a median from so few survey responses. Three of these tracts still have thousands of residents, nearly all of them in group quarters: they are college dormitory tracts around Duke and UNC, which have people but almost no households. The rest are 98xx special land-use tracts with almost no residents at all.&lt;/p&gt;
-&lt;p&gt;On a map, the two kinds stand apart: the group quarters tracts sit on the campuses, while the 98xx tracts (RTP and RDU) are large areas with almost no residents. Click a tract to see its numbers.&lt;/p&gt;
+&lt;p&gt;Every tract with a missing median income has fewer than ten households; the Census Bureau does not publish a median from so few survey responses. Three of these tracts still have thousands of residents, nearly all of them in group quarters: they are college dormitory tracts around Duke and UNC, which have people but almost no households. The rest are 98xx special land-use tracts (RDU, RTP etc.) with almost no residents at all. Click a tract to see its attributes.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;quirk_tracts &amp;lt;- tr_shapes |&amp;gt;
   left_join(tr_acs_hh_inc, by = &amp;quot;GEOID&amp;quot;) |&amp;gt;
   left_join(gq_2020, by = &amp;quot;GEOID&amp;quot;) |&amp;gt;
@@ -844,7 +875,7 @@ frameWidget(tmap_leaflet(m_quirks))
 &lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_acs-quirks-map.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;h3 id=&#34;5-county-median-income&#34;&gt;5. County median income&lt;/h3&gt;
-&lt;p&gt;Housing programs compare incomes with the &lt;strong&gt;area median income&lt;/strong&gt; of a region. As a stand-in, we use each county’s median household income:&lt;/p&gt;
+&lt;p&gt;Housing programs compare incomes with the &lt;strong&gt;area median income&lt;/strong&gt; of a region. As a stand-in, we use each county’s median household income (&lt;strong&gt;B19013_001&lt;/strong&gt;):&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;county_income &amp;lt;- get_acs(geography = &amp;quot;county&amp;quot;, state = &amp;quot;NC&amp;quot;, county = counties, year = 2023,
                          survey = &amp;quot;acs5&amp;quot;, variables = c(county_med_income = &amp;quot;B19013_001&amp;quot;)) |&amp;gt;
   transmute(county = NAME |&amp;gt; str_remove(&amp;quot; County, North Carolina&amp;quot;), county_med_income = estimate)
@@ -856,7 +887,7 @@ glimpse(county_income)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h3 id=&#34;6-putting-it-together&#34;&gt;6. Putting it together&lt;/h3&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tracts_dat &amp;lt;- tr_shapes |&amp;gt;
-  st_drop_geometry() |&amp;gt;
+  st_drop_geometry() |&amp;gt; # needed because of land area is calculated. No need to keep the geometry
   left_join(pop_2010, by = &amp;quot;GEOID&amp;quot;) |&amp;gt;
   left_join(tr_pop_2020, by = &amp;quot;GEOID&amp;quot;) |&amp;gt;
   left_join(tr_acs_hh_inc, by = &amp;quot;GEOID&amp;quot;) |&amp;gt;
@@ -904,8 +935,8 @@ fastest
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;h3 id=&#34;exercise-2-renters-and-income&#34;&gt;Exercise 2: Renters and income&lt;/h3&gt;
-&lt;p&gt;Say you want to create a targeted housing program for neighbourhoods where most households rent and incomes are low. “Low” has to be judged against the local cost of living: the median household income is about $80,000 in Durham County but over $100,000 in Wake. So each tract is compared with &lt;strong&gt;its own county’s&lt;/strong&gt; median.&lt;/p&gt;
-&lt;p&gt;Create &lt;code&gt;eligible&lt;/code&gt;: the tracts where more than half of households rent &lt;strong&gt;and&lt;/strong&gt; the tract’s median income is below its county’s median. Include &lt;code&gt;GEOID&lt;/code&gt;, &lt;code&gt;county&lt;/code&gt;, and &lt;code&gt;renter_share&lt;/code&gt; (renter households ÷ households). Leave out tracts with unknown income.&lt;/p&gt;
+&lt;p&gt;Say you want to create a targeted housing program for neighbourhoods where most households rent and incomes are low. “Low” has to be judged against the local cost of living: the median household income is about 80,000 usd in Durham County but over 100,000 usd in Wake. So each tract is compared with &lt;strong&gt;its own county’s&lt;/strong&gt; median.&lt;/p&gt;
+&lt;p&gt;Create &lt;code&gt;eligible&lt;/code&gt; tibble: the tracts where more than half of households rent &lt;strong&gt;and&lt;/strong&gt; the tract’s median income is below its county’s median. Include &lt;code&gt;GEOID&lt;/code&gt;, &lt;code&gt;county&lt;/code&gt;, and &lt;code&gt;renter_share&lt;/code&gt;. Leave out tracts with unknown income.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; join &lt;code&gt;county_income&lt;/code&gt; by &lt;code&gt;county&lt;/code&gt; so each tract has its own county median beside it.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
@@ -981,7 +1012,7 @@ stats_map
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;h3 id=&#34;exercise-5-fix-the-income-categories&#34;&gt;Exercise 5: Fix the income categories&lt;/h3&gt;
-&lt;p&gt;The US Department of Housing and Urban Development (HUD) defines eligibility for housing assistance by comparing household income with the &lt;strong&gt;area median income&lt;/strong&gt; (AMI): households below 80% of AMI count as “low income,” and many affordable-housing programs serve households up to 120% of AMI. Comparing a tract’s median income with its county’s median is a rough version of this, useful for screening neighbourhoods rather than deciding who qualifies.&lt;/p&gt;
+&lt;p&gt;The US Department of Housing and Urban Development (HUD) defines eligibility for housing assistance by comparing household income with the &lt;strong&gt;area median income&lt;/strong&gt; (AMI): households below 80% of AMI count as “low income,” and many affordable-housing programs serve households up to 120% of AMI. Comparing a tract’s median income with its county’s median is a rough version of this, useful for screening neighbourhoods.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -1008,7 +1039,7 @@ stats_map
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;A colleague wrote this function, but it doesn’t work. Run it, read the error, and fix it. There is more than one bug.&lt;/p&gt;
+&lt;p&gt;The following function doesn’t work. Run it, read the error, and fix it. There is more than one bug.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;income_class &amp;lt;- function(df, county_income) {
   df |&amp;gt;
     left_join(county_income, by = &amp;quot;county&amp;quot;) |&amp;gt;
@@ -1055,7 +1086,7 @@ count(tract_classes, county, income_class) |&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;h3 id=&#34;exercise-6-refactor-the-summary-table&#34;&gt;Exercise 6: Refactor the summary table&lt;/h3&gt;
-&lt;p&gt;Before analyzing a new dataset, check each column: how many values are missing, and whether the smallest and largest values make sense. This code builds such a table by copying the same block five times. It runs, but copy-and-paste hides mistakes, and two of the copies are wrong. Can you spot them?&lt;/p&gt;
+&lt;p&gt;Before analysing a new dataset, check each column: how many values are missing, and whether the smallest and largest values make sense. This code builds such a table by copying the same block five times. It runs, but copy-and-paste hides mistakes, and two of the copies are wrong. Can you spot them?&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;pop_2010_stats &amp;lt;- tibble(variable = &amp;quot;pop_2010&amp;quot;, n_missing = sum(is.na(tracts_dat$pop_2010)),
                          min = min(tracts_dat$pop_2010, na.rm = TRUE),
                          median = median(tracts_dat$pop_2010, na.rm = TRUE),
@@ -1078,13 +1109,14 @@ income_stats &amp;lt;- tibble(variable = &amp;quot;med_income&amp;quot;, n_missi
                        max = max(tracts_dat$med_income, na.rm = TRUE))
 summary_table &amp;lt;- bind_rows(pop_2010_stats, pop_2020_stats, households_stats, renter_stats, income_stats)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Rewrite it as a function &lt;code&gt;describe(df, var)&lt;/code&gt; that returns one row for the column named &lt;code&gt;var&lt;/code&gt;, and build the table by calling it once per variable with &lt;code&gt;map()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Rewrite it as a function &lt;code&gt;describe(df, var)&lt;/code&gt; that returns one row for the column named &lt;code&gt;var&lt;/code&gt; and stops with a clear error if &lt;code&gt;df&lt;/code&gt; has no such column, and build the table by calling it once per variable with &lt;code&gt;map()&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; &lt;code&gt;var&lt;/code&gt; is a string, so get the column with &lt;code&gt;df[[var]]&lt;/code&gt;. &lt;code&gt;map(x, f)&lt;/code&gt; passes only one argument; pass the others with an anonymous function, &lt;code&gt;\(v) describe(tracts_dat, v)&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
 Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;describe &amp;lt;- function(df, var) {
+  if (!var %in% names(df)) stop(&amp;quot;No column named &amp;quot;, var)
   x &amp;lt;- df[[var]]
   tibble(variable = var,
          n_missing = sum(is.na(x)),
@@ -1104,7 +1136,11 @@ map(vars, \(v) describe(tracts_dat, v)) |&amp;gt; list_rbind()
 # 4 renter_hh          0     0   608    2605
 # 5 med_income         6 23198 90936. 242647
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The two bugs: the &lt;code&gt;pop_2020&lt;/code&gt; block takes its maximum from &lt;code&gt;pop_2010&lt;/code&gt;, and the income block’s median has no &lt;code&gt;na.rm = TRUE&lt;/code&gt;, so it comes out &lt;code&gt;NA&lt;/code&gt;. With a function, each statistic is written once.&lt;/p&gt;
+&lt;p&gt;The two bugs: the &lt;code&gt;pop_2020&lt;/code&gt; block takes its maximum from &lt;code&gt;pop_2010&lt;/code&gt;, and the income block’s median has no &lt;code&gt;na.rm = TRUE&lt;/code&gt;, so it comes out &lt;code&gt;NA&lt;/code&gt;. With a function, each statistic is written once. The check matters because &lt;code&gt;df[[var]]&lt;/code&gt; quietly returns &lt;code&gt;NULL&lt;/code&gt; for a misspelled name, and without the check you get a row with &lt;code&gt;0&lt;/code&gt; missing, a minimum of &lt;code&gt;Inf&lt;/code&gt;, a maximum of &lt;code&gt;-Inf&lt;/code&gt;, and no median column at all, with only warnings to flag it:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;describe(tracts_dat, &amp;quot;income&amp;quot;)
+# Error in `describe()`:
+# ! No column named income
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;h3 id=&#34;exercise-7-maps-and-histograms&#34;&gt;Exercise 7: Maps and histograms&lt;/h3&gt;
 &lt;p&gt;A map (statistical graphic not a function) shows &lt;strong&gt;where&lt;/strong&gt; values are; a histogram shows &lt;strong&gt;how they are distributed&lt;/strong&gt;: whether most tracts cluster in the middle, how long the tail of high incomes is, and how many tracts sit at the extremes. Together they answer questions neither answers alone. Choices about colour scales and breaks change the visual evidence a map produces, so be deliberate about them.&lt;/p&gt;
