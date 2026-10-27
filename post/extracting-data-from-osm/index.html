@@ -976,7 +976,7 @@
 
 <div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 720px;">
   <div style="position: relative">
-    <img src="/post/extracting-data-from-osm/featured_hu056de9a4b9a869d9a0cd9767544bf3f3_1859178_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
+    <img src="/post/extracting-data-from-osm/featured_hucb292aea2264e4f68ac2695d53bc9bb7_1828034_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
     <span class="article-header-caption">Food places in Durham, NC. Data © OpenStreetMap contributors</span>
   </div>
 </div>
@@ -1057,9 +1057,9 @@ tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
   tm_shape(bb_poly) +
   tm_borders(col = &quot;firebrick&quot;, lwd = 2, lty = &quot;dashed&quot;) +
   tm_shape(durham_m) +
-  tm_polygons(fill = &quot;steelblue&quot;, fill_alpha = 0.3, col = &quot;steelblue&quot;) +
+  tm_borders(col = &quot;black&quot;, lwd = 2, lty = &quot;dashed&quot;, group = &quot;City limits&quot;) +
   tm_credits(&quot;© OpenStreetMap contributors&quot;, position = c(&quot;left&quot;, &quot;bottom&quot;)) +
-  tm_title(&quot;City of Durham (blue) and its bounding box (red)&quot;) +
+  tm_title(&quot;City of Durham (black) and its bounding box (red)&quot;) +
   tm_layout(frame = FALSE)
 </code></pre>
 <img src="https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/bbox-map-1.png" alt="" width="672" />
@@ -1156,7 +1156,7 @@ str(food_raw, max.level = 1)
 #  $ food_court:List of 8
 #   ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;osmdata_sf&quot; &quot;osmdata&quot; &quot;list&quot;
 </code></pre>
-<p><code>food_raw</code> is not a table. It is a list of six <code>osmdata</code> objects, one per query, each with the same layers as <code>restaurants</code> above. To get one table of places, convert each to points, stack them and drop duplicates. Duplicates are rare when looping over values of one key, but common when looping over different keys: a bakery café tagged <code>amenity = cafe</code> and <code>shop = bakery</code> comes back from both queries. OSM ids are unique only within a type, so node 123 and way 123 are different objects. Deduplicate on type and id together.</p>
+<p><code>food_raw</code> is not a table. It is a list of six <code>osmdata</code> objects, one per query, each with the same layers as <code>restaurants</code> above. To get one table of places, convert each to points, stack them and drop duplicates. Duplicates are rare when looping over values of one key, but common when looping over different keys: a bakery café tagged <code>amenity = cafe</code> and <code>shop = bakery</code> comes back from both queries. OSM ids are unique only within a type, so node 123 and way 123 are different objects. Deduplicate on type and id together. But first we need to deal with a trap.</p>
 <h3 id="the-vertex-trap">The vertex trap</h3>
 <p>If you only use <code>osm_points</code>, it contains <em>every</em> node in the result, including the corners of each building outline. Those corner nodes have no tags.</p>
 <pre><code class="language-r">rest &lt;- food_raw$restaurant
@@ -1262,10 +1262,10 @@ food |&gt;
 </table>
 <p>There are 514 places to eat in the city of Durham in OSM today, of which 272 are restaurants.</p>
 <hr>
-<h3 id="exercise-1-which-boundary">Exercise 1: Which boundary?</h3>
+<p><strong>Exercise 1: Which boundary?</strong></p>
 <ol>
 <li>How many food places are inside Durham’s bounding box but outside the city? What share of all places in the box is that?</li>
-<li>OSM has its own city boundary, drawn by volunteers. Download it with <code>getbb(&quot;Durham, North Carolina&quot;, format_out = &quot;sf_polygon&quot;)</code>, which asks <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener">Nominatim</a>, OSM’s place-name search, and compare its area with the Census boundary’s.</li>
+<li>OSM has its own city boundary, drawn by volunteers. Download it with <code>getbb(&quot;Durham, North Carolina&quot;, format_out = &quot;sf_polygon&quot;)</code>, which asks <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener">Nominatim</a>, OSM’s place-name search, and compare its area with the Census boundary.</li>
 </ol>
 <p><em>Hint:</em> for (1), combine <code>food_raw</code> without the <code>st_filter()</code> step, then use <code>st_filter()</code> with <code>.predicate = st_disjoint</code>. For (2), <code>st_area()</code> and <code>units::set_units()</code>.</p>
 <details>
@@ -1336,7 +1336,7 @@ tibble(boundary = c(&quot;Census (tigris)&quot;, &quot;OSM (Nominatim)&quot;),
 tmap_mode(&quot;maplibre&quot;)
 
 m_food &lt;- tm_shape(durham) +
-  tm_borders(col = &quot;gray40&quot;, lwd = 1, group = &quot;City limits&quot;) +
+  tm_borders(col = &quot;olivedrab4&quot;, lwd = 2, lty = &quot;dashed&quot;, group = &quot;City limits&quot;) +
   tm_shape(food) +
   tm_dots(fill = &quot;firebrick&quot;,
           size = 0.2,
@@ -1390,7 +1390,7 @@ m_hex &lt;- tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
   tm_shape(food_hex) +
   tm_borders(col = NA) +                 # first shape sets the extent: zoom to the hexagons
   tm_shape(durham_m) +
-  tm_borders(col = &quot;gray25&quot;, lwd = 1) +
+  tm_borders(col = &quot;black&quot;, lwd = 2, lty = &quot;dashed&quot;, group = &quot;City limits&quot;) +
   tm_shape(food_hex) +
   tm_polygons(fill = &quot;class&quot;,
               fill.scale = tm_scale_categorical(values = c(&quot;#9ecae1&quot;, &quot;#4292c6&quot;, &quot;#2166ac&quot;, &quot;#08306b&quot;)),   # blues: no clash with OSM's green parks
@@ -1409,7 +1409,7 @@ m_hex + tm_title(&quot;Places to eat in Durham, 800 m hexagons&quot;)
 <img src="https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/hex-map-1.png" alt="" width="672" />
 <p>Ninth Street, next to Duke’s East Campus, is the densest cluster, followed by downtown. The rest are shopping centres at freeway interchanges: New Hope Commons where US 15-501 meets I-40, Southpoint off I-40 and the strip along Page Road near Research Triangle Park.</p>
 <hr>
-<h3 id="exercise-2-supermarkets">Exercise 2: Supermarkets</h3>
+<p><strong>Exercise 2: Supermarkets</strong></p>
 <p>Download supermarkets (<code>shop = supermarket</code>) in Durham from OpenStreetMap. Then, for each hexagon in <code>hex</code>, compute the straight-line distance from its centre to the nearest supermarket, and map it. Which parts of the city are more than 2 km from one?</p>
 <p><em>Hint:</em> <code>st_nearest_feature()</code> returns the index of the nearest feature; <code>st_distance(..., by_element = TRUE)</code> then gives the distance to it.</p>
 <details>
@@ -1435,7 +1435,7 @@ far &lt;- set_units(2, km)
 tmap_mode(&quot;plot&quot;)
 tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
   tm_shape(durham_m) +
-  tm_borders(col = &quot;gray30&quot;) +
+  tm_borders(col = &quot;black&quot;, lwd = 2, lty = &quot;dashed&quot;, group = &quot;City limits&quot;) +
   tm_shape(hex |&gt; filter(dist &gt; far)) +
   tm_polygons(fill = &quot;#6a51a3&quot;, fill_alpha = 0.55, col = &quot;white&quot;, lwd = 0.2) +
   tm_shape(supermarkets) +
@@ -1450,8 +1450,7 @@ tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
 </code></pre>
 <p>Straight-line distance understates the real trip. Be cautious. Clipping data to the boundary ahead of time introduces spurious boundary effects.</p>
 </details>
-<hr>
-<h3 id="exercise-3-food-near-transit">Exercise 3: Food near transit</h3>
+<p><strong>Exercise 3: Food near transit</strong></p>
 <p>What share of Durham’s food places are within 400 m (about a five-minute walk) of a bus stop? Bus stops are tagged <code>highway = bus_stop</code>.</p>
 <details>
 <summary>
@@ -1539,7 +1538,7 @@ ggplot(completeness, aes(x = share, y = fct_reorder(tag, share))) +
 <img src="https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/completeness-1.png" alt="" width="672" />
 <p>Names are nearly always present, because a nameless café is hard to map. Opening hours and websites are much patchier. Completeness can also vary across space, since tags depend on whether an active mapper lives nearby. An analysis that drops places with missing tags may quietly drop whole neighbourhoods; mapping the places with no <code>opening_hours</code> is a quick check.</p>
 <hr>
-<h3 id="exercise-4-what-cuisines">Exercise 4: What cuisines?</h3>
+<p><strong>Exercise 4: What cuisines?</strong></p>
 <p>List the ten most common cuisines among Durham’s restaurants. Some places list more than one, separated by semicolons (<code>mexican;tex-mex</code>); count each separately. What share of restaurants have no cuisine at all, in the dataset?</p>
 <p><em>Hint:</em> use <code>separate_longer_delim()</code>.</p>
 <details>
@@ -1806,7 +1805,7 @@ bind_rows(osm = st_drop_geometry(osm), overture = st_drop_geometry(ov), .id = &q
 </table>
 <p>Overture lists about 2.7 times as many places as OSM. Some of the gap is OSM missing businesses, especially new ones. Some is Overture’s noise: duplicates, stale listings and businesses filed in the wrong category, inherited from social media. Neither source is the truth; it is often best to triangulate from multiple sources.</p>
 <hr>
-<h3 id="exercise-5-how-much-does-confidence-matter">Exercise 5: How much does confidence matter?</h3>
+<p><strong>Exercise 5: How much does confidence matter?</strong></p>
 <p>Recount Overture’s places by type with confidence thresholds of 0.5, 0.7 and 0.9. How much do the totals move? What does that say about any “number of restaurants” taken from a single source?</p>
 <details>
 <summary>
@@ -1890,28 +1889,17 @@ map(c(0.5, 0.7, 0.9), count_at) |&gt;
         <li><a href="#using-a-loop-over-many-different-kinds-of-queries">Using a loop over many different kinds of queries</a>
           <ul>
             <li><a href="#the-vertex-trap">The vertex trap</a></li>
-            <li><a href="#exercise-1-which-boundary">Exercise 1: Which boundary?</a></li>
           </ul>
         </li>
         <li><a href="#visualise-the-data">Visualise the data</a>
           <ul>
             <li><a href="#an-interactive-map">An interactive map</a></li>
             <li><a href="#density-on-a-hexagonal-grid">Density on a hexagonal grid</a></li>
-            <li><a href="#exercise-2-supermarkets">Exercise 2: Supermarkets</a></li>
-            <li><a href="#exercise-3-food-near-transit">Exercise 3: Food near transit</a></li>
           </ul>
         </li>
-        <li><a href="#how-complete-are-the-tags">How complete are the tags?</a>
-          <ul>
-            <li><a href="#exercise-4-what-cuisines">Exercise 4: What cuisines?</a></li>
-          </ul>
-        </li>
+        <li><a href="#how-complete-are-the-tags">How complete are the tags?</a></li>
         <li><a href="#reproducibility-vscurrency">Reproducibility vs. Currency</a></li>
-        <li><a href="#comparing-with-overture-maps">Comparing with Overture Maps</a>
-          <ul>
-            <li><a href="#exercise-5-how-much-does-confidence-matter">Exercise 5: How much does confidence matter?</a></li>
-          </ul>
-        </li>
+        <li><a href="#comparing-with-overture-maps">Comparing with Overture Maps</a></li>
         <li><a href="#conclusion">Conclusion</a></li>
         <li><a href="#acknowledgements">Acknowledgements</a></li>
       </ul>
