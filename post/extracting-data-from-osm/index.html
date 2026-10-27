@@ -346,7 +346,7 @@
         content="2020-02-12T00:00:00&#43;00:00"
       />
     
-    <meta property="article:modified_time" content="2026-10-26T00:00:00&#43;00:00">
+    <meta property="article:modified_time" content="2026-10-27T00:00:00&#43;00:00">
   
 
   
@@ -379,7 +379,7 @@
   ],
   
   "datePublished": "2020-02-12T00:00:00Z",
-  "dateModified": "2026-10-26T00:00:00Z",
+  "dateModified": "2026-10-27T00:00:00Z",
   
   "author": {
     "@type": "Person",
@@ -936,7 +936,7 @@
           Last updated on
       
     
-    Oct 26, 2026
+    Oct 27, 2026
   </span>
   
 
@@ -945,7 +945,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    18 min read
+    17 min read
   </span>
   
 
@@ -976,7 +976,7 @@
 
 <div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 720px;">
   <div style="position: relative">
-    <img src="/post/extracting-data-from-osm/featured_hu5e1415c89ada96d3d3d1bc7838034ae4_472586_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
+    <img src="/post/extracting-data-from-osm/featured_hu70de9d3db3629b87ffb5ddc34149a4ca_1838129_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
     <span class="article-header-caption">Food places in Durham, NC. Data © OpenStreetMap contributors</span>
   </div>
 </div>
@@ -1100,33 +1100,14 @@ durham &lt;- getbb(&quot;Durham, North Carolina&quot;, format_out = &quot;sf_pol
   select(name) |&gt;
   st_make_valid()
 </code></pre>
-<p>From here on we work in North Carolina State Plane (EPSG:32119, metres), with grayed OSM tiles behind the static maps.</p>
-<details>
-<summary>
-Basemap code
-</summary>
-<pre><code class="language-r">library(maptiles)
-durham_m &lt;- st_transform(durham, 32119)
-
-osm_tiles &lt;- get_tiles(durham_m, provider = &quot;OpenStreetMap&quot;, zoom = 12, crop = TRUE,
-                       cachedir = cache_dir)
-
-to_gray &lt;- function(tiles, wash = 0.7) {   # wash = 1 keeps full contrast; smaller is paler
-  gray &lt;- 0.299 * tiles[[1]] + 0.587 * tiles[[2]] + 0.114 * tiles[[3]]   # luminance of the red, green, blue bands
-  255 - (255 - gray) * wash
-}
-gray_basemap &lt;- function(wash = 0.7, bbox = NULL) {   # a tmap layer to start every static map with
-  tm_shape(to_gray(osm_tiles, wash), bbox = bbox) +
-    tm_raster(col.scale = tm_scale_continuous(values = c(&quot;black&quot;, &quot;white&quot;), limits = c(0, 255)),
-              col.legend = tm_legend_hide())
-}
+<p>From here on we work in North Carolina State Plane (EPSG:32119, metres).</p>
+<pre><code class="language-r">durham_m &lt;- st_transform(durham, 32119)
 </code></pre>
-</details>
 <p>Bounding boxes are not the same as city limits.</p>
 <pre><code class="language-r">tmap_mode(&quot;plot&quot;)
 bb_poly &lt;- st_as_sfc(st_bbox(durham_m))
 
-gray_basemap() +
+tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
   tm_shape(bb_poly) +
   tm_borders(col = &quot;firebrick&quot;, lwd = 2, lty = &quot;dashed&quot;) +
   tm_shape(durham_m) +
@@ -1154,8 +1135,8 @@ only_in &lt;- function(a, b) {   # parts of a not in b
     st_buffer(20)              # different line work, keeps the real patches
 }
 
-gray_basemap() +
-  tm_shape(only_in(durham_census, osm_b)) +
+tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
+  tm_shape(only_in(durham_census, osm_b), bbox = st_bbox(durham_m)) +
   tm_polygons(fill = &quot;#7570b3&quot;, lwd = 0) +
   tm_shape(only_in(osm_b, durham_census)) +
   tm_polygons(fill = &quot;#1b9e77&quot;, lwd = 0) +
@@ -1375,10 +1356,14 @@ examples &lt;- food_hex |&gt;              # one labelled hexagon per colour, pl
   distinct(hex_id, .keep_all = TRUE) |&gt;
   mutate(text_col = if_else(class %in% c(&quot;1-2&quot;, &quot;3-9&quot;), &quot;black&quot;, &quot;white&quot;))
 
-m_hex &lt;- gray_basemap(wash = 0.35, bbox = st_bbox(food_hex)) +   # pale background, zoomed to the hexagons
+m_hex &lt;- tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
+  tm_shape(food_hex) +
+  tm_borders(col = NA) +                 # first shape sets the extent: zoom to the hexagons
+  tm_shape(durham_m) +
+  tm_borders(col = &quot;gray25&quot;, lwd = 1) +
   tm_shape(food_hex) +
   tm_polygons(fill = &quot;class&quot;,
-              fill.scale = tm_scale_categorical(values = viridisLite::viridis(4, end = 0.85, direction = -1)),   # green to purple
+              fill.scale = tm_scale_categorical(values = c(&quot;#9ecae1&quot;, &quot;#4292c6&quot;, &quot;#2166ac&quot;, &quot;#08306b&quot;)),   # blues: no clash with OSM's green parks
               fill.legend = tm_legend_hide(),
               col = &quot;white&quot;, lwd = 0.4) +
   tm_shape(examples) +
@@ -1418,7 +1403,7 @@ hex$dist_km &lt;- st_distance(hex_centres, supermarkets[nearest, ], by_element =
   drop_units()                          # tmap's colour scales want plain numbers
 
 tmap_mode(&quot;plot&quot;)
-gray_basemap() +
+tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
   tm_shape(durham_m) +
   tm_borders(col = &quot;gray30&quot;) +
   tm_shape(hex |&gt; filter(dist_km &gt; 2) |&gt; st_intersection(st_geometry(durham_m))) +   # clip to the city
