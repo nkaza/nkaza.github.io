@@ -11352,13 +11352,8 @@ lc_tracts_tbl
 &lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;&lt;em&gt;OpenStreetMap (OSM)&lt;/em&gt; is a free and open map of the world, built by millions of volunteers, much like Wikipedia. Anyone can use the data for any purpose, including commercial ones, as long as they credit “© OpenStreetMap contributors” and share any database they derive from it under the same &lt;a href=&#34;https://www.openstreetmap.org/copyright&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Database License (ODbL)&lt;/a&gt;. Every map in this post carries that credit.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;OpenStreetMap (OSM)&lt;/em&gt; is a free and open map of the world, built by millions of volunteers, much like Wikipedia. Anyone can use the data for any purpose, including commercial ones, as long as they credit “© OpenStreetMap contributors” and share any database they derive from it under the same &lt;a href=&#34;https://www.openstreetmap.org/copyright&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Database License (ODbL)&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Underneath the map tiles is a database of roads, buildings, shops, bus stops and much more. This post pulls the places to eat in Durham, NC out of that database, avoids a few common traps, and asks how good the data is.&lt;/p&gt;
-&lt;div class=&#34;alert alert-note&#34;&gt;
-  &lt;div&gt;
-    This post was first written in 2020 and rewritten in 2026.
-  &lt;/div&gt;
-&lt;/div&gt;
 &lt;h2 id=&#34;how-osm-data-is-structured&#34;&gt;How OSM data is structured&lt;/h2&gt;
 &lt;p&gt;OSM has only three kinds of objects:&lt;/p&gt;
 &lt;ul&gt;
@@ -11399,74 +11394,25 @@ lc_tracts_tbl
 &lt;/table&gt;
 &lt;p&gt;Only the first tag says &lt;em&gt;what&lt;/em&gt; the object is. The rest are optional, and whether they are filled in depends on whether some volunteer bothered. There is no enforced schema: tags are conventions, documented on the OSM Wiki’s &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Map_Features&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Map Features&lt;/a&gt; page, and &lt;a href=&#34;https://taginfo.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Taginfo&lt;/a&gt; shows how often each is actually used. Keys useful in planning include &lt;code&gt;amenity&lt;/code&gt; (restaurants, schools, clinics), &lt;code&gt;shop&lt;/code&gt;, &lt;code&gt;highway&lt;/code&gt; (roads and bus stops), &lt;code&gt;leisure&lt;/code&gt; (parks) and &lt;code&gt;building&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;We will use the &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Overpass API&lt;/a&gt; through the &lt;code&gt;osmdata&lt;/code&gt; package, which suits a city and a handful of tags. For a whole state or country, download an extract from &lt;a href=&#34;https://download.geofabrik.de/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geofabrik&lt;/a&gt; instead (the &lt;code&gt;osmextract&lt;/code&gt; package).&lt;/p&gt;
-&lt;h2 id=&#34;a-sturdier-way-to-call-overpass&#34;&gt;A sturdier way to call Overpass&lt;/h2&gt;
-&lt;p&gt;Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. Small queries, a fallback server, and saving every answer to disk make code that keeps working.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;osmdata&lt;/code&gt; builds the query for us. &lt;code&gt;opq_string()&lt;/code&gt; shows the query in Overpass’s own language:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;opq(bbox = c(-78.95, 35.98, -78.88, 36.02)) |&amp;gt;
-  add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;) |&amp;gt;
-  opq_string() |&amp;gt;
-  cat()
-# [out:xml][timeout:25];
-# (
-#   node [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.98,-78.95,36.02,-78.88);
-#   way [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.98,-78.95,36.02,-78.88);
-#   relation [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.98,-78.95,36.02,-78.88);
-# );
-# (._;&amp;gt;;);
-# out body;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The query asks for every node, way and relation tagged &lt;code&gt;amenity = restaurant&lt;/code&gt; in the box, and for enough geometry to draw them.&lt;/p&gt;
-&lt;p&gt;The function below first looks for a saved answer to the same query on disk. If there is none, it tries each server in turn and saves the answer. Either way, &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;endpoints &amp;lt;- c(&amp;quot;https://overpass-api.de/api/interpreter&amp;quot;,
-               &amp;quot;https://maps.mail.ru/osm/tools/overpass/api/interpreter&amp;quot;,
-               &amp;quot;https://overpass.kumi.systems/api/interpreter&amp;quot;)
-
-cache_dir &amp;lt;- here::here(&amp;quot;osm_cache&amp;quot;)   # a folder in your project
-
-get_osm &amp;lt;- function(q) {
-  dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
-  qs   &amp;lt;- opq_string(q)
-  file &amp;lt;- file.path(cache_dir, paste0(rlang::hash(qs), &amp;quot;.osm&amp;quot;))   # one file per distinct query
-  if (file.exists(file)) return(osmdata_sf(q, doc = file))
-
-  for (round in 1:3) {                          # up to three passes over the servers
-  for (u in endpoints) {
-    resp &amp;lt;- request(u) |&amp;gt;
-      req_body_form(data = qs) |&amp;gt;
-      req_user_agent(&amp;quot;osm-tutorial (R httr2)&amp;quot;) |&amp;gt;
-      req_timeout(180) |&amp;gt;
-      req_retry(max_tries = 3, backoff = function(attempt) 30) |&amp;gt;   # wait 30 s between tries
-      req_error(is_error = function(resp) FALSE) |&amp;gt;   # inspect the status ourselves
-      req_perform() |&amp;gt;
-      tryCatch(error = function(e) NULL)           # network failures return NULL
-    if (!is.null(resp) &amp;amp;&amp;amp; resp_status(resp) == 200) {
-      writeBin(resp_body_raw(resp), file)
-      return(osmdata_sf(q, doc = file))
-    }
-  }
-  Sys.sleep(60)                                 # everyone is busy; wait a minute
-  }
-  stop(&amp;quot;No Overpass server answered. Try again later.&amp;quot;)
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;On a quiet day, &lt;code&gt;osmdata_sf(q)&lt;/code&gt; does the same job against a single server. To get fresh data, delete the &lt;code&gt;osm_cache&lt;/code&gt; folder in your project.&lt;/p&gt;
 &lt;h2 id=&#34;defining-the-study-area&#34;&gt;Defining the study area&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;getbb()&lt;/code&gt; asks &lt;a href=&#34;https://nominatim.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Nominatim&lt;/a&gt;, OSM’s place-name search, for the location of a place. By default it returns a &lt;strong&gt;bounding box&lt;/strong&gt;, the smallest rectangle around the place. With &lt;code&gt;format_out = &amp;quot;sf_polygon&amp;quot;&lt;/code&gt; it returns the actual boundary.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;durham_bb &amp;lt;- getbb(&amp;quot;Durham, North Carolina&amp;quot;)
-durham_bb
-#         min       max
-# x -79.00750 -78.75691
-# y  35.86635  36.13701
+&lt;p&gt;The Census Bureau publishes city boundaries, and &lt;code&gt;tigris&lt;/code&gt; downloads them. These are the same boundaries &lt;code&gt;tidycensus&lt;/code&gt; attaches to census data, so OSM counts can later be joined to population or income.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tigris)
+options(tigris_use_cache = TRUE)
 
-durham &amp;lt;- getbb(&amp;quot;Durham, North Carolina&amp;quot;, format_out = &amp;quot;sf_polygon&amp;quot;) |&amp;gt;
-  filter(addresstype == &amp;quot;city&amp;quot;) |&amp;gt;
-  select(name) |&amp;gt;
+durham &amp;lt;- places(state = &amp;quot;NC&amp;quot;, year = 2024, cb = TRUE, progress_bar = FALSE) |&amp;gt;
+  filter(GEOID == &amp;quot;3719000&amp;quot;) |&amp;gt;        # Durham city
+  select(NAME) |&amp;gt;
+  st_transform(4326) |&amp;gt;                # Overpass wants longitude and latitude
   st_make_valid()
+
+durham_bb &amp;lt;- st_bbox(durham)
+durham_bb
+#      xmin      ymin      xmax      ymax 
+# -79.00754  35.86637 -78.75470  36.13704
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;From here on we work in North Carolina State Plane (EPSG:32119, metres).&lt;/p&gt;
+&lt;p&gt;Overpass works with rectangles, so we ask for everything in the city’s &lt;strong&gt;bounding box&lt;/strong&gt;, the smallest rectangle around it, and then clip to the boundary. For measuring distances and areas we use North Carolina State Plane (EPSG:32119, metres).&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;durham_m &amp;lt;- st_transform(durham, 32119)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Bounding boxes are not the same as city limits.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmap_mode(&amp;quot;plot&amp;quot;)
 bb_poly &amp;lt;- st_as_sfc(st_bbox(durham_m))
 
@@ -11480,51 +11426,92 @@ tm_basemap(&amp;quot;OpenStreetMap&amp;quot;, alpha = 0.4, zoom = 12) +
   tm_layout(frame = FALSE)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/bbox-map-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
-&lt;h3 id=&#34;whose-boundary&#34;&gt;Whose boundary?&lt;/h3&gt;
-&lt;p&gt;The boundary from Nominatim is the one drawn in OSM by volunteers. The Census Bureau publishes its own, which is the one &lt;code&gt;tidycensus&lt;/code&gt; attaches.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tigris)
-options(tigris_use_cache = TRUE)
+&lt;h2 id=&#34;a-first-query&#34;&gt;A first query&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;osmdata&lt;/code&gt; builds the query for us: &lt;code&gt;opq()&lt;/code&gt; sets the area, &lt;code&gt;add_osm_feature()&lt;/code&gt; the tag. &lt;code&gt;opq_string()&lt;/code&gt; shows the query in Overpass’s own language.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;q &amp;lt;- opq(durham_bb, timeout = 120) |&amp;gt;
+  add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;)
 
-durham_census &amp;lt;- places(state = &amp;quot;NC&amp;quot;, year = 2024, cb = TRUE, progress_bar = FALSE) |&amp;gt;
-  filter(GEOID == &amp;quot;3719000&amp;quot;) |&amp;gt;        # Durham city
-  st_transform(32119) |&amp;gt;
-  st_make_valid()
+q |&amp;gt; opq_string() |&amp;gt; cat()
+# [out:xml][timeout:120];
+# (
+#   node [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);
+#   way [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);
+#   relation [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);
+# );
+# (._;&amp;gt;;);
+# out body;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;osm_b &amp;lt;- st_make_valid(durham_m)
+&lt;p&gt;The query asks for every node, way and relation tagged &lt;code&gt;amenity = restaurant&lt;/code&gt; in the box, and for enough geometry to draw them. &lt;code&gt;osmdata_sf()&lt;/code&gt; sends it to an Overpass server and converts the answer into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;restaurants &amp;lt;- osmdata_sf(q)
+restaurants
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;# Object of class &#39;osmdata&#39; with:
+#                  $bbox : 35.866372,-79.007536,36.137039,-78.754703
+#         $overpass_call : The call submitted to the overpass API
+#                  $meta : metadata including timestamp and version numbers
+#            $osm_points : &#39;sf&#39; Simple Features Collection with 1016 points
+#             $osm_lines : NULL
+#          $osm_polygons : &#39;sf&#39; Simple Features Collection with 114 polygons
+#        $osm_multilines : NULL
+#     $osm_multipolygons : NULL
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The result is a list of &lt;code&gt;sf&lt;/code&gt; layers: &lt;code&gt;osm_points&lt;/code&gt;, &lt;code&gt;osm_lines&lt;/code&gt;, &lt;code&gt;osm_polygons&lt;/code&gt;, &lt;code&gt;osm_multilines&lt;/code&gt; and &lt;code&gt;osm_multipolygons&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;a-sturdier-way-to-call-overpass&#34;&gt;A sturdier way to call Overpass&lt;/h2&gt;
+&lt;p&gt;Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. When that happens, &lt;code&gt;osmdata_sf()&lt;/code&gt; stops with an HTTP error, often before it has even sent the query (it checks the server’s status first). If the call above failed for you, this is why. Small queries, a fallback server, and saving every answer to disk make code that keeps working.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;get_osm()&lt;/code&gt; first looks for a saved answer to the same query on disk. If there is none, &lt;code&gt;ask_overpass()&lt;/code&gt; tries the &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;servers&lt;/a&gt; in turn and stops at the first one that answers, and the answer is saved. Either way, &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;endpoints &amp;lt;- c(&amp;quot;https://overpass-api.de/api/interpreter&amp;quot;,
+               &amp;quot;https://overpass.private.coffee/api/interpreter&amp;quot;,
+               &amp;quot;https://overpass.kumi.systems/api/interpreter&amp;quot;)
 
-only_in &amp;lt;- function(a, b) {   # parts of a not in b
-  st_difference(st_geometry(a), st_geometry(b)) |&amp;gt;
-    st_buffer(-20) |&amp;gt;          # shrink and regrow by 20 m: drops slivers from slightly
-    st_buffer(20)              # different line work, keeps the real patches
+cache_dir &amp;lt;- here::here(&amp;quot;osm_cache&amp;quot;)   # a folder in your project
+if (!dir.exists(cache_dir)) dir.create(cache_dir, recursive = TRUE)
+
+ask_overpass &amp;lt;- function(qs) {          # the raw answer from the first server that replies, or NULL
+  for (u in endpoints) {
+    resp &amp;lt;- request(u) |&amp;gt;
+      req_body_form(data = qs) |&amp;gt;
+      req_user_agent(&amp;quot;osm-tutorial (R httr2)&amp;quot;) |&amp;gt;
+      req_timeout(180) |&amp;gt;
+      req_retry(max_tries = 3,
+                is_transient = function(resp) return(resp_status(resp) %in% c(429, 502, 503, 504)),
+                backoff = function(attempt) return(30)) |&amp;gt;   # a busy server: wait 30 s and try again
+      req_error(is_error = function(resp) return(FALSE)) |&amp;gt;   # inspect the status ourselves
+      req_perform() |&amp;gt;
+      tryCatch(error = function(e) return(NULL))         # network failures return NULL
+    if (!is.null(resp) &amp;amp;&amp;amp; resp_status(resp) == 200) {
+      return(resp_body_raw(resp))                  # success: skip the remaining servers
+    }
+    message(&amp;quot;No answer from &amp;quot;, u, &amp;quot;; trying the next server&amp;quot;)
+  }
+  return(NULL)
 }
 
-tm_basemap(&amp;quot;OpenStreetMap&amp;quot;, alpha = 0.4, zoom = 12) +
-  tm_shape(only_in(durham_census, osm_b), bbox = st_bbox(durham_m)) +
-  tm_polygons(fill = &amp;quot;#7570b3&amp;quot;, lwd = 0) +
-  tm_shape(only_in(osm_b, durham_census)) +
-  tm_polygons(fill = &amp;quot;#1b9e77&amp;quot;, lwd = 0) +
-  tm_title(&amp;quot;Only in the Census boundary (purple) or only in OSM&#39;s (green)&amp;quot;) +
-  tm_credits(&amp;quot;© OpenStreetMap contributors&amp;quot;, position = c(&amp;quot;left&amp;quot;, &amp;quot;bottom&amp;quot;)) +
-  tm_layout(frame = FALSE)
+get_osm &amp;lt;- function(q) {
+  qs   &amp;lt;- opq_string(q)
+  file &amp;lt;- file.path(cache_dir, paste0(rlang::hash(qs), &amp;quot;.osm&amp;quot;))   # one file per distinct query
+  if (!file.exists(file)) {
+    answer &amp;lt;- ask_overpass(qs)
+    if (is.null(answer)) stop(&amp;quot;No Overpass server answered. Try again later.&amp;quot;)
+    writeBin(answer, file)
+  }
+  return(osmdata_sf(q, doc = file))
+}
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/boundary-diff-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
-&lt;p&gt;Cities annex land every year, and each source catches up on its own schedule. Use the boundary that matches the rest of your data.&lt;/p&gt;
-&lt;p&gt;Overpass works with rectangles, so we download for the box and then clip to the boundary.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;get_osm(q)&lt;/code&gt; is a drop-in replacement for &lt;code&gt;osmdata_sf(q)&lt;/code&gt;. To get fresh data, delete the &lt;code&gt;osm_cache&lt;/code&gt; folder in your project.&lt;/p&gt;
 &lt;h2 id=&#34;downloading-food-places-in-a-loop&#34;&gt;Downloading food places in a loop&lt;/h2&gt;
-&lt;p&gt;Restaurants are tagged &lt;code&gt;amenity = restaurant&lt;/code&gt;. Someone interested in “places to eat” would also want &lt;code&gt;fast_food&lt;/code&gt;, &lt;code&gt;cafe&lt;/code&gt;, &lt;code&gt;bar&lt;/code&gt;, &lt;code&gt;pub&lt;/code&gt; and &lt;code&gt;food_court&lt;/code&gt;. Instead of one large query, we send one query per value, pausing between them to be polite to the server.&lt;/p&gt;
+&lt;p&gt;Restaurants are only one kind of place to eat. Someone interested in “places to eat” would also want &lt;code&gt;fast_food&lt;/code&gt;, &lt;code&gt;cafe&lt;/code&gt;, &lt;code&gt;bar&lt;/code&gt;, &lt;code&gt;pub&lt;/code&gt; and &lt;code&gt;food_court&lt;/code&gt;. Instead of one large query, we send one query per value, pausing between them to be polite to the server.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;food_types &amp;lt;- c(&amp;quot;restaurant&amp;quot;, &amp;quot;fast_food&amp;quot;, &amp;quot;cafe&amp;quot;, &amp;quot;bar&amp;quot;, &amp;quot;pub&amp;quot;, &amp;quot;food_court&amp;quot;)
 
 food_raw &amp;lt;- map(food_types, function(v) {
   Sys.sleep(2)
-  opq(durham_bb, timeout = 120) |&amp;gt;
+  result &amp;lt;- opq(durham_bb, timeout = 120) |&amp;gt;
     add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = v) |&amp;gt;
     get_osm()
+  return(result)
 }) |&amp;gt;
   set_names(food_types)
-
-food_raw$restaurant
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Each result is a list of &lt;code&gt;sf&lt;/code&gt; layers: &lt;code&gt;osm_points&lt;/code&gt;, &lt;code&gt;osm_lines&lt;/code&gt;, &lt;code&gt;osm_polygons&lt;/code&gt;, &lt;code&gt;osm_multilines&lt;/code&gt; and &lt;code&gt;osm_multipolygons&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Each result has the same layers as &lt;code&gt;restaurants&lt;/code&gt; above.&lt;/p&gt;
 &lt;h3 id=&#34;the-vertex-trap&#34;&gt;The vertex trap&lt;/h3&gt;
 &lt;p&gt;If you only use &lt;code&gt;osm_points&lt;/code&gt;, it contains &lt;em&gt;every&lt;/em&gt; node in the result, including the corners of each building outline. Those corner nodes have no tags.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest &amp;lt;- food_raw$restaurant
@@ -11564,13 +11551,13 @@ tibble(layer = c(&amp;quot;osm_points: every node, including building corners&am
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Counting all points would inflate the number of restaurants several times over, and the restaurants drawn as building outlines would be represented only by their corners. The right approach keeps tagged points and turns each area into a single representative point. &lt;code&gt;st_point_on_surface()&lt;/code&gt; is better than &lt;code&gt;st_centroid()&lt;/code&gt; here, because a centroid can fall outside an L-shaped building.&lt;/p&gt;
+&lt;p&gt;Counting all points would inflate the number of restaurants several times over, and the restaurants drawn as building outlines would be represented only by their corners. A good approach keeps tagged points and turns each area into a single representative point (using &lt;code&gt;st_point_on_surface()&lt;/code&gt;).&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;keep &amp;lt;- c(&amp;quot;osm_id&amp;quot;, &amp;quot;name&amp;quot;, &amp;quot;amenity&amp;quot;, &amp;quot;cuisine&amp;quot;, &amp;quot;opening_hours&amp;quot;,
           &amp;quot;addr:street&amp;quot;, &amp;quot;addr:housenumber&amp;quot;, &amp;quot;website&amp;quot;, &amp;quot;phone&amp;quot;)
 
 tagged &amp;lt;- function(layer) {     # an empty layer has no amenity column at all
   if (is.null(layer) || !&amp;quot;amenity&amp;quot; %in% names(layer)) return(NULL)
-  filter(layer, !is.na(amenity))
+  return(filter(layer, !is.na(amenity)))
 }
 
 as_points &amp;lt;- function(x) {
@@ -11579,8 +11566,9 @@ as_points &amp;lt;- function(x) {
   if (nrow(areas) &amp;gt; 0) {
     areas &amp;lt;- areas |&amp;gt; st_make_valid() |&amp;gt; st_point_on_surface()
   }
-  bind_rows(pts, areas) |&amp;gt;
+  result &amp;lt;- bind_rows(pts, areas) |&amp;gt;
     select(any_of(keep))      # some tags are missing for some types
+  return(result)
 }
 
 food &amp;lt;- map(food_raw, as_points) |&amp;gt;
@@ -11629,8 +11617,11 @@ food |&amp;gt;
 &lt;/table&gt;
 &lt;p&gt;There are 514 places to eat in the city of Durham in OSM today, of which 272 are restaurants.&lt;/p&gt;
 &lt;h3 id=&#34;exercise-1-which-boundary&#34;&gt;Exercise 1: Which boundary?&lt;/h3&gt;
-&lt;p&gt;How many food places are inside Durham’s bounding box but outside the city? What share of all places in the box is that?&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; combine &lt;code&gt;food_raw&lt;/code&gt; without the &lt;code&gt;st_filter()&lt;/code&gt; step, then use &lt;code&gt;st_filter()&lt;/code&gt; with &lt;code&gt;.predicate = st_disjoint&lt;/code&gt;.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;How many food places are inside Durham’s bounding box but outside the city? What share of all places in the box is that?&lt;/li&gt;
+&lt;li&gt;OSM has its own city boundary, drawn by volunteers. Download it with &lt;code&gt;getbb(&amp;quot;Durham, North Carolina&amp;quot;, format_out = &amp;quot;sf_polygon&amp;quot;)&lt;/code&gt;, which asks &lt;a href=&#34;https://nominatim.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Nominatim&lt;/a&gt;, OSM’s place-name search, and compare its area with the Census boundary’s.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; for (1), combine &lt;code&gt;food_raw&lt;/code&gt; without the &lt;code&gt;st_filter()&lt;/code&gt; step, then use &lt;code&gt;st_filter()&lt;/code&gt; with &lt;code&gt;.predicate = st_disjoint&lt;/code&gt;. For (2), &lt;code&gt;st_area()&lt;/code&gt; and &lt;code&gt;units::set_units()&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
 Solution
@@ -11661,10 +11652,39 @@ tibble(in_box = nrow(food_box), outside_city = nrow(outside),
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;Anything counted “per city” from a bounding box would be badly off.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;durham_osm &amp;lt;- getbb(&amp;quot;Durham, North Carolina&amp;quot;, format_out = &amp;quot;sf_polygon&amp;quot;) |&amp;gt;
+  filter(addresstype == &amp;quot;city&amp;quot;) |&amp;gt;
+  st_transform(32119) |&amp;gt;
+  st_make_valid()
+
+tibble(boundary = c(&amp;quot;Census (tigris)&amp;quot;, &amp;quot;OSM (Nominatim)&amp;quot;),
+       area     = c(sum(st_area(durham_m)), sum(st_area(durham_osm)))) |&amp;gt;
+  mutate(area = area |&amp;gt; set_units(mi^2) |&amp;gt; drop_units() |&amp;gt; round(1)) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;Boundary&amp;quot;, &amp;quot;Area (sq mi)&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Boundary&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Area (sq mi)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Census (tigris)&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;119.9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;OSM (Nominatim)&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;115.2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Cities annex land every year, and each source catches up on its own schedule. Use the boundary that matches the rest of your data.&lt;/p&gt;
 &lt;/details&gt;
 &lt;h2 id=&#34;visualise-the-data&#34;&gt;Visualise the data&lt;/h2&gt;
 &lt;h3 id=&#34;an-interactive-map&#34;&gt;An interactive map&lt;/h3&gt;
-&lt;p&gt;Click a point to see its tags. Notice how many have no cuisine or opening hours.&lt;/p&gt;
+&lt;p&gt;Since it is an &lt;code&gt;sf&lt;/code&gt; object, we can use &lt;code&gt;tmap&lt;/code&gt; to visualise either as interactive map or as a plot.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tmap.mapgl)   # adds the &amp;quot;maplibre&amp;quot; mode, which draws vector basemaps such as OpenFreeMap
 tmap_mode(&amp;quot;maplibre&amp;quot;)
 
@@ -11779,9 +11799,9 @@ tm_basemap(&amp;quot;OpenStreetMap&amp;quot;, alpha = 0.4, zoom = 12) +
 &lt;/code&gt;&lt;/pre&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/ex3-map-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;scales::percent(mean(hex$dist_km &amp;gt; 2))   # share of hexagons more than 2 km away
-# [1] &amp;quot;46%&amp;quot;
+# [1] &amp;quot;47%&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Straight-line distance understates the real trip, and supermarkets just outside the city still count, which is why we did not clip them to the boundary.&lt;/p&gt;
+&lt;p&gt;Straight-line distance understates the real trip. Be cautious. Clipping data to the boundary ahead of time, introduces spurious boundary effects.&lt;/p&gt;
 &lt;/details&gt;
 &lt;h3 id=&#34;exercise-3-food-near-transit&#34;&gt;Exercise 3: Food near transit&lt;/h3&gt;
 &lt;p&gt;What share of Durham’s food places are within 400 m (about a five-minute walk) of a bus stop? Bus stops are tagged &lt;code&gt;highway = bus_stop&lt;/code&gt;.&lt;/p&gt;
@@ -11851,7 +11871,7 @@ food_m |&amp;gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tag_cols &amp;lt;- c(&amp;quot;name&amp;quot;, &amp;quot;cuisine&amp;quot;, &amp;quot;opening_hours&amp;quot;, &amp;quot;addr:street&amp;quot;, &amp;quot;website&amp;quot;, &amp;quot;phone&amp;quot;)
 
 share_present &amp;lt;- function(x) {
-  mean(!is.na(x))
+  return(mean(!is.na(x)))
 }
 
 completeness &amp;lt;- food |&amp;gt;
@@ -11870,7 +11890,7 @@ ggplot(completeness, aes(x = share, y = fct_reorder(tag, share))) +
 &lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/completeness-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
 &lt;p&gt;Names are nearly always present, because a nameless café is hard to map. Opening hours and websites are much patchier. Completeness can also vary across space, since tags depend on whether an active mapper lives nearby. An analysis that drops places with missing tags may quietly drop whole neighbourhoods; mapping the places with no &lt;code&gt;opening_hours&lt;/code&gt; is a quick check.&lt;/p&gt;
 &lt;h3 id=&#34;exercise-4-what-cuisines&#34;&gt;Exercise 4: What cuisines?&lt;/h3&gt;
-&lt;p&gt;List the ten most common cuisines among Durham’s restaurants. Some places list more than one, separated by semicolons (&lt;code&gt;mexican;tex-mex&lt;/code&gt;); count each separately. What share of restaurants have no cuisine at all?&lt;/p&gt;
+&lt;p&gt;List the ten most common cuisines among Durham’s restaurants. Some places list more than one, separated by semicolons (&lt;code&gt;mexican;tex-mex&lt;/code&gt;); count each separately. What share of restaurants have no cuisine at all, in the dataset?&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; &lt;code&gt;separate_longer_delim()&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
@@ -11942,6 +11962,50 @@ rest_now |&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;With that many missing, “Durham has few Thai restaurants” might only mean “few Thai restaurants are tagged.”&lt;/p&gt;
 &lt;/details&gt;
+&lt;h2 id=&#34;reproducibility-vscurrency&#34;&gt;Reproducibility vs. Currency&lt;/h2&gt;
+&lt;p&gt;OSM is edited thousands of times a minute. Running the same query next month will give a different answer, which is good for timeliness and bad for reproducibility. Overpass can, however, query OSM &lt;strong&gt;as it was&lt;/strong&gt; on a past date, using the &lt;code&gt;datetime&lt;/code&gt; argument. Here are Durham’s restaurants on the day this post was first published.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest_2020 &amp;lt;- opq(durham_bb, timeout = 120, datetime = &amp;quot;2020-02-12T00:00:00Z&amp;quot;) |&amp;gt;
+  add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;) |&amp;gt;
+  get_osm() |&amp;gt;
+  as_points() |&amp;gt;
+  st_filter(durham)
+
+rest_now &amp;lt;- food |&amp;gt; filter(amenity == &amp;quot;restaurant&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;status &amp;lt;- full_join(
+  rest_2020 |&amp;gt; st_drop_geometry() |&amp;gt; transmute(osm_id, in_2020 = TRUE),
+  rest_now  |&amp;gt; st_drop_geometry() |&amp;gt; transmute(osm_id, in_now = TRUE),
+  by = &amp;quot;osm_id&amp;quot;) |&amp;gt;
+  mutate(status = case_when(in_2020 &amp;amp; in_now ~ &amp;quot;in both&amp;quot;,
+                            is.na(in_now)    ~ &amp;quot;only in 2020&amp;quot;,
+                            is.na(in_2020)   ~ &amp;quot;only now&amp;quot;))
+count(status, status) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;&amp;quot;, &amp;quot;Restaurants&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Restaurants&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;in both&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;147&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;only in 2020&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;38&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;only now&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;125&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;OSM had 185 restaurants in the city in February 2020 and has 272 now. Some of the change is real: restaurants open and close. Some of it is mapping: new restaurants are added long after they open, closed ones linger, and a restaurant redrawn from a point to a building outline gets a new &lt;code&gt;osm_id&lt;/code&gt; even though nothing changed on the ground.&lt;/p&gt;
+&lt;p&gt;For reproducible work, record the date you downloaded the data, save the data you used, or query a fixed date with &lt;code&gt;datetime&lt;/code&gt;, as above.&lt;/p&gt;
 &lt;h2 id=&#34;comparing-with-overture-maps&#34;&gt;Comparing with Overture Maps&lt;/h2&gt;
 &lt;p&gt;No single source of points of interest is complete, so it helps to compare OSM with an independent one. &lt;a href=&#34;https://overturemaps.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Overture Maps&lt;/a&gt;, backed by Amazon, Meta, Microsoft and TomTom, publishes an open &lt;em&gt;places&lt;/em&gt; layer built from Facebook business pages, business registries, and Microsoft and Foursquare listings, not from OSM.&lt;/p&gt;
 &lt;p&gt;Overture releases are &lt;a href=&#34;https://geoparquet.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GeoParquet&lt;/a&gt; files in public cloud storage, with no API. The &lt;a href=&#34;https://duckdb.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;DuckDB&lt;/a&gt; database engine reads just the parts inside our bounding box, directly over the internet. Pinning the release date keeps the query reproducible while that release stays online.&lt;/p&gt;
@@ -11957,8 +12021,8 @@ ov_sql &amp;lt;- str_glue(&amp;quot;
          confidence, operating_status, sources[1].dataset AS source,
          ST_AsText(geometry) AS geometry
   FROM read_parquet(&#39;{ov_places}&#39;)
-  WHERE bbox.xmin &amp;gt; {durham_bb[&#39;x&#39;, &#39;min&#39;]} AND bbox.xmax &amp;lt; {durham_bb[&#39;x&#39;, &#39;max&#39;]}
-    AND bbox.ymin &amp;gt; {durham_bb[&#39;y&#39;, &#39;min&#39;]} AND bbox.ymax &amp;lt; {durham_bb[&#39;y&#39;, &#39;max&#39;]}&amp;quot;)
+  WHERE bbox.xmin &amp;gt; {durham_bb[&#39;xmin&#39;]} AND bbox.xmax &amp;lt; {durham_bb[&#39;xmax&#39;]}
+    AND bbox.ymin &amp;gt; {durham_bb[&#39;ymin&#39;]} AND bbox.ymax &amp;lt; {durham_bb[&#39;ymax&#39;]}&amp;quot;)
 
 overture &amp;lt;- dbGetQuery(con, ov_sql) |&amp;gt;
   st_as_sf(wkt = &amp;quot;geometry&amp;quot;, crs = 4326) |&amp;gt;   # keep the usual column name, so bind_rows() works later
@@ -11966,7 +12030,7 @@ overture &amp;lt;- dbGetQuery(con, ov_sql) |&amp;gt;
 dbDisconnect(con, shutdown = TRUE)
 
 nrow(overture)
-# [1] 17457
+# [1] 17506
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The query takes seconds and returns every place in the city, from restaurants to dentists to churches. Where do they come from?&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;overture |&amp;gt;
@@ -11984,15 +12048,15 @@ nrow(overture)
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;meta&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;8038&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;8068&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;BrightQuery&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;4720&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;4725&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;Microsoft&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;3210&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;3220&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;Foursquare&lt;/td&gt;
@@ -12000,7 +12064,7 @@ nrow(overture)
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;AllThePlaces&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;249&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;252&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;Uberall&lt;/td&gt;
@@ -12008,7 +12072,7 @@ nrow(overture)
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;DAC&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;65&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;66&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;PinMeTo&lt;/td&gt;
@@ -12030,7 +12094,7 @@ nrow(overture)
 &lt;/table&gt;
 &lt;p&gt;Each place also has a category hierarchy. Food places sit under &lt;code&gt;food_and_drink&lt;/code&gt;:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;is_food &amp;lt;- function(h) {          # h is one place&#39;s category hierarchy, e.g. c(&amp;quot;food_and_drink&amp;quot;, &amp;quot;restaurant&amp;quot;)
-  length(h) &amp;gt; 1 &amp;amp;&amp;amp; h[1] == &amp;quot;food_and_drink&amp;quot;
+  return(length(h) &amp;gt; 1 &amp;amp;&amp;amp; h[1] == &amp;quot;food_and_drink&amp;quot;)
 }
 
 overture_food &amp;lt;- overture |&amp;gt;
@@ -12085,7 +12149,7 @@ bind_rows(osm = st_drop_geometry(osm), overture = st_drop_geometry(ov), .id = &a
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;restaurant&lt;/td&gt;
 &lt;td style=&#34;text-align:right&#34;&gt;272&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;771&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;773&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -12097,11 +12161,12 @@ bind_rows(osm = st_drop_geometry(osm), overture = st_drop_geometry(ov), .id = &a
 Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;count_at &amp;lt;- function(threshold) {
-  overture_food |&amp;gt;
+  result &amp;lt;- overture_food |&amp;gt;
     st_drop_geometry() |&amp;gt;
     filter(operating_status != &amp;quot;permanently_closed&amp;quot; | is.na(operating_status),
            confidence &amp;gt;= threshold) |&amp;gt;
     count(amenity, name = paste(&amp;quot;confidence ≥&amp;quot;, threshold))
+  return(result)
 }
 
 map(c(0.5, 0.7, 0.9), count_at) |&amp;gt;
@@ -12138,58 +12203,14 @@ map(c(0.5, 0.7, 0.9), count_at) |&amp;gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:left&#34;&gt;restaurant&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;811&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;771&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;680&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;814&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;773&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;681&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;The count depends on a threshold someone chose. Any published number of restaurants rests on a similar choice, even when it is not visible.&lt;/p&gt;
 &lt;/details&gt;
-&lt;h2 id=&#34;data-that-changes&#34;&gt;Data that changes&lt;/h2&gt;
-&lt;p&gt;OSM is edited thousands of times a minute. Running the same query next month will give a different answer, which is good for timeliness and bad for reproducibility. Overpass can, however, query OSM &lt;strong&gt;as it was&lt;/strong&gt; on a past date, using the &lt;code&gt;datetime&lt;/code&gt; argument. Here are Durham’s restaurants on the day this post was first published.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest_2020 &amp;lt;- opq(durham_bb, timeout = 120, datetime = &amp;quot;2020-02-12T00:00:00Z&amp;quot;) |&amp;gt;
-  add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;) |&amp;gt;
-  get_osm() |&amp;gt;
-  as_points() |&amp;gt;
-  st_filter(durham)
-
-rest_now &amp;lt;- food |&amp;gt; filter(amenity == &amp;quot;restaurant&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;status &amp;lt;- full_join(
-  rest_2020 |&amp;gt; st_drop_geometry() |&amp;gt; transmute(osm_id, in_2020 = TRUE),
-  rest_now  |&amp;gt; st_drop_geometry() |&amp;gt; transmute(osm_id, in_now = TRUE),
-  by = &amp;quot;osm_id&amp;quot;) |&amp;gt;
-  mutate(status = case_when(in_2020 &amp;amp; in_now ~ &amp;quot;in both&amp;quot;,
-                            is.na(in_now)    ~ &amp;quot;only in 2020&amp;quot;,
-                            is.na(in_2020)   ~ &amp;quot;only now&amp;quot;))
-count(status, status) |&amp;gt;
-  knitr::kable(col.names = c(&amp;quot;&amp;quot;, &amp;quot;Restaurants&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Restaurants&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;in both&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;147&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;only in 2020&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;38&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;only now&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;125&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;OSM had 185 restaurants in the city in February 2020 and has 272 now. Some of the change is real: restaurants open and close. Some of it is mapping: new restaurants are added long after they open, closed ones linger, and a restaurant redrawn from a point to a building outline gets a new &lt;code&gt;osm_id&lt;/code&gt; even though nothing changed on the ground.&lt;/p&gt;
-&lt;p&gt;For reproducible work, record the date you downloaded the data, save the data you used, or query a fixed date with &lt;code&gt;datetime&lt;/code&gt;, as above.&lt;/p&gt;
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;OSM is free, detailed and current. Using it well means crediting the contributors, being gentle with shared servers, checking the tags you rely on, and recording when you downloaded the data. Every points-of-interest dataset, OSM or Overture, reflects how it was collected.&lt;/p&gt;
 &lt;h2 id=&#34;acknowledgements&#34;&gt;Acknowledgements&lt;/h2&gt;
