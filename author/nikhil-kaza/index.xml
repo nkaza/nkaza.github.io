@@ -556,318 +556,864 @@ msgs2 %&amp;gt;%
       <description>&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;This tutorial covers obtaining free OpenStreetMap (OSM) data. &lt;em&gt;OpenstreetMap (OSM)&lt;/em&gt; is a free and open map of the world created largely by voluntary contribution of millions of people around the world. Much like Wikipedia. Since the data is free and open, there are much less restrictions to obtaining and using the data. The only condition of using OSM data is proper attribution to OSM contributors.&lt;/p&gt;
-&lt;h2 id=&#34;comparison-between-osm-and-google&#34;&gt;Comparison between OSM and Google&lt;/h2&gt;
-&lt;p&gt;Availability of data is reasonably good in both Goolge and OSM in most parts of the world. However, the availability of Google data is better in places where there is more commercial interest and that in OSM where there is more humanitarian interst. You can use &lt;a href = &#34;https://tools.geofabrik.de/mc/&#34;&gt;Map Compare&lt;/a&gt; to compare OSM and Google in particular locations.&lt;/p&gt;
-&lt;p&gt;OSM data is free to download. Overpass can be used free of cost to download small amount of data. For large datasets, use &lt;a href = &#34;https://download.geofabrik.de/&#34;&gt;Geofabrik&lt;/a&gt;. Google requires users to pay based on volume of data served after a limited daily quota. Policies of Google change frequently, so note that your code will eventually and frequently break.&lt;/p&gt;
-&lt;h2 id=&#34;downloading-data&#34;&gt;Downloading data&lt;/h2&gt;
-&lt;p&gt;OSM serves two APIs, namely Main API for editing OSM, and Overpass API for providing OSM data. We will use Overpass API to gather data in this tutorial just like in the &lt;a href=&#34;https://nkaza.github.io/post/intersection-density-from-osm-using-qgis-r/&#34;&gt;tutorial about OSM and QGIS&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Data can be queried for download using a combination of search criteria lke location and type of objects. It helps to understand how OSM data is structured. OSM data is stored as a list of attributes tagged in key - value pairs of geospatial objects (points, lines or polygons). For example, for an architect’s office, the key is “office”, and the value is “architect.” For the name of the office, key is “name” and value is “ABC Design Studio.” Access an extensive list of key-value pairs through &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Map_Features&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;OSM Wiki&lt;/a&gt; Map features.&lt;/p&gt;
-&lt;h2 id=&#34;obtaining-point-locations-of-restaurants-in-durham-from-osm&#34;&gt;Obtaining point locations of restaurants in Durham from OSM&lt;/h2&gt;
-&lt;p&gt;Restaurants are tagged under amenities. Amenities, according to OSM Wiki are facilities used by visitors and residents. Here, ‘key’ is “amenity” and ‘value’ is “restaurant.” Do not forget to look for related amenities such as “pub”, “food court”, “cafe”, “fast food”, etc. Other amenities include: “university”, “music school”, “kindergarten” and the likes in education, “bus station”, “fuel”, “parking” and others in transportation, and much more.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osmdata)
-library(sf)
-library(tidyverse)
-library(leaflet)
-library(widgetframe)
-
-data_from_osm_df &amp;lt;- opq (getbb (&amp;quot;Durham, North carolina&amp;quot;)) %&amp;gt;% #gets bounding box
-  add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;) %&amp;gt;% #searches for restaurants
-  osmdata_sf() #download OSM data as sf
-
-#select name and geometry from point data for restaurants
-cafe_osm &amp;lt;- data_from_osm_df$osm_points %&amp;gt;% #select point data from downloaded OSM data
-  select(name, geometry) #for now just selecting the name and geometry to plot
-
-#create a plot in leaflet
-m1 &amp;lt;-
-leaflet() %&amp;gt;%
-  addProviderTiles(&amp;quot;CartoDB.Positron&amp;quot;) %&amp;gt;%
-  addCircles(data = cafe_osm)
-
-frameWidget(m1)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-1.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;It is helpful to learn about the distinctions between different tags (key-value pairs). For example, the key “landuse” is used to describe the purpose for which an area is being used. Examples of values for the key “landuse” are “commercial”, “retail”, “vineyard”, “cemetery”, “religious”, etc. Landuse tags are more generic than amenities and are only used for area objects while amenities can also be used for point objects. In case of any confusion, refer to &lt;a href = &#34; https://wiki.openstreetmap.org/wiki/Map_Features&#34;&gt;Map features&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Various amenities, land-use, roads (e.g. key=“highway”, value = “primary”, “service”, “footway”), natural land features (key=“natural”, value = “grassland”), settlements (key = “place”, value = “suburb”), power (key=“power”, value=“line”, “pole”, “transformer”), etc. may be useful in planning applications.
-&lt;br /&gt;&lt;/p&gt;
-&lt;h2 id=&#34;comparing-with-google-places&#34;&gt;Comparing with Google Places&lt;/h2&gt;
-&lt;p&gt;It is useful to compare the output of OSM to Google Places. I am going to use &lt;code&gt;googleway&lt;/code&gt; package for this analysis.&lt;/p&gt;
-&lt;div class=&#34;alert alert-Note&#34;&gt;
+&lt;p&gt;&lt;em&gt;OpenStreetMap (OSM)&lt;/em&gt; is a free and open map of the world, built by millions of volunteers, much like Wikipedia. Anyone can use the data for any purpose, including commercial ones, as long as they credit “© OpenStreetMap contributors” and share any database they derive from it under the same &lt;a href=&#34;https://www.openstreetmap.org/copyright&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Database License (ODbL)&lt;/a&gt;. Every map in this post carries that credit.&lt;/p&gt;
+&lt;p&gt;Underneath the map tiles is a database of roads, buildings, shops, bus stops and much more. This post pulls the places to eat in Durham, NC out of that database, avoids a few common traps, and asks how good the data is.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
   &lt;div&gt;
-    To make this portion of the code work, you will need an API key from Google. Instructions to get and set an API key are located here.
+    This post was first written in 2020 and rewritten in 2026.
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;Note the use of loops to get the next page.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(googleway)
-
-str &amp;lt;- &amp;quot;restaurants in Durham, NC&amp;quot;  # Construct a search string
-
-res &amp;lt;- google_places(search_string = str, key = YOUR_API_KEY)  #Query google servers. Do not forget to set your Google API key 
-
-str(res)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## List of 4
-##  $ html_attributions: list()
-##  $ next_page_token  : chr &amp;quot;AfLeUgMGT-mwxcivbE0RqYwAt129UKfk0t72RjKr4882rjVi4LsM5k4ApcVC0veEtDM2AaDtIXm_AwTDvhyNuR7dMA80Cjxs9j18FFjUQOLfgBz&amp;quot;| __truncated__
-##  $ results          :&#39;data.frame&#39;:   20 obs. of  16 variables:
-##   ..$ business_status      : chr [1:20] &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; &amp;quot;OPERATIONAL&amp;quot; ...
-##   ..$ formatted_address    : chr [1:20] &amp;quot;737 9th St #210, Durham, NC 27705, United States&amp;quot; &amp;quot;8128 Renaissance Pkwy #114, Durham, NC 27713, United States&amp;quot; &amp;quot;315 E Chapel Hill St, Durham, NC 27701, United States&amp;quot; &amp;quot;1200 W Chapel Hill St, Durham, NC 27701, United States&amp;quot; ...
-##   ..$ geometry             :&#39;data.frame&#39;:    20 obs. of  2 variables:
-##   .. ..$ location:&#39;data.frame&#39;:  20 obs. of  2 variables:
-##   .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
-##   .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
-##   .. ..$ viewport:&#39;data.frame&#39;:  20 obs. of  2 variables:
-##   .. .. ..$ northeast:&#39;data.frame&#39;:  20 obs. of  2 variables:
-##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
-##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
-##   .. .. ..$ southwest:&#39;data.frame&#39;:  20 obs. of  2 variables:
-##   .. .. .. ..$ lat: num [1:20] 36 35.9 36 36 36 ...
-##   .. .. .. ..$ lng: num [1:20] -78.9 -79 -78.9 -78.9 -78.9 ...
-##   ..$ icon                 : chr [1:20] &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png&amp;quot; ...
-##   ..$ icon_background_color: chr [1:20] &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; &amp;quot;#FF9E67&amp;quot; ...
-##   ..$ icon_mask_base_uri   : chr [1:20] &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; &amp;quot;https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet&amp;quot; ...
-##   ..$ name                 : chr [1:20] &amp;quot;Juju Durham&amp;quot; &amp;quot;Harvest 18 Restaurant&amp;quot; &amp;quot;The Restaurant at The Durham&amp;quot; &amp;quot;GRUB Durham&amp;quot; ...
-##   ..$ opening_hours        :&#39;data.frame&#39;:    20 obs. of  1 variable:
-##   .. ..$ open_now: logi [1:20] FALSE FALSE FALSE TRUE FALSE FALSE ...
-##   ..$ photos               :List of 20
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1365
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/101715461096256363950\&amp;quot;&amp;gt;Juju Asian Tapas + Bar&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgNgzxuFSzGqNULuskoX1J1eSYN1MoW3YEQ9c7PkXcg4qWXatHFQ4Rb5cwIQr7l-ga-4lijhr69kK6U63LVpoR7ba-XZ9zzumHPUSoZkE4V&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 2048
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 2340
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114770559454901883104\&amp;quot;&amp;gt;Mike Little&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPPIA99W25syCwvvcQYxFUrut0bFaPBZl5jprnhTIRyGdcr0QDfzDOikz4Hp1Cjhg7k7E4iYQCGFWk2-uZgbns_csK-P3xcrxnZebT2q70&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4160
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/103711833847435042805\&amp;quot;&amp;gt;Erik Newby&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgMcxBgjOJDODXoQaFqHrMF-yY6eEKkRn-LhM076R41KFhumuBtiv8zjuw6yXHBfaAL_APZqjefYigLmDkpicqiayu7HvtmYc7Be8rFFYY3&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114870547795315215397\&amp;quot;&amp;gt;James Goerke&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPMD9yIH36j5iqlrH_muls2Z3d76MRXuGriZKTcRB45kzgYghXWPiiOqgiss4XovnhvEzrA1SsrkGaL2AmkuYgu5d3wlmKaXTY3p5ZF2pF&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3072
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/106155315629813478210\&amp;quot;&amp;gt;John Vinueza&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPxyiChtj0yxR6NMCSAyHyP1C0v-aw7ROgHBa4XqABXYj2euzeR9vsXSNckahZHOuk42N6U47k5-8NDCzRTqF_14y_jR1Xr8zCnfHDskpe&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4080
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1280
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/108889804668316321834\&amp;quot;&amp;gt;Local 22 Kitchen And Bar&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPZqAgMiH1Cj_5Ml-pqlh2Bpa7eRf7hWYaC-sjNAW-qyMHYP7KBHOvmHEcOuHALI8EM5zteRzzzbD_2HuVK4rbkhJuPdPEjxhS1aJlw55w&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 1920
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 2268
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/116309041934196405059\&amp;quot;&amp;gt;Vishwanath Math&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgNDxdslnjs0TSAfW8xZ2G6yKznysWRwifnJ_M1O-fFl1wO-dxca1PJE50xJkk5Z9oZt42GWr5zmEuSdC218K6_TWf9RkPjQSj6YCzH6tsm&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/108963259167865212631\&amp;quot;&amp;gt;BRIAN MASSENGILL&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgMRLSDmOeN5XmRRLtenMPy7mdfSlyxTX0wgvoI0cshqMcaYS0M3_kNYu5dL_5TIAb7zvhVmgnX27K-u2NdncbLJG5flZFm181NU0a3ZI8p&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/117366860799003538591\&amp;quot;&amp;gt;A Google User&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgP_hRNFFXZGdI75PiKIxqXFXTlY8__rykRZ2aKHSlWuA_DchjC8tU63cdRXxX5ips1oiVWQCriruFHmM-E4tPxiqAPkbrQDce_fTmnqzIe&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/109300032866188423940\&amp;quot;&amp;gt;Zach Brown&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgOICZG0j3Pyh1V3uJ5kUgcFhu46mfHDQMIf-L5r4Ytv-SAm1qGlBt447IByIr57j6szD56-G-nOrs5ZDEsOjHoFdDRfZF6eRcJXtF5-XKk&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1067
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/118359313798311826267\&amp;quot;&amp;gt;A Google User&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPASPTIaPmGSxahYbOEgFAaqXrAQHPgGzIX7KIkDKv-SfOwbY4bfoRTtQtWoNnnSLiVZa8Qr3Yy31h3Sx3OYBmjpP-HVfHJ24ZPcZS3WYI&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 1600
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3072
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114917363150643087487\&amp;quot;&amp;gt;David Foresman&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgOX4w-TgQ7Gg5xc8iDY4haqOyxq1zvU5b9o2NifriF-Op-xL6HJC9exho2T8vHFG7gUnEWwxOjxfDS5NRqlOlX-rY9VbYsKdbfqojsZL2e&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4080
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/102066483967244766103\&amp;quot;&amp;gt;Marv Baker&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgMEL1DvyfjMEr3FDGmvbs2tG1txo65kjR2e6GSxoTLzHwpJfdB0wzi0kO_5MDOdc2QAF7y7CGppjXZZoshDMiUv0tK3lg8pmaGDKNUcKRG&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115591303687864814152\&amp;quot;&amp;gt;warada shafi&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPEm3Ny2re6YXG2yFmGZ9-VZtedKU6Pdja1s4WeeTeVYhooI5jOBgqwHbSwXA5HzHNSZ-3jpdt316T1UV3AP0WQItKaRCznhzFSW07u4Nz&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3072
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/117939330467348488790\&amp;quot;&amp;gt;protonoid&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgM-f9F0veS1XgpyjuG-sk9lHguYnn-JzHApG7mHDoUKLIGv-rPaExIxvP9ngcWfdRhpcF1f4CbgqAWhDON_eojLkkMfrn__jsM3Iqm3xgU&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4080
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 1512
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/116117583444734059617\&amp;quot;&amp;gt;Mothers &amp;amp;amp; Sons Trattoria&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgNGmqVkzlzONPHWuqhkBpc9GQRuedQTY7w8lRBBcNrhkK6wjySsTUe4trkk3KPboWvwUpRGdV0KYc3biGRmuUU5TSIz5X9TREJr0Scail5&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 2016
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 2721
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/108832116470362120552\&amp;quot;&amp;gt;Kimberly Slentz-Kesler&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgPi22ZdFw8D5q7HgP-evVd5fvUuh_ry12PsACZ5J_7-qLHNEiLeUCuHQpAsM-Vqz1vtSjdpHnOOX0L9bxG9iMZROZGtD6LQK2Q9Sdd6-lE&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 4032
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/100123088912788695638\&amp;quot;&amp;gt;Chris Schwarz&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgNQN_h2cGNl6t3S6GBSgmI7d2CBOBHD8kRDRhBs_iJ8eSNQtf9J1nhGzr33VJhXDMCowe-xhy4-INZqzAQAnBkGiTAo31nQqmb0nnSJeph&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 3024
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3264
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/115121000442582864884\&amp;quot;&amp;gt;Rachael Lord&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgP6NoILAb1ve9q3phRmvXuygx6Lno87WupJQq63RxjGl2QvzKWygM-IiyM3_ve-KCx6Bt6RaRSLCcn_iJNa5HvCbPNoUjQaHwpFlIkJytG&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 2448
-##   .. ..$ :&#39;data.frame&#39;:  1 obs. of  4 variables:
-##   .. .. ..$ height           : int 3024
-##   .. .. ..$ html_attributions:List of 1
-##   .. .. .. ..$ : chr &amp;quot;&amp;lt;a href=\&amp;quot;https://maps.google.com/maps/contrib/114464732617145277475\&amp;quot;&amp;gt;Mauro Jeronimo Mendoza&amp;lt;/a&amp;gt;&amp;quot;
-##   .. .. ..$ photo_reference  : chr &amp;quot;AfLeUgMGjK4hHrxBdRwAT6gKHVWZ7wpuFh0TV2hJ80R0JJMBx3ZmkkM6fOHze0Ry7f1tjgxkKzuFufnxrSO9UqgOT0VPmpu6FLAprlIKn4H8fCT&amp;quot;| __truncated__
-##   .. .. ..$ width            : int 4032
-##   ..$ place_id             : chr [1:20] &amp;quot;ChIJ608CRgfkrIkRzaPpHby3GS4&amp;quot; &amp;quot;ChIJj6foxurorIkRhlH7GB_PMo0&amp;quot; &amp;quot;ChIJNR4KG3LkrIkR2G7VfaFtyWw&amp;quot; &amp;quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&amp;quot; ...
-##   ..$ plus_code            :&#39;data.frame&#39;:    20 obs. of  2 variables:
-##   .. ..$ compound_code: chr [1:20] &amp;quot;235H+W2 Durham, North Carolina&amp;quot; &amp;quot;W23W+8Q Durham, North Carolina&amp;quot; &amp;quot;X3WX+VJ Durham, North Carolina&amp;quot; &amp;quot;X3WJ+QW Durham, North Carolina&amp;quot; ...
-##   .. ..$ global_code  : chr [1:20] &amp;quot;8783235H+W2&amp;quot; &amp;quot;8773W23W+8Q&amp;quot; &amp;quot;8773X3WX+VJ&amp;quot; &amp;quot;8773X3WJ+QW&amp;quot; ...
-##   ..$ price_level          : int [1:20] 3 2 2 2 NA 2 2 3 2 2 ...
-##   ..$ rating               : num [1:20] 4.5 4.3 4.3 4.4 4.7 4.5 4.4 4.5 4.4 4.6 ...
-##   ..$ reference            : chr [1:20] &amp;quot;ChIJ608CRgfkrIkRzaPpHby3GS4&amp;quot; &amp;quot;ChIJj6foxurorIkRhlH7GB_PMo0&amp;quot; &amp;quot;ChIJNR4KG3LkrIkR2G7VfaFtyWw&amp;quot; &amp;quot;ChIJtQrhphrkrIkRwN9ZgZlJdKU&amp;quot; ...
-##   ..$ types                :List of 20
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:5] &amp;quot;restaurant&amp;quot; &amp;quot;bar&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:6] &amp;quot;restaurant&amp;quot; &amp;quot;cafe&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:5] &amp;quot;restaurant&amp;quot; &amp;quot;bar&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:5] &amp;quot;bar&amp;quot; &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; ...
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   .. ..$ : chr [1:4] &amp;quot;restaurant&amp;quot; &amp;quot;food&amp;quot; &amp;quot;point_of_interest&amp;quot; &amp;quot;establishment&amp;quot;
-##   ..$ user_ratings_total   : int [1:20] 941 1053 116 1748 179 797 1095 505 607 240 ...
-##  $ status           : chr &amp;quot;OK&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Notice that the result has Status code and next page token. We are going to use them to extract the restaurants.
-
-# Initiatlise some values.
-nextpage_yes_no &amp;lt;- !is.null(res$next_page_token)
-token &amp;lt;- res$next_page_token
-i &amp;lt;- 1
-cafe_google_list &amp;lt;- NULL
-
-# extract only when status is OK.
-
-if(res$status == &amp;quot;OK&amp;quot;) {
-    cafe_google_list[[i]] &amp;lt;- 
-                        cbind (&amp;quot;id&amp;quot; = res$results$id, 
-                               &amp;quot;name&amp;quot; = res$results$name,
-                               &amp;quot;address&amp;quot; = res$results$formatted_address,
-                               &amp;quot;longitude&amp;quot; = res$results$geometry$location$lng,  # Notice that we are going multiple levels down in the data frame.  You should really examine the structure of the res and results to understand what is going on here.
-                               &amp;quot;latitude&amp;quot; = res$results$geometry$location$lat,
-                               &amp;quot;plus_code&amp;quot; = res$results$plus_code$compound_code,
-                               &amp;quot;price_level&amp;quot; = res$results$price_level,
-                               &amp;quot;rating&amp;quot; = res$results$rating
-                               ) %&amp;gt;% as_tibble()
-
-}
-
-
-# The loop begins.
-
-while(nextpage_yes_no == TRUE){ #See if the loop will run at least once.
-  i &amp;lt;- i+1 #increment i.
-  res_next &amp;lt;- google_places(search_string = str,
-                          page_token = token,
-                          key = YOUR_API_KEY)
-
-  if(res_next$status == &amp;quot;OK&amp;quot;) {
-    cafe_google_list[[i]] &amp;lt;- 
-                        cbind (&amp;quot;id&amp;quot; = res_next$results$id, 
-                               &amp;quot;name&amp;quot; = res_next$results$name,
-                               &amp;quot;address&amp;quot; = res_next$results$formatted_address,
-                               &amp;quot;longitude&amp;quot; = res_next$results$geometry$location$lng,
-                               &amp;quot;latitude&amp;quot; = res_next$results$geometry$location$lat,
-                               &amp;quot;plus_code&amp;quot; = res_next$results$plus_code$compound_code,
-                               &amp;quot;price_level&amp;quot; = res_next$results$price_level,
-                               &amp;quot;rating&amp;quot; = res_next$results$rating
-                               ) %&amp;gt;% as_tibble()
-
-}
-
-
-  token &amp;lt;- res_next$next_page_token # notice the update of the token 
-  nextpage_yes_no &amp;lt;- !is.null(res_next$next_page_token) # Notice the update of nextpage_yes_no. If you don&#39;t do it, you can potentially run the loop forever (or at least till the server shuts you down.)
-  rm(res_next)  # clean up the temporary objects. Good practise/
-  Sys.sleep(5) # Introduce a time delay, so that you do not overwhelm the server.
-}  # The loop concludes
-
-
-# Convert the list to a sf object to visualise
-cafe_google &amp;lt;- plyr::compact(cafe_google_list) %&amp;gt;% bind_rows 
-cafe_google &amp;lt;- st_as_sf(cafe_google,  coords = c(&amp;quot;longitude&amp;quot;, &amp;quot;latitude&amp;quot;), crs=4326)
-
-m1 &amp;lt;-
-leaflet() %&amp;gt;%
-  addProviderTiles(&amp;quot;CartoDB.Positron&amp;quot;) %&amp;gt;%
-  addCircles(data = cafe_google)
-
-frameWidget(m1)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_unnamed-chunk-2.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;Note that OSM report 894 entries while Google reports 20 restaurants.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;how-osm-data-is-structured&#34;&gt;How OSM data is structured&lt;/h2&gt;
+&lt;p&gt;OSM has only three kinds of objects:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Why is there a difference between Google and OSM? (Hint: Read the documentation)&lt;/li&gt;
-&lt;li&gt;If there is a marked difference between OSM and Google, what implication does this have for any analysis that you might do using their data?&lt;/li&gt;
-&lt;li&gt;Notice that repeated application of the same query produce different results in in the same system. Why? What implication does this have for reproducibility?&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Nodes&lt;/strong&gt; are points with a latitude and longitude. A bench, a bus stop, or a café drawn as a single point is a node.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Ways&lt;/strong&gt; are ordered lists of nodes. An open way is a line (a road, a stream); a closed way is usually an area (a building, a park).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Relations&lt;/strong&gt; group other objects. A bus route, a city boundary, or a building with a courtyard is a relation.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;hr&gt;
+&lt;p&gt;None of these objects has a fixed “type” or attribute table. Instead, each carries a set of &lt;strong&gt;tags&lt;/strong&gt;, which are &lt;code&gt;key = value&lt;/code&gt; pairs. A restaurant might carry:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;key&lt;/th&gt;
+&lt;th&gt;value&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;amenity&lt;/td&gt;
+&lt;td&gt;restaurant&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;name&lt;/td&gt;
+&lt;td&gt;Mateo Bar de Tapas&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;cuisine&lt;/td&gt;
+&lt;td&gt;spanish&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;addr:street&lt;/td&gt;
+&lt;td&gt;West Chapel Hill Street&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;opening_hours&lt;/td&gt;
+&lt;td&gt;Tu-Sa 17:00-22:00&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Only the first tag says &lt;em&gt;what&lt;/em&gt; the object is. The rest are optional, and whether they are filled in depends on whether some volunteer bothered. There is no enforced schema: tags are conventions, documented on the OSM Wiki’s &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Map_Features&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Map Features&lt;/a&gt; page, and &lt;a href=&#34;https://taginfo.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Taginfo&lt;/a&gt; shows how often each is actually used. Keys useful in planning include &lt;code&gt;amenity&lt;/code&gt; (restaurants, schools, clinics), &lt;code&gt;shop&lt;/code&gt;, &lt;code&gt;highway&lt;/code&gt; (roads and bus stops), &lt;code&gt;leisure&lt;/code&gt; (parks) and &lt;code&gt;building&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;We will use the &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Overpass API&lt;/a&gt; through the &lt;code&gt;osmdata&lt;/code&gt; package, which suits a city and a handful of tags. For a whole state or country, download an extract from &lt;a href=&#34;https://download.geofabrik.de/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geofabrik&lt;/a&gt; instead (the &lt;code&gt;osmextract&lt;/code&gt; package).&lt;/p&gt;
+&lt;h2 id=&#34;a-sturdier-way-to-call-overpass&#34;&gt;A sturdier way to call Overpass&lt;/h2&gt;
+&lt;p&gt;Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. Small queries, a fallback server, and saving every answer to disk make code that keeps working.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;osmdata&lt;/code&gt; builds the query for us. &lt;code&gt;opq_string()&lt;/code&gt; shows the query in Overpass’s own language:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;opq(bbox = c(-78.95, 35.98, -78.88, 36.02)) |&amp;gt;
+  add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;) |&amp;gt;
+  opq_string() |&amp;gt;
+  cat()
+# [out:xml][timeout:25];
+# (
+#   node [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.98,-78.95,36.02,-78.88);
+#   way [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.98,-78.95,36.02,-78.88);
+#   relation [&amp;quot;amenity&amp;quot;=&amp;quot;restaurant&amp;quot;] (35.98,-78.95,36.02,-78.88);
+# );
+# (._;&amp;gt;;);
+# out body;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The query asks for every node, way and relation tagged &lt;code&gt;amenity = restaurant&lt;/code&gt; in the box, and for enough geometry to draw them.&lt;/p&gt;
+&lt;p&gt;The function below first looks for a saved answer to the same query on disk. If there is none, it tries each server in turn and saves the answer. Either way, &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;endpoints &amp;lt;- c(&amp;quot;https://overpass-api.de/api/interpreter&amp;quot;,
+               &amp;quot;https://maps.mail.ru/osm/tools/overpass/api/interpreter&amp;quot;,
+               &amp;quot;https://overpass.kumi.systems/api/interpreter&amp;quot;)
+
+cache_dir &amp;lt;- here::here(&amp;quot;osm_cache&amp;quot;)   # a folder in your project
+
+get_osm &amp;lt;- function(q) {
+  dir.create(cache_dir, showWarnings = FALSE, recursive = TRUE)
+  qs   &amp;lt;- opq_string(q)
+  file &amp;lt;- file.path(cache_dir, paste0(rlang::hash(qs), &amp;quot;.osm&amp;quot;))   # one file per distinct query
+  if (file.exists(file)) return(osmdata_sf(q, doc = file))
+
+  for (round in 1:3) {                          # up to three passes over the servers
+  for (u in endpoints) {
+    resp &amp;lt;- request(u) |&amp;gt;
+      req_body_form(data = qs) |&amp;gt;
+      req_user_agent(&amp;quot;osm-tutorial (R httr2)&amp;quot;) |&amp;gt;
+      req_timeout(180) |&amp;gt;
+      req_retry(max_tries = 3, backoff = function(attempt) 30) |&amp;gt;   # wait 30 s between tries
+      req_error(is_error = function(resp) FALSE) |&amp;gt;   # inspect the status ourselves
+      req_perform() |&amp;gt;
+      tryCatch(error = function(e) NULL)           # network failures return NULL
+    if (!is.null(resp) &amp;amp;&amp;amp; resp_status(resp) == 200) {
+      writeBin(resp_body_raw(resp), file)
+      return(osmdata_sf(q, doc = file))
+    }
+  }
+  Sys.sleep(60)                                 # everyone is busy; wait a minute
+  }
+  stop(&amp;quot;No Overpass server answered. Try again later.&amp;quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;On a quiet day, &lt;code&gt;osmdata_sf(q)&lt;/code&gt; does the same job against a single server. To get fresh data, delete the &lt;code&gt;osm_cache&lt;/code&gt; folder in your project.&lt;/p&gt;
+&lt;h2 id=&#34;defining-the-study-area&#34;&gt;Defining the study area&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;getbb()&lt;/code&gt; asks &lt;a href=&#34;https://nominatim.openstreetmap.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Nominatim&lt;/a&gt;, OSM’s place-name search, for the location of a place. By default it returns a &lt;strong&gt;bounding box&lt;/strong&gt;, the smallest rectangle around the place. With &lt;code&gt;format_out = &amp;quot;sf_polygon&amp;quot;&lt;/code&gt; it returns the actual boundary.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;durham_bb &amp;lt;- getbb(&amp;quot;Durham, North Carolina&amp;quot;)
+durham_bb
+#         min       max
+# x -79.00750 -78.75691
+# y  35.86635  36.13701
+
+durham &amp;lt;- getbb(&amp;quot;Durham, North Carolina&amp;quot;, format_out = &amp;quot;sf_polygon&amp;quot;) |&amp;gt;
+  filter(addresstype == &amp;quot;city&amp;quot;) |&amp;gt;
+  select(name) |&amp;gt;
+  st_make_valid()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;From here on we work in North Carolina State Plane (EPSG:32119, metres), with grayed OSM tiles behind the static maps.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Basemap code
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(maptiles)
+durham_m &amp;lt;- st_transform(durham, 32119)
+
+osm_tiles &amp;lt;- get_tiles(durham_m, provider = &amp;quot;OpenStreetMap&amp;quot;, zoom = 12, crop = TRUE,
+                       cachedir = cache_dir)
+
+to_gray &amp;lt;- function(tiles, wash = 0.7) {   # wash = 1 keeps full contrast; smaller is paler
+  gray &amp;lt;- 0.299 * tiles[[1]] + 0.587 * tiles[[2]] + 0.114 * tiles[[3]]   # luminance of the red, green, blue bands
+  255 - (255 - gray) * wash
+}
+gray_basemap &amp;lt;- function(wash = 0.7, bbox = NULL) {   # a tmap layer to start every static map with
+  tm_shape(to_gray(osm_tiles, wash), bbox = bbox) +
+    tm_raster(col.scale = tm_scale_continuous(values = c(&amp;quot;black&amp;quot;, &amp;quot;white&amp;quot;), limits = c(0, 255)),
+              col.legend = tm_legend_hide())
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;p&gt;Bounding boxes are not the same as city limits.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmap_mode(&amp;quot;plot&amp;quot;)
+bb_poly &amp;lt;- st_as_sfc(st_bbox(durham_m))
+
+gray_basemap() +
+  tm_shape(bb_poly) +
+  tm_borders(col = &amp;quot;firebrick&amp;quot;, lwd = 2, lty = &amp;quot;dashed&amp;quot;) +
+  tm_shape(durham_m) +
+  tm_polygons(fill = &amp;quot;steelblue&amp;quot;, fill_alpha = 0.3, col = &amp;quot;steelblue&amp;quot;) +
+  tm_credits(&amp;quot;© OpenStreetMap contributors&amp;quot;, position = c(&amp;quot;left&amp;quot;, &amp;quot;bottom&amp;quot;)) +
+  tm_title(&amp;quot;City of Durham (blue) and its bounding box (red)&amp;quot;) +
+  tm_layout(frame = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/bbox-map-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;h3 id=&#34;whose-boundary&#34;&gt;Whose boundary?&lt;/h3&gt;
+&lt;p&gt;The boundary from Nominatim is the one drawn in OSM by volunteers. The Census Bureau publishes its own, which is the one &lt;code&gt;tidycensus&lt;/code&gt; attaches.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tigris)
+options(tigris_use_cache = TRUE)
+
+durham_census &amp;lt;- places(state = &amp;quot;NC&amp;quot;, year = 2024, cb = TRUE, progress_bar = FALSE) |&amp;gt;
+  filter(GEOID == &amp;quot;3719000&amp;quot;) |&amp;gt;        # Durham city
+  st_transform(32119) |&amp;gt;
+  st_make_valid()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;osm_b &amp;lt;- st_make_valid(durham_m)
+
+only_in &amp;lt;- function(a, b) {   # parts of a not in b
+  st_difference(st_geometry(a), st_geometry(b)) |&amp;gt;
+    st_buffer(-20) |&amp;gt;          # shrink and regrow by 20 m: drops slivers from slightly
+    st_buffer(20)              # different line work, keeps the real patches
+}
+
+gray_basemap() +
+  tm_shape(only_in(durham_census, osm_b)) +
+  tm_polygons(fill = &amp;quot;#7570b3&amp;quot;, lwd = 0) +
+  tm_shape(only_in(osm_b, durham_census)) +
+  tm_polygons(fill = &amp;quot;#1b9e77&amp;quot;, lwd = 0) +
+  tm_title(&amp;quot;Only in the Census boundary (purple) or only in OSM&#39;s (green)&amp;quot;) +
+  tm_credits(&amp;quot;© OpenStreetMap contributors&amp;quot;, position = c(&amp;quot;left&amp;quot;, &amp;quot;bottom&amp;quot;)) +
+  tm_layout(frame = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/boundary-diff-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;Cities annex land every year, and each source catches up on its own schedule. Use the boundary that matches the rest of your data.&lt;/p&gt;
+&lt;p&gt;Overpass works with rectangles, so we download for the box and then clip to the boundary.&lt;/p&gt;
+&lt;h2 id=&#34;downloading-food-places-in-a-loop&#34;&gt;Downloading food places in a loop&lt;/h2&gt;
+&lt;p&gt;Restaurants are tagged &lt;code&gt;amenity = restaurant&lt;/code&gt;. Someone interested in “places to eat” would also want &lt;code&gt;fast_food&lt;/code&gt;, &lt;code&gt;cafe&lt;/code&gt;, &lt;code&gt;bar&lt;/code&gt;, &lt;code&gt;pub&lt;/code&gt; and &lt;code&gt;food_court&lt;/code&gt;. Instead of one large query, we send one query per value, pausing between them to be polite to the server.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;food_types &amp;lt;- c(&amp;quot;restaurant&amp;quot;, &amp;quot;fast_food&amp;quot;, &amp;quot;cafe&amp;quot;, &amp;quot;bar&amp;quot;, &amp;quot;pub&amp;quot;, &amp;quot;food_court&amp;quot;)
+
+food_raw &amp;lt;- map(food_types, function(v) {
+  Sys.sleep(2)
+  opq(durham_bb, timeout = 120) |&amp;gt;
+    add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = v) |&amp;gt;
+    get_osm()
+}) |&amp;gt;
+  set_names(food_types)
+
+food_raw$restaurant
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each result is a list of &lt;code&gt;sf&lt;/code&gt; layers: &lt;code&gt;osm_points&lt;/code&gt;, &lt;code&gt;osm_lines&lt;/code&gt;, &lt;code&gt;osm_polygons&lt;/code&gt;, &lt;code&gt;osm_multilines&lt;/code&gt; and &lt;code&gt;osm_multipolygons&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;the-vertex-trap&#34;&gt;The vertex trap&lt;/h3&gt;
+&lt;p&gt;If you only use &lt;code&gt;osm_points&lt;/code&gt;, it contains &lt;em&gt;every&lt;/em&gt; node in the result, including the corners of each building outline. Those corner nodes have no tags.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest &amp;lt;- food_raw$restaurant
+tibble(layer = c(&amp;quot;osm_points: every node, including building corners&amp;quot;,
+                 &amp;quot;osm_points tagged amenity = restaurant&amp;quot;,
+                 &amp;quot;osm_polygons: restaurants drawn as building outlines&amp;quot;,
+                 &amp;quot;osm_multipolygons: outlines with holes or several parts&amp;quot;),
+       n     = c(nrow(rest$osm_points),
+                 sum(!is.na(rest$osm_points$amenity)),
+                 nrow(rest$osm_polygons),
+                 nrow(rest$osm_multipolygons %||% tibble()))) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;Layer&amp;quot;, &amp;quot;Features&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Layer&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Features&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;osm_points: every node, including building corners&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1016&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;osm_points tagged amenity = restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;211&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;osm_polygons: restaurants drawn as building outlines&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;114&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;osm_multipolygons: outlines with holes or several parts&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Counting all points would inflate the number of restaurants several times over, and the restaurants drawn as building outlines would be represented only by their corners. The right approach keeps tagged points and turns each area into a single representative point. &lt;code&gt;st_point_on_surface()&lt;/code&gt; is better than &lt;code&gt;st_centroid()&lt;/code&gt; here, because a centroid can fall outside an L-shaped building.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;keep &amp;lt;- c(&amp;quot;osm_id&amp;quot;, &amp;quot;name&amp;quot;, &amp;quot;amenity&amp;quot;, &amp;quot;cuisine&amp;quot;, &amp;quot;opening_hours&amp;quot;,
+          &amp;quot;addr:street&amp;quot;, &amp;quot;addr:housenumber&amp;quot;, &amp;quot;website&amp;quot;, &amp;quot;phone&amp;quot;)
+
+tagged &amp;lt;- function(layer) {     # an empty layer has no amenity column at all
+  if (is.null(layer) || !&amp;quot;amenity&amp;quot; %in% names(layer)) return(NULL)
+  filter(layer, !is.na(amenity))
+}
+
+as_points &amp;lt;- function(x) {
+  pts   &amp;lt;- tagged(x$osm_points)
+  areas &amp;lt;- bind_rows(tagged(x$osm_polygons), tagged(x$osm_multipolygons))
+  if (nrow(areas) &amp;gt; 0) {
+    areas &amp;lt;- areas |&amp;gt; st_make_valid() |&amp;gt; st_point_on_surface()
+  }
+  bind_rows(pts, areas) |&amp;gt;
+    select(any_of(keep))      # some tags are missing for some types
+}
+
+food &amp;lt;- map(food_raw, as_points) |&amp;gt;
+  bind_rows() |&amp;gt;
+  distinct(osm_id, .keep_all = TRUE) |&amp;gt;
+  st_filter(durham)           # clip the bounding box to the city
+
+food |&amp;gt;
+  st_drop_geometry() |&amp;gt;
+  count(amenity, sort = TRUE) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;amenity&amp;quot;, &amp;quot;Places&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;amenity&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Places&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;272&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;fast_food&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;155&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;cafe&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;41&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;bar&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;34&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;pub&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;food_court&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;There are 514 places to eat in the city of Durham in OSM today, of which 272 are restaurants.&lt;/p&gt;
+&lt;h3 id=&#34;exercise-1-which-boundary&#34;&gt;Exercise 1: Which boundary?&lt;/h3&gt;
+&lt;p&gt;How many food places are inside Durham’s bounding box but outside the city? What share of all places in the box is that?&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; combine &lt;code&gt;food_raw&lt;/code&gt; without the &lt;code&gt;st_filter()&lt;/code&gt; step, then use &lt;code&gt;st_filter()&lt;/code&gt; with &lt;code&gt;.predicate = st_disjoint&lt;/code&gt;.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;food_box &amp;lt;- map(food_raw, as_points) |&amp;gt;
+  bind_rows() |&amp;gt;
+  distinct(osm_id, .keep_all = TRUE)
+
+outside &amp;lt;- st_filter(food_box, durham, .predicate = st_disjoint)
+tibble(in_box = nrow(food_box), outside_city = nrow(outside),
+       share_outside = scales::percent(nrow(outside) / nrow(food_box))) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;In the box&amp;quot;, &amp;quot;Outside the city&amp;quot;, &amp;quot;Share outside&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;In the box&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Outside the city&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Share outside&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;608&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;94&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;15%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Anything counted “per city” from a bounding box would be badly off.&lt;/p&gt;
+&lt;/details&gt;
+&lt;h2 id=&#34;visualise-the-data&#34;&gt;Visualise the data&lt;/h2&gt;
+&lt;h3 id=&#34;an-interactive-map&#34;&gt;An interactive map&lt;/h3&gt;
+&lt;p&gt;Click a point to see its tags. Notice how many have no cuisine or opening hours.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tmap.mapgl)   # adds the &amp;quot;maplibre&amp;quot; mode, which draws vector basemaps such as OpenFreeMap
+tmap_mode(&amp;quot;maplibre&amp;quot;)
+
+m_food &amp;lt;- tm_shape(durham) +
+  tm_borders(col = &amp;quot;gray40&amp;quot;, lwd = 1, group = &amp;quot;City limits&amp;quot;) +
+  tm_shape(food) +
+  tm_dots(fill = &amp;quot;firebrick&amp;quot;,
+          size = 0.5,
+          id = &amp;quot;name&amp;quot;,
+          popup = tm_popup(vars = c(&amp;quot;amenity&amp;quot;, &amp;quot;cuisine&amp;quot;, &amp;quot;opening_hours&amp;quot;, &amp;quot;addr:street&amp;quot;, &amp;quot;website&amp;quot;)),
+          group = &amp;quot;Places to eat&amp;quot;) +
+  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
+
+frameWidget(tmap_maplibre(m_food))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index_files/figure-html//widgets/widget_food-map.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;h3 id=&#34;density-on-a-hexagonal-grid&#34;&gt;Density on a hexagonal grid&lt;/h3&gt;
+&lt;p&gt;With hundreds of points, a dot map hides the overlap downtown. Counting points in equal-area hexagons shows where food places concentrate.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;food_m &amp;lt;- st_transform(food, 32119)
+
+hex &amp;lt;- st_make_grid(durham_m, cellsize = 800, square = FALSE) |&amp;gt;   # 800 m across the flats
+  st_as_sf() |&amp;gt;
+  st_filter(durham_m) |&amp;gt;
+  mutate(hex_id = row_number())
+
+hex$n_food &amp;lt;- lengths(st_intersects(hex, food_m))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The basemap supplies roads and place names. We add labels only for the places discussed below.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;landmarks &amp;lt;- tribble(   # coordinates read off openstreetmap.org; dx, dy move the label off the cluster
+  ~label,             ~lon,     ~lat,     ~dx,  ~dy,
+  &amp;quot;Ninth Street&amp;quot;,     -78.9232, 36.0100,   2.8,  1.1,
+  &amp;quot;Downtown&amp;quot;,         -78.9030, 35.9960,   3.4,  0,
+  &amp;quot;Duke / Erwin Rd&amp;quot;,  -78.9410, 35.9985,  -4.2,  0,
+  &amp;quot;New Hope Commons&amp;quot;, -78.9898, 35.9538,   4,   -1.1,
+  &amp;quot;Southpoint&amp;quot;,       -78.9450, 35.9030,   0,   -1.2,
+  &amp;quot;Page Road (RTP)&amp;quot;,  -78.8480, 35.8788,  -4.4,  0) |&amp;gt;
+  st_as_sf(coords = c(&amp;quot;lon&amp;quot;, &amp;quot;lat&amp;quot;), crs = 4326) |&amp;gt;
+  st_transform(32119)
+
+tmap_mode(&amp;quot;plot&amp;quot;)
+food_hex &amp;lt;- hex |&amp;gt;
+  filter(n_food &amp;gt; 0) |&amp;gt;
+  mutate(class = cut(n_food, breaks = c(0, 2, 9, 19, Inf), labels = c(&amp;quot;1-2&amp;quot;, &amp;quot;3-9&amp;quot;, &amp;quot;10-19&amp;quot;, &amp;quot;20+&amp;quot;)))
+food_hex$neighbours  &amp;lt;- lengths(st_touches(food_hex))
+food_hex$to_landmark &amp;lt;- apply(st_distance(food_hex, landmarks), 1, min)   # metres to the nearest label
+
+examples &amp;lt;- food_hex |&amp;gt;              # one labelled hexagon per colour, plus the outliers; no legend needed
+  arrange(neighbours, desc(to_landmark)) |&amp;gt;
+  slice_head(n = 1, by = class) |&amp;gt;   # an isolated hexagon away from the labels is easiest to see
+  bind_rows(filter(food_hex, n_food &amp;gt;= 15)) |&amp;gt;
+  distinct(hex_id, .keep_all = TRUE) |&amp;gt;
+  mutate(text_col = if_else(class %in% c(&amp;quot;1-2&amp;quot;, &amp;quot;3-9&amp;quot;), &amp;quot;black&amp;quot;, &amp;quot;white&amp;quot;))
+
+m_hex &amp;lt;- gray_basemap(wash = 0.35, bbox = st_bbox(food_hex)) +   # pale background, zoomed to the hexagons
+  tm_shape(food_hex) +
+  tm_polygons(fill = &amp;quot;class&amp;quot;,
+              fill.scale = tm_scale_categorical(values = viridisLite::viridis(4, end = 0.85, direction = -1)),   # green to purple
+              fill.legend = tm_legend_hide(),
+              col = &amp;quot;white&amp;quot;, lwd = 0.4) +
+  tm_shape(examples) +
+  tm_text(&amp;quot;n_food&amp;quot;, size = 0.6, col = &amp;quot;text_col&amp;quot;, col.scale = tm_scale_asis(), fontface = &amp;quot;bold&amp;quot;) +
+  tm_shape(landmarks) +
+  tm_text(&amp;quot;label&amp;quot;, size = 0.75, fontface = &amp;quot;bold&amp;quot;, xmod = &amp;quot;dx&amp;quot;, ymod = &amp;quot;dy&amp;quot;,
+          bgcol = &amp;quot;white&amp;quot;, bgcol_alpha = 0.7) +
+  tm_credits(&amp;quot;© OpenStreetMap contributors&amp;quot;, position = c(&amp;quot;left&amp;quot;, &amp;quot;bottom&amp;quot;)) +
+  tm_layout(frame = FALSE)
+
+m_hex + tm_title(&amp;quot;Places to eat in Durham, 800 m hexagons&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/hex-map-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;Ninth Street, next to Duke’s East Campus, is the densest cluster, followed by downtown. The rest are shopping centres at freeway interchanges: New Hope Commons where US 15-501 meets I-40, Southpoint off I-40, and the strip along Page Road near Research Triangle Park.&lt;/p&gt;
+&lt;h3 id=&#34;exercise-2-supermarkets&#34;&gt;Exercise 2: Supermarkets&lt;/h3&gt;
+&lt;p&gt;Download supermarkets (&lt;code&gt;shop = supermarket&lt;/code&gt;) in Durham. Then, for each hexagon in &lt;code&gt;hex&lt;/code&gt;, compute the straight-line distance from its centre to the nearest supermarket, and map it. Which parts of the city are more than 2 km from one?&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; &lt;code&gt;st_nearest_feature()&lt;/code&gt; returns the index of the nearest feature; &lt;code&gt;st_distance(..., by_element = TRUE)&lt;/code&gt; then gives the distance to it.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;supermarkets &amp;lt;- opq(durham_bb, timeout = 120) |&amp;gt;
+  add_osm_feature(key = &amp;quot;shop&amp;quot;, value = &amp;quot;supermarket&amp;quot;) |&amp;gt;
+  get_osm()
+supermarkets &amp;lt;- bind_rows(
+  supermarkets$osm_points |&amp;gt; filter(!is.na(shop)),
+  bind_rows(supermarkets$osm_polygons, supermarkets$osm_multipolygons) |&amp;gt;
+    st_make_valid() |&amp;gt; st_point_on_surface()) |&amp;gt;
+  select(osm_id, name) |&amp;gt;
+  st_transform(32119)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(units)
+hex_centres &amp;lt;- st_centroid(hex)
+nearest &amp;lt;- st_nearest_feature(hex_centres, supermarkets)
+hex$dist_km &amp;lt;- st_distance(hex_centres, supermarkets[nearest, ], by_element = TRUE) |&amp;gt;
+  set_units(km) |&amp;gt;
+  drop_units()                          # tmap&#39;s colour scales want plain numbers
+
+tmap_mode(&amp;quot;plot&amp;quot;)
+gray_basemap() +
+  tm_shape(durham_m) +
+  tm_borders(col = &amp;quot;gray30&amp;quot;) +
+  tm_shape(hex |&amp;gt; filter(dist_km &amp;gt; 2) |&amp;gt; st_intersection(st_geometry(durham_m))) +   # clip to the city
+  tm_polygons(fill = &amp;quot;#6a51a3&amp;quot;, fill_alpha = 0.55, col = &amp;quot;white&amp;quot;, lwd = 0.2) +
+  tm_shape(supermarkets |&amp;gt; st_filter(durham_m)) +
+  tm_dots(fill = &amp;quot;black&amp;quot;, size = 0.3) +
+  tm_title(&amp;quot;Shaded: more than 2 km in a straight line from a supermarket (black dots)&amp;quot;, size = 0.8) +
+  tm_credits(&amp;quot;© OpenStreetMap contributors&amp;quot;, position = c(&amp;quot;left&amp;quot;, &amp;quot;bottom&amp;quot;)) +
+  tm_layout(frame = FALSE)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/ex3-map-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;scales::percent(mean(hex$dist_km &amp;gt; 2))   # share of hexagons more than 2 km away
+# [1] &amp;quot;46%&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Straight-line distance understates the real trip, and supermarkets just outside the city still count, which is why we did not clip them to the boundary.&lt;/p&gt;
+&lt;/details&gt;
+&lt;h3 id=&#34;exercise-3-food-near-transit&#34;&gt;Exercise 3: Food near transit&lt;/h3&gt;
+&lt;p&gt;What share of Durham’s food places are within 400 m (about a five-minute walk) of a bus stop? Bus stops are tagged &lt;code&gt;highway = bus_stop&lt;/code&gt;.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;bus &amp;lt;- opq(durham_bb, timeout = 120) |&amp;gt;
+  add_osm_feature(key = &amp;quot;highway&amp;quot;, value = &amp;quot;bus_stop&amp;quot;) |&amp;gt;
+  get_osm()
+bus_stops &amp;lt;- bus$osm_points |&amp;gt;
+  filter(!is.na(highway)) |&amp;gt;
+  st_transform(32119)
+
+food_m$near_bus &amp;lt;- lengths(st_is_within_distance(food_m, bus_stops, dist = 400)) &amp;gt; 0
+
+food_m |&amp;gt;
+  st_drop_geometry() |&amp;gt;
+  summarise(places = n(), share_near_bus = scales::percent(mean(near_bus)), .by = amenity) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;amenity&amp;quot;, &amp;quot;Places&amp;quot;, &amp;quot;Within 400 m of a bus stop&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;amenity&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Places&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Within 400 m of a bus stop&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;272&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;95%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;fast_food&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;155&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;96%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;cafe&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;41&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;95%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;bar&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;34&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;100%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;pub&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;10&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;100%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;food_court&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;100%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Mapping of bus stops is uneven; GoDurham publishes its stops as &lt;a href=&#34;https://gtfs.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GTFS&lt;/a&gt;, which would be a better source for real work.&lt;/p&gt;
+&lt;/details&gt;
+&lt;h2 id=&#34;how-complete-are-the-tags&#34;&gt;How complete are the tags?&lt;/h2&gt;
+&lt;p&gt;OSM is often very good at &lt;em&gt;where&lt;/em&gt; things are and much weaker on their &lt;em&gt;attributes&lt;/em&gt;. Before you analyse cuisine or opening hours, check how often they are filled in.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tag_cols &amp;lt;- c(&amp;quot;name&amp;quot;, &amp;quot;cuisine&amp;quot;, &amp;quot;opening_hours&amp;quot;, &amp;quot;addr:street&amp;quot;, &amp;quot;website&amp;quot;, &amp;quot;phone&amp;quot;)
+
+share_present &amp;lt;- function(x) {
+  mean(!is.na(x))
+}
+
+completeness &amp;lt;- food |&amp;gt;
+  st_drop_geometry() |&amp;gt;
+  summarise(across(all_of(tag_cols), share_present)) |&amp;gt;
+  pivot_longer(everything(), names_to = &amp;quot;tag&amp;quot;, values_to = &amp;quot;share&amp;quot;)
+
+ggplot(completeness, aes(x = share, y = fct_reorder(tag, share))) +
+  geom_col(fill = &amp;quot;steelblue&amp;quot;, width = 0.7) +
+  geom_text(aes(label = scales::percent(share, accuracy = 1)), hjust = -0.15, size = 3.5) +
+  scale_x_continuous(labels = scales::percent, limits = c(0, 1.08)) +
+  labs(x = &amp;quot;Share of Durham&#39;s food places with the tag&amp;quot;, y = NULL,
+       caption = &amp;quot;Data © OpenStreetMap contributors&amp;quot;) +
+  theme_minimal()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/completeness-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;Names are nearly always present, because a nameless café is hard to map. Opening hours and websites are much patchier. Completeness can also vary across space, since tags depend on whether an active mapper lives nearby. An analysis that drops places with missing tags may quietly drop whole neighbourhoods; mapping the places with no &lt;code&gt;opening_hours&lt;/code&gt; is a quick check.&lt;/p&gt;
+&lt;h3 id=&#34;exercise-4-what-cuisines&#34;&gt;Exercise 4: What cuisines?&lt;/h3&gt;
+&lt;p&gt;List the ten most common cuisines among Durham’s restaurants. Some places list more than one, separated by semicolons (&lt;code&gt;mexican;tex-mex&lt;/code&gt;); count each separately. What share of restaurants have no cuisine at all?&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; &lt;code&gt;separate_longer_delim()&lt;/code&gt;.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest_now &amp;lt;- food |&amp;gt; filter(amenity == &amp;quot;restaurant&amp;quot;)
+
+rest_now |&amp;gt;
+  st_drop_geometry() |&amp;gt;
+  filter(!is.na(cuisine)) |&amp;gt;
+  separate_longer_delim(cuisine, delim = &amp;quot;;&amp;quot;) |&amp;gt;
+  mutate(cuisine = str_trim(str_to_lower(cuisine))) |&amp;gt;
+  count(cuisine, sort = TRUE) |&amp;gt;
+  slice_head(n = 10) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;Cuisine&amp;quot;, &amp;quot;Restaurants&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Cuisine&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Restaurants&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;american&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;31&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;mexican&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;23&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;pizza&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;18&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;sandwich&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;13&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;asian&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;italian&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;japanese&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;burger&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;barbecue&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;breakfast&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;scales::percent(mean(is.na(rest_now$cuisine)))   # share with no cuisine tag
+# [1] &amp;quot;30%&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With that many missing, “Durham has few Thai restaurants” might only mean “few Thai restaurants are tagged.”&lt;/p&gt;
+&lt;/details&gt;
+&lt;h2 id=&#34;comparing-with-overture-maps&#34;&gt;Comparing with Overture Maps&lt;/h2&gt;
+&lt;p&gt;No single source of points of interest is complete, so it helps to compare OSM with an independent one. &lt;a href=&#34;https://overturemaps.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Overture Maps&lt;/a&gt;, backed by Amazon, Meta, Microsoft and TomTom, publishes an open &lt;em&gt;places&lt;/em&gt; layer built from Facebook business pages, business registries, and Microsoft and Foursquare listings, not from OSM.&lt;/p&gt;
+&lt;p&gt;Overture releases are &lt;a href=&#34;https://geoparquet.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GeoParquet&lt;/a&gt; files in public cloud storage, with no API. The &lt;a href=&#34;https://duckdb.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;DuckDB&lt;/a&gt; database engine reads just the parts inside our bounding box, directly over the internet. Pinning the release date keeps the query reproducible while that release stays online.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(duckdb)
+con &amp;lt;- dbConnect(duckdb())
+invisible(dbExecute(con, &amp;quot;INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs; SET s3_region = &#39;us-west-2&#39;;&amp;quot;))
+
+ov_release &amp;lt;- &amp;quot;2026-10-21.0&amp;quot;   # see https://docs.overturemaps.org/release/latest/
+ov_places  &amp;lt;- str_glue(&amp;quot;s3://overturemaps-us-west-2/release/{ov_release}/theme=places/type=place/*&amp;quot;)
+
+ov_sql &amp;lt;- str_glue(&amp;quot;
+  SELECT id, names.primary AS name, taxonomy.hierarchy AS hierarchy,
+         confidence, operating_status, sources[1].dataset AS source,
+         ST_AsText(geometry) AS geometry
+  FROM read_parquet(&#39;{ov_places}&#39;)
+  WHERE bbox.xmin &amp;gt; {durham_bb[&#39;x&#39;, &#39;min&#39;]} AND bbox.xmax &amp;lt; {durham_bb[&#39;x&#39;, &#39;max&#39;]}
+    AND bbox.ymin &amp;gt; {durham_bb[&#39;y&#39;, &#39;min&#39;]} AND bbox.ymax &amp;lt; {durham_bb[&#39;y&#39;, &#39;max&#39;]}&amp;quot;)
+
+overture &amp;lt;- dbGetQuery(con, ov_sql) |&amp;gt;
+  st_as_sf(wkt = &amp;quot;geometry&amp;quot;, crs = 4326) |&amp;gt;   # keep the usual column name, so bind_rows() works later
+  st_filter(durham)
+dbDisconnect(con, shutdown = TRUE)
+
+nrow(overture)
+# [1] 17457
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The query takes seconds and returns every place in the city, from restaurants to dentists to churches. Where do they come from?&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;overture |&amp;gt;
+  st_drop_geometry() |&amp;gt;
+  count(source, sort = TRUE) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;Source&amp;quot;, &amp;quot;Places&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Source&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Places&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;meta&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;8038&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;BrightQuery&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;4720&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Microsoft&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;3210&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Foursquare&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1079&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;AllThePlaces&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;249&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Uberall&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;72&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;DAC&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;65&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;PinMeTo&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;17&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Birdeye&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;OpenTravel&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;RenderSEO&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Each place also has a category hierarchy. Food places sit under &lt;code&gt;food_and_drink&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;is_food &amp;lt;- function(h) {          # h is one place&#39;s category hierarchy, e.g. c(&amp;quot;food_and_drink&amp;quot;, &amp;quot;restaurant&amp;quot;)
+  length(h) &amp;gt; 1 &amp;amp;&amp;amp; h[1] == &amp;quot;food_and_drink&amp;quot;
+}
+
+overture_food &amp;lt;- overture |&amp;gt;
+  filter(map_lgl(hierarchy, is_food)) |&amp;gt;
+  mutate(category = map_chr(hierarchy, 2),
+         amenity  = case_when(category == &amp;quot;restaurant&amp;quot;                   ~ &amp;quot;restaurant&amp;quot;,
+                              category == &amp;quot;casual_eatery&amp;quot;                ~ &amp;quot;fast_food&amp;quot;,
+                              category == &amp;quot;non_alcoholic_beverage_venue&amp;quot; ~ &amp;quot;cafe&amp;quot;,
+                              category == &amp;quot;alcoholic_beverage_venue&amp;quot;     ~ &amp;quot;bar or pub&amp;quot;)) |&amp;gt;
+  filter(!is.na(amenity))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The categories only roughly match OSM’s tags: “casual eatery” includes bakeries that OSM tags as &lt;code&gt;shop&lt;/code&gt;, and Overture does not separate bars from pubs. Overture also has &lt;code&gt;operating_status&lt;/code&gt;, which flags closed places, and &lt;code&gt;confidence&lt;/code&gt;, its 0 to 1 estimate that a place exists. We keep open places with a confidence of at least 0.7.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ov &amp;lt;- overture_food |&amp;gt;
+  filter(operating_status != &amp;quot;permanently_closed&amp;quot; | is.na(operating_status),
+         confidence &amp;gt;= 0.7) |&amp;gt;
+  select(ov_id = id, ov_name = name, amenity, confidence, source)
+
+osm &amp;lt;- food |&amp;gt;
+  mutate(amenity = if_else(amenity %in% c(&amp;quot;bar&amp;quot;, &amp;quot;pub&amp;quot;), &amp;quot;bar or pub&amp;quot;, amenity)) |&amp;gt;
+  filter(amenity != &amp;quot;food_court&amp;quot;) |&amp;gt;
+  select(osm_id, osm_name = name, amenity)
+
+bind_rows(osm = st_drop_geometry(osm), overture = st_drop_geometry(ov), .id = &amp;quot;source&amp;quot;) |&amp;gt;
+  count(source, amenity) |&amp;gt;
+  pivot_wider(names_from = source, values_from = n) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;Type&amp;quot;, &amp;quot;OSM&amp;quot;, &amp;quot;Overture&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Type&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;OSM&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Overture&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;bar or pub&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;44&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;124&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;cafe&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;41&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;89&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;fast_food&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;155&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;374&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;272&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;771&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Overture lists about 2.7 times as many places as OSM. Some of the gap is OSM missing businesses, especially new ones. Some is Overture’s noise: duplicates, stale listings and businesses filed in the wrong category, inherited from social media. Neither source is the truth; it is often best to triangulate from multiple sources.&lt;/p&gt;
+&lt;h3 id=&#34;exercise-5-how-much-does-confidence-matter&#34;&gt;Exercise 5: How much does confidence matter?&lt;/h3&gt;
+&lt;p&gt;Recount Overture’s places by type with confidence thresholds of 0.5, 0.7 and 0.9. How much do the totals move? What does that say about any “number of restaurants” taken from a single source?&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;count_at &amp;lt;- function(threshold) {
+  overture_food |&amp;gt;
+    st_drop_geometry() |&amp;gt;
+    filter(operating_status != &amp;quot;permanently_closed&amp;quot; | is.na(operating_status),
+           confidence &amp;gt;= threshold) |&amp;gt;
+    count(amenity, name = paste(&amp;quot;confidence ≥&amp;quot;, threshold))
+}
+
+map(c(0.5, 0.7, 0.9), count_at) |&amp;gt;
+  reduce(left_join, by = &amp;quot;amenity&amp;quot;) |&amp;gt;
+  knitr::kable()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;amenity&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;confidence ≥ 0.5&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;confidence ≥ 0.7&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;confidence ≥ 0.9&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;bar or pub&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;137&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;124&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;107&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;cafe&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;97&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;89&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;81&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;fast_food&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;409&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;374&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;317&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;811&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;771&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;680&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The count depends on a threshold someone chose. Any published number of restaurants rests on a similar choice, even when it is not visible.&lt;/p&gt;
+&lt;/details&gt;
+&lt;h2 id=&#34;data-that-changes&#34;&gt;Data that changes&lt;/h2&gt;
+&lt;p&gt;OSM is edited thousands of times a minute. Running the same query next month will give a different answer, which is good for timeliness and bad for reproducibility. Overpass can, however, query OSM &lt;strong&gt;as it was&lt;/strong&gt; on a past date, using the &lt;code&gt;datetime&lt;/code&gt; argument. Here are Durham’s restaurants on the day this post was first published.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest_2020 &amp;lt;- opq(durham_bb, timeout = 120, datetime = &amp;quot;2020-02-12T00:00:00Z&amp;quot;) |&amp;gt;
+  add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;) |&amp;gt;
+  get_osm() |&amp;gt;
+  as_points() |&amp;gt;
+  st_filter(durham)
+
+rest_now &amp;lt;- food |&amp;gt; filter(amenity == &amp;quot;restaurant&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;status &amp;lt;- full_join(
+  rest_2020 |&amp;gt; st_drop_geometry() |&amp;gt; transmute(osm_id, in_2020 = TRUE),
+  rest_now  |&amp;gt; st_drop_geometry() |&amp;gt; transmute(osm_id, in_now = TRUE),
+  by = &amp;quot;osm_id&amp;quot;) |&amp;gt;
+  mutate(status = case_when(in_2020 &amp;amp; in_now ~ &amp;quot;in both&amp;quot;,
+                            is.na(in_now)    ~ &amp;quot;only in 2020&amp;quot;,
+                            is.na(in_2020)   ~ &amp;quot;only now&amp;quot;))
+count(status, status) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;&amp;quot;, &amp;quot;Restaurants&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Restaurants&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;in both&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;147&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;only in 2020&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;38&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;only now&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;125&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;OSM had 185 restaurants in the city in February 2020 and has 272 now. Some of the change is real: restaurants open and close. Some of it is mapping: new restaurants are added long after they open, closed ones linger, and a restaurant redrawn from a point to a building outline gets a new &lt;code&gt;osm_id&lt;/code&gt; even though nothing changed on the ground.&lt;/p&gt;
+&lt;p&gt;For reproducible work, record the date you downloaded the data, save the data you used, or query a fixed date with &lt;code&gt;datetime&lt;/code&gt;, as above.&lt;/p&gt;
 &lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;The provenance of the data and the continual update of data on servers have serious implications for reproducibility. On the other hand, the updates allow for timeliness of analysis. It is important to recognise these limitations and potential.&lt;/p&gt;
+&lt;p&gt;OSM is free, detailed and current. Using it well means crediting the contributors, being gentle with shared servers, checking the tags you rely on, and recording when you downloaded the data. Every points-of-interest dataset, OSM or Overture, reflects how it was collected.&lt;/p&gt;
 &lt;h2 id=&#34;acknowledgements&#34;&gt;Acknowledgements&lt;/h2&gt;
-&lt;p&gt;Much of the post is written by &lt;a href=&#34;https://planning.unc.edu/student/kshitiz-khanal-2/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kshitiz Khanal&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The first version of this post was written by &lt;a href=&#34;https://planning.unc.edu/student/kshitiz-khanal-2/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Kshitiz Khanal&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
