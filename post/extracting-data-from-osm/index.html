@@ -945,7 +945,7 @@
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    19 min read
+    20 min read
   </span>
   
 
@@ -976,7 +976,7 @@
 
 <div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 720px;">
   <div style="position: relative">
-    <img src="/post/extracting-data-from-osm/featured_hucb292aea2264e4f68ac2695d53bc9bb7_1828034_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
+    <img src="/post/extracting-data-from-osm/featured_hua5095c16e4f6ef0ff471f95a3d658d9b_1828419_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
     <span class="article-header-caption">Food places in Durham, NC. Data © OpenStreetMap contributors</span>
   </div>
 </div>
@@ -990,7 +990,7 @@
 <script src="https://nkaza.github.io/post/extracting-data-from-osm/index_files/widgetframe-binding/widgetframe.js"></script>
 <h2 id="introduction">Introduction</h2>
 <p><em>OpenStreetMap (OSM)</em> is a free and open map of the world, built by millions of volunteers, much like Wikipedia. Anyone can use the data for any purpose, including commercial ones, as long as they credit “© OpenStreetMap contributors” and share any database they derive from it under the same <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">Open Database License (ODbL)</a>.</p>
-<p>Underneath the map tiles is a database of roads, buildings, shops, bus stops and much more. This post pulls the places to eat in Durham, NC out of that database, avoids a few common traps and asks how good the data is.</p>
+<p>Underneath the map tiles is a database of roads, buildings, shops, bus stops and much more. This post queries the places to eat in Durham, NC out of that database, avoids a few common traps and analyses the completeness and currency of the data.</p>
 <h2 id="how-osm-data-is-structured">How OSM data is structured</h2>
 <p>OSM has only three kinds of objects:</p>
 <ul>
@@ -1030,9 +1030,9 @@
 </tbody>
 </table>
 <p>Only the first tag says <em>what</em> the object is. The rest are optional, and whether they are filled in depends on whether some volunteer bothered. There is no enforced schema: tags are conventions, documented on the OSM Wiki’s <a href="https://wiki.openstreetmap.org/wiki/Map_Features" target="_blank" rel="noopener">Map Features</a> page, and <a href="https://taginfo.openstreetmap.org/" target="_blank" rel="noopener">Taginfo</a> shows how often each is actually used. Keys useful in planning include <code>amenity</code> (restaurants, schools, clinics), <code>shop</code>, <code>highway</code> (roads and bus stops), <code>leisure</code> (parks) and <code>building</code>.</p>
-<p>We will use the <a href="https://wiki.openstreetmap.org/wiki/Overpass_API" target="_blank" rel="noopener">Overpass API</a> through the <code>osmdata</code> package, which suits a city and a handful of tags. For a whole state or country, download an extract from <a href="https://download.geofabrik.de/" target="_blank" rel="noopener">Geofabrik</a> instead (the <code>osmextract</code> package).</p>
+<p>We will use the <a href="https://wiki.openstreetmap.org/wiki/Overpass_API" target="_blank" rel="noopener">Overpass API</a> through the <code>osmdata</code> package. This is fine for a small city such as Durham and a handful of tags. For a whole state or country, you can download an extract from <a href="https://download.geofabrik.de/" target="_blank" rel="noopener">Geofabrik</a> instead (the <code>osmextract</code> package) and process it.</p>
 <h2 id="defining-the-study-area">Defining the study area</h2>
-<p>The Census Bureau publishes city boundaries, and <code>tigris</code> downloads them. These are the same boundaries <code>tidycensus</code> attaches to census data, so OSM counts can later be joined to population or income.</p>
+<p>The Census Bureau publishes city boundaries, and <code>tigris</code> downloads them. These are the same boundaries <code>tidycensus</code> attaches to census data. We will just use “3719000” to get Durham’s city limits.</p>
 <pre><code class="language-r">library(tigris)
 options(tigris_use_cache = TRUE)
 
@@ -1047,17 +1047,20 @@ durham_bb
 #      xmin      ymin      xmax      ymax 
 # -79.00754  35.86637 -78.75470  36.13704
 </code></pre>
-<p>Overpass works with rectangles, so we ask for everything in the city’s <strong>bounding box</strong>, the smallest rectangle around it, and then clip to the boundary. For measuring distances and areas we use North Carolina State Plane (EPSG:32119, metres).</p>
-<pre><code class="language-r">durham_m &lt;- st_transform(durham, 32119)
-</code></pre>
+<p>Overpass works with rectangles, so we ask for everything in the city’s <strong>bounding box</strong> and then keep what falls inside the boundary.</p>
+<div class="alert alert-note">
+  <div>
+    Everything stays in longitude and latitude (EPSG:4326) for the most part in this post. <code>sf</code> can measure distances and areas on the sphere (with the s2 library), in metres.
+  </div>
+</div>
 <pre><code class="language-r">tmap_mode(&quot;plot&quot;)
-bb_poly &lt;- st_as_sfc(st_bbox(durham_m))
+bb_poly &lt;- st_as_sfc(durham_bb)
 
-tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
-  tm_shape(bb_poly) +
+tm_shape(bb_poly) +
   tm_borders(col = &quot;firebrick&quot;, lwd = 2, lty = &quot;dashed&quot;) +
-  tm_shape(durham_m) +
+  tm_shape(durham) +
   tm_borders(col = &quot;black&quot;, lwd = 2, lty = &quot;dashed&quot;, group = &quot;City limits&quot;) +
+  tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
   tm_credits(&quot;© OpenStreetMap contributors&quot;, position = c(&quot;left&quot;, &quot;bottom&quot;)) +
   tm_title(&quot;City of Durham (black) and its bounding box (red)&quot;) +
   tm_layout(frame = FALSE)
@@ -1300,11 +1303,10 @@ tibble(in_box = nrow(food_box), outside_city = nrow(outside),
 <p>Anything counted “per city” from a bounding box would be badly off.</p>
 <pre><code class="language-r">durham_osm &lt;- getbb(&quot;Durham, North Carolina&quot;, format_out = &quot;sf_polygon&quot;) |&gt;
   filter(addresstype == &quot;city&quot;) |&gt;
-  st_transform(32119) |&gt;
   st_make_valid()
 
 tibble(boundary = c(&quot;Census (tigris)&quot;, &quot;OSM (Nominatim)&quot;),
-       area     = c(sum(st_area(durham_m)), sum(st_area(durham_osm)))) |&gt;
+       area     = c(sum(st_area(durham)), sum(st_area(durham_osm)))) |&gt;
   mutate(area = area |&gt; set_units(mi^2) |&gt; round(1)) |&gt;
   knitr::kable(col.names = c(&quot;Boundary&quot;, &quot;Area&quot;))
 </code></pre>
@@ -1322,7 +1324,7 @@ tibble(boundary = c(&quot;Census (tigris)&quot;, &quot;OSM (Nominatim)&quot;),
 </tr>
 <tr>
 <td style="text-align:left">OSM (Nominatim)</td>
-<td style="text-align:right">115.2 [mi^2]</td>
+<td style="text-align:right">115.1 [mi^2]</td>
 </tr>
 </tbody>
 </table>
@@ -1351,14 +1353,15 @@ frameWidget(tmap_maplibre(m_food))
 <script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_food-map.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <h3 id="density-on-a-hexagonal-grid">Density on a hexagonal grid</h3>
 <p>With hundreds of points, a dot map hides the overlap downtown. Counting points in equal-area hexagons shows where food places concentrate.</p>
-<pre><code class="language-r">food_m &lt;- st_transform(food, 32119)
-
-hex &lt;- st_make_grid(durham_m, cellsize = 800, square = FALSE) |&gt;   # 800 m across the flats
+<p><code>st_make_grid()</code> works on a flat plane, so this is the one place we project: build the grid in North Carolina State Plane (EPSG:32119, metres) and bring it straight back.</p>
+<pre><code class="language-r">hex &lt;- st_transform(durham, 32119) |&gt;
+  st_make_grid(cellsize = 800, square = FALSE) |&gt;   # 800 m across the flats
+  st_transform(4326) |&gt;
   st_as_sf() |&gt;
-  st_filter(durham_m, .predicate = st_intersects) |&gt;   # whole hexagons that touch the city, not clipped
+  st_filter(durham, .predicate = st_intersects) |&gt;   # whole hexagons that touch the city, not clipped
   mutate(hex_id = row_number())
 
-hex$n_food &lt;- lengths(st_intersects(hex, food_m))
+hex$n_food &lt;- lengths(st_intersects(hex, food))
 </code></pre>
 <p>The basemap supplies roads and place names. We add labels for the places discussed below. Be very intentional with your visualisations. Much of the code below is to make the map as legible to the reader as possible. This is after a lot of iterations. You should expect to do so. Thus you might want to build your story around specific visualisations you have laboured over, rather than visualisaions that you are using for your exploratory data analysis.</p>
 <pre><code class="language-r">landmarks &lt;- tribble(   # coordinates read off openstreetmap.org; dx, dy move the label off the cluster
@@ -1369,8 +1372,7 @@ hex$n_food &lt;- lengths(st_intersects(hex, food_m))
   &quot;New Hope Commons&quot;, -78.9898, 35.9538,   4,   -1.1,
   &quot;Southpoint&quot;,       -78.9450, 35.9030,   0,   -1.2,
   &quot;Page Road (RTP)&quot;,  -78.8480, 35.8788,  -4.4,  0) |&gt;
-  st_as_sf(coords = c(&quot;lon&quot;, &quot;lat&quot;), crs = 4326) |&gt;
-  st_transform(32119)
+  st_as_sf(coords = c(&quot;lon&quot;, &quot;lat&quot;), crs = 4326)
 
 tmap_mode(&quot;plot&quot;)
 food_hex &lt;- hex |&gt;
@@ -1389,7 +1391,7 @@ examples &lt;- food_hex |&gt;              # two labelled hexagon per colour, pl
 m_hex &lt;- tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
   tm_shape(food_hex) +
   tm_borders(col = NA) +                 # first shape sets the extent: zoom to the hexagons
-  tm_shape(durham_m) +
+  tm_shape(durham) +
   tm_borders(col = &quot;black&quot;, lwd = 2, lty = &quot;dashed&quot;, group = &quot;City limits&quot;) +
   tm_shape(food_hex) +
   tm_polygons(fill = &quot;class&quot;,
@@ -1423,8 +1425,7 @@ supermarkets &lt;- bind_rows(
   supermarkets$osm_points |&gt; filter(!is.na(shop)),
   bind_rows(supermarkets$osm_polygons, supermarkets$osm_multipolygons) |&gt;
     st_make_valid() |&gt; st_point_on_surface()) |&gt;
-  select(osm_id, name) |&gt;
-  st_transform(32119)
+  select(osm_id, name)
 </code></pre>
 <pre><code class="language-r">hex_centres &lt;- st_centroid(hex)
 nearest &lt;- st_nearest_feature(hex_centres, supermarkets)
@@ -1434,7 +1435,7 @@ far &lt;- set_units(2, km)
 
 tmap_mode(&quot;plot&quot;)
 tm_basemap(&quot;OpenStreetMap&quot;, alpha = 0.4, zoom = 12) +
-  tm_shape(durham_m) +
+  tm_shape(durham) +
   tm_borders(col = &quot;black&quot;, lwd = 2, lty = &quot;dashed&quot;, group = &quot;City limits&quot;) +
   tm_shape(hex |&gt; filter(dist &gt; far)) +
   tm_polygons(fill = &quot;#6a51a3&quot;, fill_alpha = 0.55, col = &quot;white&quot;, lwd = 0.2) +
@@ -1460,13 +1461,13 @@ Solution
   add_osm_feature(key = &quot;highway&quot;, value = &quot;bus_stop&quot;) |&gt;
   get_osm()
 bus_stops &lt;- bus$osm_points |&gt;
-  filter(!is.na(highway)) |&gt;
-  st_transform(32119)
+  filter(!is.na(highway))
 
-food_m$near_bus &lt;- lengths(st_is_within_distance(food_m, bus_stops, dist = 400)) &gt; 0
+near_bus &lt;- lengths(st_is_within_distance(food, bus_stops, dist = 400)) &gt; 0   # metres, on the sphere
 
-food_m |&gt;
+food |&gt;
   st_drop_geometry() |&gt;
+  mutate(near_bus = near_bus) |&gt;
   summarise(places = n(), share_near_bus = scales::percent(mean(near_bus)), .by = amenity) |&gt;
   knitr::kable(col.names = c(&quot;amenity&quot;, &quot;Places&quot;, &quot;Within 400 m of a bus stop&quot;))
 </code></pre>
