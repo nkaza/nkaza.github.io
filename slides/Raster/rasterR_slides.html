@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="" xml:lang="">
   <head>
-    <title></title>
-    <meta charset="utf-8">
+    <title>rasterR_slides.knit</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
     <link rel="stylesheet" href="nkaza-pres.css" type="text/css" />
   </head>
   <body>
@@ -13,13 +16,14 @@
 
 class: right, bottom
 
-## Raster data in R 
+## Thinking in Rasters
 
 ##### Nikhil Kaza
 ##### Department of City &amp; Regional Planning &lt;br /&gt; University of North Carolina at Chapel Hill
-###### updated: 2018-08-03
+###### updated: 2026-09-22
 
 ---
+
 # Fields vs. Objects
 
 This is an age old debate as to which is a better representation of reality.
@@ -28,9 +32,52 @@ Objects: Discrete, sharply defined boundaries, have distinct attributes (e.g. bu
   - Need to keep track of topology and spatial relations among them
 
 Fields: Something that varies continuously over space. The discretisation is an artefact of the data storage and representation (e.g. temperature, ground level, urbanicity)
-  - Topological relationships are embedded 
- 
-Usually fields are represented by rasters. Rasters could be thought of as a 2D-matrix of values, with row and column indices representing the location information.
+  - Topological relationships are embedded
+
+Usually fields are represented by rasters.
+
+---
+
+# What is a raster, really?
+
+A raster is a grid of cells (pixels), each holding a value. Rasters show up well outside geography:
+
+&lt;div style="display:flex; justify-content:center; gap:3%; margin-top:20px;"&gt;
+&lt;div style="text-align:center; width:22%;"&gt;
+&lt;img src="./includes/what_is_a_raster/photograph.jpg" style="width:100%; border-radius:4px;"&gt;
+&lt;div style="font-size:0.8em; margin-top:6px;"&gt;&lt;b&gt;Photograph&lt;/b&gt;&lt;br/&gt;light intensity&lt;/div&gt;
+&lt;/div&gt;
+&lt;div style="text-align:center; width:22%;"&gt;
+&lt;img src="./includes/what_is_a_raster/xray.jpg" style="width:100%; border-radius:4px;"&gt;
+&lt;div style="font-size:0.8em; margin-top:6px;"&gt;&lt;b&gt;X-ray&lt;/b&gt;&lt;br/&gt;tissue density&lt;/div&gt;
+&lt;/div&gt;
+&lt;div style="text-align:center; width:22%;"&gt;
+&lt;img src="./includes/what_is_a_raster/telescope.gif" style="width:100%; border-radius:4px;"&gt;
+&lt;div style="font-size:0.8em; margin-top:6px;"&gt;&lt;b&gt;Telescope image&lt;/b&gt;&lt;br/&gt;photon counts&lt;/div&gt;
+&lt;/div&gt;
+&lt;div style="text-align:center; width:22%;"&gt;
+&lt;img src="./includes/what_is_a_raster/drawing.jpg" style="width:100%; border-radius:4px;"&gt;
+&lt;div style="font-size:0.8em; margin-top:6px;"&gt;&lt;b&gt;Scanned drawing&lt;/b&gt;&lt;br/&gt;ink density&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div style="font-size:0.55em; color:#999; text-align:right; margin-top:2px;"&gt;Stephan's Quintet, Hubble vs. James Webb — NASA, ESA, CSA, STScI&lt;/div&gt;
+
+None of these are geospatial, but they have a coordinate system.
+
+---
+
+# Key features of any raster
+
+- **Grid structure** — rows and columns, forming a rectangular array
+
+- **Pixel values** — each cell holds a number: brightness, elevation, intensity, a class label
+
+- **Resolution** — the size of each cell; smaller cells mean finer detail
+
+- **Bands/layers** — a raster can carry several layers at once (e.g. R, G, B channels, or timestamps), and layers can also stack observations of the same place over time
+
+- **Spatial context** *(optional)* — if a raster is georeferenced, the coordinates of its corners plus its resolution locate every pixel in the world. If not, it's just a grid.
+
 ---
 
 # Raster data in urban analytics
@@ -51,164 +98,420 @@ Usually fields are represented by rasters. Rasters could be thought of as a 2D-m
 ]
 
 ---
+class: inverse, middle, center
 
-# Raster package
+# Part I (continued)
+## Four ways to think about a raster
 
-In this course we will use Robert Hijmans' excellent Raster package. This package handles raster data that does not fit into memory.
+---
+
+# 1. A raster as a table
+
+Each pixel is a row. Each band is a column.  
+- **A raster is a tibble that happens to have a grid layout.**
+
+&lt;img src="./includes/raster_animation.gif" alt="" width="75%" /&gt;
 
 
-```r
-if(!require(raster)){
-    install.packages("raster")
-*    library(raster) 
-}
 
-(rast &lt;- raster())
+---
+
+# 2. A raster as a matrix
+
+Equivalently: each band is its own matrix, and a multi-band raster is a stack of matrices of identical dimensions.
+
+
+&lt;img src="./includes/raster_as_matrix.gif" alt="" width="85%" /&gt;
+
+---
+
+# 3. A raster as a graph
+
+Pixels are nodes. Edges connect neighboring pixels. The definition of "neighbour" (rook, queen, k-th order) is a modelling choice.
+
+&lt;img src="./includes/raster_graph.png" alt="" width="70%" /&gt;
+
+This framing matters whenever an operation depends on *connectivity* rather than *position* — moving-window filters, cost-distance and regionalisation
+
+---
+
+# 4. A raster as sampled continuity
+
+A raster can also be seen as a discrete sample of an underlying continuous surface — elevation, temperature, reflectance — independent of how finely we chose to grid it.
+
+&lt;img src="./includes/raster_continuous_surface.gif" alt="" width="65%" /&gt;
+
+Resolution is then a sampling-rate decision, and operations like resampling/aggregation are really questions about how to re-sample that surface.
+
+---
+
+# Which framing, when?
+
+- Reaching for `dplyr`-style verbs, joining pixel values to other data, tidy plotting → **table**
+
+- Linear algebra, image filters expressed as matrix operations → **matrix**
+
+- Connectivity, adjacency, shortest paths, region-growing → **graph**
+
+- Interpolation, resampling, "what's the true value between these cells?" → **continuous surface**
+
+None of these is the "correct" one. Pick the framing that matches the question you're asking.
+
+---
+class: inverse, middle, center
+
+# Part II
+## The raster ecosystem in R
+### (it's bigger than geospatial)
+
+---
+
+# Remote sensing &amp; raster visualization
+
+&lt;table class="table" style="font-size: 22px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Package &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Description &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; terra &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Modern package for handling spatial raster data efficiently. Supports cropping, resampling, projection. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; rasterVis &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Lattice-style raster visualization and thematic mapping. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; stars &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Spatiotemporal arrays; integrates with sf and the tidyverse. Good for multi-band satellite data. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; satellite &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Satellite imagery processing, including atmospheric correction and vegetation indices. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; RStoolbox &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; PCA, supervised classification, spectral indices for remote sensing. &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# Environmental &amp; climate raster data
+
+&lt;table class="table" style="font-size: 22px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Package &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Description &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ncdf4 / RNetCDF &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Reading and writing NetCDF files; custom extraction of structured arrays. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; stars &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Also handles NetCDF and spatiotemporal rasters within a tidy workflow. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; geodata &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Global environmental datasets: WorldClim, elevation, land cover. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; elevatr &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Global elevation data from SRTM, AWS, and other sources. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; climate / rnoaa &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Climate and weather time series, NOAA datasets. &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+# Biological &amp; medical imaging
+
+&lt;table class="table" style="font-size: 22px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Package &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Description &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; EBImage &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Bioconductor package for segmentation, object detection, feature extraction. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; mmand &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Mathematical morphology (erosion, dilation, skeletonization) on n-D arrays. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ANTsR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Image registration and segmentation for neuroimaging; wraps the ANTs toolkit. &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+The pixel grid is the same object as your satellite scene. The domain-specific vocabulary is what changes.
+
+---
+
+# General image processing &amp; computer vision
+
+&lt;table class="table" style="font-size: 22px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Package &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Description &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; imager &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Pixel-level operations, filters, edge detection, convolution. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; magick &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Wraps ImageMagick: cropping, compositing, format conversion, annotation. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; OpenImageR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Preprocessing, feature extraction, similarity metrics for ML pipelines. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; landscapemetrics &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Landscape-ecology metrics (patch, class, landscape level) from raster data. &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; imagefx &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Lightweight blur/sharpen/color-adjustment effects. &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+---
+class: inverse, middle, center
+
+# Part III
+## `terra` basics
+### thought about the tidyverse way
+
+---
+
+# Why `terra`?
+
+- Successor to Robert Hijmans' `raster` package (`raster` is now in maintenance mode)
+
+- One class, `SpatRaster`, replaces `RasterLayer` / `RasterStack` / `RasterBrick`
+
+- Fast, out-of-memory processing — handles rasters larger than RAM
+
+- Plays well with `sf` (vectors) and the tidyverse (`as.data.frame()`, pipes)
+
+We'll use `terra` throughout. Some older packages (e.g. `gdistance`) still expect the legacy `raster` classes.
+
+---
+
+# Creating a `SpatRaster`
+
+
+``` r
+(rast_empty &lt;- rast())
 ```
 
 ```
-## class       : RasterLayer 
-## dimensions  : 180, 360, 64800  (nrow, ncol, ncell)
+## class       : SpatRaster
+## size        : 180, 360, 1  (nrow, ncol, nlyr)
 ## resolution  : 1, 1  (x, y)
 ## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0
+## coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84)
 ```
 
 ---
 
 
-```r
-res(rast) &lt;- 20
-rast
+``` r
+res(rast_empty) &lt;- 20
+rast_empty
 ```
 
 ```
-## class       : RasterLayer 
-## dimensions  : 9, 18, 162  (nrow, ncol, ncell)
+## class       : SpatRaster
+## size        : 9, 18, 1  (nrow, ncol, nlyr)
 ## resolution  : 20, 20  (x, y)
 ## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0
+## coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84)
 ```
 
-```r
-ncol(rast) &lt;- 30
- rast
+``` r
+ncol(rast_empty) &lt;- 30
+rast_empty
 ```
 
 ```
-## class       : RasterLayer 
-## dimensions  : 9, 30, 270  (nrow, ncol, ncell)
+## class       : SpatRaster
+## size        : 9, 30, 1  (nrow, ncol, nlyr)
 ## resolution  : 12, 20  (x, y)
 ## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0
+## coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84)
 ```
+
 ---
 
-# External Files
+# External files
 
 
-```r
-rast &lt;- raster(system.file("external/test.grd", package="raster"))
-library(rasterVis)
-levelplot(rast, xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+``` r
+r1 &lt;- rast(system.file("external/test.grd", package="raster"))
+plot(r1, plg=list(cex=1.5))
 ```
 
-![](figs/unnamed-chunk-3-1.png)&lt;!-- --&gt;
-See [https://oscarperpinan.github.io/rastervis/#levelplot](https://oscarperpinan.github.io/rastervis/#levelplot)
+![](figs/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
 ---
 
-# Rasters can be stacked
+# The pixel-table equivalence
+
+Way 1 said a raster *is* a table. 
 
 
-```r
-rast2 &lt;- rast * runif(ncell(rast)) 
-(rastS &lt;- stack(rast, rast2))
+``` r
+as.data.frame(r1, xy = TRUE) %&gt;%
+  glimpse()
 ```
 
 ```
-## class       : RasterStack 
-## dimensions  : 115, 80, 9200, 2  (nrow, ncol, ncell, nlayers)
-## resolution  : 40, 40  (x, y)
-## extent      : 178400, 181600, 329400, 334000  (xmin, xmax, ymin, ymax)
-## coord. ref. : +init=epsg:28992 +towgs84=565.237,50.0087,465.658,-0.406857,0.350733,-1.87035,4.0812 +proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs 
-## names       :       test.1,       test.2 
-## min values  : 128.43400574,   0.04142424 
-## max values  :      1805.78,      1583.89
+## Rows: 3,178
+## Columns: 3
+## $ x    &lt;dbl&gt; 181140, 181180, 181100, 181140, 181180, 181220, 181060, 181100, 1…
+## $ y    &lt;dbl&gt; 333620, 333620, 333580, 333580, 333580, 333580, 333540, 333540, 3…
+## $ test &lt;dbl&gt; 655.5997, 612.2552, 753.8189, 672.5580, 616.4962, 604.4344, 907.7…
 ```
+
+Every pixel is a row, `x`/`y` are its coordinates, `test` is its value. From here on, ordinary `dplyr` verbs apply.
+
 ---
 
-# or bricked
+# Multiple layers = multiple columns
 
 
-```r
-rastB &lt;- brick(rast, rast2)
+``` r
+noise &lt;- init(r1, fun = runif)          # a same-shaped random layer
+rastS &lt;- c(r1, noise)                    # bind layers, like bind_cols()
+names(rastS) &lt;- c("Original", "Noise")
+rsum(rastS)
+```
+
+```
+## class      : SpatRaster
+## size       : 115, 80, 2  (nrow, ncol, nlyr)
+## resolution : 40, 40  (x, y)
+## names      : Original, Noise
+## min values : 138.7071, 2e-04
+## max values : 1736.0579, 1
+```
+
+---
+
+
+``` r
+plot(rastS)
+```
+
+![](figs/unnamed-chunk-14-1.png)&lt;!-- --&gt;
+
+---
+
+# Cell-by-cell algebra
+
+Standard operators (`+`, `-`, `&gt;=`, `max`, ...) work cell-by-cell across layers or against a number — exactly like `mutate()` combining columns of a tibble.
+
+
+``` r
+rastB &lt;- c(r1 * 10, r1 * noise)
 names(rastB) &lt;- c('Original', 'Modified')
-levelplot(rastB, xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
-```
-
-![](figs/unnamed-chunk-5-1.png)&lt;!-- --&gt;
----
-
-# Cell by cell algebra
-
-Standard mathematical operators +,- etc. or logical operators such as `\(\ge\)`, `\(\max\)` etc.. work cell by cell between multiple Raster* objects or between Raster and numbers
-
-
-```r
-rastB[[1]] &lt;- rast * 10
-(rastB)
+rsum(rastB)
 ```
 
 ```
-## class       : RasterBrick 
-## dimensions  : 115, 80, 9200, 2  (nrow, ncol, ncell, nlayers)
-## resolution  : 40, 40  (x, y)
-## extent      : 178400, 181600, 329400, 334000  (xmin, xmax, ymin, ymax)
-## coord. ref. : +init=epsg:28992 +towgs84=565.237,50.0087,465.658,-0.406857,0.350733,-1.87035,4.0812 +proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs 
-## data source : in memory
-## names       :         test,     Modified 
-## min values  : 1.284340e+03, 4.142424e-02 
-## max values  :     18057.80,      1583.89
+## class      : SpatRaster
+## size       : 115, 80, 2  (nrow, ncol, nlyr)
+## resolution : 40, 40  (x, y)
+## names      : Original, Modified
+## min values : 1387.0708, 0.0643
+## max values : 17360.5798, 1332.2969
 ```
 
 ---
-# Cell by cell algebra
-More complicated algebra is possible
 
 
-```r
-(rastB[[1]]/100 &gt;= rastB[[2]]) %&gt;%
-  levelplot(xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+``` r
+(rastB[["Original"]] / 100 &gt;= rastB[["Modified"]]) %&gt;%
+  plot(main = "Original/100 &gt;= Modified")
 ```
 
-&lt;img src="figs/unnamed-chunk-7-1.png" width="60%" /&gt;
+&lt;img src="figs/unnamed-chunk-16-1.png" alt="" width="60%" /&gt;
 
 ---
-# Moving window
 
-```r
-# 3x3 mean filter
-(rast3 &lt;- focal(rast, w=matrix(1/9,nrow=3,ncol=3)) )
+# Moving windows
+
+`focal()` slides a window over the 2-D grid — the spatial cousin of a rolling window over a 1-D time series.
+
+.pull-left[
+
+``` r
+# 3x3 mean filter, in space
+smoothed &lt;- focal(r1, w = matrix(1/9, 3, 3))
+round(values(smoothed)[1:8], 1)
 ```
 
 ```
-## class       : RasterLayer 
-## dimensions  : 115, 80, 9200  (nrow, ncol, ncell)
-## resolution  : 40, 40  (x, y)
-## extent      : 178400, 181600, 329400, 334000  (xmin, xmax, ymin, ymax)
-## coord. ref. : +init=epsg:28992 +towgs84=565.237,50.0087,465.658,-0.406857,0.350733,-1.87035,4.0812 +proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs 
-## data source : in memory
-## names       : layer 
-## values      : 168.611, 1372.349  (min, max)
+## [1] NaN NaN NaN NaN NaN NaN NaN NaN
 ```
+]
+
+.pull-right[
+
+``` r
+# 3-point mean filter, in time
+x &lt;- rnorm(10)
+round(zoo::rollmean(x, k = 3, fill = NA), 1)
+```
+
+```
+##  [1]   NA -0.1  0.1 -0.4 -0.7 -0.6 -0.1  0.3  0.1   NA
+```
+]
+
+Same idea — local averaging over a neighborhood — different notion of "neighbor" (grid cells vs. adjacent time points).
+
 ---
 
-# Moving window
+# The same mechanism, side by side
+
+A window of fixed size slides across the data, one step at a time, and summarizes whatever falls inside it. Whether "next" means the next time point or the next grid cell is the only real difference.
+
+![](./includes/moving_window_parallel.gif)&lt;!-- --&gt;
+
+---
+
+# Moving window: local maximum
 
 
-```r
-# Local maximum in 5X5 neighborhood
-rast3 &lt;- focal(rast, w=matrix(1, nrow=5,ncol=5), fun=max, na.rm=TRUE)
+``` r
+rast3 &lt;- focal(r1, w=matrix(1, nrow=5,ncol=5), fun=max, na.rm=TRUE)
 res(rast3)
 ```
 
@@ -216,170 +519,495 @@ res(rast3)
 ## [1] 40 40
 ```
 
-```r
-levelplot(rast3,xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+``` r
+plot(rast3)
 ```
 
-&lt;img src="figs/unnamed-chunk-9-1.png" width="70%" /&gt;
+&lt;img src="figs/unnamed-chunk-20-1.png" alt="" width="70%" /&gt;
+
 ---
 
 # Reduce resolution
 
-```r
-rast3 &lt;- rast %&gt;% aggregate(fact=5,fun=mean) 
-res(rast3)
+`aggregate()` pools blocks of cells into one, using a summary function — the raster analogue of grouping rows and summarizing.
+
+
+``` r
+rast3c &lt;- r1 %&gt;% aggregate(fact=5, fun=mean)
+res(rast3c)
 ```
 
 ```
 ## [1] 200 200
 ```
 
-```r
-levelplot(rast3, xlab=NULL, ylab=NULL, scales=list(draw=FALSE), margin=FALSE,  colorkey= list(labels=list(cex=2.5)))
+``` r
+plot(rast3c)
 ```
 
-&lt;img src="figs/unnamed-chunk-10-1.png" width="70%" /&gt;
+&lt;img src="figs/unnamed-chunk-21-1.png" alt="" width="70%" /&gt;
 
 ---
 
-# Categorical raster
+# Categorical rasters
 
-```r
-rastCat &lt;- rast %&gt;% cut(breaks=c(0,300,800,1100, 1900))
-rastCat &lt;- ratify(rastCat)
-rat &lt;- levels(rastCat)[[1]]
-rat$class &lt;- c('Low', 'Mid', 'High', 'V. High')
+
+``` r
+rastCat &lt;- classify(
+  r1,
+  rcl = matrix(c(-Inf,300,1,  300,800,2,  800,1100,3,  1100,Inf,4),
+               ncol = 3, byrow = TRUE)
+)
+levels(rastCat) &lt;- data.frame(id = 1:4, class = c('Low','Mid','High','V. High'))
 ```
-&lt;img src="figs/unnamed-chunk-12-1.png" width="60%" /&gt;
+&lt;img src="figs/unnamed-chunk-23-1.png" alt="" width="60%" /&gt;
+
+The reclassification matrix (breakpoint, breakpoint, new value) is doing exactly what a `case_when()` ladder of conditions would do, one row at a time.
 
 ---
 
-# Vector/Raster Operations
+# Vector/Raster operations
+
+`terra` objects (`SpatRaster`, `SpatVector`) interoperate with `sf`. Build two polygons and bring them into `terra`:
 
 
-```r
-cds1 &lt;- structure(c(179169.418312112, 179776.022915626, 179344.40040928, 
-179064.429053812, 178737.795805766, 179076.094526956, 178726.130332621, 
-179169.418312112, 330830.748571234, 330527.446269478, 330049.161870553, 
-329955.838085397, 330037.496397409, 330247.47491401, 330387.460591744, 
+``` r
+cds1 &lt;- structure(c(179169.418312112, 179776.022915626, 179344.40040928,
+179064.429053812, 178737.795805766, 179076.094526956, 178726.130332621,
+179169.418312112, 330830.748571234, 330527.446269478, 330049.161870553,
+329955.838085397, 330037.496397409, 330247.47491401, 330387.460591744,
 330830.748571234), .Dim = c(8L, 2L))
 
-cds2 &lt;- structure(c(180440.954884862, 180522.613196873, 179857.681227637, 
-179951.005012793, 180440.954884862, 332417.252918885, 331717.324530216, 
-331554.007906193, 331962.29946625, 332417.252918885), .Dim = c(5L, 
-2L))
+cds2 &lt;- structure(c(180440.954884862, 180522.613196873, 179857.681227637,
+179951.005012793, 180440.954884862, 332417.252918885, 331717.324530216,
+331554.007906193, 331962.29946625, 332417.252918885), .Dim = c(5L, 2L))
 
-polys &lt;- SpatialPolygonsDataFrame(SpatialPolygons(list(Polygons(list(Polygon(cds1)), 1), 
-                                  Polygons(list(Polygon(cds2)), 2))),data.frame(ID=c(1,2)))
-
-polys
+polys_sf &lt;- st_sf(ID = c(1,2),
+                   geometry = st_sfc(st_polygon(list(cds1)), st_polygon(list(cds2)),
+                                      crs = crs(rastCat)))
+polys &lt;- vect(polys_sf)
 ```
 
-```
-## class       : SpatialPolygonsDataFrame 
-## features    : 2 
-## extent      : 178726.1, 180522.6, 329955.8, 332417.3  (xmin, xmax, ymin, ymax)
-## coord. ref. : NA 
-## variables   : 1
-## names       : ID 
-## min values  :  1 
-## max values  :  2
-```
 ---
 
-# Vector/Raster Operations
+# Vector/Raster operations
 
 
-```r
-p + layer(sp.polygons(polys, lwd=4, col='blue'))
+``` r
+cat("class   : SpatVector\n",
+    "geoms   : ", length(polys), " polygons\n",
+    "extent  : ", paste(round(as.vector(ext(polys)), 1), collapse = ", "), "\n",
+    "fields  : ", paste(names(polys), collapse = ", "), "\n",
+    sep = "")
 ```
 
-![](figs/unnamed-chunk-14-1.png)&lt;!-- --&gt;
+```
+## class   : SpatVector
+## geoms   : 2 polygons
+## extent  : 178726.1, 180522.6, 329955.8, 332417.3
+## fields  : ID
+```
 
 ---
+
+# Vector/Raster operations
+
+
+``` r
+plot(rastCat, col = brewer.pal(n = 4, name = 'Dark2'))
+plot(polys, lwd=4, border='blue', add=TRUE)
+```
+
+&lt;img src="figs/unnamed-chunk-26-1.png" alt="" width="65%" /&gt;
+
+---
+
 # Count percentage of cells
 
+`extract()` returns one row per cell per polygon — a long table you then `group_by()` and `summarize()`, just as you would after a spatial join.
 
-```r
-library(tabularaster)
-cn &lt;- cellnumbers(rastCat, polys)
-library(dplyr)
-(cn %&gt;% mutate(v = raster::extract(rastCat, cell_)) %&gt;% 
-    group_by(object_, v) %&gt;% 
-    summarize(count = n()) %&gt;% 
-  mutate(v.pct = count / sum(count))
-  )
+
+``` r
+terra::extract(rastCat, polys) %&gt;%
+  group_by(ID, class) %&gt;%
+  summarize(count = n(), .groups = "drop_last") %&gt;%
+  mutate(pct = count / sum(count))
 ```
 
 ```
-## # A tibble: 4 x 4
-## # Groups:   object_ [2]
-##   object_     v count v.pct
-##     &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
-## 1       1     1   114 0.368
-## 2       1     2   196 0.632
-## 3       2     1    49 0.249
-## 4       2     2   148 0.751
+## # A tibble: 6 × 4
+## # Groups:   ID [2]
+##      ID class   count     pct
+##   &lt;dbl&gt; &lt;fct&gt;   &lt;int&gt;   &lt;dbl&gt;
+## 1     1 Low        92 0.297  
+## 2     1 Mid       218 0.703  
+## 3     2 Low        31 0.157  
+## 4     2 Mid       154 0.782  
+## 5     2 High       11 0.0558 
+## 6     2 V. High     1 0.00508
 ```
+
 ---
 
-# Least cost path between two points
+# Least-cost path: raster as graph, again
+
+Recall Way 3 — a raster can be a graph, with pixels as nodes and neighbors as edges. `gdistance` builds exactly that graph to find a cheapest path.
 
 
-```r
-library(gdistance)
-# Construct cells that are `impasssable`
-cost &lt;- calc(rast, fun=function(x)  ifelse(x &gt; 400 &amp; x&lt;900, NA,  x)) #toy example
-rclmat &lt;- c(0,200, 20, 200, 400, 30, 900,1900, 40) %&gt;% matrix(ncol=3, byrow = TRUE)
-cost &lt;- reclassify(cost, rclmat  )
+``` r
+cost &lt;- classify(r1, rcl = matrix(c(-Inf,200,20, 200,400,30,
+                                        400,900,NA, 900,Inf,40),
+                                       ncol=3, byrow=TRUE)) # toy cost surface
 A &lt;- c(179706.2, 330570.0)
 B &lt;- c(180100.9, 331074.3)
 plot(cost)
 ```
 
-&lt;img src="figs/unnamed-chunk-16-1.png" width="70%" /&gt;
+&lt;img src="figs/unnamed-chunk-28-1.png" alt="" width="70%" /&gt;
 
 ---
 
 
-```r
-# Least cost path between two points
-
-conductance &lt;- transition(cost, function(x) 1/mean(x), 8) # Conductance matrix
-AtoB &lt;- shortestPath(conductance, A, B, output="SpatialLines")
+``` r
+library(raster)     # gdistance predates terra; it wants the legacy class
+library(gdistance)
+conductance &lt;- transition(raster::raster(cost), function(x) 1/mean(x), 8)
+AtoB &lt;- shortestPath(conductance, A, B, output = "SpatialLines")
 plot(cost)
 lines(AtoB, col="red", lwd=2)
 ```
 
-&lt;img src="figs/unnamed-chunk-17-1.png" width="60%" /&gt;
+&lt;img src="figs/unnamed-chunk-29-1.png" alt="" width="50%" /&gt;
+
+Not every package has migrated to `terra` — `raster::raster()` converts back to the legacy class when a downstream package needs it.
 
 ---
-class: center, middle
 
-Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+# Some key things to think about
 
-The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+A few properties of rasters surprise people the first time they work with real data 
+
+1. `NA` values are used to define shape
+
+2. Data type determines size
+
+3. Reprojecting a raster is costly
+
+4. Units live in metadata, not in the raster itself
+
+---
+
+# 1. `NA` defines the shape
+
+A raster's *extent* is always a rectangle. Almost nothing real is. `NA` carves an arbitrary shape out of that rectangle — "no data" and "outside the thing I care about" are the same value.
+
+
+``` r
+r1 &lt;- rast(system.file("external/test.grd", package="raster"))
+par(mfrow = c(1, 2))
+plot(r1, main = "Values (blank = NA)")
+plot(!is.na(r1), col = c("grey85", "steelblue"), legend = FALSE,
+     main = "Same rectangle, valid cells only")
+```
+
+&lt;img src="figs/unnamed-chunk-30-1.png" alt="" width="70%" /&gt;
+
+---
+
+# 1. `NA` defines the shape
+
+
+``` r
+ncell(r1)                # the full rectangle
+```
+
+```
+## [1] 9200
+```
+
+``` r
+sum(!is.na(values(r1)))  # cells actually "inside" the shape
+```
+
+```
+## [1] 3178
+```
+
+Two-thirds of this rectangle is `NA` — not missing data we wish we had, just bookkeeping. (Recall: `as.data.frame()` earlier silently returned only 3,178 rows, for exactly this reason.)
+
+---
+
+# 2. Data type determines size
+
+A cell is just a number, but *how* that number is stored is a choice you make, not a fact about the data.
+
+.pull-left[
+
+``` r
+tmp &lt;- tempfile(fileext = ".tif")
+file_size &lt;- function(r, dt) {
+  writeRaster(r, tmp, datatype = dt,
+              overwrite = TRUE)
+  file.size(tmp)
+}
+tibble::tibble(
+  datatype = c("FLT8S", "FLT4S",
+               "INT2S", "INT1U (mask)"),
+  bytes = c(
+    file_size(r1, "FLT8S"),
+    file_size(r1, "FLT4S"),
+    file_size(round(r1), "INT2S"),
+    file_size(!is.na(r1), "INT1U"))
+)
+```
+]
+
+.pull-right[
+
+|datatype     | bytes|
+|:------------|-----:|
+|FLT8S        | 20740|
+|FLT4S        | 17200|
+|INT2S        |  7701|
+|INT1U (mask) |  1955|
+
+Same values, four sizes. `INT2S` rounds to the nearest meter; the #1 mask only needs 0/1, so `INT1U` fits it alone.
+]
+
+---
+
+# 3. Reprojecting a raster is costly
+
+Reprojecting a vector just recomputes vertex coordinates. Reprojecting a raster has to build a **new grid** and resample every cell onto it — there's no shortcut.
+
+
+``` r
+box &lt;- as.polygons(ext(r1), crs = crs(r1))
+t_vec  &lt;- system.time(project(box, "EPSG:4326"))[["elapsed"]]
+t_rast &lt;- system.time(r1_ll &lt;- project(r1, "EPSG:4326"))[["elapsed"]]
+
+tibble::tibble(what = c("vector: recompute corners", "raster: resample ~9,200 cells"),
+               seconds = c(t_vec, t_rast))
+```
+
+
+
+|what                          | seconds|
+|:-----------------------------|-------:|
+|vector: recompute corners     |   0.002|
+|raster: resample ~9,200 cells |   0.008|
+
+``` r
+cat("cell count:", ncell(r1), "-&gt;", ncell(r1_ll), "(a *different* grid)")
+```
+
+```
+## cell count: 9200 -&gt; 9975 (a *different* grid)
+```
+
+This toy raster still does measurably more work than its vector counterpart, and cost scales with cell count — for a drone- or satellite-sized raster that gap runs to minutes.
+
+---
+
+# 4. Units live in metadata
+
+A cell holds a bare number. Whether that number means meters, feet, or reflectance is a label someone attached — `terra` stores it, but never checks it.
+
+
+``` r
+units(r1)                 # this file ships with no units at all
+```
+
+```
+## [1] ""
+```
+
+``` r
+feet &lt;- r1 * 3.28084       # actually converted to feet...
+units(feet) &lt;- "m"             # ...but nothing stops a wrong label
+units(feet)
+```
+
+```
+## [1] "m"
+```
+
+
+``` r
+linearUnits(r1)   # meters per coordinate unit — THIS is enforced by the CRS
+```
+
+```
+## [1] 1
+```
+
+The **spatial** unit (what an X/Y coordinate means) is guaranteed by the CRS. The **value** unit (what a cell's number means) is not — it's on you to check and document it.
+
+---
+
+
+# `terra` &amp;harr; tidyverse cheat sheet
+
+&lt;table class="table" style="font-size: 20px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Task &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; terra &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; tidyverse &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Combine columns/layers &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; c(r1, r2) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; bind_cols() &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Select a column/layer &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; r[["band"]], r$band &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; select(), df$col &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Row-wise arithmetic across columns &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; r1 - r2, app(), lapp() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; mutate() &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Recode into categories &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; classify() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; case_when(), cut() &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Neighborhood/rolling summary &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; focal() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; slider/zoo rolling functions &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Coarsen &amp;amp; summarize groups &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; aggregate() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; group_by() %&amp;gt;% summarize() &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Join keys &amp;amp; summarize &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; extract() + group_by/summarize &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; left_join() + group_by/summarize &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Convert to a plain table &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; as.data.frame(r, xy=TRUE) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; (it already is one) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
     </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "github",
-"highlightLines": true,
-"countIncrementalSlides": false,
-"seal": false
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "seal": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
 });
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
   if (!r) return;
   s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
   d.head.appendChild(s);
-})();</script>
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
 
 <script>
-(function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
   for (i = 0; i < codes.length;) {
     code = codes[i];
     if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
@@ -393,14 +1021,15 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     i++;
   }
-})();
+};
+slideshow._releaseMath(document);
 </script>
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
 (function () {
   var script = document.createElement('script');
   script.type = 'text/javascript';
-  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
   if (location.protocol !== 'file:' && /^https?:/.test(script.src))
     script.src  = script.src.replace(/^https?:/, '');
   document.getElementsByTagName('head')[0].appendChild(script);

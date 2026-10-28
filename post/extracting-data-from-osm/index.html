@@ -976,7 +976,7 @@
 
 <div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 720px;">
   <div style="position: relative">
-    <img src="/post/extracting-data-from-osm/featured_hucb292aea2264e4f68ac2695d53bc9bb7_1827746_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
+    <img src="/post/extracting-data-from-osm/featured_hufd97dd65edd7cde35dbd4715aea13ebb_1827927_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
     <span class="article-header-caption">Food places in Durham, NC. Data © OpenStreetMap contributors</span>
   </div>
 </div>
@@ -1091,10 +1091,10 @@ restaurants
 <p>The result is a list of <code>sf</code> layers: <code>osm_points</code>, <code>osm_lines</code>, <code>osm_polygons</code>, <code>osm_multilines</code> and <code>osm_multipolygons</code>.</p>
 <h2 id="a-sturdier-way-to-call-overpass">A sturdier way to call Overpass</h2>
 <p>Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. When that happens, <code>osmdata_sf()</code> stops with an HTTP error, often before it has even sent the query (it checks the server’s status first). If the call above failed for you, this is why. Small queries, a fallback server and saving every answer to disk make code that keeps working.</p>
-<p><code>get_osm()</code> first looks for a saved answer to the same query on disk. If there is none, <code>ask_overpass()</code> tries the <a href="https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances" target="_blank" rel="noopener">servers</a> in turn and stops at the first one that answers, and the answer is saved. Either way, <code>osmdata</code> converts it into <code>sf</code> objects.</p>
+<p><code>get_osm()</code> first looks for a saved answer to the same query on disk. If there is none, <code>ask_overpass()</code> tries the <a href="https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances" target="_blank" rel="noopener">servers</a> in turn and stops at the first one that answers, and the answer is saved. Either way, <code>osmdata</code> converts it into <code>sf</code> objects. If a server is busy or unreachable, it says why; some campus networks have no DNS entry for the mirrors, so add a server you can reach to <code>endpoints</code>.</p>
 <pre><code class="language-r">endpoints &lt;- c(&quot;https://overpass-api.de/api/interpreter&quot;,
-               &quot;https://overpass.private.coffee/api/interpreter&quot;,
-               &quot;https://overpass.kumi.systems/api/interpreter&quot;)
+               &quot;https://maps.mail.ru/osm/tools/overpass/api/interpreter&quot;,
+               &quot;https://overpass.private.coffee/api/interpreter&quot;)   # overpass.kumi.systems is now this same server
 
 cache_dir &lt;- here::here(&quot;osm_cache&quot;)   # a folder in your project
 if (!dir.exists(cache_dir)) dir.create(cache_dir, recursive = TRUE)
@@ -1105,16 +1105,19 @@ ask_overpass &lt;- function(qs) {          # the raw answer from the first serve
       req_body_form(data = qs) |&gt;
       req_user_agent(&quot;osm-tutorial (R httr2)&quot;) |&gt;
       req_timeout(180) |&gt;
-      req_retry(max_tries = 3,
+      req_retry(max_tries = 5,
                 is_transient = function(resp) return(resp_status(resp) %in% c(429, 502, 503, 504)),
                 backoff = function(attempt) return(30)) |&gt;   # a busy server: wait 30 s and try again
       req_error(is_error = function(resp) return(FALSE)) |&gt;   # inspect the status ourselves
       req_perform() |&gt;
-      tryCatch(error = function(e) return(NULL))         # network failures return NULL
-    if (!is.null(resp) &amp;&amp; resp_status(resp) == 200) {
+      tryCatch(error = function(e) return(e))      # network failures (no DNS entry, timeout) come back as the error
+    if (inherits(resp, &quot;error&quot;)) {
+      message(u, &quot; unreachable: &quot;, conditionMessage(resp))
+    } else if (resp_status(resp) == 200) {
       return(resp_body_raw(resp))                  # success: skip the remaining servers
+    } else {
+      message(u, &quot; answered HTTP &quot;, resp_status(resp))
     }
-    message(&quot;No answer from &quot;, u, &quot;; trying the next server&quot;)
   }
   return(NULL)
 }

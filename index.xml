@@ -12384,10 +12384,10 @@ restaurants
 &lt;p&gt;The result is a list of &lt;code&gt;sf&lt;/code&gt; layers: &lt;code&gt;osm_points&lt;/code&gt;, &lt;code&gt;osm_lines&lt;/code&gt;, &lt;code&gt;osm_polygons&lt;/code&gt;, &lt;code&gt;osm_multilines&lt;/code&gt; and &lt;code&gt;osm_multipolygons&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;a-sturdier-way-to-call-overpass&#34;&gt;A sturdier way to call Overpass&lt;/h2&gt;
 &lt;p&gt;Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. When that happens, &lt;code&gt;osmdata_sf()&lt;/code&gt; stops with an HTTP error, often before it has even sent the query (it checks the server’s status first). If the call above failed for you, this is why. Small queries, a fallback server and saving every answer to disk make code that keeps working.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;get_osm()&lt;/code&gt; first looks for a saved answer to the same query on disk. If there is none, &lt;code&gt;ask_overpass()&lt;/code&gt; tries the &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;servers&lt;/a&gt; in turn and stops at the first one that answers, and the answer is saved. Either way, &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;get_osm()&lt;/code&gt; first looks for a saved answer to the same query on disk. If there is none, &lt;code&gt;ask_overpass()&lt;/code&gt; tries the &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;servers&lt;/a&gt; in turn and stops at the first one that answers, and the answer is saved. Either way, &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects. If a server is busy or unreachable, it says why; some campus networks have no DNS entry for the mirrors, so add a server you can reach to &lt;code&gt;endpoints&lt;/code&gt;.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;endpoints &amp;lt;- c(&amp;quot;https://overpass-api.de/api/interpreter&amp;quot;,
-               &amp;quot;https://overpass.private.coffee/api/interpreter&amp;quot;,
-               &amp;quot;https://overpass.kumi.systems/api/interpreter&amp;quot;)
+               &amp;quot;https://maps.mail.ru/osm/tools/overpass/api/interpreter&amp;quot;,
+               &amp;quot;https://overpass.private.coffee/api/interpreter&amp;quot;)   # overpass.kumi.systems is now this same server
 
 cache_dir &amp;lt;- here::here(&amp;quot;osm_cache&amp;quot;)   # a folder in your project
 if (!dir.exists(cache_dir)) dir.create(cache_dir, recursive = TRUE)
@@ -12398,16 +12398,19 @@ ask_overpass &amp;lt;- function(qs) {          # the raw answer from the first s
       req_body_form(data = qs) |&amp;gt;
       req_user_agent(&amp;quot;osm-tutorial (R httr2)&amp;quot;) |&amp;gt;
       req_timeout(180) |&amp;gt;
-      req_retry(max_tries = 3,
+      req_retry(max_tries = 5,
                 is_transient = function(resp) return(resp_status(resp) %in% c(429, 502, 503, 504)),
                 backoff = function(attempt) return(30)) |&amp;gt;   # a busy server: wait 30 s and try again
       req_error(is_error = function(resp) return(FALSE)) |&amp;gt;   # inspect the status ourselves
       req_perform() |&amp;gt;
-      tryCatch(error = function(e) return(NULL))         # network failures return NULL
-    if (!is.null(resp) &amp;amp;&amp;amp; resp_status(resp) == 200) {
+      tryCatch(error = function(e) return(e))      # network failures (no DNS entry, timeout) come back as the error
+    if (inherits(resp, &amp;quot;error&amp;quot;)) {
+      message(u, &amp;quot; unreachable: &amp;quot;, conditionMessage(resp))
+    } else if (resp_status(resp) == 200) {
       return(resp_body_raw(resp))                  # success: skip the remaining servers
+    } else {
+      message(u, &amp;quot; answered HTTP &amp;quot;, resp_status(resp))
     }
-    message(&amp;quot;No answer from &amp;quot;, u, &amp;quot;; trying the next server&amp;quot;)
   }
   return(NULL)
 }
