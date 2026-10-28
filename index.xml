@@ -12284,15 +12284,6 @@ lc_tracts_tbl
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;OpenStreetMap (OSM)&lt;/em&gt; is a free and open map of the world, built by millions of volunteers, much like Wikipedia. Anyone can use the data for any purpose, including commercial ones, as long as they credit “© OpenStreetMap contributors” and share any database they derive from it under the same &lt;a href=&#34;https://www.openstreetmap.org/copyright&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Database License (ODbL)&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Underneath the map tiles is a database of roads, buildings, shops, bus stops and much more. This post queries the places to eat in Durham, NC out of that database, avoids a few common traps and analyses the completeness and currency of the data.&lt;/p&gt;
-&lt;p&gt;The code uses these packages:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyverse)
-library(sf)
-library(osmdata)
-library(httr2)        # sends our own requests to Overpass
-library(tmap)
-library(widgetframe)  # embeds interactive maps in this page
-library(units)
-&lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&#34;how-osm-data-is-structured&#34;&gt;How OSM data is structured&lt;/h2&gt;
 &lt;p&gt;OSM has only three kinds of objects:&lt;/p&gt;
 &lt;ul&gt;
@@ -12355,7 +12346,8 @@ durham_bb
     Everything stays in longitude and latitude (EPSG:4326) for the most part in this post. &lt;code&gt;sf&lt;/code&gt; can measure distances and areas on the sphere (with the s2 library), in metres.
   &lt;/div&gt;
 &lt;/div&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmap_mode(&amp;quot;plot&amp;quot;)
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tmap)
+tmap_mode(&amp;quot;plot&amp;quot;)
 bb_poly &amp;lt;- st_as_sfc(durham_bb)
 
 tm_shape(bb_poly) +
@@ -12370,11 +12362,12 @@ tm_shape(bb_poly) +
 &lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/bbox-map-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
 &lt;h2 id=&#34;a-first-query&#34;&gt;A first query&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;osmdata&lt;/code&gt; builds the query for us: &lt;code&gt;opq()&lt;/code&gt; sets the area, &lt;code&gt;add_osm_feature()&lt;/code&gt; the tag. &lt;code&gt;opq_string()&lt;/code&gt; shows the query in Overpass’s own language.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;q &amp;lt;- opq(durham_bb, timeout = 120) |&amp;gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osmdata)
+q &amp;lt;- opq(durham_bb, timeout = 60) |&amp;gt;
   add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;)
 
 q |&amp;gt; opq_string() |&amp;gt; print()
-# [1] &amp;quot;[out:xml][timeout:120];\n(\n  node [\&amp;quot;amenity\&amp;quot;=\&amp;quot;restaurant\&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);\n  way [\&amp;quot;amenity\&amp;quot;=\&amp;quot;restaurant\&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);\n  relation [\&amp;quot;amenity\&amp;quot;=\&amp;quot;restaurant\&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);\n);\n(._;&amp;gt;;);\nout body;&amp;quot;
+# [1] &amp;quot;[out:xml][timeout:60];\n(\n  node [\&amp;quot;amenity\&amp;quot;=\&amp;quot;restaurant\&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);\n  way [\&amp;quot;amenity\&amp;quot;=\&amp;quot;restaurant\&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);\n  relation [\&amp;quot;amenity\&amp;quot;=\&amp;quot;restaurant\&amp;quot;] (35.866372,-79.007536,36.137039,-78.754703);\n);\n(._;&amp;gt;;);\nout body;&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The query asks for every node, way and relation tagged &lt;code&gt;amenity = restaurant&lt;/code&gt; in the box, and for enough geometry to draw them. &lt;code&gt;osmdata_sf()&lt;/code&gt; sends it to an Overpass server and converts the answer into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;restaurants &amp;lt;- osmdata_sf(q)
@@ -12393,17 +12386,33 @@ restaurants
 &lt;p&gt;The result is a list of &lt;code&gt;sf&lt;/code&gt; layers: &lt;code&gt;osm_points&lt;/code&gt;, &lt;code&gt;osm_lines&lt;/code&gt;, &lt;code&gt;osm_polygons&lt;/code&gt;, &lt;code&gt;osm_multilines&lt;/code&gt; and &lt;code&gt;osm_multipolygons&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;a-sturdier-way-to-call-overpass&#34;&gt;A sturdier way to call Overpass&lt;/h2&gt;
 &lt;p&gt;Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. When that happens, &lt;code&gt;osmdata_sf()&lt;/code&gt; stops with an HTTP error, often before it has even sent the query (it checks the server’s status first). If the call above failed for you, this is why. Small queries, a fallback server and saving every answer to disk make code that keeps working.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;get_osm()&lt;/code&gt; first looks for a saved answer to the same query on disk. If there is none, &lt;code&gt;ask_overpass()&lt;/code&gt; tries the &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;servers&lt;/a&gt; in turn and stops at the first one that answers, and the answer is saved. Either way, &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects. If a server is busy or unreachable, it says why.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;endpoints &amp;lt;- c(&amp;quot;https://overpass-api.de/api/interpreter&amp;quot;,
-               &amp;quot;https://maps.mail.ru/osm/tools/overpass/api/interpreter&amp;quot;,
-               &amp;quot;https://overpass.private.coffee/api/interpreter&amp;quot;)   # overpass.kumi.systems is now this same server
+&lt;p&gt;&lt;strong&gt;Get your own key.&lt;/strong&gt; The free public servers are shared by everyone, and the main one allows only two queries at a time from one internet address. &lt;a href=&#34;https://overpass.ch/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Overpass.ch&lt;/a&gt; gives each person a free key (10,000 queries a month, one at a time, up to 60 seconds each), so your limit is yours alone.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a free account at &lt;a href=&#34;https://overpass.ch/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;overpass.ch&lt;/a&gt; and confirm your e-mail. Copy the API key from your account page.&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;usethis::edit_r_environ()&lt;/code&gt; and add a line &lt;code&gt;OVERPASS_CH_KEY=&#39;your-key&#39;&lt;/code&gt;. Keeping the key there, rather than in your code, means it never ends up in a script you share.&lt;/li&gt;
+&lt;li&gt;Restart R.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;get_osm()&lt;/code&gt; first looks for a saved answer to the same query on disk. If there is none, &lt;code&gt;ask_overpass()&lt;/code&gt; tries your overpass.ch server, then the free &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;public servers&lt;/a&gt; in turn, and stops at the first one that answers. The answer is saved, and &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects. If a server is busy or unreachable, it says why. The servers are named, so the messages never print your key.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(httr2)
+
+endpoints &amp;lt;- c(fossgis        = &amp;quot;https://overpass-api.de/api/interpreter&amp;quot;,
+               vk_maps        = &amp;quot;https://maps.mail.ru/osm/tools/overpass/api/interpreter&amp;quot;,
+               private_coffee = &amp;quot;https://overpass.private.coffee/api/interpreter&amp;quot;,   # formerly overpass.kumi.systems
+               osm_fr         = &amp;quot;https://overpass.openstreetmap.fr/api/interpreter&amp;quot;)  # last resort: its data can lag by weeks
+
+key &amp;lt;- Sys.getenv(&amp;quot;OVERPASS_CH_KEY&amp;quot;)   # set in ~/.Renviron, see above
+if (key == &amp;quot;&amp;quot;) {
+  warning(&amp;quot;OVERPASS_CH_KEY is not set; using only the shared public servers, which are often full.&amp;quot;)
+} else {
+  endpoints &amp;lt;- c(overpass_ch = paste0(&amp;quot;https://api.overpass.ch/v1/&amp;quot;, key, &amp;quot;/interpreter&amp;quot;), endpoints)   # your own server first
+}
 
 cache_dir &amp;lt;- here::here(&amp;quot;osm_cache&amp;quot;)   # a folder in your project
 if (!dir.exists(cache_dir)) dir.create(cache_dir, recursive = TRUE)
 
 ask_overpass &amp;lt;- function(qs) {          # the raw answer from the first server that replies, or NULL
-  for (u in endpoints) {
-    resp &amp;lt;- request(u) |&amp;gt;
+  for (server in names(endpoints)) {
+    resp &amp;lt;- request(endpoints[[server]]) |&amp;gt;
       req_body_form(data = qs) |&amp;gt;
       req_user_agent(&amp;quot;osm-tutorial (R httr2)&amp;quot;) |&amp;gt;
       req_timeout(180) |&amp;gt;
@@ -12414,11 +12423,14 @@ ask_overpass &amp;lt;- function(qs) {          # the raw answer from the first s
       req_perform() |&amp;gt;
       tryCatch(httr2_failure = function(e) return(e))   # only network failures (no DNS entry, timeout); other errors still stop
     if (inherits(resp, &amp;quot;error&amp;quot;)) {
-      message(u, &amp;quot; unreachable: &amp;quot;, conditionMessage(resp))
+      message(server, &amp;quot; unreachable: &amp;quot;, conditionMessage(resp))
     } else if (resp_status(resp) == 200) {
-      return(resp_body_raw(resp))                  # success: skip the remaining servers
+      text &amp;lt;- resp_body_string(resp)
+      problem &amp;lt;- regmatches(text, regexpr(&amp;quot;runtime error[^&amp;lt;]*&amp;quot;, text))   # Overpass reports some failures inside a 200
+      if (length(problem) == 0) return(resp_body_raw(resp))   # success: skip the remaining servers
+      message(server, &amp;quot; could not run the query: &amp;quot;, problem)   # e.g. a timeout, or no history on this server
     } else {
-      message(u, &amp;quot; answered HTTP &amp;quot;, resp_status(resp))
+      message(server, &amp;quot; answered HTTP &amp;quot;, resp_status(resp))
     }
   }
   return(NULL)
@@ -12442,7 +12454,7 @@ get_osm &amp;lt;- function(q) {
 
 food_raw &amp;lt;- map(food_types, function(v) {
   Sys.sleep(2)
-  result &amp;lt;- opq(durham_bb, timeout = 120) |&amp;gt;
+  result &amp;lt;- opq(durham_bb, timeout = 60) |&amp;gt;
     add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = v) |&amp;gt;
     get_osm()
   return(result)
@@ -12578,7 +12590,7 @@ food |&amp;gt;
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; for (1), combine &lt;code&gt;food_raw&lt;/code&gt; without the &lt;code&gt;st_filter()&lt;/code&gt; step, then use &lt;code&gt;st_filter()&lt;/code&gt; with &lt;code&gt;.predicate = st_disjoint&lt;/code&gt;. For (2), &lt;code&gt;st_area()&lt;/code&gt; and &lt;code&gt;units::set_units()&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-Solution
+&lt;p&gt;Solution&lt;/p&gt;
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;food_box &amp;lt;- map(food_raw, as_points) |&amp;gt;
   bind_rows() |&amp;gt;
@@ -12721,9 +12733,9 @@ m_hex + tm_title(&amp;quot;Places to eat in Durham, 800 m hexagons&amp;quot;)
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; &lt;code&gt;st_nearest_feature()&lt;/code&gt; returns the index of the nearest feature; &lt;code&gt;st_distance(..., by_element = TRUE)&lt;/code&gt; then gives the distance to it.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-Solution
+&lt;p&gt;Solution&lt;/p&gt;
 &lt;/summary&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;supermarkets &amp;lt;- opq(durham_bb, timeout = 120) |&amp;gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;supermarkets &amp;lt;- opq(durham_bb, timeout = 60) |&amp;gt;
   add_osm_feature(key = &amp;quot;shop&amp;quot;, value = &amp;quot;supermarket&amp;quot;) |&amp;gt;
   get_osm()
 supermarkets &amp;lt;- bind_rows(
@@ -12751,7 +12763,8 @@ tm_basemap(&amp;quot;OpenStreetMap&amp;quot;, alpha = 0.4, zoom = 12) +
   tm_layout(frame = FALSE)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/ex3-map-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;scales::percent(mean(hex$dist &amp;gt; far))   # share of hexagons more than 2 km away
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+scales::percent(mean(hex$dist &amp;gt; far))   # share of hexagons more than 2 km away
 # [1] &amp;quot;47%&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Straight-line distance understates the real trip. Be cautious. Clipping data to the boundary ahead of time introduces spurious boundary effects.&lt;/p&gt;
@@ -12760,9 +12773,9 @@ tm_basemap(&amp;quot;OpenStreetMap&amp;quot;, alpha = 0.4, zoom = 12) +
 &lt;p&gt;What share of Durham’s food places are within 400 m (about a five-minute walk) of a bus stop? Bus stops are tagged &lt;code&gt;highway = bus_stop&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-Solution
+&lt;p&gt;Solution&lt;/p&gt;
 &lt;/summary&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;bus &amp;lt;- opq(durham_bb, timeout = 120) |&amp;gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;bus &amp;lt;- opq(durham_bb, timeout = 60) |&amp;gt;
   add_osm_feature(key = &amp;quot;highway&amp;quot;, value = &amp;quot;bus_stop&amp;quot;) |&amp;gt;
   get_osm()
 bus_stops &amp;lt;- bus$osm_points |&amp;gt;
@@ -12849,7 +12862,7 @@ ggplot(completeness, aes(x = share, y = fct_reorder(tag, share))) +
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; use &lt;code&gt;separate_longer_delim()&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-Solution
+&lt;p&gt;Solution&lt;/p&gt;
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest_now &amp;lt;- food |&amp;gt; filter(amenity == &amp;quot;restaurant&amp;quot;)
 
@@ -12912,15 +12925,16 @@ rest_now |&amp;gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;scales::percent(mean(is.na(rest_now$cuisine)))   # share with no cuisine tag
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+scales::percent(mean(is.na(rest_now$cuisine)))   # share with no cuisine tag
 # [1] &amp;quot;30%&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;With that many missing, “Durham has few Thai restaurants” might only mean “few Thai restaurants are tagged.” But I know from experience that the triangle is sorely lacking in good Thai food.&lt;/p&gt;
+&lt;p&gt;With that many missing, “Durham has few Thai restaurants” might only mean “few Thai restaurants are tagged”. But I know from experience that the triangle is sorely lacking in good Thai food.&lt;/p&gt;
 &lt;/details&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;reproducibility-vscurrency&#34;&gt;Reproducibility vs. Currency&lt;/h2&gt;
 &lt;p&gt;OSM is edited thousands of times a minute. Running the same query next month will give a different answer, which is good for timeliness and bad for reproducibility. Overpass can, however, query OSM &lt;strong&gt;as it was&lt;/strong&gt; on a past date, using the &lt;code&gt;datetime&lt;/code&gt; argument. Here are Durham’s restaurants on the day this post was first published.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest_2020 &amp;lt;- opq(durham_bb, timeout = 120, datetime = &amp;quot;2020-02-12T00:00:00Z&amp;quot;) |&amp;gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest_2020 &amp;lt;- opq(durham_bb, timeout = 60, datetime = &amp;quot;2020-02-12T00:00:00Z&amp;quot;) |&amp;gt;
   add_osm_feature(key = &amp;quot;amenity&amp;quot;, value = &amp;quot;restaurant&amp;quot;) |&amp;gt;
   get_osm() |&amp;gt;
   as_points() |&amp;gt;
@@ -13115,7 +13129,7 @@ bind_rows(osm = st_drop_geometry(osm), overture = st_drop_geometry(ov), .id = &a
 &lt;p&gt;Recount Overture’s places by type with confidence thresholds of 0.5, 0.7 and 0.9. How much do the totals move? What does that say about any “number of restaurants” taken from a single source?&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-Solution
+&lt;p&gt;Solution&lt;/p&gt;
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;count_at &amp;lt;- function(threshold) {
   result &amp;lt;- overture_food |&amp;gt;
