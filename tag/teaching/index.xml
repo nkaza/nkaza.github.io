@@ -4178,10 +4178,10 @@ restaurants
 &lt;p&gt;The result is a list of &lt;code&gt;sf&lt;/code&gt; layers: &lt;code&gt;osm_points&lt;/code&gt;, &lt;code&gt;osm_lines&lt;/code&gt;, &lt;code&gt;osm_polygons&lt;/code&gt;, &lt;code&gt;osm_multilines&lt;/code&gt; and &lt;code&gt;osm_multipolygons&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;a-sturdier-way-to-call-overpass&#34;&gt;A sturdier way to call Overpass&lt;/h2&gt;
 &lt;p&gt;Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. When that happens, &lt;code&gt;osmdata_sf()&lt;/code&gt; stops with an HTTP error, often before it has even sent the query (it checks the server’s status first). If the call above failed for you, this is why. Small queries, a fallback server and saving every answer to disk make code that keeps working.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Get your own key.&lt;/strong&gt; The free public servers are shared by everyone, and the main one allows only two queries at a time from one internet address. &lt;a href=&#34;https://overpass.ch/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Overpass.ch&lt;/a&gt; gives each person a free key (10,000 queries a month, one at a time, up to 60 seconds each), so your limit is yours alone.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Get your own key.&lt;/strong&gt; The free public servers are shared by everyone, and the main one allows only two queries at a time from one internet address. &lt;a href=&#34;https://overpass.ch/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Overpass.ch&lt;/a&gt; gives each person a free key (10,000 queries a month, one at a time, up to 60 seconds each).&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Create a free account at &lt;a href=&#34;https://overpass.ch/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;overpass.ch&lt;/a&gt; and confirm your e-mail. Copy the API key from your account page.&lt;/li&gt;
-&lt;li&gt;Run &lt;code&gt;usethis::edit_r_environ()&lt;/code&gt; and add a line &lt;code&gt;OVERPASS_CH_KEY=&#39;your-key&#39;&lt;/code&gt;. Keeping the key there, rather than in your code, means it never ends up in a script you share.&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;usethis::edit_r_environ()&lt;/code&gt; and add a line &lt;code&gt;OVERPASS_CH_KEY=&#39;your-key&#39;&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;Restart R.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;code&gt;get_osm()&lt;/code&gt; first looks for a saved answer to the same query on disk. If there is none, &lt;code&gt;ask_overpass()&lt;/code&gt; tries your overpass.ch server, then the free &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;public servers&lt;/a&gt; in turn, and stops at the first one that answers. The answer is saved, and &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects. If a server is busy or unreachable, it says why. The servers are named, so the messages never print your key.&lt;/p&gt;
@@ -4382,7 +4382,7 @@ food |&amp;gt;
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; for (1), combine &lt;code&gt;food_raw&lt;/code&gt; without the &lt;code&gt;st_filter()&lt;/code&gt; step, then use &lt;code&gt;st_filter()&lt;/code&gt; with &lt;code&gt;.predicate = st_disjoint&lt;/code&gt;. For (2), &lt;code&gt;st_area()&lt;/code&gt; and &lt;code&gt;units::set_units()&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-&lt;p&gt;Solution&lt;/p&gt;
+Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;food_box &amp;lt;- map(food_raw, as_points) |&amp;gt;
   bind_rows() |&amp;gt;
@@ -4525,7 +4525,7 @@ m_hex + tm_title(&amp;quot;Places to eat in Durham, 800 m hexagons&amp;quot;)
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; &lt;code&gt;st_nearest_feature()&lt;/code&gt; returns the index of the nearest feature; &lt;code&gt;st_distance(..., by_element = TRUE)&lt;/code&gt; then gives the distance to it.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-&lt;p&gt;Solution&lt;/p&gt;
+Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;supermarkets &amp;lt;- opq(durham_bb, timeout = 60) |&amp;gt;
   add_osm_feature(key = &amp;quot;shop&amp;quot;, value = &amp;quot;supermarket&amp;quot;) |&amp;gt;
@@ -4555,8 +4555,7 @@ tm_basemap(&amp;quot;OpenStreetMap&amp;quot;, alpha = 0.4, zoom = 12) +
   tm_layout(frame = FALSE)
 &lt;/code&gt;&lt;/pre&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/extracting-data-from-osm/index_files/figure-html/ex3-map-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
-scales::percent(mean(hex$dist &amp;gt; far))   # share of hexagons more than 2 km away
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;scales::percent(mean(hex$dist &amp;gt; far))   # share of hexagons more than 2 km away
 # [1] &amp;quot;47%&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Straight-line distance understates the real trip. Be cautious. Clipping data to the boundary ahead of time introduces spurious boundary effects.&lt;/p&gt;
@@ -4565,7 +4564,7 @@ scales::percent(mean(hex$dist &amp;gt; far))   # share of hexagons more than 2 k
 &lt;p&gt;What share of Durham’s food places are within 400 m (about a five-minute walk) of a bus stop? Bus stops are tagged &lt;code&gt;highway = bus_stop&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-&lt;p&gt;Solution&lt;/p&gt;
+Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;bus &amp;lt;- opq(durham_bb, timeout = 60) |&amp;gt;
   add_osm_feature(key = &amp;quot;highway&amp;quot;, value = &amp;quot;bus_stop&amp;quot;) |&amp;gt;
@@ -4654,7 +4653,7 @@ ggplot(completeness, aes(x = share, y = fct_reorder(tag, share))) +
 &lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; use &lt;code&gt;separate_longer_delim()&lt;/code&gt;.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-&lt;p&gt;Solution&lt;/p&gt;
+Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;rest_now &amp;lt;- food |&amp;gt; filter(amenity == &amp;quot;restaurant&amp;quot;)
 
@@ -4717,11 +4716,10 @@ rest_now |&amp;gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
-scales::percent(mean(is.na(rest_now$cuisine)))   # share with no cuisine tag
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;scales::percent(mean(is.na(rest_now$cuisine)))   # share with no cuisine tag
 # [1] &amp;quot;30%&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;With that many missing, “Durham has few Thai restaurants” might only mean “few Thai restaurants are tagged”. But I know from experience that the triangle is sorely lacking in good Thai food.&lt;/p&gt;
+&lt;p&gt;With that many missing, “Durham has few Thai restaurants” might only mean “few Thai restaurants are tagged.” But I know from experience that the triangle is sorely lacking in good Thai food.&lt;/p&gt;
 &lt;/details&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;reproducibility-vscurrency&#34;&gt;Reproducibility vs. Currency&lt;/h2&gt;
@@ -4921,7 +4919,7 @@ bind_rows(osm = st_drop_geometry(osm), overture = st_drop_geometry(ov), .id = &a
 &lt;p&gt;Recount Overture’s places by type with confidence thresholds of 0.5, 0.7 and 0.9. How much do the totals move? What does that say about any “number of restaurants” taken from a single source?&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
-&lt;p&gt;Solution&lt;/p&gt;
+Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;count_at &amp;lt;- function(threshold) {
   result &amp;lt;- overture_food |&amp;gt;
