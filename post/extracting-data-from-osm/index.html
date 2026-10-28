@@ -976,7 +976,7 @@
 
 <div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 720px;">
   <div style="position: relative">
-    <img src="/post/extracting-data-from-osm/featured_hufd97dd65edd7cde35dbd4715aea13ebb_1827927_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
+    <img src="/post/extracting-data-from-osm/featured_huc955b780561b3a10fa3212cb49b071a9_1827732_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
     <span class="article-header-caption">Food places in Durham, NC. Data © OpenStreetMap contributors</span>
   </div>
 </div>
@@ -991,6 +991,15 @@
 <h2 id="introduction">Introduction</h2>
 <p><em>OpenStreetMap (OSM)</em> is a free and open map of the world, built by millions of volunteers, much like Wikipedia. Anyone can use the data for any purpose, including commercial ones, as long as they credit “© OpenStreetMap contributors” and share any database they derive from it under the same <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">Open Database License (ODbL)</a>.</p>
 <p>Underneath the map tiles is a database of roads, buildings, shops, bus stops and much more. This post queries the places to eat in Durham, NC out of that database, avoids a few common traps and analyses the completeness and currency of the data.</p>
+<p>The code uses these packages:</p>
+<pre><code class="language-r">library(tidyverse)
+library(sf)
+library(osmdata)
+library(httr2)        # sends our own requests to Overpass
+library(tmap)
+library(widgetframe)  # embeds interactive maps in this page
+library(units)
+</code></pre>
 <h2 id="how-osm-data-is-structured">How OSM data is structured</h2>
 <p>OSM has only three kinds of objects:</p>
 <ul>
@@ -1091,7 +1100,7 @@ restaurants
 <p>The result is a list of <code>sf</code> layers: <code>osm_points</code>, <code>osm_lines</code>, <code>osm_polygons</code>, <code>osm_multilines</code> and <code>osm_multipolygons</code>.</p>
 <h2 id="a-sturdier-way-to-call-overpass">A sturdier way to call Overpass</h2>
 <p>Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. When that happens, <code>osmdata_sf()</code> stops with an HTTP error, often before it has even sent the query (it checks the server’s status first). If the call above failed for you, this is why. Small queries, a fallback server and saving every answer to disk make code that keeps working.</p>
-<p><code>get_osm()</code> first looks for a saved answer to the same query on disk. If there is none, <code>ask_overpass()</code> tries the <a href="https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances" target="_blank" rel="noopener">servers</a> in turn and stops at the first one that answers, and the answer is saved. Either way, <code>osmdata</code> converts it into <code>sf</code> objects. If a server is busy or unreachable, it says why; some campus networks have no DNS entry for the mirrors, so add a server you can reach to <code>endpoints</code>.</p>
+<p><code>get_osm()</code> first looks for a saved answer to the same query on disk. If there is none, <code>ask_overpass()</code> tries the <a href="https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances" target="_blank" rel="noopener">servers</a> in turn and stops at the first one that answers, and the answer is saved. Either way, <code>osmdata</code> converts it into <code>sf</code> objects. If a server is busy or unreachable, it says why.</p>
 <pre><code class="language-r">endpoints &lt;- c(&quot;https://overpass-api.de/api/interpreter&quot;,
                &quot;https://maps.mail.ru/osm/tools/overpass/api/interpreter&quot;,
                &quot;https://overpass.private.coffee/api/interpreter&quot;)   # overpass.kumi.systems is now this same server
@@ -1110,7 +1119,7 @@ ask_overpass &lt;- function(qs) {          # the raw answer from the first serve
                 backoff = function(attempt) return(30)) |&gt;   # a busy server: wait 30 s and try again
       req_error(is_error = function(resp) return(FALSE)) |&gt;   # inspect the status ourselves
       req_perform() |&gt;
-      tryCatch(error = function(e) return(e))      # network failures (no DNS entry, timeout) come back as the error
+      tryCatch(httr2_failure = function(e) return(e))   # only network failures (no DNS entry, timeout); other errors still stop
     if (inherits(resp, &quot;error&quot;)) {
       message(u, &quot; unreachable: &quot;, conditionMessage(resp))
     } else if (resp_status(resp) == 200) {

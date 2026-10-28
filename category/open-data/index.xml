@@ -23,6 +23,15 @@
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;OpenStreetMap (OSM)&lt;/em&gt; is a free and open map of the world, built by millions of volunteers, much like Wikipedia. Anyone can use the data for any purpose, including commercial ones, as long as they credit “© OpenStreetMap contributors” and share any database they derive from it under the same &lt;a href=&#34;https://www.openstreetmap.org/copyright&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Open Database License (ODbL)&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Underneath the map tiles is a database of roads, buildings, shops, bus stops and much more. This post queries the places to eat in Durham, NC out of that database, avoids a few common traps and analyses the completeness and currency of the data.&lt;/p&gt;
+&lt;p&gt;The code uses these packages:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidyverse)
+library(sf)
+library(osmdata)
+library(httr2)        # sends our own requests to Overpass
+library(tmap)
+library(widgetframe)  # embeds interactive maps in this page
+library(units)
+&lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&#34;how-osm-data-is-structured&#34;&gt;How OSM data is structured&lt;/h2&gt;
 &lt;p&gt;OSM has only three kinds of objects:&lt;/p&gt;
 &lt;ul&gt;
@@ -123,7 +132,7 @@ restaurants
 &lt;p&gt;The result is a list of &lt;code&gt;sf&lt;/code&gt; layers: &lt;code&gt;osm_points&lt;/code&gt;, &lt;code&gt;osm_lines&lt;/code&gt;, &lt;code&gt;osm_polygons&lt;/code&gt;, &lt;code&gt;osm_multilines&lt;/code&gt; and &lt;code&gt;osm_multipolygons&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;a-sturdier-way-to-call-overpass&#34;&gt;A sturdier way to call Overpass&lt;/h2&gt;
 &lt;p&gt;Overpass servers are run by volunteers and shared by everyone, and the main one often refuses requests when it is busy. When that happens, &lt;code&gt;osmdata_sf()&lt;/code&gt; stops with an HTTP error, often before it has even sent the query (it checks the server’s status first). If the call above failed for you, this is why. Small queries, a fallback server and saving every answer to disk make code that keeps working.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;get_osm()&lt;/code&gt; first looks for a saved answer to the same query on disk. If there is none, &lt;code&gt;ask_overpass()&lt;/code&gt; tries the &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;servers&lt;/a&gt; in turn and stops at the first one that answers, and the answer is saved. Either way, &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects. If a server is busy or unreachable, it says why; some campus networks have no DNS entry for the mirrors, so add a server you can reach to &lt;code&gt;endpoints&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;get_osm()&lt;/code&gt; first looks for a saved answer to the same query on disk. If there is none, &lt;code&gt;ask_overpass()&lt;/code&gt; tries the &lt;a href=&#34;https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;servers&lt;/a&gt; in turn and stops at the first one that answers, and the answer is saved. Either way, &lt;code&gt;osmdata&lt;/code&gt; converts it into &lt;code&gt;sf&lt;/code&gt; objects. If a server is busy or unreachable, it says why.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;endpoints &amp;lt;- c(&amp;quot;https://overpass-api.de/api/interpreter&amp;quot;,
                &amp;quot;https://maps.mail.ru/osm/tools/overpass/api/interpreter&amp;quot;,
                &amp;quot;https://overpass.private.coffee/api/interpreter&amp;quot;)   # overpass.kumi.systems is now this same server
@@ -142,7 +151,7 @@ ask_overpass &amp;lt;- function(qs) {          # the raw answer from the first s
                 backoff = function(attempt) return(30)) |&amp;gt;   # a busy server: wait 30 s and try again
       req_error(is_error = function(resp) return(FALSE)) |&amp;gt;   # inspect the status ourselves
       req_perform() |&amp;gt;
-      tryCatch(error = function(e) return(e))      # network failures (no DNS entry, timeout) come back as the error
+      tryCatch(httr2_failure = function(e) return(e))   # only network failures (no DNS entry, timeout); other errors still stop
     if (inherits(resp, &amp;quot;error&amp;quot;)) {
       message(u, &amp;quot; unreachable: &amp;quot;, conditionMessage(resp))
     } else if (resp_status(resp) == 200) {
