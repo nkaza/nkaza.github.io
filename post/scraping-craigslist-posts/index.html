@@ -1034,7 +1034,8 @@
 <li>It looks like the spaces in <code>all dates</code> are replaced with a <code>+</code>. Usually they are replaced by <code>%20</code> a hexadecimal code for space. It is useful to <a href="https://www.w3schools.com/tags/ref_urlencode.ASP" target="_blank" rel="noopener">understand the hex codes</a> for special characters.</li>
 </ol>
 <p>Based on the understanding of the above url, we can use conventional string manipulation to construct the url in R as follows.</p>
-<pre><code class="language-r">library(tidyverse)
+<pre><code class="language-r">
+library(tidyverse)
 library(rvest)
 library(tmap)
 
@@ -1060,7 +1061,7 @@ queries[3] &lt;- paste0(&quot;minSqft=&quot;, min_sqft)
 <p><em>Hint:</em> set a filter in the browser and read the url. Note where Craigslist redirects you.</p>
 <details>
 <summary>
-Solution
+<p>Solution</p>
 </summary>
 <pre><code class="language-text">for each city:
     build the base url from the city name and the category code
@@ -1176,18 +1177,18 @@ rD &lt;- rsDriver(browser = 'firefox',
                verbose =F,
                chromever = NULL,
                phantomver = NULL,
-               port = free_port()) # Sometimes these ports are blocked by the firewall. You can change the port number to something else. Or check with your system administrator.
+               port = free_port()) # free_port() picks an unused port. If your firewall blocks it, use a port your system administrator has opened.
 remDr &lt;- rD[[&quot;client&quot;]]
 
 remDr$navigate(query_url) # Navigate to the url
 
 Sys.sleep(2) # give the page time to fully load
 html_page &lt;- remDr$getPageSource()[[1]]
-#  # Close the browser whenever you are done with it.
+# Close the browser with remDr$close() when you are done with it.
 </code></pre>
 <h2 id="using-rvest-to-extract-data-from-html">Using rvest to extract data from html</h2>
 <p>The workhorse functions we are going to use are <code>html_elements</code> and <code>html_element</code> from the <code>rvest</code> library. <code>html_element</code> always extracts exactly one element. In this instance we want to extract all elements that are of <code>cl-search-result</code> class of element <code>div</code>.</p>
-<pre><code class="language-r">#(raw_query &lt;- read_html(query_url))
+<pre><code class="language-r"># read_html(query_url) no longer gets the listings; Craigslist only serves them to a browser that runs JavaScript.
 
 raw_query &lt;- read_html(html_page)
 
@@ -1216,7 +1217,7 @@ prices &lt;-
    raw_ads %&gt;% 
      html_element(&quot;span.priceinfo&quot;) %&gt;%
      html_text() %&gt;%
-     str_replace_all(&quot;\\$|,+&quot;, &quot;&quot;) %&gt;% # This is a function that includes a regular expression to extract a special symbols $ and , and replace them with nothing.
+     str_replace_all(&quot;\\$|,+&quot;, &quot;&quot;) %&gt;% # A regular expression that removes the $ sign and the commas
      as.numeric()
 
 metadata &lt;-
@@ -1243,7 +1244,7 @@ metadata &lt;-
 <p><em>Hint:</em> is the value inside the tag or between tags? Inspect <code>div.meta</code> in the browser.</p>
 <details>
 <summary>
-Solution
+<p>Solution</p>
 </summary>
 <ul>
 <li><code>html_attr()</code>: values inside the tag. <code>html_text()</code>: text between tags.</li>
@@ -1266,7 +1267,7 @@ combine into a table with one row per ad; missing spans should become NA
 </div>
 <details>
 <summary>
-Hint
+<p>Hint</p>
 </summary>
 <p>One missing price shifts every later price up a row. Work ad by ad: <code>html_element()</code> vs <code>html_elements()</code>.</p>
 </details>
@@ -1274,13 +1275,14 @@ Hint
 <p>Location of the apartments/houses are little bit more tricky because they are not embedded in the results page, but in each individual ad. To access them we need to access individual urls for the ads and then extract the location attributes.</p>
 <p>To do this we use the <code>map_*</code> function in <code>purrr</code> package. The function is effectively like a for loop. So the following code for each of the element of urls use the function(x) and then combine them into a table using row binding.</p>
 <p>To avoid being blocked by craigslist server, we use <code>Sys.sleep(1)</code> to pause for a second between each request. This makes the loop a time consuming process, but is necessary to avoid being blocked by the server. I am going to demonstrate the loop only for 30 urls here for brevity. You can run it for all the urls in your own time.</p>
-<pre><code class="language-r">urls &lt;-
+<pre><code class="language-r">
+urls &lt;-
   raw_ads %&gt;%
   html_element(&quot;.cl-app-anchor&quot;) %&gt;%
   html_attr(&quot;href&quot;)
 
 selection_num &lt;- 30
-urls &lt;- urls[1:selection_num] # For brevity only first 10 urls
+urls &lt;- urls[1:selection_num] # For brevity only the first 30 urls
 
 latlongs &lt;- map_dfr(urls, function(x){
     remDr$navigate(x) # Navigate to the url
@@ -1304,7 +1306,7 @@ latlongs &lt;- map_dfr(urls, function(x){
   )
 
 latlongs
-# # A tibble: 30 x 3
+# # A tibble: 30 × 3
 #    `data-latitude` `data-longitude` `data-accuracy`
 #              &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;
 #  1            42.3            -71.1               7
@@ -1317,7 +1319,7 @@ latlongs
 #  8            42.4            -71.2              10
 #  9            42.1            -71.4              22
 # 10            42.2            -71.2              22
-# # i 20 more rows
+# # ℹ 20 more rows
 </code></pre>
 <hr>
 <p><strong>Exercise</strong></p>
@@ -1332,7 +1334,7 @@ latlongs
 <p><em>Hint:</em> run the body on one url and print after each pipe. Inspect the picture thumbnails.</p>
 <details>
 <summary>
-Solution
+<p>Solution</p>
 </summary>
 <ul>
 <li>The coordinates are text attributes of the map <code>div</code>.</li>
@@ -1350,7 +1352,8 @@ then model rent on pictures, controlling for size and location
 <h3 id="geocoding-addresses">Geocoding addresses</h3>
 <p>Notice the <code>data-accuracy</code> field in the results. It is not clear, if the lat longs provided by the craigslist are accurate. It is useful to geocode the addresses to get a more accurate location. We first extract the addresses that are in each page and then geocode them using <code>tidygeocoder</code> package.</p>
 <p>But first, let’s limit the data that we already collected to the 30 urls that we are using for this demonstration.</p>
-<pre><code class="language-r">ids &lt;- ids[1:selection_num]
+<pre><code class="language-r">
+ids &lt;- ids[1:selection_num]
 titles &lt;- titles[1:selection_num]
 prices &lt;- prices[1:selection_num]
 metadata &lt;- metadata[1:selection_num]
@@ -1383,26 +1386,28 @@ addresses &lt;- map_dfr(urls, function(x){
   )
 
 head(addresses)
-# # A tibble: 6 x 3
+# # A tibble: 6 × 3
 #   pid        title                                                     full_addr
 #   &lt;chr&gt;      &lt;chr&gt;                                                     &lt;chr&gt;    
-# 1 7992711240 November 1st 2026 - 6 Bed 3 Bath  Pkg, Laundry, MBTA - B~ Leamingt~
-# 2 7992710865 November 1st 2026 Cleveland Cir. 4 Bed, 2 Bath, Laundry,~ Englewoo~
-# 3 7992506475 2 full baths: Updated kitchen and baths: one months rent~ Farwell ~
-# 4 7992455433 Large 5 Bed | 2 Baths 1st Floor Apartment - 10 Centennia~ 10 Cente~
-# 5 7992381123 NEWLY ON 1 Family doesn't fail 2 impress. 4-5beds, 2.5ba~ Bruce Rd~
-# 6 7992232695 Beautiful - 4 bedrooms,  2  baths, townhouse with storag~ Lawrence~
+# 1 7992711240 November 1st 2026 - 6 Bed 3 Bath  Pkg, Laundry, MBTA - B… Leamingt…
+# 2 7992710865 November 1st 2026 Cleveland Cir. 4 Bed, 2 Bath, Laundry,… Englewoo…
+# 3 7992506475 2 full baths: Updated kitchen and baths: one months rent… Farwell …
+# 4 7992455433 Large 5 Bed | 2 Baths 1st Floor Apartment - 10 Centennia… 10 Cente…
+# 5 7992381123 NEWLY ON 1 Family doesn't fail 2 impress. 4-5beds, 2.5ba… Bruce Rd…
+# 6 7992232695 Beautiful - 4 bedrooms,  2  baths, townhouse with storag… Lawrence…
 
 library(tidygeocoder)
 library(sf)
 
   addresses_geocode &lt;- addresses %&gt;%
     geocode_combine(
-      queries = list(list(method = 'census'), list(method = 'arcgis')),
-      global_params = list(address = 'full_addr'), cascade = TRUE)
+      queries = list(list(method = 'census'), 
+                     list(method = 'arcgis')),
+      global_params = list(address = 'full_addr'), 
+        cascade = TRUE)
   
 
-# Now Check to see if the distances between lat long and craigslist lat long 
+# Combine the scraped fields with the geocoded addresses
   
 
 
@@ -1413,45 +1418,48 @@ craigslist_table &lt;- craigslist_table %&gt;%
   left_join(addresses_geocode, by=c(&quot;ids&quot; = &quot;pid&quot;))
 
 craigslist_table
-# # A tibble: 30 x 12
+# # A tibble: 30 × 12
 #    ids      titles urls  `data-latitude` `data-longitude` `data-accuracy` prices
 #    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;           &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt;  &lt;dbl&gt;
-#  1 7992711~ Novem~ http~            42.3            -71.1               7   6700
-#  2 7992710~ Novem~ http~            42.3            -71.1               5   4500
-#  3 7992506~ 2 ful~ http~            42.4            -71.2               5   2800
-#  4 7992455~ Large~ http~            42.4            -71.0              22   3500
-#  5 7992381~ NEWLY~ http~            42.4            -71.2               5   4400
-#  6 7992232~ Beaut~ http~            42.6            -71.3              15   3550
-#  7 7992191~ 2 Bed~ http~            42.4            -71.1              10   3650
-#  8 7992138~ Impec~ http~            42.4            -71.2              10   5325
-#  9 7992137~ Washe~ http~            42.1            -71.4              22   2350
-# 10 7992135~ Wood ~ http~            42.2            -71.2              22   3151
-# # i 20 more rows
-# # i 5 more variables: title &lt;chr&gt;, full_addr &lt;chr&gt;, lat &lt;dbl&gt;, long &lt;dbl&gt;,
+#  1 7992711… Novem… http…            42.3            -71.1               7   6700
+#  2 7992710… Novem… http…            42.3            -71.1               5   4500
+#  3 7992506… 2 ful… http…            42.4            -71.2               5   2800
+#  4 7992455… Large… http…            42.4            -71.0              22   3500
+#  5 7992381… NEWLY… http…            42.4            -71.2               5   4400
+#  6 7992232… Beaut… http…            42.6            -71.3              15   3550
+#  7 7992191… 2 Bed… http…            42.4            -71.1              10   3650
+#  8 7992138… Impec… http…            42.4            -71.2              10   5325
+#  9 7992137… Washe… http…            42.1            -71.4              22   2350
+# 10 7992135… Wood … http…            42.2            -71.2              22   3151
+# # ℹ 20 more rows
+# # ℹ 5 more variables: title &lt;chr&gt;, full_addr &lt;chr&gt;, lat &lt;dbl&gt;, long &lt;dbl&gt;,
 # #   query &lt;chr&gt;
 
-craigslist_table$dist_err &lt;- diag(geosphere::distm(craigslist_table[,c(&quot;data-longitude&quot;, &quot;data-latitude&quot;)], craigslist_table[,c(&quot;long&quot;, &quot;lat&quot;)]))
+# Distance (in metres) between the Craigslist and the geocoded lat long. distm() compares every pair of points; diag() keeps each listing's own pair
+craigslist_table$dist_err &lt;- geosphere::distm(craigslist_table[,c(&quot;data-longitude&quot;, &quot;data-latitude&quot;)], craigslist_table[,c(&quot;long&quot;, &quot;lat&quot;)]) %&gt;%
+  diag()
 
 
 craigslist_table %&gt;% arrange(-`data-accuracy`) %&gt;% glimpse()
 # Rows: 30
 # Columns: 13
-# $ ids              &lt;chr&gt; &quot;7992455433&quot;, &quot;7992137319&quot;, &quot;7992135630&quot;, &quot;7992131814~
-# $ titles           &lt;chr&gt; &quot;Large 5 Bed | 2 Baths 1st Floor Apartment - 10 Cente~
-# $ urls             &lt;chr&gt; &quot;https://www.craigslist.org/view/d/revere-large-bed-b~
-# $ `data-latitude`  &lt;dbl&gt; 42.41380, 42.09350, 42.18680, 42.45670, 42.41730, 42.~
-# $ `data-longitude` &lt;dbl&gt; -71.00520, -71.40580, -71.20330, -71.37470, -71.10870~
-# $ `data-accuracy`  &lt;dbl&gt; 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 15, 1~
-# $ prices           &lt;dbl&gt; 3500, 2350, 3151, 3349, 4600, 2195, 2878, 3304, 3069,~
-# $ title            &lt;chr&gt; &quot;Large 5 Bed | 2 Baths 1st Floor Apartment - 10 Cente~
-# $ full_addr        &lt;chr&gt; &quot;10 Centennial Ave, Revere, MA 02151&quot;, &quot;10 Independen~
-# $ lat              &lt;dbl&gt; 42.40550, 42.05982, 42.20611, 42.43790, 42.43042, NA,~
-# $ long             &lt;dbl&gt; -70.99678, -71.39399, -71.20505, -71.42923, -71.09099~
-# $ query            &lt;chr&gt; &quot;census&quot;, &quot;census&quot;, &quot;census&quot;, &quot;census&quot;, &quot;census&quot;, &quot;&quot;,~
-# $ dist_err         &lt;dbl&gt; 1154.073084, 3866.863403, 2149.685047, 4948.595847, 2~
+# $ ids              &lt;chr&gt; &quot;7992455433&quot;, &quot;7992137319&quot;, &quot;7992135630&quot;, &quot;7992131814…
+# $ titles           &lt;chr&gt; &quot;Large 5 Bed | 2 Baths 1st Floor Apartment - 10 Cente…
+# $ urls             &lt;chr&gt; &quot;https://www.craigslist.org/view/d/revere-large-bed-b…
+# $ `data-latitude`  &lt;dbl&gt; 42.41380, 42.09350, 42.18680, 42.45670, 42.41730, 42.…
+# $ `data-longitude` &lt;dbl&gt; -71.00520, -71.40580, -71.20330, -71.37470, -71.10870…
+# $ `data-accuracy`  &lt;dbl&gt; 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 15, 1…
+# $ prices           &lt;dbl&gt; 3500, 2350, 3151, 3349, 4600, 2195, 2878, 3304, 3069,…
+# $ title            &lt;chr&gt; &quot;Large 5 Bed | 2 Baths 1st Floor Apartment - 10 Cente…
+# $ full_addr        &lt;chr&gt; &quot;10 Centennial Ave, Revere, MA 02151&quot;, &quot;10 Independen…
+# $ lat              &lt;dbl&gt; 42.40550, 42.05982, 42.20611, 42.43790, 42.43042, NA,…
+# $ long             &lt;dbl&gt; -70.99678, -71.39399, -71.20505, -71.42923, -71.09099…
+# $ query            &lt;chr&gt; &quot;census&quot;, &quot;census&quot;, &quot;census&quot;, &quot;census&quot;, &quot;census&quot;, &quot;&quot;,…
+# $ dist_err         &lt;dbl&gt; 1154.073084, 3866.863403, 2149.685047, 4948.595847, 2…
 </code></pre>
-<p>Notice all the missing addresses with ‘high-accuracy.’ Clearly the text address is an incomplete data. However, can you trust the CL created longitude and latitude?</p>
-<pre><code class="language-r">library(ggplot2)
+<p>Notice all the missing addresses with ‘high-accuracy’. Clearly the text address is an incomplete data. However, can you trust the CL created longitude and latitude?</p>
+<pre><code class="language-r">
+library(ggplot2)
 
 ggplot() +
   geom_point(aes(x = `data-accuracy`, y = `dist_err`), data = craigslist_table) +
@@ -1466,7 +1474,7 @@ ggplot() +
 <p><em>Hint:</em> metres or kilometres? Compare with the size of a tract.</p>
 <details>
 <summary>
-Solution
+<p>Solution</p>
 </summary>
 <ul>
 <li><code>dist_err</code> is disagreement, not error; the geocoder is not ground truth.</li>
@@ -1480,7 +1488,8 @@ assign listings to tracts with each source and compare the counts
 </details>
 <hr>
 <p>Now we are ready to combine them all into one table and visualise the results.</p>
-<pre><code class="language-r">library(tmap.mapgl)   # adds the &quot;maplibre&quot; mode, which draws vector basemaps such as OpenFreeMap
+<pre><code class="language-r">
+library(tmap.mapgl)   # adds the &quot;maplibre&quot; mode, which draws vector basemaps such as OpenFreeMap
 tmap_mode(&quot;maplibre&quot;)
 
 craigslist_sf &lt;- craigslist_table %&gt;%
@@ -1560,15 +1569,15 @@ while (no_new_rounds &lt; 3) {
 nrow(all_ads)
 # [1] 217
 all_ads %&gt;% head()
-# # A tibble: 6 x 5
+# # A tibble: 6 × 5
 #   ids        titles                                        prices metadata urls 
 #   &lt;chr&gt;      &lt;chr&gt;                                          &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;
-# 1 7992711240 November 1st 2026 - 6 Bed 3 Bath  Pkg, Laund~   6700 30/106b~ http~
-# 2 7992710865 November 1st 2026 Cleveland Cir. 4 Bed, 2 Ba~   4500 30/104b~ http~
-# 3 7992506475 2 full baths: Updated kitchen and baths: one~   2800 30/102b~ http~
-# 4 7992455433 Large 5 Bed | 2 Baths 1st Floor Apartment - ~   3500 30/105b~ http~
-# 5 7992381123 NEWLY ON 1 Family doesn't fail 2 impress. 4-~   4400 30/104b~ http~
-# 6 7992232695 Beautiful - 4 bedrooms,  2  baths, townhouse~   3550 29/104b~ http~
+# 1 7992711240 November 1st 2026 - 6 Bed 3 Bath  Pkg, Laund…   6700 30/106b… http…
+# 2 7992710865 November 1st 2026 Cleveland Cir. 4 Bed, 2 Ba…   4500 30/104b… http…
+# 3 7992506475 2 full baths: Updated kitchen and baths: one…   2800 30/102b… http…
+# 4 7992455433 Large 5 Bed | 2 Baths 1st Floor Apartment - …   3500 30/105b… http…
+# 5 7992381123 NEWLY ON 1 Family doesn't fail 2 impress. 4-…   4400 30/104b… http…
+# 6 7992232695 Beautiful - 4 bedrooms,  2  baths, townhouse…   3550 29/104b… http…
 </code></pre>
 <p>We collected 217 listings, which you can compare with the count of 216 that the page reported. These may be off by a few, because new ads get posted and old ones get deleted while we are scrolling.</p>
 <p>Note that we are using <code>scrollTo</code> with a position that we keep track of, rather than scrolling relative to where the page currently is. When the browser swaps batches of listings, the page can jump around, and an absolute position makes sure that we keep moving down.</p>
@@ -1591,7 +1600,7 @@ all_ads %&gt;% head()
 <p><em>Hint:</em> one input, <code>query_url</code>. Compare the url you asked for with where you land.</p>
 <details>
 <summary>
-Solution
+<p>Solution</p>
 </summary>
 <pre><code class="language-text">function(query_url):
     open the url and wait
