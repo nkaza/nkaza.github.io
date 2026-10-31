@@ -12346,6 +12346,19 @@ queries[3] &amp;lt;- paste0(&amp;quot;minSqft=&amp;quot;, min_sqft)
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Try out the different urls and understand how the query to the server works. i.e. try different cities, different types of ads and different arguments to the queries. It is useful to construct different urls by typing them out so that you understand the syntax.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; set a filter in the browser and read the url. Note where Craigslist redirects you.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;for each city:
+    build the base url from the city name and the category code
+    set one filter in the browser, read the argument it adds to the url
+    type a url with two or three arguments yourself; check the filters on the page match
+repeat with a different category (rooms, cars, jobs) and see which part of the url changes
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Misspelt arguments are usually ignored silently.&lt;/p&gt;
+&lt;/details&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;figuring-out-the-structure-of-the-results&#34;&gt;Figuring out the structure of the results&lt;/h2&gt;
 &lt;p&gt;An url request to the server usually results in an HTML page that is rendered in the browser. In other posts, we have seen how the URL may result in JSON objects which are much easier to deal with to create a structured dataset. But HTML pages are often with some structure that are used to render the page. Sometimes, we can take advantage of that structure to infer and extract what we need.&lt;/p&gt;
@@ -12516,12 +12529,36 @@ metadata &amp;lt;-
 &lt;p&gt;Use &lt;a href=&#34;https://selectorgadget.com/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;selectorgadget&lt;/a&gt; Chrome extension or bookmarklet to figure out which elements to extract more easily.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; is the value inside the tag or between tags? Inspect &lt;code&gt;div.meta&lt;/code&gt; in the browser.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;html_attr()&lt;/code&gt;: values inside the tag. &lt;code&gt;html_text()&lt;/code&gt;: text between tags.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;.&lt;/code&gt; selects by class; a bare name selects by tag.&lt;/li&gt;
+&lt;li&gt;Parse the metadata span by span, not as one string.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;in the browser, find the class of each span inside the metadata
+for each ad:
+    pick out the date, bedrooms, size and locale spans
+    strip the units from bedrooms and size, convert to numbers
+    note that the date has no year
+combine into a table with one row per ad; missing spans should become NA
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
 &lt;hr&gt;
 &lt;div class=&#34;alert alert-warning&#34;&gt;
   &lt;div&gt;
     We are treading dangerously here. Notice that we are assuming that each of these ads have same attributes that we can extact and are in the same places within the document and are properly encoded. It is always a good idea to spot check some of these results. In particular, an easy check is to see if the lengths of these variables are the same. If they are, then more likely than not, we can column bind them into a table. If they are not, there is some error and it is likely that the prices wont match up with the descriptions or the number of bedrooms. I will leave that as an exercise, as to how you will spot and recover from these errors.
   &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Hint
+&lt;/summary&gt;
+&lt;p&gt;One missing price shifts every later price up a row. Work ad by ad: &lt;code&gt;html_element()&lt;/code&gt; vs &lt;code&gt;html_elements()&lt;/code&gt;.&lt;/p&gt;
+&lt;/details&gt;
 &lt;h2 id=&#34;extracting-location-attributes&#34;&gt;Extracting location attributes&lt;/h2&gt;
 &lt;p&gt;Location of the apartments/houses are little bit more tricky because they are not embedded in the results page, but in each individual ad. To access them we need to access individual urls for the ads and then extract the location attributes.&lt;/p&gt;
 &lt;p&gt;To do this we use the &lt;code&gt;map_*&lt;/code&gt; function in &lt;code&gt;purrr&lt;/code&gt; package. The function is effectively like a for loop. So the following code for each of the element of urls use the function(x) and then combine them into a table using row binding.&lt;/p&gt;
@@ -12581,6 +12618,23 @@ latlongs
 &lt;p&gt;Extract the number of pictures posted on the ad and relate it to the rent charged.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; run the body on one url and print after each pipe. Inspect the picture thumbnails.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;The coordinates are text attributes of the map &lt;code&gt;div&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;for each ad:
+    count the picture elements (0 if none)
+    (or count them on the results page and save yourself the extra page visits)
+join the counts to the prices
+plot rent against the number of pictures
+then model rent on pictures, controlling for size and location
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Expect a positive association, confounded by size and management. 30 ads is too few.&lt;/p&gt;
+&lt;/details&gt;
 &lt;hr&gt;
 &lt;h3 id=&#34;geocoding-addresses&#34;&gt;Geocoding addresses&lt;/h3&gt;
 &lt;p&gt;Notice the &lt;code&gt;data-accuracy&lt;/code&gt; field in the results. It is not clear, if the lat longs provided by the craigslist are accurate. It is useful to geocode the addresses to get a more accurate location. We first extract the addresses that are in each page and then geocode them using &lt;code&gt;tidygeocoder&lt;/code&gt; package.&lt;/p&gt;
@@ -12698,6 +12752,21 @@ ggplot() +
 &lt;ul&gt;
 &lt;li&gt;What can you infer from this graph? How does this condition your analysis further?&lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; metres or kilometres? Compare with the size of a tract.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;dist_err&lt;/code&gt; is disagreement, not error; the geocoder is not ground truth.&lt;/li&gt;
+&lt;li&gt;Blurred points land in the wrong tract: flag them, prefer exact geocodes or aggregate up.&lt;/li&gt;
+&lt;li&gt;Ads without addresses are not a random subset.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;flag listings whose accuracy is poor or whose two locations disagree by more than a threshold
+pick one location per listing, with a rule for which source you trust when
+assign listings to tracts with each source and compare the counts
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
 &lt;hr&gt;
 &lt;p&gt;Now we are ready to combine them all into one table and visualise the results.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tmap.mapgl)   # adds the &amp;quot;maplibre&amp;quot; mode, which draws vector basemaps such as OpenFreeMap
@@ -12709,8 +12778,9 @@ craigslist_sf &amp;lt;- craigslist_table %&amp;gt;%
 
 m1 &amp;lt;-
   tm_shape(craigslist_sf) +
-  tm_bubbles(fill  = &amp;quot;prices&amp;quot;,
+  tm_dots(fill  = &amp;quot;prices&amp;quot;,
              id = &amp;quot;titles&amp;quot;,
+             size = .3,
              popup = tm_popup(vars = c(&amp;quot;prices&amp;quot;, &amp;quot;full_addr&amp;quot;)),
              group = &amp;quot;Rental listings&amp;quot;) +
   tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
@@ -12807,6 +12877,32 @@ all_ads %&amp;gt;% head()
 &lt;p&gt;Do not forget to close your webdriver with &lt;code&gt;remDr$close()&lt;/code&gt; when you are exiting the script.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; one input, &lt;code&gt;query_url&lt;/code&gt;. Compare the url you asked for with where you land.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;function(query_url):
+    open the url and wait
+    start with an empty table and the scroll position at the top
+    loop until the stopping rule holds:
+        add the ads on the page that are not already in the table
+        scroll down and wait
+    return the table
+
+for each city:
+    build its query url, call the function, add a city column
+    pause before the next city
+stack the tables
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Cache downloaded pages to disk while debugging.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;pull the number in front of each unit out of the metadata text (NA if missing)
+plot rent against size, coloured by bedrooms; try log scales
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Rent per square foot falls with size. Check the outliers and the ads with no size.&lt;/p&gt;
+&lt;/details&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;cautions--conclusions&#34;&gt;Cautions &amp;amp; Conclusions&lt;/h2&gt;
 &lt;p&gt;Scraping the web to create a structured dataset is as much an art as it is a technical exercise. It is about figuring out the right combinations of searches and manipulations that will get you right result. And because there are no documentation and manuals, it is imperative to experiment with it and fail. And you will fail often. The webpages change their structure over time and the code that might work one week may not work the next. The webpages themselves are dynamic and therefore the dataset that you generate may not be replicable. All these should be taken into account when you are scraping the web for data and conducting your analyses.&lt;/p&gt;
