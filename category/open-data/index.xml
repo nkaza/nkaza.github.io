@@ -715,31 +715,32 @@ count(status, status) |&amp;gt;
 &lt;p&gt;For reproducible work, record the date you downloaded the data, save the data you used or query a fixed date with &lt;code&gt;datetime&lt;/code&gt;, as above.&lt;/p&gt;
 &lt;h2 id=&#34;comparing-with-overture-maps&#34;&gt;Comparing with Overture Maps&lt;/h2&gt;
 &lt;p&gt;No single source of points of interest is complete, so it helps to compare OSM with an independent one. &lt;a href=&#34;https://overturemaps.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Overture Maps&lt;/a&gt;, backed by Amazon, Meta, Microsoft and TomTom, publishes an open &lt;em&gt;places&lt;/em&gt; layer built from Facebook business pages, business registries and listings from Microsoft and Foursquare, not from OSM.&lt;/p&gt;
-&lt;p&gt;Overture releases are &lt;a href=&#34;https://geoparquet.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GeoParquet&lt;/a&gt; files in public cloud storage, with no API. The &lt;a href=&#34;https://duckdb.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;DuckDB&lt;/a&gt; database engine reads just the parts inside our bounding box, directly over the internet. Pinning the release date keeps the query reproducible while that release stays online.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(duckdb)
-con &amp;lt;- dbConnect(duckdb())
-invisible(dbExecute(con, &amp;quot;INSTALL spatial; LOAD spatial; INSTALL httpfs; LOAD httpfs; SET s3_region = &#39;us-west-2&#39;;&amp;quot;))
+&lt;p&gt;Overture releases are &lt;a href=&#34;https://geoparquet.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GeoParquet&lt;/a&gt; files in public cloud storage, with no API. The &lt;code&gt;overturemapsr&lt;/code&gt; package reads just the parts inside our bounding box, directly over the internet. Pinning the release date keeps the query reproducible while that release stays online (Overture removes old releases after a few months).&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(overturemapsr)
 
-ov_release &amp;lt;- &amp;quot;2026-10-21.0&amp;quot;   # see https://docs.overturemaps.org/release/latest/
-ov_places  &amp;lt;- str_glue(&amp;quot;s3://overturemaps-us-west-2/release/{ov_release}/theme=places/type=place/*&amp;quot;)
+ov_release &amp;lt;- &amp;quot;2026-10-21&amp;quot;   # see https://docs.overturemaps.org/release/latest/
 
-ov_sql &amp;lt;- str_glue(&amp;quot;
-  SELECT id, names.primary AS name, taxonomy.hierarchy AS hierarchy,
-         confidence, operating_status, sources[1].dataset AS source,
-         ST_AsText(geometry) AS geometry
-  FROM read_parquet(&#39;{ov_places}&#39;)
-  WHERE bbox.xmin &amp;gt; {durham_bb[&#39;xmin&#39;]} AND bbox.xmax &amp;lt; {durham_bb[&#39;xmax&#39;]}
-    AND bbox.ymin &amp;gt; {durham_bb[&#39;ymin&#39;]} AND bbox.ymax &amp;lt; {durham_bb[&#39;ymax&#39;]}&amp;quot;)
-
-overture &amp;lt;- dbGetQuery(con, ov_sql) |&amp;gt;
-  st_as_sf(wkt = &amp;quot;geometry&amp;quot;, crs = 4326) |&amp;gt;   # keep the usual column name, so bind_rows() works later
+overture &amp;lt;- record_batch_reader(&amp;quot;place&amp;quot;, bbox = durham_bb, release_date = ov_release) |&amp;gt;
+  mutate(name      = names$primary,
+         primary   = taxonomy$primary,
+         hierarchy = taxonomy$hierarchy,
+         source    = map_chr(sources, function(s) return(s$dataset[1])),   # the first source of each place
+         geometry  = st_as_sfc(geometry, crs = 4326)) |&amp;gt;                    # geometry arrives as binary (WKB)
+  select(id, name, basic_category, primary, hierarchy, confidence, operating_status, source, geometry) |&amp;gt;
+  st_as_sf() |&amp;gt;
   st_filter(durham)
-dbDisconnect(con, shutdown = TRUE)
+# Processing data for ... s3://overturemaps-us-west-2/release/2026-10-21.0/theme=places/type=place/ ...
+# 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%
+# Data processing complete. Time taken: 5.759184 seconds.
 
 nrow(overture)
 # [1] 17506
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The query takes seconds and returns every place in the city, from restaurants to dentists to churches. Where do they come from?&lt;/p&gt;
+&lt;p&gt;This returns every place in the city, from restaurants to dentists to churches. Where do they come from?&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;overture |&amp;gt;
   st_drop_geometry() |&amp;gt;
   count(source, sort = TRUE) |&amp;gt;
@@ -799,7 +800,146 @@ nrow(overture)
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;Each place also has a category hierarchy. Food places sit under &lt;code&gt;food_and_drink&lt;/code&gt;:&lt;/p&gt;
+&lt;h3 id=&#34;how-overture-categorises-places&#34;&gt;How Overture categorises places&lt;/h3&gt;
+&lt;p&gt;Where OSM has free-form tags, Overture assigns every place to one category in a fixed &lt;a href=&#34;https://docs.overturemaps.org/guides/places/taxonomy/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;taxonomy&lt;/a&gt; of about 2,000 categories, arranged as a tree. Each place carries three views of it:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;primary&lt;/code&gt;: the most specific category, such as &lt;code&gt;chinese_restaurant&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;hierarchy&lt;/code&gt;: the path from the broadest category down to &lt;code&gt;primary&lt;/code&gt;, such as &lt;code&gt;food_and_drink &amp;gt; restaurant &amp;gt; asian_restaurant &amp;gt; east_asian_restaurant &amp;gt; chinese_restaurant&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;basic_category&lt;/code&gt;: one of about 300 everyday categories, such as &lt;code&gt;restaurant&lt;/code&gt;, for when the detail is not needed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The &lt;a href=&#34;https://docs.overturemaps.org/guides/places/taxonomy-browser/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;taxonomy browser&lt;/a&gt; lets you look up where a category sits. To select a kind of place, look for its category anywhere in the hierarchy; that also picks up everything below it.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;has_category &amp;lt;- function(hierarchy, category) {   # TRUE for each place whose path includes category
+  return(map_lgl(hierarchy, function(h) return(category %in% h)))
+}
+
+ov_open &amp;lt;- overture |&amp;gt;
+  filter(operating_status != &amp;quot;permanently_closed&amp;quot; | is.na(operating_status),
+         confidence &amp;gt;= 0.7)   # confidence: Overture&#39;s 0 to 1 estimate that the place exists
+
+kinds &amp;lt;- tribble(
+  ~kind,          ~category,
+  &amp;quot;Restaurants&amp;quot;,  &amp;quot;restaurant&amp;quot;,
+  &amp;quot;Supermarkets&amp;quot;, &amp;quot;grocery_store&amp;quot;,   # Overture has no separate supermarket category
+  &amp;quot;Parks&amp;quot;,        &amp;quot;park&amp;quot;)            # matches whole names, so &amp;quot;parking&amp;quot; is not included
+
+top_paths &amp;lt;- function(category) {   # the most common paths below a category
+  result &amp;lt;- ov_open |&amp;gt;
+    st_drop_geometry() |&amp;gt;
+    filter(has_category(hierarchy, category)) |&amp;gt;
+    mutate(path = map_chr(hierarchy, function(h) return(paste(h, collapse = &amp;quot; &amp;gt; &amp;quot;)))) |&amp;gt;
+    count(path, sort = TRUE) |&amp;gt;
+    slice_head(n = 3)
+  return(result)
+}
+
+kinds |&amp;gt;
+  mutate(paths = map(category, top_paths)) |&amp;gt;
+  unnest(paths) |&amp;gt;
+  select(kind, path, n) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;&amp;quot;, &amp;quot;Hierarchy&amp;quot;, &amp;quot;Places&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Hierarchy&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Places&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Restaurants&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;food_and_drink &amp;gt; restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;139&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Restaurants&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;food_and_drink &amp;gt; restaurant &amp;gt; latin_american_restaurant &amp;gt; mexican_restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;73&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Restaurants&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;food_and_drink &amp;gt; restaurant &amp;gt; european_restaurant &amp;gt; mediterranean_restaurant &amp;gt; italian_restaurant &amp;gt; pizza_restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;72&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Supermarkets&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;shopping &amp;gt; food_and_beverage_store &amp;gt; grocery_store&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;64&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Supermarkets&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;shopping &amp;gt; food_and_beverage_store &amp;gt; grocery_store &amp;gt; mexican_grocery_store&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Supermarkets&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;shopping &amp;gt; food_and_beverage_store &amp;gt; grocery_store &amp;gt; international_grocery_store&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Parks&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;sports_and_recreation &amp;gt; park&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;76&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Parks&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;sports_and_recreation &amp;gt; park &amp;gt; dog_park&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Parks&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;sports_and_recreation &amp;gt; park &amp;gt; playground&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The same three kinds of place in OSM are &lt;code&gt;amenity = restaurant&lt;/code&gt;, &lt;code&gt;shop = supermarket&lt;/code&gt; and &lt;code&gt;leisure = park&lt;/code&gt;. We already have the first two; parks are one more query.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;parks_raw &amp;lt;- opq(durham_bb, timeout = 60) |&amp;gt;
+  add_osm_feature(key = &amp;quot;leisure&amp;quot;, value = &amp;quot;park&amp;quot;) |&amp;gt;
+  get_osm()
+osm_parks &amp;lt;- bind_rows(parks_raw$osm_polygons, parks_raw$osm_multipolygons) |&amp;gt;
+  filter(leisure == &amp;quot;park&amp;quot;) |&amp;gt;
+  st_make_valid() |&amp;gt;
+  st_filter(durham)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;kinds |&amp;gt;
+  mutate(overture = map_int(category, function(k) return(sum(has_category(ov_open$hierarchy, k)))),
+         osm      = c(sum(food$amenity == &amp;quot;restaurant&amp;quot;),
+                      nrow(st_filter(supermarkets, durham)),
+                      nrow(osm_parks))) |&amp;gt;
+  select(kind, osm, overture) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;&amp;quot;, &amp;quot;OSM&amp;quot;, &amp;quot;Overture&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;OSM&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Overture&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Restaurants&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;272&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;773&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Supermarkets&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;36&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;71&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Parks&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;115&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;84&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;For parks, OSM maps the land itself, so a neighbourhood park is there whether or not anyone lists it; Overture has a point for each park that appears in its sources. For supermarkets, Overture’s &lt;code&gt;grocery_store&lt;/code&gt; holds the chains (Food Lion, Harris Teeter, Aldi) but also small food marts, tiendas and tortillerías, and a few places that are not stores at all, such as a farm and a dairy. Counts from the two sources only line up when the definitions do.&lt;/p&gt;
+&lt;h3 id=&#34;places-to-eat&#34;&gt;Places to eat&lt;/h3&gt;
+&lt;p&gt;Food places sit under &lt;code&gt;food_and_drink&lt;/code&gt;. Its second level roughly matches OSM’s &lt;code&gt;amenity&lt;/code&gt; values:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;is_food &amp;lt;- function(h) {          # h is one place&#39;s category hierarchy, e.g. c(&amp;quot;food_and_drink&amp;quot;, &amp;quot;restaurant&amp;quot;)
   return(length(h) &amp;gt; 1 &amp;amp;&amp;amp; h[1] == &amp;quot;food_and_drink&amp;quot;)
 }
@@ -813,7 +953,7 @@ overture_food &amp;lt;- overture |&amp;gt;
                               category == &amp;quot;alcoholic_beverage_venue&amp;quot;     ~ &amp;quot;bar or pub&amp;quot;)) |&amp;gt;
   filter(!is.na(amenity))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The categories only roughly match OSM’s tags: “casual eatery” includes bakeries that OSM tags as &lt;code&gt;shop&lt;/code&gt;, and Overture does not separate bars from pubs. Overture also has &lt;code&gt;operating_status&lt;/code&gt;, which flags closed places, and &lt;code&gt;confidence&lt;/code&gt;, its 0 to 1 estimate that a place exists. We keep open places with a confidence of at least 0.7.&lt;/p&gt;
+&lt;p&gt;The categories only roughly match OSM’s tags: “casual eatery” includes bakeries that OSM tags as &lt;code&gt;shop&lt;/code&gt;, and Overture does not separate bars from pubs. As above, we keep open places with a confidence of at least 0.7.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ov &amp;lt;- overture_food |&amp;gt;
   filter(operating_status != &amp;quot;permanently_closed&amp;quot; | is.na(operating_status),
          confidence &amp;gt;= 0.7) |&amp;gt;
