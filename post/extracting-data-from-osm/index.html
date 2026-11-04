@@ -976,7 +976,7 @@
 
 <div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 720px;">
   <div style="position: relative">
-    <img src="/post/extracting-data-from-osm/featured_hua5095c16e4f6ef0ff471f95a3d658d9b_1828096_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
+    <img src="/post/extracting-data-from-osm/featured_hua8139860d4c844cd5bec9e2ea759096b_1828308_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
     <span class="article-header-caption">Food places in Durham, NC. Data © OpenStreetMap contributors</span>
   </div>
 </div>
@@ -1762,114 +1762,50 @@ overture &lt;- record_batch_reader(&quot;place&quot;, bbox = durham_bb, release_
 </tbody>
 </table>
 <h3 id="how-overture-categorises-places">How Overture categorises places</h3>
-<p>Where OSM has free-form tags, Overture assigns every place to one category in a fixed <a href="https://docs.overturemaps.org/guides/places/taxonomy/" target="_blank" rel="noopener">taxonomy</a> of about 2,000 categories, arranged as a tree. Each place carries three views of it:</p>
+<p>Where OSM has free-form tags, Overture assigns every place to one category in a fixed <a href="https://docs.overturemaps.org/guides/places/taxonomy/" target="_blank" rel="noopener">taxonomy</a> of about 2,000 categories, arranged as a tree. Currently there are three types</p>
 <ul>
 <li><code>primary</code>: the most specific category, such as <code>chinese_restaurant</code>.</li>
 <li><code>hierarchy</code>: the path from the broadest category down to <code>primary</code>, such as <code>food_and_drink &gt; restaurant &gt; asian_restaurant &gt; east_asian_restaurant &gt; chinese_restaurant</code>.</li>
 <li><code>basic_category</code>: one of about 300 everyday categories, such as <code>restaurant</code>, for when the detail is not needed.</li>
 </ul>
-<p>The <a href="https://docs.overturemaps.org/guides/places/taxonomy-browser/" target="_blank" rel="noopener">taxonomy browser</a> lets you look up where a category sits. To select a kind of place, look for its category anywhere in the hierarchy; that also picks up everything below it.</p>
-<pre><code class="language-r">has_category &lt;- function(hierarchy, category) {   # TRUE for each place whose path includes category
-  return(map_lgl(hierarchy, function(h) return(category %in% h)))
+<p>The <a href="https://docs.overturemaps.org/guides/places/taxonomy-browser/" target="_blank" rel="noopener">taxonomy browser</a> lets you look up where a category sits. To select a kind of place, look for its category anywhere in the hierarchy.</p>
+<pre><code class="language-r"># first create a function that you can run repeatedly within each row.
+
+has_category &lt;- function(hierarchy, category) {  
+  return(map_lgl(hierarchy, function(h) return(category %in% h)))  # TRUE for each place whose path includes category. map_lgl returns TRUE, FALSE or NA
 }
 
 ov_open &lt;- overture |&gt;
   filter(operating_status != &quot;permanently_closed&quot; | is.na(operating_status),
          confidence &gt;= 0.7)   # confidence: Overture's 0 to 1 estimate that the place exists
 
-kinds &lt;- tribble(
-  ~kind,          ~category,
-  &quot;Restaurants&quot;,  &quot;restaurant&quot;,
-  &quot;Supermarkets&quot;, &quot;grocery_store&quot;,   # Overture has no separate supermarket category
-  &quot;Parks&quot;,        &quot;park&quot;)            # matches whole names, so &quot;parking&quot; is not included
+ov_open_restaurants &lt;- ov_open |&gt;
+  filter(has_category(hierarchy, &quot;restaurant&quot;))
 
-top_paths &lt;- function(category) {   # the most common paths below a category
-  result &lt;- ov_open |&gt;
-    st_drop_geometry() |&gt;
-    filter(has_category(hierarchy, category)) |&gt;
-    mutate(path = map_chr(hierarchy, function(h) return(paste(h, collapse = &quot; &gt; &quot;)))) |&gt;
-    count(path, sort = TRUE) |&gt;
-    slice_head(n = 3)
-  return(result)
-}
+glimpse(ov_open_restaurants)
+# Rows: 773
+# Columns: 9
+# $ id               &lt;chr&gt; &quot;41734c8a-828c-47cb-8849-edcaf00c7451&quot;, &quot;f469c85e-30f…
+# $ name             &lt;chr&gt; &quot;Wayback Burgers&quot;, &quot;Urban Noodle&quot;, &quot;Baba ghannouj&quot;, &quot;…
+# $ basic_category   &lt;chr&gt; &quot;restaurant&quot;, &quot;restaurant&quot;, &quot;restaurant&quot;, &quot;restaurant…
+# $ primary          &lt;chr&gt; &quot;burger_restaurant&quot;, &quot;ramen_restaurant&quot;, &quot;lebanese_re…
+# $ hierarchy        &lt;list&lt;character&gt;&gt; &lt;&quot;food_and_drink&quot;, &quot;restaurant&quot;, &quot;meat_re…
+# $ confidence       &lt;dbl&gt; 0.9903502, 0.9774380, 0.9662204, 0.9902193, 0.9606313…
+# $ operating_status &lt;chr&gt; &quot;open&quot;, &quot;open&quot;, &quot;open&quot;, &quot;open&quot;, &quot;open&quot;, &quot;open&quot;, &quot;open…
+# $ source           &lt;chr&gt; &quot;meta&quot;, &quot;Foursquare&quot;, &quot;meta&quot;, &quot;meta&quot;, &quot;meta&quot;, &quot;Bright…
+# $ geometry         &lt;POINT [°]&gt; POINT (-78.84927 35.86761), POINT (-78.849 35.8…
+</code></pre>
+<p>The same kinds of place in OSM are <code>amenity = restaurant</code> and <code>shop = supermarket</code>, both downloaded above.</p>
+<pre><code class="language-r">categories &lt;- c(&quot;restaurant&quot;, &quot;grocery_store&quot;, &quot;park&quot;)   # Overture has no separate supermarket category
 
-kinds |&gt;
-  mutate(paths = map(category, top_paths)) |&gt;
-  unnest(paths) |&gt;
-  select(kind, path, n) |&gt;
-  knitr::kable(col.names = c(&quot;&quot;, &quot;Hierarchy&quot;, &quot;Places&quot;))
-</code></pre>
-<table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:left">Hierarchy</th>
-<th style="text-align:right">Places</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Restaurants</td>
-<td style="text-align:left">food_and_drink &gt; restaurant</td>
-<td style="text-align:right">139</td>
-</tr>
-<tr>
-<td style="text-align:left">Restaurants</td>
-<td style="text-align:left">food_and_drink &gt; restaurant &gt; latin_american_restaurant &gt; mexican_restaurant</td>
-<td style="text-align:right">73</td>
-</tr>
-<tr>
-<td style="text-align:left">Restaurants</td>
-<td style="text-align:left">food_and_drink &gt; restaurant &gt; european_restaurant &gt; mediterranean_restaurant &gt; italian_restaurant &gt; pizza_restaurant</td>
-<td style="text-align:right">72</td>
-</tr>
-<tr>
-<td style="text-align:left">Supermarkets</td>
-<td style="text-align:left">shopping &gt; food_and_beverage_store &gt; grocery_store</td>
-<td style="text-align:right">64</td>
-</tr>
-<tr>
-<td style="text-align:left">Supermarkets</td>
-<td style="text-align:left">shopping &gt; food_and_beverage_store &gt; grocery_store &gt; mexican_grocery_store</td>
-<td style="text-align:right">5</td>
-</tr>
-<tr>
-<td style="text-align:left">Supermarkets</td>
-<td style="text-align:left">shopping &gt; food_and_beverage_store &gt; grocery_store &gt; international_grocery_store</td>
-<td style="text-align:right">1</td>
-</tr>
-<tr>
-<td style="text-align:left">Parks</td>
-<td style="text-align:left">sports_and_recreation &gt; park</td>
-<td style="text-align:right">76</td>
-</tr>
-<tr>
-<td style="text-align:left">Parks</td>
-<td style="text-align:left">sports_and_recreation &gt; park &gt; dog_park</td>
-<td style="text-align:right">6</td>
-</tr>
-<tr>
-<td style="text-align:left">Parks</td>
-<td style="text-align:left">sports_and_recreation &gt; park &gt; playground</td>
-<td style="text-align:right">1</td>
-</tr>
-</tbody>
-</table>
-<p>The same three kinds of place in OSM are <code>amenity = restaurant</code>, <code>shop = supermarket</code> and <code>leisure = park</code>. We already have the first two; parks are one more query.</p>
-<pre><code class="language-r">parks_raw &lt;- opq(durham_bb, timeout = 60) |&gt;
-  add_osm_feature(key = &quot;leisure&quot;, value = &quot;park&quot;) |&gt;
-  get_osm()
-osm_parks &lt;- bind_rows(parks_raw$osm_polygons, parks_raw$osm_multipolygons) |&gt;
-  filter(leisure == &quot;park&quot;) |&gt;
-  st_make_valid() |&gt;
-  st_filter(durham)
-</code></pre>
-<pre><code class="language-r">kinds |&gt;
-  mutate(overture = map_int(category, function(k) return(sum(has_category(ov_open$hierarchy, k)))),
-         osm      = c(sum(food$amenity == &quot;restaurant&quot;),
-                      nrow(st_filter(supermarkets, durham)),
-                      nrow(osm_parks))) |&gt;
-  select(kind, osm, overture) |&gt;
+tibble(
+  kind     = c(&quot;Restaurants&quot;, &quot;Supermarkets&quot;, &quot;Parks&quot;),
+  OSM      = c(sum(food$amenity == &quot;restaurant&quot;),
+               nrow(st_filter(supermarkets, durham)),
+               NA),                                       # parks: Exercise 5
+  Overture = map_int(categories,
+                     function(k) return(sum(has_category(ov_open$hierarchy, k))))
+) |&gt;
   knitr::kable(col.names = c(&quot;&quot;, &quot;OSM&quot;, &quot;Overture&quot;))
 </code></pre>
 <table>
@@ -1893,15 +1829,49 @@ osm_parks &lt;- bind_rows(parks_raw$osm_polygons, parks_raw$osm_multipolygons) |
 </tr>
 <tr>
 <td style="text-align:left">Parks</td>
+<td style="text-align:right"></td>
+<td style="text-align:right">84</td>
+</tr>
+</tbody>
+</table>
+<p>For supermarkets, Overture’s <code>grocery_store</code> holds the chains (Food Lion, Harris Teeter, Aldi) but also small food marts, tiendas and tortillerías, and a few places that are not stores at all, such as a farm and a dairy. Counts from the two sources only line up when the definitions do.</p>
+<p>Overture lists more restaurants and supermarkets than OSM. Some of the gap is OSM missing businesses, especially new ones. Some is Overture’s noise: duplicates, stale listings and businesses filed in the wrong category, inherited from social media. Neither source is the truth; it is often best to triangulate from multiple sources.</p>
+<hr>
+<p><strong>Exercise 5: Parks in OSM</strong></p>
+<p>Parks in OSM are tagged <code>leisure = park</code>. Download them, count those in the city and compare with Overture’s parks. Why might the two counts differ?</p>
+<p><em>Hint:</em> parks are areas, so look in <code>osm_polygons</code> and <code>osm_multipolygons</code>.</p>
+<details>
+<summary>
+Solution
+</summary>
+<pre><code class="language-r">parks_raw &lt;- opq(durham_bb, timeout = 60) |&gt;
+  add_osm_feature(key = &quot;leisure&quot;, value = &quot;park&quot;) |&gt;
+  get_osm()
+osm_parks &lt;- bind_rows(parks_raw$osm_polygons, parks_raw$osm_multipolygons) |&gt;
+  filter(leisure == &quot;park&quot;) |&gt;
+  st_make_valid() |&gt;
+  st_filter(durham)
+
+tibble(osm = nrow(osm_parks), overture = sum(has_category(ov_open$hierarchy, &quot;park&quot;))) |&gt;
+  knitr::kable(col.names = c(&quot;OSM&quot;, &quot;Overture&quot;))
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">OSM</th>
+<th style="text-align:right">Overture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
 <td style="text-align:right">115</td>
 <td style="text-align:right">84</td>
 </tr>
 </tbody>
 </table>
-<p>For parks, OSM maps the land itself, so a neighbourhood park is there whether or not anyone lists it; Overture has a point for each park that appears in its sources. For supermarkets, Overture’s <code>grocery_store</code> holds the chains (Food Lion, Harris Teeter, Aldi) but also small food marts, tiendas and tortillerías, and a few places that are not stores at all, such as a farm and a dairy. Counts from the two sources only line up when the definitions do.</p>
-<p>Overture lists more restaurants and supermarkets than OSM. Some of the gap is OSM missing businesses, especially new ones. Some is Overture’s noise: duplicates, stale listings and businesses filed in the wrong category, inherited from social media. Neither source is the truth; it is often best to triangulate from multiple sources.</p>
-<hr>
-<p><strong>Exercise 5: How much does confidence matter?</strong></p>
+<p>OSM maps the land itself, so a neighbourhood park is there whether or not anyone lists it; Overture has a point for each park that appears in its sources, such as a business page or a review.</p>
+</details>
+<p><strong>Exercise 6: How much does confidence matter?</strong></p>
 <p>Recount Overture’s restaurants, supermarkets and parks with confidence thresholds of 0.5, 0.7 and 0.9. How much do the totals move? What does that say about any “number of restaurants” taken from a single source?</p>
 <details>
 <summary>
@@ -1911,15 +1881,14 @@ Solution
   open_places &lt;- overture |&gt;
     filter(operating_status != &quot;permanently_closed&quot; | is.na(operating_status),
            confidence &gt;= threshold)
-  result &lt;- map_int(kinds$category, function(k) return(sum(has_category(open_places$hierarchy, k))))
+  result &lt;- map_int(categories, function(k) return(sum(has_category(open_places$hierarchy, k))))
   return(result)
 }
 
-kinds |&gt;
-  mutate(`confidence ≥ 0.5` = count_at(0.5),
-         `confidence ≥ 0.7` = count_at(0.7),
-         `confidence ≥ 0.9` = count_at(0.9)) |&gt;
-  select(-category) |&gt;
+tibble(kind  = c(&quot;Restaurants&quot;, &quot;Supermarkets&quot;, &quot;Parks&quot;),
+       low   = count_at(0.5),
+       mid   = count_at(0.7),
+       high  = count_at(0.9)) |&gt;
   knitr::kable(col.names = c(&quot;&quot;, &quot;≥ 0.5&quot;, &quot;≥ 0.7&quot;, &quot;≥ 0.9&quot;))
 </code></pre>
 <table>
