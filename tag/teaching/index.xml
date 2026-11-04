@@ -4782,15 +4782,8 @@ overture &amp;lt;- record_batch_reader(&amp;quot;place&amp;quot;, bbox = durham_
   select(id, name, basic_category, primary, hierarchy, confidence, operating_status, source, geometry) |&amp;gt;
   st_as_sf() |&amp;gt;
   st_filter(durham)
-# Processing data for ... s3://overturemaps-us-west-2/release/2026-10-21.0/theme=places/type=place/ ...
-# 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |======================================================================| 100%
-# Data processing complete. Time taken: 5.759184 seconds.
-
-nrow(overture)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;nrow(overture)
 # [1] 17506
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This returns every place in the city, from restaurants to dentists to churches. Where do they come from?&lt;/p&gt;
@@ -4991,122 +4984,56 @@ osm_parks &amp;lt;- bind_rows(parks_raw$osm_polygons, parks_raw$osm_multipolygon
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;For parks, OSM maps the land itself, so a neighbourhood park is there whether or not anyone lists it; Overture has a point for each park that appears in its sources. For supermarkets, Overture’s &lt;code&gt;grocery_store&lt;/code&gt; holds the chains (Food Lion, Harris Teeter, Aldi) but also small food marts, tiendas and tortillerías, and a few places that are not stores at all, such as a farm and a dairy. Counts from the two sources only line up when the definitions do.&lt;/p&gt;
-&lt;h3 id=&#34;places-to-eat&#34;&gt;Places to eat&lt;/h3&gt;
-&lt;p&gt;Food places sit under &lt;code&gt;food_and_drink&lt;/code&gt;. Its second level roughly matches OSM’s &lt;code&gt;amenity&lt;/code&gt; values:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;is_food &amp;lt;- function(h) {          # h is one place&#39;s category hierarchy, e.g. c(&amp;quot;food_and_drink&amp;quot;, &amp;quot;restaurant&amp;quot;)
-  return(length(h) &amp;gt; 1 &amp;amp;&amp;amp; h[1] == &amp;quot;food_and_drink&amp;quot;)
-}
-
-overture_food &amp;lt;- overture |&amp;gt;
-  filter(map_lgl(hierarchy, is_food)) |&amp;gt;
-  mutate(category = map_chr(hierarchy, 2),
-         amenity  = case_when(category == &amp;quot;restaurant&amp;quot;                   ~ &amp;quot;restaurant&amp;quot;,
-                              category == &amp;quot;casual_eatery&amp;quot;                ~ &amp;quot;fast_food&amp;quot;,
-                              category == &amp;quot;non_alcoholic_beverage_venue&amp;quot; ~ &amp;quot;cafe&amp;quot;,
-                              category == &amp;quot;alcoholic_beverage_venue&amp;quot;     ~ &amp;quot;bar or pub&amp;quot;)) |&amp;gt;
-  filter(!is.na(amenity))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The categories only roughly match OSM’s tags: “casual eatery” includes bakeries that OSM tags as &lt;code&gt;shop&lt;/code&gt;, and Overture does not separate bars from pubs. As above, we keep open places with a confidence of at least 0.7.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ov &amp;lt;- overture_food |&amp;gt;
-  filter(operating_status != &amp;quot;permanently_closed&amp;quot; | is.na(operating_status),
-         confidence &amp;gt;= 0.7) |&amp;gt;
-  select(ov_id = id, ov_name = name, amenity, confidence, source)
-
-osm &amp;lt;- food |&amp;gt;
-  mutate(amenity = if_else(amenity %in% c(&amp;quot;bar&amp;quot;, &amp;quot;pub&amp;quot;), &amp;quot;bar or pub&amp;quot;, amenity)) |&amp;gt;
-  filter(amenity != &amp;quot;food_court&amp;quot;) |&amp;gt;
-  select(osm_id, osm_name = name, amenity)
-
-bind_rows(osm = st_drop_geometry(osm), overture = st_drop_geometry(ov), .id = &amp;quot;source&amp;quot;) |&amp;gt;
-  count(source, amenity) |&amp;gt;
-  pivot_wider(names_from = source, values_from = n) |&amp;gt;
-  knitr::kable(col.names = c(&amp;quot;Type&amp;quot;, &amp;quot;OSM&amp;quot;, &amp;quot;Overture&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;Type&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;OSM&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Overture&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;bar or pub&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;44&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;124&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;cafe&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;41&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;89&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;fast_food&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;155&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;374&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;restaurant&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;272&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;773&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Overture lists about 2.7 times as many places as OSM. Some of the gap is OSM missing businesses, especially new ones. Some is Overture’s noise: duplicates, stale listings and businesses filed in the wrong category, inherited from social media. Neither source is the truth; it is often best to triangulate from multiple sources.&lt;/p&gt;
+&lt;p&gt;Overture lists more restaurants and supermarkets than OSM. Some of the gap is OSM missing businesses, especially new ones. Some is Overture’s noise: duplicates, stale listings and businesses filed in the wrong category, inherited from social media. Neither source is the truth; it is often best to triangulate from multiple sources.&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise 5: How much does confidence matter?&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Recount Overture’s places by type with confidence thresholds of 0.5, 0.7 and 0.9. How much do the totals move? What does that say about any “number of restaurants” taken from a single source?&lt;/p&gt;
+&lt;p&gt;Recount Overture’s restaurants, supermarkets and parks with confidence thresholds of 0.5, 0.7 and 0.9. How much do the totals move? What does that say about any “number of restaurants” taken from a single source?&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
 Solution
 &lt;/summary&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;count_at &amp;lt;- function(threshold) {
-  result &amp;lt;- overture_food |&amp;gt;
-    st_drop_geometry() |&amp;gt;
+  open_places &amp;lt;- overture |&amp;gt;
     filter(operating_status != &amp;quot;permanently_closed&amp;quot; | is.na(operating_status),
-           confidence &amp;gt;= threshold) |&amp;gt;
-    count(amenity, name = paste(&amp;quot;confidence ≥&amp;quot;, threshold))
+           confidence &amp;gt;= threshold)
+  result &amp;lt;- map_int(kinds$category, function(k) return(sum(has_category(open_places$hierarchy, k))))
   return(result)
 }
 
-map(c(0.5, 0.7, 0.9), count_at) |&amp;gt;
-  reduce(left_join, by = &amp;quot;amenity&amp;quot;) |&amp;gt;
-  knitr::kable()
+kinds |&amp;gt;
+  mutate(`confidence ≥ 0.5` = count_at(0.5),
+         `confidence ≥ 0.7` = count_at(0.7),
+         `confidence ≥ 0.9` = count_at(0.9)) |&amp;gt;
+  select(-category) |&amp;gt;
+  knitr::kable(col.names = c(&amp;quot;&amp;quot;, &amp;quot;≥ 0.5&amp;quot;, &amp;quot;≥ 0.7&amp;quot;, &amp;quot;≥ 0.9&amp;quot;))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;amenity&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;confidence ≥ 0.5&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;confidence ≥ 0.7&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;confidence ≥ 0.9&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;≥ 0.5&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;≥ 0.7&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;≥ 0.9&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;bar or pub&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;137&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;124&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;107&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;cafe&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;97&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;89&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;81&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;fast_food&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;409&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;374&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;317&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;restaurant&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Restaurants&lt;/td&gt;
 &lt;td style=&#34;text-align:right&#34;&gt;814&lt;/td&gt;
 &lt;td style=&#34;text-align:right&#34;&gt;773&lt;/td&gt;
 &lt;td style=&#34;text-align:right&#34;&gt;681&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Supermarkets&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;81&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;71&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;62&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Parks&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;96&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;84&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;60&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
