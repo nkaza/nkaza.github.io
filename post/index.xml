@@ -6037,332 +6037,346 @@ g3 &amp;lt;- ggplot(bg_trips_duration)+
 &lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people. Analysing fixed route public transit has become relatively straightforward with the introduction of the “General Transit Feed Specification”, a common standard for transit agencies to publish their schedules. &lt;a href=&#34;https://beyondtransparency.org/chapters/part-2/pioneering-open-data-standards-the-gtfs-story/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Pioneered by TriMet of Portland, Oregon&lt;/a&gt; in collaboration with Google, this specification has become common for transit agencies around the world to publish their consumer facing datasets.&lt;/p&gt;
+&lt;p&gt;Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people. Analysing fixed route public transit has become relatively straightforward with the introduction of the “General Transit Feed Specification,” a common standard for transit agencies to publish their schedules. &lt;a href=&#34;https://beyondtransparency.org/chapters/part-2/pioneering-open-data-standards-the-gtfs-story/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Pioneered by TriMet of Portland, Oregon&lt;/a&gt; in collaboration with Google, this specification has become common for transit agencies around the world to publish their consumer facing datasets.&lt;/p&gt;
 &lt;p&gt;GTFS is split into a schedule component that contains schedule, fare, and geographic transit information and a real-time component that contains arrival predictions, vehicle positions and service advisories. Static GTFS consists of routes, trips, stop_times, stops and calendar as mandatory tables. There are also other optional tables such as fares and frequencies. Real Time GTFS (gtfs-rt) consists of trip updates, service interruptions etc.&lt;/p&gt;
 &lt;h2 id=&#34;reading-in-gtfs-files&#34;&gt;Reading in GTFS files&lt;/h2&gt;
-&lt;p&gt;Because GTFS are regularly updated (usually semi-annually) and published on transit agency’s website, it is a good idea to get the latest schedule. Fortunately, &lt;a href=&#34;https://database.mobilitydata.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Mobility Database&lt;/a&gt; has a catalogue of various GTFS feeds and their source locations. In this tutorial, I am going to use Metro St. Louis GTFS feed.&lt;/p&gt;
-&lt;p&gt;In addition, I am going to use &lt;code&gt;tidytransit&lt;/code&gt; and &lt;code&gt;gtfsrouter&lt;/code&gt; packages. &lt;code&gt;extract_gtfs&lt;/code&gt; is a function in the &lt;code&gt;gtfsrouter&lt;/code&gt; package that reads the zipfile and converts it into bunch of data tables. Similarly &lt;code&gt;read_gtfs&lt;/code&gt; from &lt;code&gt;tidytransit&lt;/code&gt; could also be used.&lt;/p&gt;
-&lt;p&gt;In the following code, I am showing how to download the latest GTFS files. However, I am going to use an &lt;a href=&#34;https://www.dropbox.com/s/v0lgu35uxmva00r/google_transit.zip?dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;archived GTFS files&lt;/a&gt; for consistency.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
+&lt;p&gt;Because GTFS are regularly updated (usually semi-annually) and published on transit agency’s website, it is a good idea to get the latest schedule. Fortunately, &lt;a href=&#34;https://mobilitydatabase.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Mobility Database&lt;/a&gt; has a catalogue of various GTFS feeds and their source locations. In this tutorial, I am going to use Metro St. Louis GTFS feed.&lt;/p&gt;
+&lt;p&gt;I am going to use the &lt;code&gt;tidytransit&lt;/code&gt; package. &lt;code&gt;read_gtfs&lt;/code&gt; reads the zipfile and converts it into a bunch of tables.&lt;/p&gt;
+&lt;p&gt;In the following code, I am showing how to download the latest GTFS files. However, I am going to use an &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/google_transit.zip?d=w9eef3cb7424645b79c76f666da0e88de&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=egDfbb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;archived copy of that feed&lt;/a&gt; for consistency. It covers 2 to 29 November 2026.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(readr)
+library(dplyr)
+library(here)
 
-gtfs_feeds &amp;lt;- read_csv(&amp;quot;https://bit.ly/catalogs-csv&amp;quot;) %&amp;gt;%
-               filter(provider == &amp;quot;Metro St. Louis&amp;quot;) %&amp;gt;%
-               filter(data_type == &amp;quot;gtfs&amp;quot;) %&amp;gt;%
-               pull(&#39;urls.direct_download&#39;)
+catalog_url &amp;lt;- &amp;quot;https://storage.googleapis.com/storage/v1/b/mdb-csv/o/sources.csv?alt=media&amp;quot;
+
+gtfs_feeds &amp;lt;- read_csv(catalog_url) |&amp;gt;
+  filter(mdb_source_id == 190) |&amp;gt;   # Metro St. Louis
+  pull(urls.direct_download)
 
 gtfs_feeds
 
-
-## function to download and read the gtfs feeds. Particularly helpful, if there are multiple feeds and/or multiple transit agencies in the area.
-
-download_read_gtfs &amp;lt;- function(feed_url){
-      zipfilename &amp;lt;- basename(feed_url)
-     download.file(feed_url, destfile = zipfilename)
-#      gtfsrouter::extract_gtfs(zipfilename)
-      tidytransit::read_gtfs(zipfilename)
+## Download and read the feed. Particularly helpful if there are multiple feeds and/or multiple transit agencies in the area.
+download_read_gtfs &amp;lt;- function(feed_url) {
+  zipfilename &amp;lt;- here(&amp;quot;tutorials_datasets/gtfs&amp;quot;, &amp;quot;stlouis_latest.zip&amp;quot;)
+  download.file(feed_url, destfile = zipfilename, mode = &amp;quot;wb&amp;quot;)
+  return(tidytransit::read_gtfs(zipfilename))
 }
 
-stlouis_gtfs &amp;lt;- gtfs_feeds %&amp;gt;% download_read_gtfs()
+stlouis_gtfs &amp;lt;- download_read_gtfs(gtfs_feeds)
 
 summary(stlouis_gtfs)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(widgetframe)
-library(tidytransit)
-library(tidyverse)
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidytransit)
+library(dplyr)
+library(purrr)
+library(ggplot2)
 library(sf)
 library(units)
 library(here)
+library(knitr)
+library(lubridate)
+library(tmap)
+library(tmap.mapgl)   # adds the &amp;quot;maplibre&amp;quot; mode, which draws vector basemaps such as OpenFreeMap
+library(widgetframe)
 
-stlouis_gtfs &amp;lt;- here(&amp;quot;tutorials_datasets/gtfs/google_transit.zip&amp;quot;) %&amp;gt;%tidytransit::read_gtfs()
+stlouis_gtfs &amp;lt;- read_gtfs(here(&amp;quot;tutorials_datasets/gtfs/google_transit.zip&amp;quot;))
 
 summary(stlouis_gtfs)
 # tidygtfs object
-# files        agency, stops, routes, trips, stop_times, calendar, calendar_dates, shapes
+# files        agency, routes, stop_times, trips, shapes, calendar, calendar_dates, stops
 # agency       Metro St. Louis
-# service      from 2022-09-26 to 2023-03-12
+# service      from 2026-11-02 to 2026-11-29
 # uses         stop_times (no frequencies)
-# # routes       121
-# # trips      17704
-# # stop_ids    5315
-# # stop_names  5256
-# # shapes       420
+# # routes       61
+# # trips      9796
+# # stop_ids   5108
+# # stop_names 5056
+# # shapes      230
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Notice that there are about 121 routes with over 5,000 stops in the St. Louis region. Visualising these stops is pretty straightforward, once you convert them into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stlouis_gtfs &amp;lt;- gtfs_as_sf(stlouis_gtfs, skip_shapes = FALSE, crs = 4326, quiet = TRUE)
+&lt;p&gt;Notice that there are 61 routes with over 5,000 stops in the St. Louis region. Visualising these stops is pretty straightforward, once you convert them into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stlouis_gtfs &amp;lt;- gtfs_as_sf(stlouis_gtfs, crs = 4326, quiet = TRUE)
 
-stlouis_gtfs 
-# $agency
-# # A tibble: 1 × 8
-#   agency_phone agency_url        agenc…¹ agenc…² agenc…³ agenc…⁴ agenc…⁵ agenc…⁶
-#   &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;             &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;  
-# 1 314-231-2345 http://www.metro… EN      &amp;quot;&amp;quot;      Metro … Americ… http:/… Transi…
-# # … with abbreviated variable names ¹​agency_lang, ²​agency_id, ³​agency_name,
-# #   ⁴​agency_timezone, ⁵​agency_fare_url, ⁶​agency_email
-# 
-# $calendar_dates
-# # A tibble: 6 × 3
-#   service_id       date       exception_type
-#   &amp;lt;chr&amp;gt;            &amp;lt;date&amp;gt;              &amp;lt;int&amp;gt;
-# 1 3_merged_3039412 2023-01-02              1
-# 2 3_merged_3039412 2022-12-26              1
-# 3 1_merged_3039411 2023-01-02              2
-# 4 1_merged_3039411 2022-12-26              2
-# 5 3_merged_3039415 2022-11-24              1
-# 6 1_merged_3039414 2022-11-24              2
-# 
-# $calendar
-# # A tibble: 6 × 10
-#   service_id start_date end_date   monday tuesday wedne…¹ thurs…² friday satur…³
-#   &amp;lt;chr&amp;gt;      &amp;lt;date&amp;gt;     &amp;lt;date&amp;gt;      &amp;lt;int&amp;gt;   &amp;lt;int&amp;gt;   &amp;lt;int&amp;gt;   &amp;lt;int&amp;gt;  &amp;lt;int&amp;gt;   &amp;lt;int&amp;gt;
-# 1 2_merged_… 2022-09-26 2022-11-27      0       0       0       0      0       1
-# 2 2_merged_… 2022-11-28 2023-03-12      0       0       0       0      0       1
-# 3 3_merged_… 2022-11-28 2023-03-12      0       0       0       0      0       0
-# 4 1_merged_… 2022-11-28 2023-03-12      1       1       1       1      1       0
-# 5 3_merged_… 2022-09-26 2022-11-27      0       0       0       0      0       0
-# 6 1_merged_… 2022-09-26 2022-11-27      1       1       1       1      1       0
-# # … with 1 more variable: sunday &amp;lt;int&amp;gt;, and abbreviated variable names
-# #   ¹​wednesday, ²​thursday, ³​saturday
-# 
-# $stops
-# Simple feature collection with 5315 features and 7 fields
+stlouis_gtfs$stops
+# Simple feature collection with 5108 features and 5 fields
 # Geometry type: POINT
 # Dimension:     XY
-# Bounding box:  xmin: -90.66209 ymin: 38.46975 xmax: -89.87466 ymax: 38.82565
+# Bounding box:  xmin: -90.66209 ymin: 38.46975 xmax: -89.87466 ymax: 38.80861
 # Geodetic CRS:  WGS 84
-# # A tibble: 5,315 × 8
-#    wheelchair_boarding zone_id stop_id stop_desc         stop_…¹ locat…² stop_…³
-#  *               &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;             &amp;lt;chr&amp;gt;     &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;  
-#  1                   2 &amp;quot;&amp;quot;      9160    FAR SIDE NATURAL… NATURA…       0 9160   
-#  2                   2 &amp;quot;&amp;quot;      16079   FAR SIDE KINGSHI… KINGSH…       0 16079  
-#  3                   2 &amp;quot;&amp;quot;      4446    FAR SIDE WOODSON… WOODSO…       0 4446   
-#  4                   2 &amp;quot;&amp;quot;      5745    NEAR SIDE 546 NO… 546 NO…       0 5745   
-#  5                   2 &amp;quot;&amp;quot;      16076   FAR SIDE CRAIG @… CRAIG …       0 16076  
-#  6                   2 &amp;quot;&amp;quot;      16075   FAR SIDE CRAIG @… CRAIG …       0 16075  
-#  7                   2 &amp;quot;&amp;quot;      16074   MID-BLOCK NATURA… NATURA…       0 16074  
-#  8                  NA &amp;quot;&amp;quot;      11542   NEAR SIDE MEMORI… MEMORI…       0 11542  
-#  9                  NA &amp;quot;&amp;quot;      11543   NEAR SIDE MEMORI… MEMORI…       0 11543  
-# 10                   1 &amp;quot;&amp;quot;      4024    NEAR SIDE CHEROK… CHEROK…       0 4024   
-# # … with 5,305 more rows, 1 more variable: geometry &amp;lt;POINT [°]&amp;gt;, and
-# #   abbreviated variable names ¹​stop_name, ²​location_type, ³​stop_code
-# 
-# $routes
-# # A tibble: 121 × 7
-#    route_long_name               route…¹ route…² agenc…³ route…⁴ route…⁵ route…⁶
-#    &amp;lt;chr&amp;gt;                           &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;  
-#  1 MetroLink Red Line                  2 f6f6fc  &amp;quot;&amp;quot;      18164R  CC0033  MLR    
-#  2 OFallon-Fairview Heights            3 000000  &amp;quot;&amp;quot;      18093   FFFFFF  12     
-#  3 Washington Park                     3 000000  &amp;quot;&amp;quot;      18092   FFFFFF  9      
-#  4 Alta Sita                           3 000000  &amp;quot;&amp;quot;      18091   FFFFFF  8      
-#  5 Rosemont                            3 000000  &amp;quot;&amp;quot;      18090   FFFFFF  6      
-#  6 St Clair Square                     3 000000  &amp;quot;&amp;quot;      18097   FFFFFF  16     
-#  7 Belleville-Shiloh-OFallon           3 000000  &amp;quot;&amp;quot;      18096   FFFFFF  15     
-#  8 Memorial Hosp-Westfield Plaza       3 000000  &amp;quot;&amp;quot;      18095   FFFFFF  14     
-#  9 Caseyville-Marybelle                3 000000  &amp;quot;&amp;quot;      18094   FFFFFF  13     
-# 10 OFallon-Fairview Heights            3 000000  &amp;quot;&amp;quot;      18158   FFFFFF  12     
-# # … with 111 more rows, and abbreviated variable names ¹​route_type,
-# #   ²​route_text_color, ³​agency_id, ⁴​route_id, ⁵​route_color, ⁶​route_short_name
-# 
-# $trips
-# # A tibble: 17,704 × 8
-#    block_id route_id wheelchair_access…¹ direc…² trip_…³ shape…⁴ servi…⁵ trip_id
-#    &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;                  &amp;lt;int&amp;gt;   &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;  
-#  1 b_65655  18076                      1       0 TO NOR… 110261  2_merg… 3020482
-#  2 b_65657  18076                      1       0 TO NOR… 110261  2_merg… 3020483
-#  3 b_65655  18076                      1       0 TO NOR… 110261  2_merg… 3020480
-#  4 b_65654  18076                      1       0 TO NOR… 110261  2_merg… 3020481
-#  5 b_65657  18076                      1       0 TO NOR… 110261  2_merg… 3020486
-#  6 b_65657  18076                      1       0 TO NOR… 110261  2_merg… 3020487
-#  7 b_65657  18076                      1       0 TO NOR… 110261  2_merg… 3020484
-#  8 b_65656  18076                      1       0 TO NOR… 110261  2_merg… 3020485
-#  9 b_65656  18076                      1       0 TO NOR… 110261  2_merg… 3020488
-# 10 b_65652  18076                      1       0 TO NOR… 110259  2_merg… 3020489
-# # … with 17,694 more rows, and abbreviated variable names
-# #   ¹​wheelchair_accessible, ²​direction_id, ³​trip_headsign, ⁴​shape_id,
-# #   ⁵​service_id
-# 
-# $stop_times
-# # A tibble: 945,643 × 10
-#    trip_id arrival_time depart…¹ stop_id stop_…² stop_…³ picku…⁴ drop_…⁵ shape…⁶
-#    &amp;lt;chr&amp;gt;   &amp;lt;time&amp;gt;       &amp;lt;time&amp;gt;   &amp;lt;chr&amp;gt;     &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;     &amp;lt;int&amp;gt;   &amp;lt;int&amp;gt;   &amp;lt;dbl&amp;gt;
-#  1 3020482 16:50        16:50    16146         1 &amp;quot;&amp;quot;           NA      NA     NA 
-#  2 3020482 16:51        16:51    16301         2 &amp;quot;&amp;quot;           NA      NA    677.
-#  3 3020482 16:51        16:51    16281         3 &amp;quot;&amp;quot;           NA      NA   1000.
-#  4 3020482 16:52        16:52    10164         4 &amp;quot;&amp;quot;           NA      NA   1574.
-#  5 3020482 16:54        16:54    15534         5 &amp;quot;&amp;quot;           NA      NA   2670.
-#  6 3020482 16:55        16:55    14708         6 &amp;quot;&amp;quot;           NA      NA   3301.
-#  7 3020482 16:56        16:56    6691          7 &amp;quot;&amp;quot;           NA      NA   3866.
-#  8 3020482 16:57        16:57    6693          8 &amp;quot;&amp;quot;           NA      NA   4196.
-#  9 3020482 16:57        16:57    6694          9 &amp;quot;&amp;quot;           NA      NA   4474.
-# 10 3020482 16:58        16:58    6695         10 &amp;quot;&amp;quot;           NA      NA   4836.
-# # … with 945,633 more rows, 1 more variable: timepoint &amp;lt;int&amp;gt;, and abbreviated
-# #   variable names ¹​departure_time, ²​stop_sequence, ³​stop_headsign,
-# #   ⁴​pickup_type, ⁵​drop_off_type, ⁶​shape_dist_traveled
-# 
-# $shapes
-# Simple feature collection with 420 features and 1 field
-# Geometry type: LINESTRING
-# Dimension:     XY
-# Bounding box:  xmin: -90.66385 ymin: 38.4682 xmax: -89.87396 ymax: 38.82576
-# Geodetic CRS:  WGS 84
-# First 10 features:
-#    shape_id                       geometry
-# 1    110120 LINESTRING (-90.30889 38.64...
-# 2    110121 LINESTRING (-90.30062 38.65...
-# 3    110122 LINESTRING (-90.2599 38.635...
-# 4    110124 LINESTRING (-90.30172 38.68...
-# 5    110125 LINESTRING (-90.30172 38.68...
-# 6    110126 LINESTRING (-90.30172 38.68...
-# 7    110129 LINESTRING (-90.33777 38.62...
-# 8    110131 LINESTRING (-90.30814 38.64...
-# 9    110132 LINESTRING (-90.315 38.7197...
-# 10   110134 LINESTRING (-90.20271 38.62...
-# 
-# $.
-# $.$dates_services
-# # A tibble: 168 × 2
-#    date       service_id      
-#    &amp;lt;date&amp;gt;     &amp;lt;chr&amp;gt;           
-#  1 2022-09-26 1_merged_3039414
-#  2 2022-09-27 1_merged_3039414
-#  3 2022-09-28 1_merged_3039414
-#  4 2022-09-29 1_merged_3039414
-#  5 2022-09-30 1_merged_3039414
-#  6 2022-10-01 2_merged_3039416
-#  7 2022-10-02 3_merged_3039415
-#  8 2022-10-03 1_merged_3039414
-#  9 2022-10-04 1_merged_3039414
-# 10 2022-10-05 1_merged_3039414
-# # … with 158 more rows
+# # A tibble: 5,108 x 6
+#    stop_id stop_code stop_name                     stop_desc wheelchair_boarding
+#  * &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;                         &amp;lt;chr&amp;gt;                   &amp;lt;int&amp;gt;
+#  1 127     127       THEKLA @ EMERSON SB           NEAR SID~                   2
+#  2 166     166       WEST FLORISSANT @ BUZZ WESTF~ NEAR SID~                   1
+#  3 172     172       SKINKER @ FOREST PARK PARKWA~ NEAR SID~                   1
+#  4 236     236       MERCY HOSPITAL SOUTH NB       FAR SIDE~                   2
+#  5 249     249       CIVIC CENTER TRANSIT CENTER   &amp;lt;NA&amp;gt;                        1
+#  6 273     273       STLCC FLORISSANT VALLEY       FAR SIDE~                   1
+#  7 314     314       175 BOULDER INDUSTRIAL        MID-BLOC~                   2
+#  8 315     315       DEPAUL @ DEPAUL HOSPITAL SB   NEAR SID~                   1
+#  9 353     353       ATHLETIC WAY @ RIDER TRAIL S~ FAR SIDE~                   2
+# 10 393     393       CATALAN TRANSIT CENTER        &amp;lt;NA&amp;gt;                        1
+# # i 5,098 more rows
+# # i 1 more variable: geometry &amp;lt;POINT [arc_degree]&amp;gt;
 
-library(tmap)
-tmap_mode(&amp;quot;view&amp;quot;)
+tmap_mode(&amp;quot;maplibre&amp;quot;)
 
+# One simplified line per route and only the mapped columns keep the web page small.
+route_lines &amp;lt;- get_route_geometry(stlouis_gtfs) |&amp;gt;
+  st_line_merge() |&amp;gt;
+  st_transform(26915) |&amp;gt;
+  st_simplify(dTolerance = 50) |&amp;gt;
+  st_transform(4326)
 
-m1 &amp;lt;- tm_shape(stlouis_gtfs$stops)+
-        tm_dots(col = &amp;quot;red&amp;quot;)+
-       tm_shape(stlouis_gtfs$shapes) +
-        tm_lines(col = &#39;green&#39;, alpha = 0.5)+
-        tm_basemap(leaflet::providers$Stamen.Toner)
+m1 &amp;lt;- tm_shape(route_lines) +
+  tm_lines(col = &amp;quot;steelblue&amp;quot;, col_alpha = 0.6, group = &amp;quot;Routes&amp;quot;) +
+  tm_shape(select(stlouis_gtfs$stops, stop_name)) +
+  tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.05, id = &amp;quot;stop_name&amp;quot;, popup = FALSE, group = &amp;quot;Stops&amp;quot;) +
+  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
 
-library(widgetframe)
-frameWidget(tmap_leaflet(m1))
+frameWidget(tmap_maplibre(m1))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-3.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_stops-map.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;h2 id=&#34;analysing-service-patterns&#34;&gt;Analysing Service Patterns&lt;/h2&gt;
-&lt;p&gt;The GTFS reference specifies that a “service_id contains an ID that uniquely identifies a set of dates when service is available for one or more routes”. A service could run on every weekday or only on Saturdays for example. However, feeds are not required to indicate anything with service_ids and some feeds even use a unique service_id for each trip and day. Service patterns can be used to find a typical day for further analysis like routing or trip frequencies for different days.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
-stlouis_gtfs &amp;lt;- set_servicepattern(stlouis_gtfs)
+&lt;p&gt;The GTFS reference specifies that a “service_id contains an ID that uniquely identifies a set of dates when service is available for one or more routes.” A service could run on every weekday or only on Saturdays for example. However, feeds are not required to indicate anything with service_ids and some feeds even use a unique service_id for each trip and day. Service patterns can be used to find a typical day for further analysis like routing or trip frequencies for different days.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stlouis_gtfs &amp;lt;- set_servicepattern(stlouis_gtfs)
 
 # service ids used
-length(unique(stlouis_gtfs$trips$service_id))
-# [1] 6
+n_distinct(stlouis_gtfs$trips$service_id)
+# [1] 9
 
-# unique date patterns 
-length(unique(stlouis_gtfs$.$servicepatterns$servicepattern_id))
-# [1] 6
+# unique date patterns
+n_distinct(stlouis_gtfs$.$servicepatterns$servicepattern_id)
+# [1] 9
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In this particular instance, service patterns and service_ids are the same.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
-#Visualise the service patterns.
-
-calendar &amp;lt;- tibble(date = unique(stlouis_gtfs$.$dates_services$date)) %&amp;gt;% 
-  mutate(
-    weekday = (function(date) {
-      c(&amp;quot;Sunday&amp;quot;, &amp;quot;Monday&amp;quot;, &amp;quot;Tuesday&amp;quot;, 
-        &amp;quot;Wednesday&amp;quot;, &amp;quot;Thursday&amp;quot;, &amp;quot;Friday&amp;quot;, 
-        &amp;quot;Saturday&amp;quot;)[as.POSIXlt(date)$wday + 1]
-    })(date)
-  )
-
-stlouis_gtfs$.$dates_servicepatterns %&amp;gt;% 
-  left_join(calendar, by = &#39;date&#39;) %&amp;gt;%
-  ggplot()+
-  geom_point(aes(x = date, y = servicepattern_id, color = weekday), size = 1) + 
-  scale_x_date(breaks = scales::date_breaks(&amp;quot;1 month&amp;quot;)) + theme(legend.position = &amp;quot;bottom&amp;quot;)
+&lt;p&gt;In this particular instance, service patterns and service_ids are the same, so we can work with the service ids directly.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stlouis_gtfs$.$dates_services |&amp;gt;
+  mutate(weekday = wday(date, label = TRUE, week_start = 1)) |&amp;gt;
+  ggplot(aes(x = date, y = weekday)) +
+  geom_point(size = 1, colour = &amp;quot;steelblue4&amp;quot;) +
+  facet_wrap(vars(service_id), ncol = 1) +
+  scale_x_date(date_breaks = &amp;quot;1 week&amp;quot;, date_labels = &amp;quot;%d %b&amp;quot;, expand = expansion(add = 2)) +
+  scale_y_discrete(limits = rev) +
+  labs(x = NULL, y = NULL) +
+  theme_minimal()
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;
-&lt;p&gt;The above figure shows that s_3204bc1 service pattern is a Saturday service from Dec 2022, while s_597ac4c is mostly a Saturday service with occasional Thursday before Dec 2022. s_5a57195 and s_f4dfeef seem to be weekday service patterns. We use those service patterns to calculate the frequencies for the rest of the tutorial.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;service_ids &amp;lt;- stlouis_gtfs$.$servicepattern %&amp;gt;% 
-  filter(servicepattern_id %in%  c(&#39;s_5a57195&#39;, &#39;s_f4dfeef&#39; )) %&amp;gt;% 
+&lt;img src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/service-calendar-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
+&lt;p&gt;Each panel is one service id. The ids ending in B1, B2 and B3 are the bus schedules for weekdays, Saturdays and Sundays. Those ending in T1, T2 and T3 are the MetroLink train schedules for the same days. The train schedule changes on 9 November, so the train patterns come in pairs. Notice that Thanksgiving (26 November) runs on the Sunday schedules.&lt;/p&gt;
+&lt;p&gt;Buses and trains run side by side, so a single day needs more than one service id. We pick them from the calendar for a typical weekday, Tuesday 10 November, and use that for the rest of the tutorial.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;analysis_date &amp;lt;- as.Date(&amp;quot;2026-11-10&amp;quot;)
+
+service_ids &amp;lt;- stlouis_gtfs$.$dates_services |&amp;gt;
+  filter(date == analysis_date) |&amp;gt;
   pull(service_id)
+
+service_ids
+# [1] &amp;quot;324-B1&amp;quot; &amp;quot;324-T1&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Getting route frequncies are straightforward when we know which service patterns we want to use. &lt;code&gt;tidytransit&lt;/code&gt; uses times as seconds from the midnight. If we want midday frequency between 11 AM and 4 PM, we need to convert them to seconds.&lt;/p&gt;
+&lt;p&gt;Getting route frequencies is straightforward when we know which services we want to use. &lt;code&gt;tidytransit&lt;/code&gt; takes the time window as &lt;code&gt;&amp;quot;HH:MM:SS&amp;quot;&lt;/code&gt; strings, but reports headways in seconds.&lt;/p&gt;
 &lt;p&gt;Please pay explicit attention to the units and their conversion, as I have done below.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;midday_route_freq &amp;lt;- get_route_frequency(stlouis_gtfs, service_ids = service_ids, 
-                                     start_time = 11*3600, end_time = 16*3600) %&amp;gt;% # these are in seconds starting from 00H00.
-                       mutate(across(ends_with(&amp;quot;headways&amp;quot;),  ~units::set_units(.x, &#39;s&#39;))) %&amp;gt;%
-                       mutate(across(ends_with(&amp;quot;headways&amp;quot;),  ~units::set_units(.x, &#39;min&#39;)))
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;to_minutes &amp;lt;- function(x) {
+  return(set_units(set_units(x, &amp;quot;s&amp;quot;), &amp;quot;min&amp;quot;))
+}
 
+midday_route_freq &amp;lt;- get_route_frequency(stlouis_gtfs, service_ids = service_ids,
+                                         start_time = &amp;quot;11:00:00&amp;quot;, end_time = &amp;quot;16:00:00&amp;quot;) |&amp;gt;
+  mutate(across(ends_with(&amp;quot;headways&amp;quot;), to_minutes))
 
-m1 &amp;lt;-
-get_route_geometry(stlouis_gtfs, service_ids = service_ids) %&amp;gt;%
-  inner_join(midday_route_freq, by = &amp;quot;route_id&amp;quot;) %&amp;gt;%
-  mutate(frequency = (1/set_units(median_headways, &amp;quot;hr&amp;quot;))) %&amp;gt;%
-  tm_shape()+
-  tm_lines(col=&#39;frequency&#39;, alpha = 0.4, style = &amp;quot;pretty&amp;quot;, n=4, scale = 5, lwd = &amp;quot;frequency&amp;quot;) +
-  tm_basemap(leaflet::providers$Stamen.Toner)
-  
-frameWidget(tmap_leaflet(m1))
+route_freq_sf &amp;lt;- route_lines |&amp;gt;
+  inner_join(midday_route_freq, by = &amp;quot;route_id&amp;quot;) |&amp;gt;
+  left_join(select(stlouis_gtfs$routes, route_id, route_short_name, route_long_name), by = &amp;quot;route_id&amp;quot;) |&amp;gt;
+  mutate(frequency = 1 / set_units(median_headways, &amp;quot;hr&amp;quot;),
+         trips_per_hr = drop_units(frequency)) |&amp;gt;   # tmap needs plain numbers
+  select(route_short_name, route_long_name, trips_per_hr)
+
+# tmap&#39;s maplibre mode has no text layer, so labels are added to the finished map with mapgl.
+add_labels &amp;lt;- function(map, labels) {
+  labelled &amp;lt;- mapgl::add_symbol_layer(map,
+                                      id = &amp;quot;labels&amp;quot;,
+                                      source = labels,
+                                      text_field = mapgl::get_column(&amp;quot;label&amp;quot;),
+                                      text_font = list(&amp;quot;Noto Sans Regular&amp;quot;),
+                                      text_size = 12,
+                                      text_halo_color = &amp;quot;white&amp;quot;,
+                                      text_halo_width = 1.5,
+                                      text_anchor = &amp;quot;top&amp;quot;,
+                                      text_offset = c(0, 0.5),
+                                      text_allow_overlap = TRUE)
+  return(labelled)
+}
+
+downtown &amp;lt;- st_sfc(st_point(c(-90.19, 38.63)), crs = 4326)
+
+# Label the most and the least frequent routes in place of a legend.
+route_labels &amp;lt;- bind_rows(slice_max(route_freq_sf, trips_per_hr, n = 3, with_ties = FALSE),
+                          slice_min(route_freq_sf, trips_per_hr, n = 2, with_ties = FALSE)) |&amp;gt;
+  mutate(label = paste0(route_short_name, &amp;quot;: &amp;quot;, round(trips_per_hr, 1), &amp;quot; per hr&amp;quot;)) |&amp;gt;
+  st_cast(&amp;quot;MULTIPOINT&amp;quot;) |&amp;gt;
+  st_cast(&amp;quot;POINT&amp;quot;) |&amp;gt;
+  mutate(from_downtown = st_distance(geometry, downtown)[, 1]) |&amp;gt;
+  slice_max(from_downtown, n = 1, by = route_short_name, with_ties = FALSE)   # label the outer end of each route, away from the crowded centre
+
+m2 &amp;lt;- tm_shape(route_freq_sf) +
+  tm_lines(col = &amp;quot;trips_per_hr&amp;quot;,
+           col.scale = tm_scale_intervals(n = 4, style = &amp;quot;pretty&amp;quot;, values = &amp;quot;brewer.blues&amp;quot;, values.range = c(0.4, 1)),
+           col.legend = tm_legend_hide(),
+           lwd = &amp;quot;trips_per_hr&amp;quot;,
+           lwd.scale = tm_scale_continuous(values.scale = 6),
+           lwd.legend = tm_legend_hide(),
+           id = &amp;quot;route_long_name&amp;quot;,
+           group = &amp;quot;Routes&amp;quot;) +
+  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
+
+frameWidget(add_labels(tmap_maplibre(m2), route_labels))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-7.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_route-frequency.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;p&gt;While it is fine to know which routes are more frequent than others, it is also useful to know which stops have smaller headways and more frequent departures.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
-midday_stops &amp;lt;-
-  get_stop_frequency(stlouis_gtfs, start_time = 11*3600, end_time = 16*3600, # these are in seconds starting from 00H00.
-                              service_ids = service_ids, by_route = FALSE) %&amp;gt;%
-  mutate(mean_headway = units::set_units(mean_headway, &amp;quot;s&amp;quot;),
-         mean_headway  = units::set_units(mean_headway, &amp;quot;min&amp;quot;)) %&amp;gt;%
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;midday_stops &amp;lt;- get_stop_frequency(stlouis_gtfs, start_time = &amp;quot;11:00:00&amp;quot;, end_time = &amp;quot;16:00:00&amp;quot;,
+                                   service_ids = service_ids, by_route = FALSE) |&amp;gt;
   arrange(mean_headway)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Notice that stop frequencies are summarised by different service patterns. Since we selected multiple patterns, we need to average them out to get a reasonable estimate.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;midday_stops_summ &amp;lt;- midday_stops %&amp;gt;% 
-group_by(stop_id) %&amp;gt;% 
-  summarise(n_departures = sum(n_departures, na.rm = T), 
-            mean_headway = mean(mean_headway, na.rm=T)) %&amp;gt;% 
-  arrange(mean_headway)
+&lt;p&gt;Notice that stop frequencies are summarised by service id. Since the buses and the trains run on the same day, we add their departures and work out the headway from the total.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;midday_window &amp;lt;- set_units(5, &amp;quot;hr&amp;quot;)
 
-head(midday_stops_summ)  # Some stops have less than 3 min wait time. However, note that this is not by route, because we set the argument in such a way in earlier piece of code 
-# # A tibble: 6 × 3
-#   stop_id n_departures mean_headway
-#   &amp;lt;chr&amp;gt;          &amp;lt;int&amp;gt;        [min]
-# 1 13330            199         3.02
-# 2 14330            184         3.27
-# 3 14769            165         3.64
-# 4 11102            160         3.75
-# 5 14792            160         3.75
-# 6 7424             142         4.23
+midday_stops_summ &amp;lt;- midday_stops |&amp;gt;
+  summarise(n_departures = sum(n_departures, na.rm = TRUE), .by = stop_id) |&amp;gt;
+  mutate(mean_headway = set_units(midday_window / n_departures, &amp;quot;min&amp;quot;)) |&amp;gt;
+  arrange(mean_headway) |&amp;gt;
+  left_join(st_drop_geometry(select(stlouis_gtfs$stops, stop_id, stop_name)), by = &amp;quot;stop_id&amp;quot;) |&amp;gt;
+  relocate(stop_name, .after = stop_id)
 
-tail(midday_stops_summ)  # Some stops have more than 2 hr wait between the buses
-# # A tibble: 6 × 3
-#   stop_id n_departures mean_headway
-#   &amp;lt;chr&amp;gt;          &amp;lt;int&amp;gt;        [min]
-# 1 16085              6         112.
-# 2 13653              4         150 
-# 3 16293              4         150 
-# 4 6086               4         150 
-# 5 15619              3         225 
-# 6 13966              2         300
+# Some stops have less than a 3 min wait. However, note that this is not by route, because we set the argument in such a way in earlier piece of code
+midday_stops_summ |&amp;gt;
+  slice_head(n = 5) |&amp;gt;
+  mutate(mean_headway = drop_units(mean_headway)) |&amp;gt;
+  kable(digits = 1, col.names = c(&amp;quot;Stop id&amp;quot;, &amp;quot;Stop&amp;quot;, &amp;quot;Departures&amp;quot;, &amp;quot;Mean headway (min)&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Stop id&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Stop&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Departures&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Mean headway (min)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;13330&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;NORTH HANLEY TRANSIT CENTER&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;120&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;14792&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;CENTRAL WEST END TRANSIT CENTER&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;113&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2.7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;14330&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;5TH &amp;amp; MISSOURI TRANSIT CENTER&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;111&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2.7&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;11102&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;BELLEVILLE TRANSIT CENTER&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;90&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;3.3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;14124&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;FAIRVIEW HEIGHTS TRANSIT CENTER&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;84&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;3.6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Some stops have more than 2 hr wait between the buses
+midday_stops_summ |&amp;gt;
+  slice_tail(n = 5) |&amp;gt;
+  mutate(mean_headway = drop_units(mean_headway)) |&amp;gt;
+  kable(digits = 1, col.names = c(&amp;quot;Stop id&amp;quot;, &amp;quot;Stop&amp;quot;, &amp;quot;Departures&amp;quot;, &amp;quot;Mean headway (min)&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Stop id&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Stop&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Departures&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Mean headway (min)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;6912&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;ST CHARLES ROCK ROAD @ NORTHWEST INDUSTRIAL EB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;150&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;6914&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;ST. CHARLES ROCK ROAD @ TAUSSIG EB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;150&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;6915&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;ST. CHARLES ROCK ROAD @ PENNRIDGE EB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;150&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;15619&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;VALLEY INDUSTRIES LOOP&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;300&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;6086&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;FLEISCHER @ LHB INDUSTRIES WB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;300&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stops_freq_sf &amp;lt;- stlouis_gtfs$stops |&amp;gt;
+  select(stop_id) |&amp;gt;
+  inner_join(midday_stops_summ, by = &amp;quot;stop_id&amp;quot;) |&amp;gt;
+  mutate(bubble_size = n_departures^2,   # squared, to set the busy stops apart
+         tip = paste0(stop_name, &amp;quot;: &amp;quot;, round(drop_units(mean_headway)), &amp;quot; min headway&amp;quot;)) |&amp;gt;
+  select(stop_name, n_departures, mean_headway, bubble_size, tip)
 
-m1 &amp;lt;-
-stlouis_gtfs$stops %&amp;gt;% 
- left_join(midday_stops_summ, by=&#39;stop_id&#39;) %&amp;gt;% 
- mutate(bubble_size = n_departures^2) %&amp;gt;% 
- tm_shape()+ 
- tm_dots(size = &amp;quot;bubble_size&amp;quot;, style = &amp;quot;cont&amp;quot;, alpha=.7, popup.vars = &amp;quot;stop_name&amp;quot;, id = &#39;stop_name&#39;) + 
- tm_shape(stlouis_gtfs$shapes)+ 
- tm_lines(col = &#39;green&#39;, alpha =.1) + 
- tm_basemap(leaflet::providers$Stamen.Toner) 
+# Label the busiest stops and the longest waits in place of a legend.
+stop_labels &amp;lt;- bind_rows(slice_max(stops_freq_sf, n_departures, n = 3, with_ties = FALSE),
+                         slice_max(stops_freq_sf, mean_headway, n = 2, with_ties = FALSE)) |&amp;gt;
+  mutate(label = tip)
 
-frameWidget(tmap_leaflet(m1))
+m3 &amp;lt;- tm_shape(route_lines) +
+  tm_lines(col = &amp;quot;steelblue&amp;quot;, col_alpha = 0.2, group = &amp;quot;Routes&amp;quot;) +
+  tm_shape(stops_freq_sf) +
+  tm_dots(fill = &amp;quot;firebrick&amp;quot;, fill_alpha = 0.6,
+          size = &amp;quot;bubble_size&amp;quot;,
+          size.scale = tm_scale_continuous(values.scale = 1.5),
+          size.legend = tm_legend_hide(),
+          id = &amp;quot;tip&amp;quot;,
+          popup = FALSE,
+          group = &amp;quot;Stops&amp;quot;) +
+  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
+
+frameWidget(add_labels(tmap_maplibre(m3), stop_labels))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-9.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;Notice how some stops have more frequent departures and some have long wait times. There are some spatial patterns. The classic hub and spoke transit system means that the downtown (hub) have a lot of stops that have high quality transit. However, there are also some transit centers at the outskirts that also have large number of departures. These serve as transfer stations or terminus.&lt;/p&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_stop-summary.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Notice how some stops have more frequent departures and some have long wait times. There are some spatial patterns. The classic hub and spoke transit system means that the downtown (hub) have a lot of stops that have high quality transit. However, there are also some transit centres at the outskirts that also have large number of departures. These serve as transfer stations or terminus.&lt;/p&gt;
 &lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Exercise 1: Frequency by route, time and season&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;Notice that these stop frequencies do not account for routes. However, it may be more useful to get the frequencies averaged by the route. Does the geography of access change?&lt;/p&gt;
@@ -6374,28 +6388,56 @@ frameWidget(tmap_leaflet(m1))
 &lt;p&gt;If there are seasonal variations, it would be helpful to know. For example, university transit systems have reduced operations during Winter and Summer breaks. Using the above as a template, and Duke University transit as your public transit system, figure out the seasonal variations in accessibility.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; Pick the service ids from the calendar for one date at a time, as we did for 10 November, then reuse the stop frequency code.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;p&gt;&lt;strong&gt;Frequency by route&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;for the same date and midday window, get stop frequencies split by route
+for each stop, keep the shortest headway among the routes that serve it
+join the result to the stop locations
+map it the same way as the combined departures and compare the two maps
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The transit centers lead the combined map because many routes meet there. North Hanley has a departure every 2.5 min across all routes, but no single route comes more often than every 20 min. By route, the stops along the busiest corridors such as Grand move to the top, at about 11.5 min.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Variation over the day and the week&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;choose one date for each day type: weekday, Saturday, Sunday
+choose time windows: morning, midday, afternoon, evening
+for each date and window:
+    find the service ids running on that date
+    get stop frequencies for those services and that window
+    add the departures at each stop
+    divide by the length of the window to get departures per hour
+tabulate system wide departures per hour by day type and window
+map the stops as small multiples, one panel for each combination
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Windows of different lengths are only comparable per hour. Weekday service is about the same in the morning and at midday. Midday service on Saturday is about 30% lower and on Sunday lower still. A weekday evening looks much like a Saturday.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Seasonal variation at Duke&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;download the Duke University feed from the catalogue
+list which service ids run on which dates and how many trips each one has
+add up the trips on each date and plot them through the feed&#39;s date range
+choose a date from each distinct period
+repeat the stop frequency analysis for each one and compare the maps
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The current feed only covers January to August 2025, and weekday trips step up from about 800 to about 870 in May. A single feed cannot show periods outside its own dates, so a full year needs archived feeds.&lt;/p&gt;
+&lt;/details&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;accessibility-as-cumulative-opportunity&#34;&gt;Accessibility as Cumulative Opportunity&lt;/h2&gt;
 &lt;p&gt;While it is useful to think of accessibility as frequency of transit at a particular location, that indicator does not tell us much about the system level accessibility. While a specific bus station might have frequent departures, it may be on a line that is broadly disconnected from the rest of the transit system (e.g. connected to other lines that have significant wait times). It is thus useful to measure accessibility as opportunities that can be accessed within a travel budget (say 45 minutes). To do compute these, it is useful to figure out how much area can be covered within 45 min of travel time.&lt;/p&gt;
 &lt;p&gt;It is reasonably straightforward to figure out how much area can be &lt;a href=&#34;https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/&#34;&gt;covered by foot using routing engines such as OSRM&lt;/a&gt;. The tricky bit is to figure out how much time is spent waiting at transit stations before boarding the buses/trains and during transfers.&lt;/p&gt;
 &lt;p&gt;Typically, accessibility is measured for centroids of population centers (block groups e.g.). However, any origin set should be fine. I select the the three counties for the analysis (St. Clair in IL and St. Louis City, St. Louis County in MO)&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
-transitstops &amp;lt;- stlouis_gtfs$stops
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;transitstops &amp;lt;- stlouis_gtfs$stops
 
-blkgrp_centroid &amp;lt;- list()
+get_centroids &amp;lt;- function(state, county) {
+  centroids &amp;lt;- tigris::block_groups(state = state, county = county, year = 2024, progress_bar = FALSE) |&amp;gt;
+    st_centroid() |&amp;gt;
+    st_transform(st_crs(transitstops)) |&amp;gt;
+    select(GEOID)
+  return(centroids)
+}
 
-blkgrp_centroid[[1]] &amp;lt;- tigris::block_groups(state=&amp;quot;MO&amp;quot;, county = c(&#39;510&#39;, &#39;189&#39;), progress_bar = FALSE) %&amp;gt;% 
-                        st_centroid() %&amp;gt;% 
-                        st_transform(st_crs(transitstops)) %&amp;gt;%
-                        select(GEOID) 
-
-blkgrp_centroid[[2]] &amp;lt;- tigris::block_groups(state=&amp;quot;IL&amp;quot;, county = &#39;163&#39;, progress_bar = FALSE) %&amp;gt;% 
-  st_centroid() %&amp;gt;% 
-  st_transform(st_crs(transitstops)) %&amp;gt;%
-  select(GEOID) 
-
-
-blkgrps &amp;lt;- do.call(rbind, blkgrp_centroid)
+blkgrps &amp;lt;- bind_rows(get_centroids(&amp;quot;MO&amp;quot;, c(&amp;quot;510&amp;quot;, &amp;quot;189&amp;quot;)),
+                     get_centroids(&amp;quot;IL&amp;quot;, &amp;quot;163&amp;quot;))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;An analytical decision to make early on is to assign the origin to a nearest starting point on the transit network or to the nearest starting point on the road (foot/bike) network. It is always more computationally expensive to model both the first and last mile of travel. In this tutorial, I will demonstrate how this might be possible.&lt;/p&gt;
 &lt;p&gt;We need to operationalise a few things. Some of them are easier to precompute and some of them are easier on the fly.&lt;/p&gt;
@@ -6407,182 +6449,378 @@ blkgrps &amp;lt;- do.call(rbind, blkgrp_centroid)
 &lt;p&gt;Travel time from each transit station to every other transit station. For the sake of practicality, we will limit the number of transfers to 3. This is highly dependent on schedules, especially when the trip starts and what time the transit reaches each stop and if there are any transfers available to other routes within the travel budget. This is time varying.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;The geography that can be covered from each transit stop in the remaining time after the transit trip is concluded. While, we do not know apriori how much time is remaining, we know that it cannot exceed the travel budget (45 min). So we can precompute 1 min ischocrones from each transit station and select them as necessary.&lt;/p&gt;
+&lt;p&gt;The geography that can be covered from each transit stop in the remaining time after the transit trip is concluded. While, we do not know apriori how much time is remaining, we know that it cannot exceed the travel budget (45 min). So we can precompute 1 min isochrones from each transit station and select them as necessary.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;While we are focused on transit, it could very well be that many of the blockgroups may not have access to good quality transit and therefore the entire travel budget is spent on foot.Thus, we also compute the isochrones for the blockgroup centeroids.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;All the steps (except the second) can be computed using routing engines such as OSRM. Since these are time consuming, I am only going to show the code rather than running it. For this to run, OSRM needs to be &lt;a href=&#34;post/isochrones-from-routing-engines-osrm/&#34;&gt;set up with appropriate street networks&lt;/a&gt;. See&lt;/p&gt;
+&lt;p&gt;All the steps (except the second) can be computed using routing engines such as OSRM.&lt;/p&gt;
+&lt;h3 id=&#34;connecting-to-a-routing-server&#34;&gt;Connecting to a routing server&lt;/h3&gt;
+&lt;p&gt;We will use a cloud server for the queries in this tutorial. Its address does not belong in shared code, so it goes in your &lt;code&gt;.Renviron&lt;/code&gt; file (&lt;code&gt;usethis::edit_r_environ()&lt;/code&gt; opens it). Students in my class can ask me for the address. Mind the trailing slash and restart R after you save the file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;OSRM_URL=http://address-of-the-server:5000/
+&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osrm)
 
-options(osrm.server = &amp;quot;http://localhost:5000/&amp;quot;)
-options(osrm.profile = &#39;foot&#39;) 
-
-
-ttmatrix &amp;lt;- osrmTable(src=blkgrps, dst=transitstops, measure = c(&#39;duration&#39;))
-ttmatrix$durations &amp;lt;- round(ttmatrix$durations)
-
-stop_iso &amp;lt;- list()
-stop_iso &amp;lt;- map(1:nrow(transitstops), possibly(function(x){osrmIsochrone(loc=transitstops[x,], breaks = seq(0,45,1))}, otherwise = NULL))
-
-blkgrp_iso &amp;lt;- list()
-blkgrp_iso &amp;lt;- map(1:nrow(blkgrps), possibly(function(x){osrmIsochrone(loc=blkgrps[x,], breaks = seq(0,45,1))}, otherwise = NULL))
+options(osrm.server = Sys.getenv(&amp;quot;OSRM_URL&amp;quot;),
+        osrm.profile = &amp;quot;foot&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I precomputed these and saved them in &lt;a href=&#34;https://www.dropbox.com/s/66fwvifw1jcg3en/ttmatrix.RData?dl=0&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;an RData file&lt;/a&gt;. The RData file has three main objects. stop_iso is list of isochrones for each stop. blkgrp_iso is the list of isochrones for each blkgrp. ttmatrix is large list where the element duration is a travel time matrix from blkgrps to transit stops.&lt;/p&gt;
-&lt;p&gt;Some clean up is necessary, like adding names to easily filter and identify.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;load(here::here(&amp;quot;tutorials_datasets/gtfs/ttmatrix.RData&amp;quot;))
+&lt;h3 id=&#34;starting-with-one-location&#34;&gt;Starting with one location&lt;/h3&gt;
+&lt;p&gt;Let us walk through the queries for a single block group. &lt;code&gt;osrmTable&lt;/code&gt; returns the walking time from an origin to a set of destinations, here the five stops closest to the block group in a straight line.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;blkgrp_id &amp;lt;- &amp;quot;291892138006&amp;quot;
+origin &amp;lt;- filter(blkgrps, GEOID == blkgrp_id)
 
-str(blkgrp_iso[[1]])
-# Classes &#39;sf&#39; and &#39;data.frame&#39;:    42 obs. of  4 variables:
-#  $ id      : int  1 2 3 4 5 6 7 8 9 10 ...
-#  $ isomin  : num  0 4 5 6 7 8 9 10 11 12 ...
-#  $ isomax  : num  4 5 6 7 8 9 10 11 12 13 ...
-#  $ geometry:sfc_MULTIPOLYGON of length 42; first list element: List of 1
-#   ..$ :List of 1
-#   .. ..$ : num [1:7, 1:2] -90.2 -90.2 -90.2 -90.2 -90.2 ...
-#   ..- attr(*, &amp;quot;class&amp;quot;)= chr [1:3] &amp;quot;XY&amp;quot; &amp;quot;MULTIPOLYGON&amp;quot; &amp;quot;sfg&amp;quot;
-#  - attr(*, &amp;quot;sf_column&amp;quot;)= chr &amp;quot;geometry&amp;quot;
-#  - attr(*, &amp;quot;agr&amp;quot;)= Factor w/ 3 levels &amp;quot;constant&amp;quot;,&amp;quot;aggregate&amp;quot;,..: NA NA NA
-#   ..- attr(*, &amp;quot;names&amp;quot;)= chr [1:3] &amp;quot;id&amp;quot; &amp;quot;isomin&amp;quot; &amp;quot;isomax&amp;quot;
-length(blkgrp_iso)
-# [1] 1260
+straight_line &amp;lt;- st_distance(transitstops, origin)[, 1]
+closest_stops &amp;lt;- transitstops[order(straight_line)[1:5], ]
 
-str(stop_iso[[1]])
-# Classes &#39;sf&#39; and &#39;data.frame&#39;:    41 obs. of  4 variables:
-#  $ id      : int  1 2 3 4 5 6 7 8 9 10 ...
-#  $ isomin  : num  0 5 6 7 8 9 10 11 12 13 ...
-#  $ isomax  : num  5 6 7 8 9 10 11 12 13 14 ...
-#  $ geometry:sfc_MULTIPOLYGON of length 41; first list element: List of 1
-#   ..$ :List of 1
-#   .. ..$ : num [1:7, 1:2] -90.3 -90.3 -90.3 -90.3 -90.3 ...
-#   ..- attr(*, &amp;quot;class&amp;quot;)= chr [1:3] &amp;quot;XY&amp;quot; &amp;quot;MULTIPOLYGON&amp;quot; &amp;quot;sfg&amp;quot;
-#  - attr(*, &amp;quot;sf_column&amp;quot;)= chr &amp;quot;geometry&amp;quot;
-#  - attr(*, &amp;quot;agr&amp;quot;)= Factor w/ 3 levels &amp;quot;constant&amp;quot;,&amp;quot;aggregate&amp;quot;,..: NA NA NA
-#   ..- attr(*, &amp;quot;names&amp;quot;)= chr [1:3] &amp;quot;id&amp;quot; &amp;quot;isomin&amp;quot; &amp;quot;isomax&amp;quot;
-length(stop_iso)
-# [1] 5315
+walk_table &amp;lt;- osrmTable(src = origin, dst = closest_stops, measure = &amp;quot;duration&amp;quot;)
 
-str(ttmatrix)
-# List of 3
-#  $ durations   : num [1:1260, 1:5315] 208 191 186 180 186 217 195 190 92 178 ...
-#   ..- attr(*, &amp;quot;dimnames&amp;quot;)=List of 2
-#   .. ..$ : chr [1:1260] &amp;quot;1&amp;quot; &amp;quot;2&amp;quot; &amp;quot;3&amp;quot; &amp;quot;11&amp;quot; ...
-#   .. ..$ : chr [1:5315] &amp;quot;1&amp;quot; &amp;quot;2&amp;quot; &amp;quot;3&amp;quot; &amp;quot;4&amp;quot; ...
-#  $ sources     :&#39;data.frame&#39;: 1260 obs. of  2 variables:
-#   ..$ lon: num [1:1260] -90.2 -90.2 -90.2 -90.4 -90.4 ...
-#   ..$ lat: num [1:1260] 38.8 38.8 38.8 38.8 38.8 ...
-#  $ destinations:&#39;data.frame&#39;: 5315 obs. of  2 variables:
-#   ..$ lon: num [1:5315] -90.3 -90.3 -90.4 -90.3 -90.4 ...
-#   ..$ lat: num [1:5315] 38.7 38.6 38.7 38.8 38.7 ...
-
-row.names(ttmatrix$durations) &amp;lt;-  blkgrps$GEOID
-
-plot(blkgrp_iso[[4]][5,&amp;quot;id&amp;quot;])
+closest_stops |&amp;gt;
+  st_drop_geometry() |&amp;gt;
+  transmute(stop_name,
+            straight_line_m = drop_units(sort(straight_line)[1:5]),
+            walk_min = as.vector(walk_table$durations)) |&amp;gt;
+  kable(digits = 1, col.names = c(&amp;quot;Stop&amp;quot;, &amp;quot;Straight line (m)&amp;quot;, &amp;quot;Walk (min)&amp;quot;))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;
-&lt;p&gt;Based on the above, it looks likes each element of the isochrone list corresponds to either origin or destination. Each of that element is a tibble with isomin and isomax times (e.g. can be reached between 10 and 11 min). But we need the cumulative isochrone (e.g. reached within 11 min) for stops and only 45 min isochrone from block groups.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;sf_use_s2(FALSE)
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Stop&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Straight line (m)&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Walk (min)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ LINCOLN NB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;230.2&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;3.8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ LINCOLN SB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;239.4&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;3.6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ COLONIAL NB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;299.4&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;4.2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ COLONIAL SB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;302.2&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;15.4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ LEXINGTON SB&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;344.4&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;5.5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The closest stop in a straight line need not be the quickest to walk to, because the walk follows the street network.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;osrmIsochrone&lt;/code&gt; returns the area that can be reached from a location within given times. Let us ask for 5, 10 and 15 min from the closest stop.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;one_stop &amp;lt;- closest_stops[1, ]
 
-names(stop_iso) &amp;lt;- stlouis_gtfs$stops$stop_id
-stop_iso_cumulative &amp;lt;- map(stop_iso, ~nngeo::st_remove_holes(.)) 
+stop_bands &amp;lt;- osrmIsochrone(loc = one_stop, breaks = c(0, 5, 10, 15)) |&amp;gt;
+  st_make_valid() |&amp;gt;
+  mutate(label = paste0(isomin, &amp;quot; to &amp;quot;, isomax, &amp;quot; min&amp;quot;))
 
-names(blkgrp_iso) &amp;lt;- blkgrps$GEOID
-blkgrp_iso_cumulative &amp;lt;- map(blkgrp_iso,
-                            ~ slice_max(., isomax, n = 1) %&amp;gt;% 
-                              nngeo::st_remove_holes() %&amp;gt;% 
-                              st_geometry() %&amp;gt;% 
-                              st_make_valid()
-                            )
+band_labels &amp;lt;- stop_bands |&amp;gt;
+  st_transform(26915) |&amp;gt;
+  st_make_valid() |&amp;gt;
+  st_point_on_surface() |&amp;gt;
+  st_transform(4326)
 
-# We don&#39;t need the attributes for the block group isochrones any more (they are all 45 min) so we only keep that geometry.
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The second part is computed using the Round-Based Public Transit Routing Algorithm (RAPTOR) for each start time. But first we need to make a transfer table. Typically GTFS should come with one that specifies the time taken to transfer between two stations (within reasonable time frame). Since we do not have it here in the St. Louis GTFS, we infer one based on distance (typically within 200 m). We need the &lt;code&gt;gtfsrouter&lt;/code&gt; package for this.&lt;/p&gt;
-&lt;p&gt;But first we must recover &lt;code&gt;stop_lon&lt;/code&gt; and &lt;code&gt;stop_lat&lt;/code&gt; in the stops table that we lost when we converted using &lt;code&gt;gtfs_as_sf&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;
-stlouis_gtfs$stops &amp;lt;- stlouis_gtfs$stops %&amp;gt;%
-  bind_cols(st_coordinates(stlouis_gtfs$stops)) %&amp;gt;%
-  rename(stop_lon = X, stop_lat = Y)
+m4 &amp;lt;- tm_shape(stop_bands) +
+  tm_polygons(fill = &amp;quot;label&amp;quot;,
+              fill.scale = tm_scale_categorical(values = c(&amp;quot;#08519c&amp;quot;, &amp;quot;#4292c6&amp;quot;, &amp;quot;#c6dbef&amp;quot;)),
+              fill.legend = tm_legend_hide(),
+              fill_alpha = 0.7,
+              col = &amp;quot;white&amp;quot;,
+              id = &amp;quot;label&amp;quot;,
+              group = &amp;quot;Isochrone bands&amp;quot;) +
+  tm_shape(one_stop) +
+  tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.6, id = &amp;quot;stop_name&amp;quot;, group = &amp;quot;Stop&amp;quot;) +
+  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
 
-stlouis_gtfs$transfers &amp;lt;-
-  gtfsrouter::gtfs_transfer_table(stlouis_gtfs)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In the following code, I am going to demonstrate the extent of reach for a single block group “291892138006” and focus on the variation through out the day on a weekday. Let’s focus on a single start time at 6:20 AM and then figure out how to iterate over a vector of times and blkgrops&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(lubridate)
-
-blk_start_time &amp;lt;- &amp;quot;6:20&amp;quot; %&amp;gt;% hm %&amp;gt;% period_to_seconds
-blkgrp_id &amp;lt;- &amp;quot;291892138006&amp;quot;
-
-geo_temp_sf2 &amp;lt;- blkgrp_iso_cumulative[[blkgrp_id]]
-
-
-
-# The following computes how much time it takes to reach different transit stations from the block group centeroid and how much time is leftover in the travel budget that can be used for waiting/transit travel.
-
-travel_to_stations &amp;lt;-
-        tibble(tt = ttmatrix$durations[blkgrp_id,],
-               stop_id = stlouis_gtfs$stops$stop_id) %&amp;gt;%
-        filter(tt &amp;lt;= 45) %&amp;gt;%  # Note that these are in minutes rather than seconds.
-        mutate(min_start_time = blk_start_time + tt * 60,
-               max_start_time = blk_start_time + 45 * 60,
-               allowed_timerange = max_start_time - min_start_time) %&amp;gt;%
-        filter(allowed_timerange &amp;gt;0)
-
-
-
-##  The following code calculates for each transit station that can be accessed by foot with 45 min, the other transit stations that can be accessed by transit and the remaining time from travel budget.
-
-remain_time_dt &amp;lt;- map_dfr(1:nrow(travel_to_stations), function(idx) {
-  transit_stop_times &amp;lt;- filter_stop_times(stlouis_gtfs, &amp;quot;2022-11-22&amp;quot;,
-                                          min_departure_time = travel_to_stations[idx,] %&amp;gt;% pull(&amp;quot;min_start_time&amp;quot;))
-  
-  raptor(
-    transit_stop_times,
-    stlouis_gtfs$transfers,
-    stop_ids = travel_to_stations[idx,] %&amp;gt;% pull(&#39;stop_id&#39;),
-    time_range = travel_to_stations[idx, ] %&amp;gt;% pull(&#39;allowed_timerange&#39;),
-    max_transfers = 3,
-    keep = &#39;shortest&#39;
-  )
-}) %&amp;gt;%
-  mutate(remain_time = (blk_start_time + 45 * 60) - journey_arrival_time) %&amp;gt;%
-  filter(remain_time &amp;gt;0) %&amp;gt;%
-  select(to_stop_id, remain_time) %&amp;gt;%
-  bind_cols(tibble(&amp;quot;GEOID&amp;quot; = blkgrp_id, &amp;quot;start&amp;quot; = blk_start_time))
-
-
-# For each reachable transit stop, extract the isochrone that is corresponding to the remaining travel time on the budget.
-
-geo_temp_sf1 &amp;lt;-
-  map_dfr(1:nrow(remain_time_dt), function(idx) {
-    stop_iso_cumulative[[remain_time_dt[idx, ]$to_stop_id]] %&amp;gt;%
-      filter(isomax &amp;lt;= remain_time_dt[idx, ]$remain_time / 60) %&amp;gt;%
-      slice_max(isomax, n = 1)
-  }) %&amp;gt;%
-  st_union() %&amp;gt;%
-  st_make_valid()
-
-
-## Union the various polygons along with the foot isochrone of the block group.
-geo_sf &amp;lt;-
-  st_union(geo_temp_sf2, geo_temp_sf1)  %&amp;gt;%
-  st_sf(GEOID = blkgrp_id, start = blk_start_time) %&amp;gt;%
-  st_make_valid()
-
-
-m1 &amp;lt;-
-  tm_shape(geo_sf) +
-  tm_polygons(col = &#39;blue&#39;, alpha = .5) +
-  tm_shape(blkgrps %&amp;gt;% filter (GEOID == blkgrp_id)) +
-  tm_markers() +
-  tm_basemap(leaflet::providers$Stamen.Toner)
-
-frameWidget(tmap_leaflet(m1))
+frameWidget(add_labels(tmap_maplibre(m4), band_labels))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-15.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_osrm-isochrone.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;p&gt;Notice that each row is a ring around the earlier rows (e.g. can be reached between 10 and 15 min). What we need is the cumulative isochrone (e.g. reached within 15 min), which is the ring with its holes filled. We work in UTM 15N (EPSG:26915), because planar geometry is more forgiving of these messy polygons.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;fill_holes &amp;lt;- function(x) {
+  filled &amp;lt;- x |&amp;gt;
+    st_geometry() |&amp;gt;
+    st_transform(26915) |&amp;gt;
+    st_make_valid() |&amp;gt;
+    nngeo::st_remove_holes()
+  return(filled)
+}
+
+tibble(within_min = stop_bands$isomax,
+       area = drop_units(set_units(st_area(fill_holes(stop_bands)), km^2))) |&amp;gt;
+  kable(digits = 2, col.names = c(&amp;quot;Within (min)&amp;quot;, &amp;quot;Area (sq km)&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Within (min)&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Area (sq km)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;5&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;0.14&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;10&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;0.63&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;15&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1.65&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;how-long-would-all-the-queries-take&#34;&gt;How long would all the queries take?&lt;/h3&gt;
+&lt;p&gt;We need these two queries for every block group and every stop. Before starting a long run, time a small sample and scale it up. OSRM moves each location to the closest road, so a location that has to move too far gets &lt;code&gt;NA&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;max_snap &amp;lt;- set_units(1, &amp;quot;km&amp;quot;)
+
+# TRUE when OSRM had to move a location too far to trust the result.
+snapped_too_far &amp;lt;- function(snapped) {
+  return(set_units(snapped$snapping_distance, &amp;quot;km&amp;quot;) &amp;gt; max_snap)
+}
+
+one_minute_bands &amp;lt;- function(location) {
+  snapped &amp;lt;- osrmTable(src = location, dst = location, measure = &amp;quot;duration&amp;quot;)$sources
+  if (snapped_too_far(snapped)) {
+    return(NA)
+  }
+  return(osrmIsochrone(loc = location, breaks = seq(0, 45, 1)))
+}
+
+sample_stops &amp;lt;- transitstops[1:5, ]
+
+sample_time &amp;lt;- system.time(
+  map(seq_len(nrow(sample_stops)), function(i) {
+    return(one_minute_bands(sample_stops[i, ]))
+  })
+)
+
+per_location &amp;lt;- set_units(sample_time[[&amp;quot;elapsed&amp;quot;]] / nrow(sample_stops), &amp;quot;s&amp;quot;)
+n_locations &amp;lt;- nrow(blkgrps) + nrow(transitstops)
+
+tibble(locations = n_locations,
+       seconds_each = drop_units(per_location),
+       hours_in_all = drop_units(set_units(per_location * n_locations, &amp;quot;hr&amp;quot;))) |&amp;gt;
+  kable(digits = 1, col.names = c(&amp;quot;Locations&amp;quot;, &amp;quot;Seconds each&amp;quot;, &amp;quot;Hours for all the isochrones&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Locations&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Seconds each&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Hours for all the isochrones&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;6368&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;0.6&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;That is one person, one location at a time, and leaves out the travel time matrix. There are two ways to do it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Query the cloud server.&lt;/strong&gt; You can run the full code below against the cloud server, but keep the following in mind.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It is a small shared machine. A long run slows everyone else down and may crash the server.&lt;/li&gt;
+&lt;li&gt;It can go down without notice, and a crash partway through loses whatever has not been saved. Save the results in batches as you go.&lt;/li&gt;
+&lt;li&gt;A very large travel time request may be refused, so keep the batches small.&lt;/li&gt;
+&lt;li&gt;It does not have all of the US. The snapping check above guards against locations outside its network.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Set up your own server.&lt;/strong&gt; This is the better choice for a full run. Download the latest OpenStreetMap data for Missouri and Illinois from &lt;a href=&#34;https://download.geofabrik.de/north-america/us.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geofabrik&lt;/a&gt;. Then run the following in a terminal to build a foot network clipped to the region and start the server (&lt;a href=&#34;https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/&#34;&gt;more on setting up OSRM&lt;/a&gt;). On a Mac, AirPlay already uses the usual port 5000, so the server listens on 5001. &lt;code&gt;--max-table-size&lt;/code&gt; has to be larger than the number of stops. Change &lt;code&gt;OSRM_URL&lt;/code&gt; to &lt;code&gt;http://localhost:5001/&lt;/code&gt; to use it.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;osmium merge missouri-latest.osm.pbf illinois-latest.osm.pbf -o merged.osm.pbf
+osmium extract -b -90.90,38.10,-89.55,39.00 merged.osm.pbf -o stlouis.osm.pbf
+osrm-extract stlouis.osm.pbf -p /usr/local/share/osrm/profiles/foot.lua
+osrm-contract stlouis.osrm
+osrm-routed --algorithm ch --port 5001 --max-table-size 6000 stlouis.osrm
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The code for the full run is the same for both. It is not run here. The origins go in batches, because a single request with every coordinate is too long.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;batches &amp;lt;- split(seq_len(nrow(blkgrps)), ceiling(seq_len(nrow(blkgrps)) / 100))
+
+durations &amp;lt;- map(batches, function(rows) {
+  table_part &amp;lt;- osrmTable(src = blkgrps[rows, ], dst = transitstops, measure = &amp;quot;duration&amp;quot;)
+  table_part$durations[snapped_too_far(table_part$sources), ] &amp;lt;- NA
+  table_part$durations[, snapped_too_far(table_part$destinations)] &amp;lt;- NA
+  return(table_part$durations)
+})
+
+ttmatrix &amp;lt;- list(durations = round(do.call(rbind, durations)))
+dimnames(ttmatrix$durations) &amp;lt;- list(blkgrps$GEOID, transitstops$stop_id)
+
+isochrones_for &amp;lt;- function(locations, ids) {
+  iso &amp;lt;- map(seq_len(nrow(locations)), possibly(function(i) {
+    return(one_minute_bands(locations[i, ]))
+  }, otherwise = NULL))
+  names(iso) &amp;lt;- ids
+  return(iso)
+}
+
+blkgrp_iso &amp;lt;- isochrones_for(blkgrps, blkgrps$GEOID)
+stop_iso &amp;lt;- isochrones_for(transitstops, transitstops$stop_id)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I ran this on my own laptop server, using OpenStreetMap data from November 2026. It took about half an hour. You do not need to repeat it. &lt;strong&gt;The rest of this tutorial uses these precomputed results instead of querying a server&lt;/strong&gt;, so download the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/ttmatrix.RData?d=w85fba735312c46119106a6575d7f57f2&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=czrk9B&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RData file&lt;/a&gt; along with the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/google_transit.zip?d=w9eef3cb7424645b79c76f666da0e88de&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=egDfbb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GTFS feed&lt;/a&gt; and change the paths in &lt;code&gt;read_gtfs&lt;/code&gt; and &lt;code&gt;load&lt;/code&gt; to wherever you save them.&lt;/p&gt;
+&lt;p&gt;stop_iso is a list of 1 min isochrone bands for each stop. blkgrp_iso is the same for each block group. ttmatrix is a list where the element durations is a travel time matrix from block groups to transit stops, in minutes. All of them are named by stop id and GEOID, to easily filter and identify. Results from the cloud server may differ slightly, because its map data can be of a different date.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;load(here(&amp;quot;tutorials_datasets/gtfs/ttmatrix.RData&amp;quot;))
+
+length(blkgrp_iso)
+# [1] 1260
+length(stop_iso)
+# [1] 5108
+dim(ttmatrix$durations)
+# [1] 1260 5108
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;adding-the-transit-trip&#34;&gt;Adding the transit trip&lt;/h3&gt;
+&lt;p&gt;The second part of the list above is computed using the Round-Based Public Transit Routing Algorithm (RAPTOR) for each start time. But first we need to make a transfer table. Typically GTFS should come with one that specifies the time taken to transfer between two stations (within reasonable time frame). Since we do not have it here in the St. Louis GTFS, we infer one based on distance (typically within 200 m) and a walking speed of 5 km/h.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;walking_speed &amp;lt;- set_units(5, &amp;quot;km/h&amp;quot;)
+
+neighbours &amp;lt;- st_is_within_distance(transitstops, dist = set_units(200, &amp;quot;m&amp;quot;))
+
+stlouis_gtfs$transfers &amp;lt;- tibble(from = rep(seq_along(neighbours), lengths(neighbours)),
+                                 to = unlist(neighbours)) |&amp;gt;
+  mutate(from_stop_id = transitstops$stop_id[from],
+         to_stop_id = transitstops$stop_id[to],
+         distance = st_distance(transitstops[from, ], transitstops[to, ], by_element = TRUE),
+         transfer_type = 2L,
+         min_transfer_time = drop_units(set_units(distance / walking_speed, &amp;quot;s&amp;quot;))) |&amp;gt;   # raptor wants plain seconds
+  select(from_stop_id, to_stop_id, transfer_type, min_transfer_time)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;the-reach-of-one-block-group&#34;&gt;The reach of one block group&lt;/h3&gt;
+&lt;p&gt;We now have all the pieces. In the following code, I am going to demonstrate the extent of reach for the same block group and focus on a single start time at 6:20 AM on a weekday. The exercise below iterates over a vector of times and block groups.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;travel_budget &amp;lt;- set_units(45, &amp;quot;min&amp;quot;)
+
+blk_start_time &amp;lt;- period_to_seconds(hm(&amp;quot;6:20&amp;quot;))
+blk_end_time &amp;lt;- blk_start_time + drop_units(set_units(travel_budget, &amp;quot;s&amp;quot;))
+
+# Trips on a single weekday within the travel budget. All the searches below share this table.
+transit_stop_times &amp;lt;- filter_stop_times(stlouis_gtfs, analysis_date,
+                                        min_departure_time = blk_start_time,
+                                        max_arrival_time = blk_end_time)
+
+# How much time it takes to reach different transit stations from the block group centroid.
+travel_to_stations &amp;lt;- tibble(stop_id = transitstops$stop_id,
+                             walk_time = set_units(ttmatrix$durations[blkgrp_id, ], &amp;quot;min&amp;quot;)) |&amp;gt;
+  filter(walk_time &amp;lt; travel_budget,
+         stop_id %in% transit_stop_times$stop_id) |&amp;gt;
+  mutate(earliest_departure = blk_start_time + drop_units(set_units(walk_time, &amp;quot;s&amp;quot;)))
+
+# For each station that can be reached on foot, the other stations reached by transit in the budget.
+journeys_from_station &amp;lt;- function(stop_id, earliest_departure) {
+  journeys &amp;lt;- raptor(transit_stop_times,
+                     stlouis_gtfs$transfers,
+                     stop_ids = stop_id,
+                     time_range = c(earliest_departure, blk_end_time),
+                     max_transfers = 3,
+                     keep = &amp;quot;earliest&amp;quot;)
+  return(journeys)
+}
+
+has_rows &amp;lt;- function(x) {
+  return(nrow(x) &amp;gt; 0)
+}
+
+# The remaining time from the travel budget, keeping the best journey to each station.
+remain_time_dt &amp;lt;- map2(travel_to_stations$stop_id,
+                       travel_to_stations$earliest_departure,
+                       journeys_from_station) |&amp;gt;
+  keep(has_rows) |&amp;gt;
+  list_rbind() |&amp;gt;
+  as_tibble() |&amp;gt;
+  mutate(remain_time = to_minutes(blk_end_time - journey_arrival_time)) |&amp;gt;
+  filter(remain_time &amp;gt; set_units(0, &amp;quot;min&amp;quot;)) |&amp;gt;
+  slice_max(remain_time, n = 1, by = to_stop_id, with_ties = FALSE) |&amp;gt;
+  select(to_stop_id, remain_time)
+
+nrow(remain_time_dt)
+# [1] 630
+
+# For a reachable station, the isochrone corresponding to the remaining time on the budget.
+iso_within &amp;lt;- function(stop_id, remain_minutes) {
+  iso &amp;lt;- stop_iso[[stop_id]] |&amp;gt;
+    filter(isomax &amp;lt;= remain_minutes) |&amp;gt;
+    slice_max(isomax, n = 1, with_ties = FALSE)
+  return(st_geometry(iso))
+}
+
+transit_reach &amp;lt;- map2(remain_time_dt$to_stop_id,
+                      drop_units(remain_time_dt$remain_time),
+                      iso_within) |&amp;gt;
+  list_c() |&amp;gt;
+  fill_holes()
+
+# The whole budget can also be spent on foot.
+walk_reach &amp;lt;- blkgrp_iso[[blkgrp_id]] |&amp;gt;
+  slice_max(isomax, n = 1, with_ties = FALSE) |&amp;gt;
+  fill_holes() |&amp;gt;
+  st_union()
+
+## Union the various polygons along with the foot isochrone of the block group.
+geo_sf &amp;lt;- c(transit_reach, walk_reach) |&amp;gt;
+  st_union() |&amp;gt;
+  st_make_valid()
+
+reach_summary &amp;lt;- tibble(mode = c(&amp;quot;Walk only&amp;quot;, &amp;quot;Walk and transit&amp;quot;),
+                        area = set_units(c(st_area(walk_reach), st_area(geo_sf)), km^2))
+
+reach_summary |&amp;gt;
+  mutate(area = drop_units(area)) |&amp;gt;
+  kable(digits = 1, col.names = c(&amp;quot;Mode&amp;quot;, &amp;quot;Area reached in 45 min (sq km)&amp;quot;))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Mode&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Area reached in 45 min (sq km)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Walk only&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;20.9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Walk and transit&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;55.6&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Place the transit label at the closest reachable station that is beyond walking distance.
+reachable_stops &amp;lt;- filter(transitstops, stop_id %in% remain_time_dt$to_stop_id)
+beyond_walk &amp;lt;- reachable_stops[st_disjoint(st_transform(reachable_stops, 26915), walk_reach, sparse = FALSE)[, 1], ]
+label_stop &amp;lt;- beyond_walk[which.min(st_distance(beyond_walk, origin)), ]
+
+reach_labels &amp;lt;- st_sf(label = paste0(reach_summary$mode, &amp;quot;: &amp;quot;,
+                                     round(drop_units(reach_summary$area)), &amp;quot; sq km&amp;quot;),
+                      geometry = c(st_transform(st_point_on_surface(walk_reach), 4326),
+                                   st_geometry(label_stop)))
+
+m5 &amp;lt;- tm_shape(st_transform(geo_sf, 4326)) +
+  tm_polygons(fill = &amp;quot;steelblue&amp;quot;, fill_alpha = 0.4, col = &amp;quot;steelblue4&amp;quot;, group = &amp;quot;Walk and transit&amp;quot;) +
+  tm_shape(st_transform(walk_reach, 4326)) +
+  tm_polygons(fill = &amp;quot;#08306b&amp;quot;, fill_alpha = 0.4, col = &amp;quot;#08306b&amp;quot;, group = &amp;quot;Walk only&amp;quot;) +
+  tm_shape(origin) +
+  tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.6, id = &amp;quot;GEOID&amp;quot;, group = &amp;quot;Block group centroid&amp;quot;) +
+  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
+
+frameWidget(add_labels(tmap_maplibre(m5), reach_labels))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-5&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-5&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_reach-one-blockgroup.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Exercise 2: Isochrones over time and space&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;Create a function that will take start time as an argument and return the transit+walk isochrones for a block group. Use it to compute the isochrones for every 10 min for a single block group&lt;/p&gt;
@@ -6597,8 +6835,49 @@ frameWidget(tmap_leaflet(m1))
 &lt;p&gt;Repeat this exercise for a transit system that has significant weekly and seasonal variablity (e.g. Duke/Durham)&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; Everything that depends on the start time or the block group in the code above becomes an argument. Each combination takes about 10 s, so try a few block groups and start times before attempting all of them.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;p&gt;&lt;strong&gt;One block group, every 10 min&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;function reach(block group, start time):
+    end time = start time + travel budget
+    keep the stop times for the date between start time and end time
+    find the stops within walking distance before the end time
+    for each of those stops:
+        search the transit network from the time we arrive on foot until the end time
+    for each stop reached, keep the journey leaving the most time on the budget
+    for each stop reached, take its isochrone for the remaining time and fill its holes
+    union them with the block group&#39;s own walking isochrone
+    return the polygon and its area
+
+for start time from 05:00 to 23:00, every 10 min:
+    reach(block group, start time)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If no stop can be reached in time, the function should return the walking isochrone alone.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;All block groups, one start time&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;for each block group:
+    reach(block group, start time)
+stack the results into one table with the GEOID and the area
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Over time and space&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;for each start time:
+    for each block group:
+        reach(block group, start time)
+summarise the area for each block group: median and spread across start times
+summarise the area for each start time: median across block groups
+map the median and the spread, and plot the area against the start time
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Run this on a sample of block groups first, or in parallel. A single start time can mislead, because the area depends on how that time lines up with departures. For the block group above, the reach on foot is 21 sq km, while with transit it swings between about 40 and 65 sq km through the weekday without tracking the rush hour. A block group in the city (295101124002) ranges from about 76 to 114 sq km. So report a summary over many start times.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Other transit systems&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;build the routing network for Durham and precompute its isochrones
+choose a date from each period and day type in the feed&#39;s calendar
+repeat the steps above for each date and compare the summaries
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
 &lt;hr&gt;
-&lt;p&gt;Your goal is to get something that resembles this.&lt;/p&gt;
+&lt;p&gt;Your goal is to get something that resembles this animation, which I made with an earlier feed.&lt;/p&gt;
 &lt;p&gt;
 
 
