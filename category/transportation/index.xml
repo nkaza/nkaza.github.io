@@ -38,7 +38,7 @@
 &lt;h2 id=&#34;reading-in-gtfs-files&#34;&gt;Reading in GTFS files&lt;/h2&gt;
 &lt;p&gt;Because GTFS are regularly updated (usually semi-annually) and published on transit agency’s website, it is a good idea to get the latest schedule. Fortunately, &lt;a href=&#34;https://mobilitydatabase.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Mobility Database&lt;/a&gt; has a catalogue of various GTFS feeds and their source locations. In this tutorial, I am going to use Metro St. Louis GTFS feed.&lt;/p&gt;
 &lt;p&gt;I am going to use the &lt;code&gt;tidytransit&lt;/code&gt; package. &lt;code&gt;read_gtfs&lt;/code&gt; reads the zipfile and converts it into a bunch of tables.&lt;/p&gt;
-&lt;p&gt;In the following code, I am showing how to download the latest GTFS files. However, I am going to use an &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/google_transit.zip?d=w9eef3cb7424645b79c76f666da0e88de&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=egDfbb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;archived copy of that feed&lt;/a&gt; for consistency. It covers 2 to 29 November 2026.&lt;/p&gt;
+&lt;p&gt;In the following code, I am showing how to download the latest GTFS files. However, I am going to use an &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/google_transit.zip?d=w9eef3cb7424645b79c76f666da0e88de&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=egDfbb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;archived copy of that feed&lt;/a&gt; for consistency.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(readr)
 library(dplyr)
 library(here)
@@ -75,7 +75,7 @@ library(tmap)
 library(tmap.mapgl)   # adds the &amp;quot;maplibre&amp;quot; mode, which draws vector basemaps such as OpenFreeMap
 library(widgetframe)
 
-stlouis_gtfs &amp;lt;- read_gtfs(here(&amp;quot;tutorials_datasets/gtfs/google_transit.zip&amp;quot;))
+stlouis_gtfs &amp;lt;- here(&amp;quot;tutorials_datasets/gtfs/google_transit.zip&amp;quot;) |&amp;gt; read_gtfs() # Change the file path appropriately.
 
 summary(stlouis_gtfs)
 # tidygtfs object
@@ -116,11 +116,17 @@ stlouis_gtfs$stops
 
 tmap_mode(&amp;quot;maplibre&amp;quot;)
 
+# Knitted maplibre maps default to 500 px high, so set the height before framing the map.
+frame_map &amp;lt;- function(map, height = &amp;quot;700px&amp;quot;) {
+  map$height &amp;lt;- height
+  return(frameWidget(map))
+}
+
 # One simplified line per route and only the mapped columns keep the web page small.
 route_lines &amp;lt;- get_route_geometry(stlouis_gtfs) |&amp;gt;
   st_line_merge() |&amp;gt;
   st_transform(26915) |&amp;gt;
-  st_simplify(dTolerance = 50) |&amp;gt;
+  st_simplify(dTolerance = 50) |&amp;gt; #units are in m for 26915
   st_transform(4326)
 
 m1 &amp;lt;- tm_shape(route_lines) +
@@ -129,9 +135,9 @@ m1 &amp;lt;- tm_shape(route_lines) +
   tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.05, id = &amp;quot;stop_name&amp;quot;, popup = FALSE, group = &amp;quot;Stops&amp;quot;) +
   tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
 
-frameWidget(tmap_maplibre(m1))
+frame_map(tmap_maplibre(m1))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_stops-map.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;h2 id=&#34;analysing-service-patterns&#34;&gt;Analysing Service Patterns&lt;/h2&gt;
 &lt;p&gt;The GTFS reference specifies that a “service_id contains an ID that uniquely identifies a set of dates when service is available for one or more routes.” A service could run on every weekday or only on Saturdays for example. However, feeds are not required to indicate anything with service_ids and some feeds even use a unique service_id for each trip and day. Service patterns can be used to find a typical day for further analysis like routing or trip frequencies for different days.&lt;/p&gt;
@@ -146,18 +152,22 @@ n_distinct(stlouis_gtfs$.$servicepatterns$servicepattern_id)
 # [1] 9
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;In this particular instance, service patterns and service_ids are the same, so we can work with the service ids directly.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stlouis_gtfs$.$dates_services |&amp;gt;
-  mutate(weekday = wday(date, label = TRUE, week_start = 1)) |&amp;gt;
-  ggplot(aes(x = date, y = weekday)) +
-  geom_point(size = 1, colour = &amp;quot;steelblue4&amp;quot;) +
-  facet_wrap(vars(service_id), ncol = 1) +
-  scale_x_date(date_breaks = &amp;quot;1 week&amp;quot;, date_labels = &amp;quot;%d %b&amp;quot;, expand = expansion(add = 2)) +
+&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;thanksgiving &amp;lt;- as.Date(&amp;quot;2026-11-26&amp;quot;)
+
+stlouis_gtfs$.$dates_services |&amp;gt;
+  ggplot(aes(x = date, y = service_id)) +
+  geom_vline(xintercept = thanksgiving, linetype = &amp;quot;dashed&amp;quot;, colour = &amp;quot;grey50&amp;quot;) +
+  geom_point(size = 2, colour = &amp;quot;steelblue4&amp;quot;) +
+  annotate(&amp;quot;text&amp;quot;, x = thanksgiving, y = Inf, label = &amp;quot;Thanksgiving&amp;quot;, vjust = -0.5, size = 3.5) +
+  scale_x_date(date_breaks = &amp;quot;1 week&amp;quot;, date_labels = &amp;quot;%a %d %b&amp;quot;, expand = expansion(add = 2)) +
   scale_y_discrete(limits = rev) +
+  coord_cartesian(clip = &amp;quot;off&amp;quot;) +
   labs(x = NULL, y = NULL) +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.margin = margin(t = 20, r = 10, b = 5, l = 5))
 &lt;/code&gt;&lt;/pre&gt;
 &lt;img src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/service-calendar-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
-&lt;p&gt;Each panel is one service id. The ids ending in B1, B2 and B3 are the bus schedules for weekdays, Saturdays and Sundays. Those ending in T1, T2 and T3 are the MetroLink train schedules for the same days. The train schedule changes on 9 November, so the train patterns come in pairs. Notice that Thanksgiving (26 November) runs on the Sunday schedules.&lt;/p&gt;
+&lt;p&gt;Each row is one service id and each dot is a date it runs. The ids ending in B1, B2 and B3 are the bus schedules for weekdays, Saturdays and Sundays. Those ending in T1, T2 and T3 are the MetroLink train schedules for the same days. The train schedule changes on 9 November, so the train patterns come in pairs. Notice that Thanksgiving (26 November) runs on the Sunday schedules.&lt;/p&gt;
 &lt;p&gt;Buses and trains run side by side, so a single day needs more than one service id. We pick them from the calendar for a typical weekday, Tuesday 10 November, and use that for the rest of the tutorial.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;analysis_date &amp;lt;- as.Date(&amp;quot;2026-11-10&amp;quot;)
 
@@ -223,9 +233,9 @@ m2 &amp;lt;- tm_shape(route_freq_sf) +
            group = &amp;quot;Routes&amp;quot;) +
   tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
 
-frameWidget(add_labels(tmap_maplibre(m2), route_labels))
+frame_map(add_labels(tmap_maplibre(m2), route_labels))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_route-frequency.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;p&gt;While it is fine to know which routes are more frequent than others, it is also useful to know which stops have smaller headways and more frequent departures.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;midday_stops &amp;lt;- get_stop_frequency(stlouis_gtfs, start_time = &amp;quot;11:00:00&amp;quot;, end_time = &amp;quot;16:00:00&amp;quot;,
@@ -362,9 +372,9 @@ m3 &amp;lt;- tm_shape(route_lines) +
           group = &amp;quot;Stops&amp;quot;) +
   tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
 
-frameWidget(add_labels(tmap_maplibre(m3), stop_labels))
+frame_map(add_labels(tmap_maplibre(m3), stop_labels))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_stop-summary.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;p&gt;Notice how some stops have more frequent departures and some have long wait times. There are some spatial patterns. The classic hub and spoke transit system means that the downtown (hub) have a lot of stops that have high quality transit. However, there are also some transit centres at the outskirts that also have large number of departures. These serve as transfer stations or terminus.&lt;/p&gt;
 &lt;hr&gt;
@@ -435,7 +445,7 @@ blkgrps &amp;lt;- bind_rows(get_centroids(&amp;quot;MO&amp;quot;, c(&amp;quot;51
 &lt;p&gt;We need to operationalise a few things. Some of them are easier to precompute and some of them are easier on the fly.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;Travel time from each origin (block group centroid) to each destination (transit station) by foot. This is presumably time invariant, as the road network is not subject to schedules. However, this is highly dependent on the quality of the road network and appropriate information about crossings and non-pedestrian roads.&lt;/p&gt;
+&lt;p&gt;Travel time from each origin (block group centroid) to each destination (transit station) by foot. This is presumably time invariant, as the road network is not subject to schedules. However, this is highly dependent on the quality of the road network and appropriate information about crossings and non-pedestrian roads. I am simplifying this and simply assigning all pedestrian roads have same walk speed and non-pedestrian roads are not traversable.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Travel time from each transit station to every other transit station. For the sake of practicality, we will limit the number of transfers to 3. This is highly dependent on schedules, especially when the trip starts and what time the transit reaches each stop and if there are any transfers available to other routes within the travel budget. This is time varying.&lt;/p&gt;
@@ -444,13 +454,13 @@ blkgrps &amp;lt;- bind_rows(get_centroids(&amp;quot;MO&amp;quot;, c(&amp;quot;51
 &lt;p&gt;The geography that can be covered from each transit stop in the remaining time after the transit trip is concluded. While, we do not know apriori how much time is remaining, we know that it cannot exceed the travel budget (45 min). So we can precompute 1 min isochrones from each transit station and select them as necessary.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;While we are focused on transit, it could very well be that many of the blockgroups may not have access to good quality transit and therefore the entire travel budget is spent on foot.Thus, we also compute the isochrones for the blockgroup centeroids.&lt;/p&gt;
+&lt;p&gt;While we are focused on transit, it could very well be that many of the block groups may not have access to good quality transit and therefore the entire travel budget is spent on foot.Thus, we also compute the isochrones for the block group centroids.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;All the steps (except the second) can be computed using routing engines such as OSRM.&lt;/p&gt;
 &lt;h3 id=&#34;connecting-to-a-routing-server&#34;&gt;Connecting to a routing server&lt;/h3&gt;
-&lt;p&gt;We will use a cloud server for the queries in this tutorial. Its address does not belong in shared code, so it goes in your &lt;code&gt;.Renviron&lt;/code&gt; file (&lt;code&gt;usethis::edit_r_environ()&lt;/code&gt; opens it). Students in my class can ask me for the address. Mind the trailing slash and restart R after you save the file.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;OSRM_URL=http://address-of-the-server:5000/
+&lt;p&gt;We will use a cloud server for the queries in this tutorial. Its address does not belong in shared code, so it goes in your &lt;code&gt;.Renviron&lt;/code&gt; file (&lt;code&gt;usethis::edit_r_environ()&lt;/code&gt; opens it). You should have received an email about this. Mind the trailing slash and restart R after you save the file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;OSRM_URL=http://address-of-the-server/
 &lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osrm)
 
@@ -536,9 +546,9 @@ m4 &amp;lt;- tm_shape(stop_bands) +
   tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.6, id = &amp;quot;stop_name&amp;quot;, group = &amp;quot;Stop&amp;quot;) +
   tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
 
-frameWidget(add_labels(tmap_maplibre(m4), band_labels))
+frame_map(add_labels(tmap_maplibre(m4), band_labels))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_osrm-isochrone.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;p&gt;Notice that each row is a ring around the earlier rows (e.g. can be reached between 10 and 15 min). What we need is the cumulative isochrone (e.g. reached within 15 min), which is the ring with its holes filled. We work in UTM 15N (EPSG:26915), because planar geometry is more forgiving of these messy polygons.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;fill_holes &amp;lt;- function(x) {
@@ -620,8 +630,8 @@ tibble(locations = n_locations,
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td style=&#34;text-align:right&#34;&gt;6368&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;0.6&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;0.7&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;1.2&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -664,7 +674,7 @@ isochrones_for &amp;lt;- function(locations, ids) {
 blkgrp_iso &amp;lt;- isochrones_for(blkgrps, blkgrps$GEOID)
 stop_iso &amp;lt;- isochrones_for(transitstops, transitstops$stop_id)
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I ran this on my own laptop server, using OpenStreetMap data from November 2026. It took about half an hour. You do not need to repeat it. &lt;strong&gt;The rest of this tutorial uses these precomputed results instead of querying a server&lt;/strong&gt;, so download the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/ttmatrix.RData?d=w85fba735312c46119106a6575d7f57f2&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=czrk9B&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RData file&lt;/a&gt; along with the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/google_transit.zip?d=w9eef3cb7424645b79c76f666da0e88de&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=egDfbb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;GTFS feed&lt;/a&gt; and change the paths in &lt;code&gt;read_gtfs&lt;/code&gt; and &lt;code&gt;load&lt;/code&gt; to wherever you save them.&lt;/p&gt;
+&lt;p&gt;I ran this on my own laptop, using OpenStreetMap data from November 2026. It took about half an hour. You do not need to repeat it. &lt;strong&gt;The rest of this tutorial uses these precomputed results instead of querying a server&lt;/strong&gt;, so download the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/ttmatrix.RData?d=w85fba735312c46119106a6575d7f57f2&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=czrk9B&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RData file&lt;/a&gt; and change the paths.&lt;/p&gt;
 &lt;p&gt;stop_iso is a list of 1 min isochrone bands for each stop. blkgrp_iso is the same for each block group. ttmatrix is a list where the element durations is a travel time matrix from block groups to transit stops, in minutes. All of them are named by stop id and GEOID, to easily filter and identify. Results from the cloud server may differ slightly, because its map data can be of a different date.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;load(here(&amp;quot;tutorials_datasets/gtfs/ttmatrix.RData&amp;quot;))
 
@@ -807,9 +817,9 @@ m5 &amp;lt;- tm_shape(st_transform(geo_sf, 4326)) +
   tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.6, id = &amp;quot;GEOID&amp;quot;, group = &amp;quot;Block group centroid&amp;quot;) +
   tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
 
-frameWidget(add_labels(tmap_maplibre(m5), reach_labels))
+frame_map(add_labels(tmap_maplibre(m5), reach_labels))
 &lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-5&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
+&lt;div id=&#34;htmlwidget-5&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
 &lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-5&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_reach-one-blockgroup.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
 &lt;hr&gt;
 &lt;p&gt;&lt;strong&gt;Exercise 2: Isochrones over time and space&lt;/strong&gt;&lt;/p&gt;
@@ -869,7 +879,7 @@ repeat the steps above for each date and compare the summaries
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
 &lt;hr&gt;
-&lt;p&gt;Your goal is to get something that resembles this animation, which I made with an earlier feed.&lt;/p&gt;
+&lt;p&gt;Your goal is to get something that resembles this animation.&lt;/p&gt;
 &lt;p&gt;
 
 

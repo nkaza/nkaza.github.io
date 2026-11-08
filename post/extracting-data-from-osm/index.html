@@ -1371,9 +1371,11 @@ m_food &lt;- tm_shape(durham) +
           group = &quot;Places to eat&quot;) +
   tm_basemap(&quot;ofm.positron&quot;, group = &quot;OpenFreeMap basemap&quot;)
 
-frameWidget(tmap_maplibre(m_food))
+map_widget &lt;- tmap_maplibre(m_food)
+map_widget$height &lt;- &quot;700px&quot;   # knitted maplibre maps default to 500 px
+frameWidget(map_widget)
 </code></pre>
-<div id="htmlwidget-1" style="width:100%;height:480px;" class="widgetframe html-widget"></div>
+<div id="htmlwidget-1" style="width:100%;height:700px;" class="widgetframe html-widget"></div>
 <script type="application/json" data-for="htmlwidget-1">{"x":{"url":"index_files/figure-html//widgets/widget_food-map.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
 <h3 id="density-on-a-hexagonal-grid">Density on a hexagonal grid</h3>
 <p>With hundreds of points, a dot map hides the overlap downtown. Counting points in equal-area hexagons shows where food places concentrate.</p>
