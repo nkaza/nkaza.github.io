@@ -1078,7 +1078,7 @@ k %&gt;%
   
   g_street_outcome</code></pre>
 <p><img src="https://nkaza.github.io/post/cluster-detection-in-point-data/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>It is also illustrative to see the spatial extent and locations of crimes. We return to our standard way of visualising spatial data with Leaflet and basemaps from <a href="https://carto.com/">CartoDB</a>. This allows us to zoom in and pan around the image to explore the data in some detail.</p>
+<p>It is also illustrative to see the spatial extent and locations of crimes. We return to our standard way of visualising spatial data with Leaflet and basemaps from OpenStreetMap. This allows us to zoom in and pan around the image to explore the data in some detail.</p>
 <p>From now on, for the sake of convenience, I will focus on “Bicycle Thefts” as they are few of them and it is easy for illustration purposes. You are welcome to try other types of crime. Furthermore, I restrict the analysis to thefts in 2016 Q2. We will return to the full series later.</p>
 <pre class="r"><code>bicycletheft &lt;- streetcrime %&gt;% subset(streetcrime$Crime_type == &quot;Bicycle theft&quot;)
 bicycletheftQ2 &lt;- bicycletheft[bicycletheft$Quarter == &quot;2016 Q2&quot;,]
@@ -1087,7 +1087,7 @@ nrow(bicycletheftQ2)
 
  map_bicycle &lt;- bicycletheftQ2 %&gt;%
   leaflet() %&gt;%
-  addProviderTiles(providers$CartoDB.Positron) %&gt;%
+  addProviderTiles(providers$OpenStreetMap) %&gt;%
   addMarkers(clusterOptions = markerClusterOptions(),
              popup = ~as.character(Last_outcome_category), 
              label = ~as.character(Crime_ID)
@@ -1390,7 +1390,7 @@ factpal &lt;- colorFactor(brewer.pal(nrow(clusterpolys),&quot;Set3&quot;), clust
 
 map_bicycle2 &lt;- clusterpolys %&gt;% 
   leaflet() %&gt;%
-  addProviderTiles(providers$CartoDB.Positron) %&gt;%
+  addProviderTiles(providers$OpenStreetMap) %&gt;%
   addPolygons(color = ~factpal(clusterpolys$ID), weight = 5, smoothFactor = 0.5,
               opacity = 1,
               fillColor = ~factpal(clusterpolys$ID), fillOpacity = .5,

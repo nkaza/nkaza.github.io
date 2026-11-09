@@ -85,8 +85,9 @@ blocks_raw <- blocks(state = STATE_FIPS, county = COUNTY_NAME, year = 2020,
 
 
 
-tmap_mode("view")
-tm_basemap(server = "CartoDB.Positron") +
+library(tmap.mapgl)   # adds the "maplibre" mode, which draws vector basemaps such as OpenFreeMap
+tmap_mode("maplibre")
+tm_basemap("ofm.positron", group = "OpenFreeMap basemap") +
     tm_shape(state_geo) +
     tm_borders(col = "darkblue", lwd = 2.5, group = 'state', id="STATEFP") +
     tm_group("state", zoom_levels = 4:8) +
@@ -102,6 +103,8 @@ tm_basemap(server = "CartoDB.Positron") +
     tm_shape(blocks_raw) +
     tm_borders(col = "darkgreen",lwd =.2, col_alpha = 0.5, group = 'census block', id = 'GEOID20') +
     tm_group("census block", zoom_levels = 13:20) 
+
+tmap_mode("view")
         
 ```
 ::::

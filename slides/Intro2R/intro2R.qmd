@@ -395,7 +395,7 @@ stations_tbl %>%
     st_as_sf(coords = c("LON", "LAT"), crs = 4326) %>%
     tm_shape() +
     tm_dots(size = .5) +
-    tm_basemap(leaflet::providers$CartoDB.Positron)
+    tm_basemap("OpenStreetMap")
 
 tmap_leaflet(m1)
 
