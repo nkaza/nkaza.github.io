@@ -346,7 +346,7 @@
         content="2020-02-12T00:00:00&#43;00:00"
       />
     
-    <meta property="article:modified_time" content="2026-11-04T00:00:00&#43;00:00">
+    <meta property="article:modified_time" content="2026-11-08T00:00:00&#43;00:00">
   
 
   
@@ -379,7 +379,7 @@
   ],
   
   "datePublished": "2020-02-12T00:00:00Z",
-  "dateModified": "2026-11-04T00:00:00Z",
+  "dateModified": "2026-11-08T00:00:00Z",
   
   "author": {
     "@type": "Person",
@@ -936,7 +936,7 @@
           Last updated on
       
     
-    Nov 4, 2026
+    Nov 8, 2026
   </span>
   
 
@@ -976,7 +976,7 @@
 
 <div class="article-header article-container featured-image-wrapper mt-4 mb-4" style="max-width: 720px; max-height: 720px;">
   <div style="position: relative">
-    <img src="/post/extracting-data-from-osm/featured_hua8139860d4c844cd5bec9e2ea759096b_1828308_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
+    <img src="/post/extracting-data-from-osm/featured_hu09a8c9450dd782cfc83ea71570bd5ca0_1828036_720x2500_fit_q75_h2_lanczos_3.webp" width="720" height="720" alt="" class="featured-image">
     <span class="article-header-caption">Food places in Durham, NC. Data © OpenStreetMap contributors</span>
   </div>
 </div>
@@ -1685,10 +1685,15 @@ count(status, status) |&gt;
 <p>For reproducible work, record the date you downloaded the data, save the data you used or query a fixed date with <code>datetime</code>, as above.</p>
 <h2 id="comparing-with-overture-maps">Comparing with Overture Maps</h2>
 <p>No single source of points of interest is complete, so it helps to compare OSM with an independent one. <a href="https://overturemaps.org/" target="_blank" rel="noopener">Overture Maps</a>, backed by Amazon, Meta, Microsoft and TomTom, publishes an open <em>places</em> layer built from Facebook business pages, business registries and listings from Microsoft and Foursquare, not from OSM.</p>
-<p>Overture releases are <a href="https://geoparquet.org/" target="_blank" rel="noopener">GeoParquet</a> files in public cloud storage, with no API. The <code>overturemapsr</code> package reads just the parts inside our bounding box, directly over the internet. Pinning the release date keeps the query reproducible while that release stays online (Overture removes old releases after a few months).</p>
+<p>Overture releases are <a href="https://geoparquet.org/" target="_blank" rel="noopener">GeoParquet</a> files in public cloud storage, with no API. The <code>overturemapsr</code> package reads just the parts inside our bounding box, directly over the internet. Overture removes old releases after a few months, so we ask for the list and take the newest. To reproduce a result later, save the data and note the release, as the counts change from one release to the next.</p>
 <pre><code class="language-r">library(overturemapsr)
 
-ov_release &lt;- &quot;2026-10-21&quot;   # see https://docs.overturemaps.org/release/latest/
+releases &lt;- arrow::s3_bucket(&quot;overturemaps-us-west-2&quot;, anonymous = TRUE, region = &quot;us-west-2&quot;)$ls(&quot;release&quot;)
+
+ov_release &lt;- basename(releases) |&gt;   # such as &quot;2026-10-21.0&quot;
+  str_subset(&quot;\\.0$&quot;) |&gt;               # overturemapsr only reads the .0 version of a release
+  max() |&gt;                            # the dates sort as text, so the largest is the newest
+  str_remove(&quot;\\.0$&quot;)
 
 overture &lt;- record_batch_reader(&quot;place&quot;, bbox = durham_bb, release_date = ov_release) |&gt;
   mutate(name      = names$primary,
@@ -1700,7 +1705,9 @@ overture &lt;- record_batch_reader(&quot;place&quot;, bbox = durham_bb, release_
   st_as_sf() |&gt;
   st_filter(durham)
 </code></pre>
-<pre><code class="language-r">nrow(overture)
+<pre><code class="language-r">ov_release
+# [1] &quot;2026-10-21&quot;
+nrow(overture)
 # [1] 17506
 </code></pre>
 <p>This returns every place in the city, from restaurants to dentists to churches. Where do they come from?</p>
