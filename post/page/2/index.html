@@ -1180,7 +1180,212 @@ Large Language Models (LLMs) represent a class of artificial intelligence system
     
     <a href="/post/transit-accessibility-using-gtfs/"  class="summary-link">
       <div class="article-style">
-        Introduction Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people. Analysing fixed route public transit has become relatively straightforward with the introduction of the “General Transit Feed Specification,” a common standard for transit agencies to publish their schedules.
+        <script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js"></script>
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js"></script>
+<link href="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css" rel="stylesheet" />
+<script src="https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js"></script>
+<h2 id="introduction">Introduction</h2>
+<p>Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people. Analysing fixed route public transit has become relatively straightforward with the introduction of the “General Transit Feed Specification,” a common standard for transit agencies to publish their schedules. <a href="https://beyondtransparency.org/chapters/part-2/pioneering-open-data-standards-the-gtfs-story/" target="_blank" rel="noopener">Pioneered by TriMet of Portland, Oregon</a> in collaboration with Google, this specification has become common for transit agencies around the world to publish their consumer facing datasets.</p>
       </div>
     </a>
     
@@ -1215,7 +1420,7 @@ Large Language Models (LLMs) represent a class of artificial intelligence system
   
   <span class="middot-divider"></span>
   <span class="article-reading-time">
-    25 min read
+    28 min read
   </span>
   
 

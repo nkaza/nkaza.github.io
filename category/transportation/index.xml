@@ -18,901 +18,211 @@
       <pubDate>Fri, 18 Nov 2022 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/transit-accessibility-using-gtfs/</guid>
       <description>&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js&#34;&gt;&lt;/script&gt;
 &lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl/maplibre-gl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-draw/mapbox-gl-draw.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/freehand-mode/freehand-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/rectangle-mode/rectangle-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/radius-mode/radius-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/bezier-mode/bezier-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw/terra-draw.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/terra-draw-maplibre-gl-adapter/terra-draw-maplibre-gl-adapter.umd.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-curve-mode.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-terra-draw-control/terra-draw-control.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibre-gl-geocoder/maplibre-gl-geocoder.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapbox-gl-globe-minimap/bundle.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/pmtiles/pmtiles.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/h3j-h3t/h3j_h3t.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/style.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maptiler-geocoding-control/maplibregl.umd.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf/turf.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/turf-operations/turf-operations.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/html2canvas/html2canvas.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/screenshot/screenshot.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/legend-interactivity/legend-interactivity.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider/slider.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-slider-css/slider-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-expressions/mapgl-expressions.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/mapgl-cluster-donut/cluster-donut.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/maplibregl-binding/maplibregl.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/layers-control/layers-control.js&#34;&gt;&lt;/script&gt;
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people. Analysing fixed route public transit has become relatively straightforward with the introduction of the “General Transit Feed Specification,” a common standard for transit agencies to publish their schedules. &lt;a href=&#34;https://beyondtransparency.org/chapters/part-2/pioneering-open-data-standards-the-gtfs-story/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Pioneered by TriMet of Portland, Oregon&lt;/a&gt; in collaboration with Google, this specification has become common for transit agencies around the world to publish their consumer facing datasets.&lt;/p&gt;
-&lt;p&gt;GTFS is split into a schedule component that contains schedule, fare, and geographic transit information and a real-time component that contains arrival predictions, vehicle positions and service advisories. Static GTFS consists of routes, trips, stop_times, stops and calendar as mandatory tables. There are also other optional tables such as fares and frequencies. Real Time GTFS (gtfs-rt) consists of trip updates, service interruptions etc.&lt;/p&gt;
-&lt;h2 id=&#34;reading-in-gtfs-files&#34;&gt;Reading in GTFS files&lt;/h2&gt;
-&lt;p&gt;Because GTFS are regularly updated (usually semi-annually) and published on transit agency’s website, it is a good idea to get the latest schedule. Fortunately, &lt;a href=&#34;https://mobilitydatabase.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Mobility Database&lt;/a&gt; has a catalogue of various GTFS feeds and their source locations. In this tutorial, I am going to use Metro St. Louis GTFS feed.&lt;/p&gt;
-&lt;p&gt;I am going to use the &lt;code&gt;tidytransit&lt;/code&gt; package. &lt;code&gt;read_gtfs&lt;/code&gt; reads the zipfile and converts it into a bunch of tables.&lt;/p&gt;
-&lt;p&gt;In the following code, I am showing how to download the latest GTFS files. However, I am going to use an &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/google_transit.zip?d=w9eef3cb7424645b79c76f666da0e88de&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=egDfbb&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;archived copy of that feed&lt;/a&gt; for consistency.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(readr)
-library(dplyr)
-library(here)
-
-catalog_url &amp;lt;- &amp;quot;https://storage.googleapis.com/storage/v1/b/mdb-csv/o/sources.csv?alt=media&amp;quot;
-
-gtfs_feeds &amp;lt;- read_csv(catalog_url) |&amp;gt;
-  filter(mdb_source_id == 190) |&amp;gt;   # Metro St. Louis
-  pull(urls.direct_download)
-
-gtfs_feeds
-
-## Download and read the feed. Particularly helpful if there are multiple feeds and/or multiple transit agencies in the area.
-download_read_gtfs &amp;lt;- function(feed_url) {
-  zipfilename &amp;lt;- here(&amp;quot;tutorials_datasets/gtfs&amp;quot;, &amp;quot;stlouis_latest.zip&amp;quot;)
-  download.file(feed_url, destfile = zipfilename, mode = &amp;quot;wb&amp;quot;)
-  return(tidytransit::read_gtfs(zipfilename))
-}
-
-stlouis_gtfs &amp;lt;- download_read_gtfs(gtfs_feeds)
-
-summary(stlouis_gtfs)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(tidytransit)
-library(dplyr)
-library(purrr)
-library(ggplot2)
-library(sf)
-library(units)
-library(here)
-library(knitr)
-library(lubridate)
-library(tmap)
-library(tmap.mapgl)   # adds the &amp;quot;maplibre&amp;quot; mode, which draws vector basemaps such as OpenFreeMap
-library(widgetframe)
-
-stlouis_gtfs &amp;lt;- here(&amp;quot;tutorials_datasets/gtfs/google_transit.zip&amp;quot;) |&amp;gt; read_gtfs() # Change the file path appropriately.
-
-summary(stlouis_gtfs)
-# tidygtfs object
-# files        agency, routes, stop_times, trips, shapes, calendar, calendar_dates, stops
-# agency       Metro St. Louis
-# service      from 2026-11-02 to 2026-11-29
-# uses         stop_times (no frequencies)
-# # routes       61
-# # trips      9796
-# # stop_ids   5108
-# # stop_names 5056
-# # shapes      230
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Notice that there are 61 routes with over 5,000 stops in the St. Louis region. Visualising these stops is pretty straightforward, once you convert them into &lt;code&gt;sf&lt;/code&gt; objects.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stlouis_gtfs &amp;lt;- gtfs_as_sf(stlouis_gtfs, crs = 4326, quiet = TRUE)
-
-stlouis_gtfs$stops
-# Simple feature collection with 5108 features and 5 fields
-# Geometry type: POINT
-# Dimension:     XY
-# Bounding box:  xmin: -90.66209 ymin: 38.46975 xmax: -89.87466 ymax: 38.80861
-# Geodetic CRS:  WGS 84
-# # A tibble: 5,108 x 6
-#    stop_id stop_code stop_name                     stop_desc wheelchair_boarding
-#  * &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;                         &amp;lt;chr&amp;gt;                   &amp;lt;int&amp;gt;
-#  1 127     127       THEKLA @ EMERSON SB           NEAR SID~                   2
-#  2 166     166       WEST FLORISSANT @ BUZZ WESTF~ NEAR SID~                   1
-#  3 172     172       SKINKER @ FOREST PARK PARKWA~ NEAR SID~                   1
-#  4 236     236       MERCY HOSPITAL SOUTH NB       FAR SIDE~                   2
-#  5 249     249       CIVIC CENTER TRANSIT CENTER   &amp;lt;NA&amp;gt;                        1
-#  6 273     273       STLCC FLORISSANT VALLEY       FAR SIDE~                   1
-#  7 314     314       175 BOULDER INDUSTRIAL        MID-BLOC~                   2
-#  8 315     315       DEPAUL @ DEPAUL HOSPITAL SB   NEAR SID~                   1
-#  9 353     353       ATHLETIC WAY @ RIDER TRAIL S~ FAR SIDE~                   2
-# 10 393     393       CATALAN TRANSIT CENTER        &amp;lt;NA&amp;gt;                        1
-# # i 5,098 more rows
-# # i 1 more variable: geometry &amp;lt;POINT [arc_degree]&amp;gt;
-
-tmap_mode(&amp;quot;maplibre&amp;quot;)
-
-# Knitted maplibre maps default to 500 px high, so set the height before framing the map.
-frame_map &amp;lt;- function(map, height = &amp;quot;700px&amp;quot;) {
-  map$height &amp;lt;- height
-  return(frameWidget(map))
-}
-
-# One simplified line per route and only the mapped columns keep the web page small.
-route_lines &amp;lt;- get_route_geometry(stlouis_gtfs) |&amp;gt;
-  st_line_merge() |&amp;gt;
-  st_transform(26915) |&amp;gt;
-  st_simplify(dTolerance = 50) |&amp;gt; #units are in m for 26915
-  st_transform(4326)
-
-m1 &amp;lt;- tm_shape(route_lines) +
-  tm_lines(col = &amp;quot;steelblue&amp;quot;, col_alpha = 0.6, group = &amp;quot;Routes&amp;quot;) +
-  tm_shape(select(stlouis_gtfs$stops, stop_name)) +
-  tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.05, id = &amp;quot;stop_name&amp;quot;, popup = FALSE, group = &amp;quot;Stops&amp;quot;) +
-  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
-
-frame_map(tmap_maplibre(m1))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_stops-map.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;h2 id=&#34;analysing-service-patterns&#34;&gt;Analysing Service Patterns&lt;/h2&gt;
-&lt;p&gt;The GTFS reference specifies that a “service_id contains an ID that uniquely identifies a set of dates when service is available for one or more routes.” A service could run on every weekday or only on Saturdays for example. However, feeds are not required to indicate anything with service_ids and some feeds even use a unique service_id for each trip and day. Service patterns can be used to find a typical day for further analysis like routing or trip frequencies for different days.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stlouis_gtfs &amp;lt;- set_servicepattern(stlouis_gtfs)
-
-# service ids used
-n_distinct(stlouis_gtfs$trips$service_id)
-# [1] 9
-
-# unique date patterns
-n_distinct(stlouis_gtfs$.$servicepatterns$servicepattern_id)
-# [1] 9
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In this particular instance, service patterns and service_ids are the same, so we can work with the service ids directly.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;thanksgiving &amp;lt;- as.Date(&amp;quot;2026-11-26&amp;quot;)
-
-stlouis_gtfs$.$dates_services |&amp;gt;
-  ggplot(aes(x = date, y = service_id)) +
-  geom_vline(xintercept = thanksgiving, linetype = &amp;quot;dashed&amp;quot;, colour = &amp;quot;grey50&amp;quot;) +
-  geom_point(size = 2, colour = &amp;quot;steelblue4&amp;quot;) +
-  annotate(&amp;quot;text&amp;quot;, x = thanksgiving, y = Inf, label = &amp;quot;Thanksgiving&amp;quot;, vjust = -0.5, size = 3.5) +
-  scale_x_date(date_breaks = &amp;quot;1 week&amp;quot;, date_labels = &amp;quot;%a %d %b&amp;quot;, expand = expansion(add = 2)) +
-  scale_y_discrete(limits = rev) +
-  coord_cartesian(clip = &amp;quot;off&amp;quot;) +
-  labs(x = NULL, y = NULL) +
-  theme_minimal() +
-  theme(plot.margin = margin(t = 20, r = 10, b = 5, l = 5))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/index.en_files/figure-html/service-calendar-1.png&#34; alt=&#34;&#34; width=&#34;672&#34; /&gt;
-&lt;p&gt;Each row is one service id and each dot is a date it runs. The ids ending in B1, B2 and B3 are the bus schedules for weekdays, Saturdays and Sundays. Those ending in T1, T2 and T3 are the MetroLink train schedules for the same days. The train schedule changes on 9 November, so the train patterns come in pairs. Notice that Thanksgiving (26 November) runs on the Sunday schedules.&lt;/p&gt;
-&lt;p&gt;Buses and trains run side by side, so a single day needs more than one service id. We pick them from the calendar for a typical weekday, Tuesday 10 November, and use that for the rest of the tutorial.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;analysis_date &amp;lt;- as.Date(&amp;quot;2026-11-10&amp;quot;)
-
-service_ids &amp;lt;- stlouis_gtfs$.$dates_services |&amp;gt;
-  filter(date == analysis_date) |&amp;gt;
-  pull(service_id)
-
-service_ids
-# [1] &amp;quot;324-B1&amp;quot; &amp;quot;324-T1&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Getting route frequencies is straightforward when we know which services we want to use. &lt;code&gt;tidytransit&lt;/code&gt; takes the time window as &lt;code&gt;&amp;quot;HH:MM:SS&amp;quot;&lt;/code&gt; strings, but reports headways in seconds.&lt;/p&gt;
-&lt;p&gt;Please pay explicit attention to the units and their conversion, as I have done below.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;to_minutes &amp;lt;- function(x) {
-  return(set_units(set_units(x, &amp;quot;s&amp;quot;), &amp;quot;min&amp;quot;))
-}
-
-midday_route_freq &amp;lt;- get_route_frequency(stlouis_gtfs, service_ids = service_ids,
-                                         start_time = &amp;quot;11:00:00&amp;quot;, end_time = &amp;quot;16:00:00&amp;quot;) |&amp;gt;
-  mutate(across(ends_with(&amp;quot;headways&amp;quot;), to_minutes))
-
-route_freq_sf &amp;lt;- route_lines |&amp;gt;
-  inner_join(midday_route_freq, by = &amp;quot;route_id&amp;quot;) |&amp;gt;
-  left_join(select(stlouis_gtfs$routes, route_id, route_short_name, route_long_name), by = &amp;quot;route_id&amp;quot;) |&amp;gt;
-  mutate(frequency = 1 / set_units(median_headways, &amp;quot;hr&amp;quot;),
-         trips_per_hr = drop_units(frequency)) |&amp;gt;   # tmap needs plain numbers
-  select(route_short_name, route_long_name, trips_per_hr)
-
-# tmap&#39;s maplibre mode has no text layer, so labels are added to the finished map with mapgl.
-add_labels &amp;lt;- function(map, labels) {
-  labelled &amp;lt;- mapgl::add_symbol_layer(map,
-                                      id = &amp;quot;labels&amp;quot;,
-                                      source = labels,
-                                      text_field = mapgl::get_column(&amp;quot;label&amp;quot;),
-                                      text_font = list(&amp;quot;Noto Sans Regular&amp;quot;),
-                                      text_size = 12,
-                                      text_halo_color = &amp;quot;white&amp;quot;,
-                                      text_halo_width = 1.5,
-                                      text_anchor = &amp;quot;top&amp;quot;,
-                                      text_offset = c(0, 0.5),
-                                      text_allow_overlap = TRUE)
-  return(labelled)
-}
-
-downtown &amp;lt;- st_sfc(st_point(c(-90.19, 38.63)), crs = 4326)
-
-# Label the most and the least frequent routes in place of a legend.
-route_labels &amp;lt;- bind_rows(slice_max(route_freq_sf, trips_per_hr, n = 3, with_ties = FALSE),
-                          slice_min(route_freq_sf, trips_per_hr, n = 2, with_ties = FALSE)) |&amp;gt;
-  mutate(label = paste0(route_short_name, &amp;quot;: &amp;quot;, round(trips_per_hr, 1), &amp;quot; per hr&amp;quot;)) |&amp;gt;
-  st_cast(&amp;quot;MULTIPOINT&amp;quot;) |&amp;gt;
-  st_cast(&amp;quot;POINT&amp;quot;) |&amp;gt;
-  mutate(from_downtown = st_distance(geometry, downtown)[, 1]) |&amp;gt;
-  slice_max(from_downtown, n = 1, by = route_short_name, with_ties = FALSE)   # label the outer end of each route, away from the crowded centre
-
-m2 &amp;lt;- tm_shape(route_freq_sf) +
-  tm_lines(col = &amp;quot;trips_per_hr&amp;quot;,
-           col.scale = tm_scale_intervals(n = 4, style = &amp;quot;pretty&amp;quot;, values = &amp;quot;brewer.blues&amp;quot;, values.range = c(0.4, 1)),
-           col.legend = tm_legend_hide(),
-           lwd = &amp;quot;trips_per_hr&amp;quot;,
-           lwd.scale = tm_scale_continuous(values.scale = 6),
-           lwd.legend = tm_legend_hide(),
-           id = &amp;quot;route_long_name&amp;quot;,
-           group = &amp;quot;Routes&amp;quot;) +
-  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
-
-frame_map(add_labels(tmap_maplibre(m2), route_labels))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_route-frequency.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;While it is fine to know which routes are more frequent than others, it is also useful to know which stops have smaller headways and more frequent departures.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;midday_stops &amp;lt;- get_stop_frequency(stlouis_gtfs, start_time = &amp;quot;11:00:00&amp;quot;, end_time = &amp;quot;16:00:00&amp;quot;,
-                                   service_ids = service_ids, by_route = FALSE) |&amp;gt;
-  arrange(mean_headway)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Notice that stop frequencies are summarised by service id. Since the buses and the trains run on the same day, we add their departures and work out the headway from the total.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;midday_window &amp;lt;- set_units(5, &amp;quot;hr&amp;quot;)
-
-midday_stops_summ &amp;lt;- midday_stops |&amp;gt;
-  summarise(n_departures = sum(n_departures, na.rm = TRUE), .by = stop_id) |&amp;gt;
-  mutate(mean_headway = set_units(midday_window / n_departures, &amp;quot;min&amp;quot;)) |&amp;gt;
-  arrange(mean_headway) |&amp;gt;
-  left_join(st_drop_geometry(select(stlouis_gtfs$stops, stop_id, stop_name)), by = &amp;quot;stop_id&amp;quot;) |&amp;gt;
-  relocate(stop_name, .after = stop_id)
-
-# Some stops have less than a 3 min wait. However, note that this is not by route, because we set the argument in such a way in earlier piece of code
-midday_stops_summ |&amp;gt;
-  slice_head(n = 5) |&amp;gt;
-  mutate(mean_headway = drop_units(mean_headway)) |&amp;gt;
-  kable(digits = 1, col.names = c(&amp;quot;Stop id&amp;quot;, &amp;quot;Stop&amp;quot;, &amp;quot;Departures&amp;quot;, &amp;quot;Mean headway (min)&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;Stop id&lt;/th&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;Stop&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Departures&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Mean headway (min)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;13330&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;NORTH HANLEY TRANSIT CENTER&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;120&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;2.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;14792&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;CENTRAL WEST END TRANSIT CENTER&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;113&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;2.7&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;14330&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;5TH &amp;amp; MISSOURI TRANSIT CENTER&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;111&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;2.7&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;11102&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;BELLEVILLE TRANSIT CENTER&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;90&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;3.3&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;14124&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;FAIRVIEW HEIGHTS TRANSIT CENTER&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;84&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;3.6&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Some stops have more than 2 hr wait between the buses
-midday_stops_summ |&amp;gt;
-  slice_tail(n = 5) |&amp;gt;
-  mutate(mean_headway = drop_units(mean_headway)) |&amp;gt;
-  kable(digits = 1, col.names = c(&amp;quot;Stop id&amp;quot;, &amp;quot;Stop&amp;quot;, &amp;quot;Departures&amp;quot;, &amp;quot;Mean headway (min)&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;Stop id&lt;/th&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;Stop&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Departures&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Mean headway (min)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;6912&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;ST CHARLES ROCK ROAD @ NORTHWEST INDUSTRIAL EB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;150&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;6914&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;ST. CHARLES ROCK ROAD @ TAUSSIG EB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;150&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;6915&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;ST. CHARLES ROCK ROAD @ PENNRIDGE EB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;2&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;150&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;15619&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;VALLEY INDUSTRIES LOOP&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;300&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;6086&lt;/td&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;FLEISCHER @ LHB INDUSTRIES WB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;1&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;300&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;stops_freq_sf &amp;lt;- stlouis_gtfs$stops |&amp;gt;
-  select(stop_id) |&amp;gt;
-  inner_join(midday_stops_summ, by = &amp;quot;stop_id&amp;quot;) |&amp;gt;
-  mutate(bubble_size = n_departures^2,   # squared, to set the busy stops apart
-         tip = paste0(stop_name, &amp;quot;: &amp;quot;, round(drop_units(mean_headway)), &amp;quot; min headway&amp;quot;)) |&amp;gt;
-  select(stop_name, n_departures, mean_headway, bubble_size, tip)
-
-# Label the busiest stops and the longest waits in place of a legend.
-stop_labels &amp;lt;- bind_rows(slice_max(stops_freq_sf, n_departures, n = 3, with_ties = FALSE),
-                         slice_max(stops_freq_sf, mean_headway, n = 2, with_ties = FALSE)) |&amp;gt;
-  mutate(label = tip)
-
-m3 &amp;lt;- tm_shape(route_lines) +
-  tm_lines(col = &amp;quot;steelblue&amp;quot;, col_alpha = 0.2, group = &amp;quot;Routes&amp;quot;) +
-  tm_shape(stops_freq_sf) +
-  tm_dots(fill = &amp;quot;firebrick&amp;quot;, fill_alpha = 0.6,
-          size = &amp;quot;bubble_size&amp;quot;,
-          size.scale = tm_scale_continuous(values.scale = 1.5),
-          size.legend = tm_legend_hide(),
-          id = &amp;quot;tip&amp;quot;,
-          popup = FALSE,
-          group = &amp;quot;Stops&amp;quot;) +
-  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
-
-frame_map(add_labels(tmap_maplibre(m3), stop_labels))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_stop-summary.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;Notice how some stops have more frequent departures and some have long wait times. There are some spatial patterns. The classic hub and spoke transit system means that the downtown (hub) have a lot of stops that have high quality transit. However, there are also some transit centres at the outskirts that also have large number of departures. These serve as transfer stations or terminus.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;Exercise 1: Frequency by route, time and season&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Notice that these stop frequencies do not account for routes. However, it may be more useful to get the frequencies averaged by the route. Does the geography of access change?&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;In the above, only midday weekday services are mapped out. What about other patterns? Saturday Morning might have a different accessibility pattern. Think about how to analyse them and represent the variation over day as well as over the week.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;If there are seasonal variations, it would be helpful to know. For example, university transit systems have reduced operations during Winter and Summer breaks. Using the above as a template, and Duke University transit as your public transit system, figure out the seasonal variations in accessibility.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; Pick the service ids from the calendar for one date at a time, as we did for 10 November, then reuse the stop frequency code.&lt;/p&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;p&gt;&lt;strong&gt;Frequency by route&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;for the same date and midday window, get stop frequencies split by route
-for each stop, keep the shortest headway among the routes that serve it
-join the result to the stop locations
-map it the same way as the combined departures and compare the two maps
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The transit centers lead the combined map because many routes meet there. North Hanley has a departure every 2.5 min across all routes, but no single route comes more often than every 20 min. By route, the stops along the busiest corridors such as Grand move to the top, at about 11.5 min.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Variation over the day and the week&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;choose one date for each day type: weekday, Saturday, Sunday
-choose time windows: morning, midday, afternoon, evening
-for each date and window:
-    find the service ids running on that date
-    get stop frequencies for those services and that window
-    add the departures at each stop
-    divide by the length of the window to get departures per hour
-tabulate system wide departures per hour by day type and window
-map the stops as small multiples, one panel for each combination
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Windows of different lengths are only comparable per hour. Weekday service is about the same in the morning and at midday. Midday service on Saturday is about 30% lower and on Sunday lower still. A weekday evening looks much like a Saturday.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Seasonal variation at Duke&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;download the Duke University feed from the catalogue
-list which service ids run on which dates and how many trips each one has
-add up the trips on each date and plot them through the feed&#39;s date range
-choose a date from each distinct period
-repeat the stop frequency analysis for each one and compare the maps
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The current feed only covers January to August 2025, and weekday trips step up from about 800 to about 870 in May. A single feed cannot show periods outside its own dates, so a full year needs archived feeds.&lt;/p&gt;
-&lt;/details&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;accessibility-as-cumulative-opportunity&#34;&gt;Accessibility as Cumulative Opportunity&lt;/h2&gt;
-&lt;p&gt;While it is useful to think of accessibility as frequency of transit at a particular location, that indicator does not tell us much about the system level accessibility. While a specific bus station might have frequent departures, it may be on a line that is broadly disconnected from the rest of the transit system (e.g. connected to other lines that have significant wait times). It is thus useful to measure accessibility as opportunities that can be accessed within a travel budget (say 45 minutes). To do compute these, it is useful to figure out how much area can be covered within 45 min of travel time.&lt;/p&gt;
-&lt;p&gt;It is reasonably straightforward to figure out how much area can be &lt;a href=&#34;https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/&#34;&gt;covered by foot using routing engines such as OSRM&lt;/a&gt;. The tricky bit is to figure out how much time is spent waiting at transit stations before boarding the buses/trains and during transfers.&lt;/p&gt;
-&lt;p&gt;Typically, accessibility is measured for centroids of population centers (block groups e.g.). However, any origin set should be fine. I select the the three counties for the analysis (St. Clair in IL and St. Louis City, St. Louis County in MO)&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;transitstops &amp;lt;- stlouis_gtfs$stops
-
-get_centroids &amp;lt;- function(state, county) {
-  centroids &amp;lt;- tigris::block_groups(state = state, county = county, year = 2024, progress_bar = FALSE) |&amp;gt;
-    st_centroid() |&amp;gt;
-    st_transform(st_crs(transitstops)) |&amp;gt;
-    select(GEOID)
-  return(centroids)
-}
-
-blkgrps &amp;lt;- bind_rows(get_centroids(&amp;quot;MO&amp;quot;, c(&amp;quot;510&amp;quot;, &amp;quot;189&amp;quot;)),
-                     get_centroids(&amp;quot;IL&amp;quot;, &amp;quot;163&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;An analytical decision to make early on is to assign the origin to a nearest starting point on the transit network or to the nearest starting point on the road (foot/bike) network. It is always more computationally expensive to model both the first and last mile of travel. In this tutorial, I will demonstrate how this might be possible.&lt;/p&gt;
-&lt;p&gt;We need to operationalise a few things. Some of them are easier to precompute and some of them are easier on the fly.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Travel time from each origin (block group centroid) to each destination (transit station) by foot. This is presumably time invariant, as the road network is not subject to schedules. However, this is highly dependent on the quality of the road network and appropriate information about crossings and non-pedestrian roads. I am simplifying this and simply assigning all pedestrian roads have same walk speed and non-pedestrian roads are not traversable.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Travel time from each transit station to every other transit station. For the sake of practicality, we will limit the number of transfers to 3. This is highly dependent on schedules, especially when the trip starts and what time the transit reaches each stop and if there are any transfers available to other routes within the travel budget. This is time varying.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The geography that can be covered from each transit stop in the remaining time after the transit trip is concluded. While, we do not know apriori how much time is remaining, we know that it cannot exceed the travel budget (45 min). So we can precompute 1 min isochrones from each transit station and select them as necessary.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;While we are focused on transit, it could very well be that many of the block groups may not have access to good quality transit and therefore the entire travel budget is spent on foot.Thus, we also compute the isochrones for the block group centroids.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;All the steps (except the second) can be computed using routing engines such as OSRM.&lt;/p&gt;
-&lt;h3 id=&#34;connecting-to-a-routing-server&#34;&gt;Connecting to a routing server&lt;/h3&gt;
-&lt;p&gt;We will use a cloud server for the queries in this tutorial. Its address does not belong in shared code, so it goes in your &lt;code&gt;.Renviron&lt;/code&gt; file (&lt;code&gt;usethis::edit_r_environ()&lt;/code&gt; opens it). You should have received an email about this. Mind the trailing slash and restart R after you save the file.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;OSRM_URL=http://address-of-the-server/
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osrm)
-
-options(osrm.server = Sys.getenv(&amp;quot;OSRM_URL&amp;quot;),
-        osrm.profile = &amp;quot;foot&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3 id=&#34;starting-with-one-location&#34;&gt;Starting with one location&lt;/h3&gt;
-&lt;p&gt;Let us walk through the queries for a single block group. &lt;code&gt;osrmTable&lt;/code&gt; returns the walking time from an origin to a set of destinations, here the five stops closest to the block group in a straight line.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;blkgrp_id &amp;lt;- &amp;quot;291892138006&amp;quot;
-origin &amp;lt;- filter(blkgrps, GEOID == blkgrp_id)
-
-straight_line &amp;lt;- st_distance(transitstops, origin)[, 1]
-closest_stops &amp;lt;- transitstops[order(straight_line)[1:5], ]
-
-walk_table &amp;lt;- osrmTable(src = origin, dst = closest_stops, measure = &amp;quot;duration&amp;quot;)
-
-closest_stops |&amp;gt;
-  st_drop_geometry() |&amp;gt;
-  transmute(stop_name,
-            straight_line_m = drop_units(sort(straight_line)[1:5]),
-            walk_min = as.vector(walk_table$durations)) |&amp;gt;
-  kable(digits = 1, col.names = c(&amp;quot;Stop&amp;quot;, &amp;quot;Straight line (m)&amp;quot;, &amp;quot;Walk (min)&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;Stop&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Straight line (m)&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Walk (min)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ LINCOLN NB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;230.2&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;3.8&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ LINCOLN SB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;239.4&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;3.6&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ COLONIAL NB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;299.4&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;4.2&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ COLONIAL SB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;302.2&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;15.4&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;LUCAS-HUNT @ LEXINGTON SB&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;344.4&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;5.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;The closest stop in a straight line need not be the quickest to walk to, because the walk follows the street network.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;osrmIsochrone&lt;/code&gt; returns the area that can be reached from a location within given times. Let us ask for 5, 10 and 15 min from the closest stop.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;one_stop &amp;lt;- closest_stops[1, ]
-
-stop_bands &amp;lt;- osrmIsochrone(loc = one_stop, breaks = c(0, 5, 10, 15)) |&amp;gt;
-  st_make_valid() |&amp;gt;
-  mutate(label = paste0(isomin, &amp;quot; to &amp;quot;, isomax, &amp;quot; min&amp;quot;))
-
-band_labels &amp;lt;- stop_bands |&amp;gt;
-  st_transform(26915) |&amp;gt;
-  st_make_valid() |&amp;gt;
-  st_point_on_surface() |&amp;gt;
-  st_transform(4326)
-
-m4 &amp;lt;- tm_shape(stop_bands) +
-  tm_polygons(fill = &amp;quot;label&amp;quot;,
-              fill.scale = tm_scale_categorical(values = c(&amp;quot;#08519c&amp;quot;, &amp;quot;#4292c6&amp;quot;, &amp;quot;#c6dbef&amp;quot;)),
-              fill.legend = tm_legend_hide(),
-              fill_alpha = 0.7,
-              col = &amp;quot;white&amp;quot;,
-              id = &amp;quot;label&amp;quot;,
-              group = &amp;quot;Isochrone bands&amp;quot;) +
-  tm_shape(one_stop) +
-  tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.6, id = &amp;quot;stop_name&amp;quot;, group = &amp;quot;Stop&amp;quot;) +
-  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
-
-frame_map(add_labels(tmap_maplibre(m4), band_labels))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_osrm-isochrone.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;Notice that each row is a ring around the earlier rows (e.g. can be reached between 10 and 15 min). What we need is the cumulative isochrone (e.g. reached within 15 min), which is the ring with its holes filled. We work in UTM 15N (EPSG:26915), because planar geometry is more forgiving of these messy polygons.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;fill_holes &amp;lt;- function(x) {
-  filled &amp;lt;- x |&amp;gt;
-    st_geometry() |&amp;gt;
-    st_transform(26915) |&amp;gt;
-    st_make_valid() |&amp;gt;
-    nngeo::st_remove_holes()
-  return(filled)
-}
-
-tibble(within_min = stop_bands$isomax,
-       area = drop_units(set_units(st_area(fill_holes(stop_bands)), km^2))) |&amp;gt;
-  kable(digits = 2, col.names = c(&amp;quot;Within (min)&amp;quot;, &amp;quot;Area (sq km)&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Within (min)&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Area (sq km)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;5&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;0.14&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;10&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;0.63&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;15&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;1.65&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;how-long-would-all-the-queries-take&#34;&gt;How long would all the queries take?&lt;/h3&gt;
-&lt;p&gt;We need these two queries for every block group and every stop. Before starting a long run, time a small sample and scale it up. OSRM moves each location to the closest road, so a location that has to move too far gets &lt;code&gt;NA&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;max_snap &amp;lt;- set_units(1, &amp;quot;km&amp;quot;)
-
-# TRUE when OSRM had to move a location too far to trust the result.
-snapped_too_far &amp;lt;- function(snapped) {
-  return(set_units(snapped$snapping_distance, &amp;quot;km&amp;quot;) &amp;gt; max_snap)
-}
-
-one_minute_bands &amp;lt;- function(location) {
-  snapped &amp;lt;- osrmTable(src = location, dst = location, measure = &amp;quot;duration&amp;quot;)$sources
-  if (snapped_too_far(snapped)) {
-    return(NA)
-  }
-  return(osrmIsochrone(loc = location, breaks = seq(0, 45, 1)))
-}
-
-sample_stops &amp;lt;- transitstops[1:5, ]
-
-sample_time &amp;lt;- system.time(
-  map(seq_len(nrow(sample_stops)), function(i) {
-    return(one_minute_bands(sample_stops[i, ]))
-  })
-)
-
-per_location &amp;lt;- set_units(sample_time[[&amp;quot;elapsed&amp;quot;]] / nrow(sample_stops), &amp;quot;s&amp;quot;)
-n_locations &amp;lt;- nrow(blkgrps) + nrow(transitstops)
-
-tibble(locations = n_locations,
-       seconds_each = drop_units(per_location),
-       hours_in_all = drop_units(set_units(per_location * n_locations, &amp;quot;hr&amp;quot;))) |&amp;gt;
-  kable(digits = 1, col.names = c(&amp;quot;Locations&amp;quot;, &amp;quot;Seconds each&amp;quot;, &amp;quot;Hours for all the isochrones&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Locations&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Seconds each&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Hours for all the isochrones&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;6368&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;0.7&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;1.2&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;That is one person, one location at a time, and leaves out the travel time matrix. There are two ways to do it.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Query the cloud server.&lt;/strong&gt; You can run the full code below against the cloud server, but keep the following in mind.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;It is a small shared machine. A long run slows everyone else down and may crash the server.&lt;/li&gt;
-&lt;li&gt;It can go down without notice, and a crash partway through loses whatever has not been saved. Save the results in batches as you go.&lt;/li&gt;
-&lt;li&gt;A very large travel time request may be refused, so keep the batches small.&lt;/li&gt;
-&lt;li&gt;It does not have all of the US. The snapping check above guards against locations outside its network.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Set up your own server.&lt;/strong&gt; This is the better choice for a full run. Download the latest OpenStreetMap data for Missouri and Illinois from &lt;a href=&#34;https://download.geofabrik.de/north-america/us.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geofabrik&lt;/a&gt;. Then run the following in a terminal to build a foot network clipped to the region and start the server (&lt;a href=&#34;https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/&#34;&gt;more on setting up OSRM&lt;/a&gt;). On a Mac, AirPlay already uses the usual port 5000, so the server listens on 5001. &lt;code&gt;--max-table-size&lt;/code&gt; has to be larger than the number of stops. Change &lt;code&gt;OSRM_URL&lt;/code&gt; to &lt;code&gt;http://localhost:5001/&lt;/code&gt; to use it.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;osmium merge missouri-latest.osm.pbf illinois-latest.osm.pbf -o merged.osm.pbf
-osmium extract -b -90.90,38.10,-89.55,39.00 merged.osm.pbf -o stlouis.osm.pbf
-osrm-extract stlouis.osm.pbf -p /usr/local/share/osrm/profiles/foot.lua
-osrm-contract stlouis.osrm
-osrm-routed --algorithm ch --port 5001 --max-table-size 6000 stlouis.osrm
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The code for the full run is the same for both. It is not run here. The origins go in batches, because a single request with every coordinate is too long.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;batches &amp;lt;- split(seq_len(nrow(blkgrps)), ceiling(seq_len(nrow(blkgrps)) / 100))
-
-durations &amp;lt;- map(batches, function(rows) {
-  table_part &amp;lt;- osrmTable(src = blkgrps[rows, ], dst = transitstops, measure = &amp;quot;duration&amp;quot;)
-  table_part$durations[snapped_too_far(table_part$sources), ] &amp;lt;- NA
-  table_part$durations[, snapped_too_far(table_part$destinations)] &amp;lt;- NA
-  return(table_part$durations)
-})
-
-ttmatrix &amp;lt;- list(durations = round(do.call(rbind, durations)))
-dimnames(ttmatrix$durations) &amp;lt;- list(blkgrps$GEOID, transitstops$stop_id)
-
-isochrones_for &amp;lt;- function(locations, ids) {
-  iso &amp;lt;- map(seq_len(nrow(locations)), possibly(function(i) {
-    return(one_minute_bands(locations[i, ]))
-  }, otherwise = NULL))
-  names(iso) &amp;lt;- ids
-  return(iso)
-}
-
-blkgrp_iso &amp;lt;- isochrones_for(blkgrps, blkgrps$GEOID)
-stop_iso &amp;lt;- isochrones_for(transitstops, transitstops$stop_id)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I ran this on my own laptop, using OpenStreetMap data from November 2026. It took about half an hour. You do not need to repeat it. &lt;strong&gt;The rest of this tutorial uses these precomputed results instead of querying a server&lt;/strong&gt;, so download the &lt;a href=&#34;https://adminliveunc-my.sharepoint.com/:u:/r/personal/kaza_ad_unc_edu/Documents/courses/672/tutorial_datasets/gtfs/ttmatrix.RData?d=w85fba735312c46119106a6575d7f57f2&amp;amp;csf=1&amp;amp;web=1&amp;amp;e=czrk9B&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;RData file&lt;/a&gt; and change the paths.&lt;/p&gt;
-&lt;p&gt;stop_iso is a list of 1 min isochrone bands for each stop. blkgrp_iso is the same for each block group. ttmatrix is a list where the element durations is a travel time matrix from block groups to transit stops, in minutes. All of them are named by stop id and GEOID, to easily filter and identify. Results from the cloud server may differ slightly, because its map data can be of a different date.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;load(here(&amp;quot;tutorials_datasets/gtfs/ttmatrix.RData&amp;quot;))
-
-length(blkgrp_iso)
-# [1] 1260
-length(stop_iso)
-# [1] 5108
-dim(ttmatrix$durations)
-# [1] 1260 5108
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3 id=&#34;adding-the-transit-trip&#34;&gt;Adding the transit trip&lt;/h3&gt;
-&lt;p&gt;The second part of the list above is computed using the Round-Based Public Transit Routing Algorithm (RAPTOR) for each start time. But first we need to make a transfer table. Typically GTFS should come with one that specifies the time taken to transfer between two stations (within reasonable time frame). Since we do not have it here in the St. Louis GTFS, we infer one based on distance (typically within 200 m) and a walking speed of 5 km/h.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;walking_speed &amp;lt;- set_units(5, &amp;quot;km/h&amp;quot;)
-
-neighbours &amp;lt;- st_is_within_distance(transitstops, dist = set_units(200, &amp;quot;m&amp;quot;))
-
-stlouis_gtfs$transfers &amp;lt;- tibble(from = rep(seq_along(neighbours), lengths(neighbours)),
-                                 to = unlist(neighbours)) |&amp;gt;
-  mutate(from_stop_id = transitstops$stop_id[from],
-         to_stop_id = transitstops$stop_id[to],
-         distance = st_distance(transitstops[from, ], transitstops[to, ], by_element = TRUE),
-         transfer_type = 2L,
-         min_transfer_time = drop_units(set_units(distance / walking_speed, &amp;quot;s&amp;quot;))) |&amp;gt;   # raptor wants plain seconds
-  select(from_stop_id, to_stop_id, transfer_type, min_transfer_time)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3 id=&#34;the-reach-of-one-block-group&#34;&gt;The reach of one block group&lt;/h3&gt;
-&lt;p&gt;We now have all the pieces. In the following code, I am going to demonstrate the extent of reach for the same block group and focus on a single start time at 6:20 AM on a weekday. The exercise below iterates over a vector of times and block groups.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;travel_budget &amp;lt;- set_units(45, &amp;quot;min&amp;quot;)
-
-blk_start_time &amp;lt;- period_to_seconds(hm(&amp;quot;6:20&amp;quot;))
-blk_end_time &amp;lt;- blk_start_time + drop_units(set_units(travel_budget, &amp;quot;s&amp;quot;))
-
-# Trips on a single weekday within the travel budget. All the searches below share this table.
-transit_stop_times &amp;lt;- filter_stop_times(stlouis_gtfs, analysis_date,
-                                        min_departure_time = blk_start_time,
-                                        max_arrival_time = blk_end_time)
-
-# How much time it takes to reach different transit stations from the block group centroid.
-travel_to_stations &amp;lt;- tibble(stop_id = transitstops$stop_id,
-                             walk_time = set_units(ttmatrix$durations[blkgrp_id, ], &amp;quot;min&amp;quot;)) |&amp;gt;
-  filter(walk_time &amp;lt; travel_budget,
-         stop_id %in% transit_stop_times$stop_id) |&amp;gt;
-  mutate(earliest_departure = blk_start_time + drop_units(set_units(walk_time, &amp;quot;s&amp;quot;)))
-
-# For each station that can be reached on foot, the other stations reached by transit in the budget.
-journeys_from_station &amp;lt;- function(stop_id, earliest_departure) {
-  journeys &amp;lt;- raptor(transit_stop_times,
-                     stlouis_gtfs$transfers,
-                     stop_ids = stop_id,
-                     time_range = c(earliest_departure, blk_end_time),
-                     max_transfers = 3,
-                     keep = &amp;quot;earliest&amp;quot;)
-  return(journeys)
-}
-
-has_rows &amp;lt;- function(x) {
-  return(nrow(x) &amp;gt; 0)
-}
-
-# The remaining time from the travel budget, keeping the best journey to each station.
-remain_time_dt &amp;lt;- map2(travel_to_stations$stop_id,
-                       travel_to_stations$earliest_departure,
-                       journeys_from_station) |&amp;gt;
-  keep(has_rows) |&amp;gt;
-  list_rbind() |&amp;gt;
-  as_tibble() |&amp;gt;
-  mutate(remain_time = to_minutes(blk_end_time - journey_arrival_time)) |&amp;gt;
-  filter(remain_time &amp;gt; set_units(0, &amp;quot;min&amp;quot;)) |&amp;gt;
-  slice_max(remain_time, n = 1, by = to_stop_id, with_ties = FALSE) |&amp;gt;
-  select(to_stop_id, remain_time)
-
-nrow(remain_time_dt)
-# [1] 630
-
-# For a reachable station, the isochrone corresponding to the remaining time on the budget.
-iso_within &amp;lt;- function(stop_id, remain_minutes) {
-  iso &amp;lt;- stop_iso[[stop_id]] |&amp;gt;
-    filter(isomax &amp;lt;= remain_minutes) |&amp;gt;
-    slice_max(isomax, n = 1, with_ties = FALSE)
-  return(st_geometry(iso))
-}
-
-transit_reach &amp;lt;- map2(remain_time_dt$to_stop_id,
-                      drop_units(remain_time_dt$remain_time),
-                      iso_within) |&amp;gt;
-  list_c() |&amp;gt;
-  fill_holes()
-
-# The whole budget can also be spent on foot.
-walk_reach &amp;lt;- blkgrp_iso[[blkgrp_id]] |&amp;gt;
-  slice_max(isomax, n = 1, with_ties = FALSE) |&amp;gt;
-  fill_holes() |&amp;gt;
-  st_union()
-
-## Union the various polygons along with the foot isochrone of the block group.
-geo_sf &amp;lt;- c(transit_reach, walk_reach) |&amp;gt;
-  st_union() |&amp;gt;
-  st_make_valid()
-
-reach_summary &amp;lt;- tibble(mode = c(&amp;quot;Walk only&amp;quot;, &amp;quot;Walk and transit&amp;quot;),
-                        area = set_units(c(st_area(walk_reach), st_area(geo_sf)), km^2))
-
-reach_summary |&amp;gt;
-  mutate(area = drop_units(area)) |&amp;gt;
-  kable(digits = 1, col.names = c(&amp;quot;Mode&amp;quot;, &amp;quot;Area reached in 45 min (sq km)&amp;quot;))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:left&#34;&gt;Mode&lt;/th&gt;
-&lt;th style=&#34;text-align:right&#34;&gt;Area reached in 45 min (sq km)&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;Walk only&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;20.9&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:left&#34;&gt;Walk and transit&lt;/td&gt;
-&lt;td style=&#34;text-align:right&#34;&gt;55.6&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# Place the transit label at the closest reachable station that is beyond walking distance.
-reachable_stops &amp;lt;- filter(transitstops, stop_id %in% remain_time_dt$to_stop_id)
-beyond_walk &amp;lt;- reachable_stops[st_disjoint(st_transform(reachable_stops, 26915), walk_reach, sparse = FALSE)[, 1], ]
-label_stop &amp;lt;- beyond_walk[which.min(st_distance(beyond_walk, origin)), ]
-
-reach_labels &amp;lt;- st_sf(label = paste0(reach_summary$mode, &amp;quot;: &amp;quot;,
-                                     round(drop_units(reach_summary$area)), &amp;quot; sq km&amp;quot;),
-                      geometry = c(st_transform(st_point_on_surface(walk_reach), 4326),
-                                   st_geometry(label_stop)))
-
-m5 &amp;lt;- tm_shape(st_transform(geo_sf, 4326)) +
-  tm_polygons(fill = &amp;quot;steelblue&amp;quot;, fill_alpha = 0.4, col = &amp;quot;steelblue4&amp;quot;, group = &amp;quot;Walk and transit&amp;quot;) +
-  tm_shape(st_transform(walk_reach, 4326)) +
-  tm_polygons(fill = &amp;quot;#08306b&amp;quot;, fill_alpha = 0.4, col = &amp;quot;#08306b&amp;quot;, group = &amp;quot;Walk only&amp;quot;) +
-  tm_shape(origin) +
-  tm_dots(fill = &amp;quot;firebrick&amp;quot;, size = 0.6, id = &amp;quot;GEOID&amp;quot;, group = &amp;quot;Block group centroid&amp;quot;) +
-  tm_basemap(&amp;quot;ofm.positron&amp;quot;, group = &amp;quot;OpenFreeMap basemap&amp;quot;)
-
-frame_map(add_labels(tmap_maplibre(m5), reach_labels))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-5&#34; style=&#34;width:100%;height:700px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-5&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_reach-one-blockgroup.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;Exercise 2: Isochrones over time and space&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Create a function that will take start time as an argument and return the transit+walk isochrones for a block group. Use it to compute the isochrones for every 10 min for a single block group&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Create a function that will return the isochrones for a single start time, but for all block groups.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Combine the two functions and create the isochrones that change over time and over space for all of St. Louis. What story can you tell about diurnal variation in accessibility.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Repeat this exercise for a transit system that has significant weekly and seasonal variablity (e.g. Duke/Durham)&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;Hint:&lt;/em&gt; Everything that depends on the start time or the block group in the code above becomes an argument. Each combination takes about 10 s, so try a few block groups and start times before attempting all of them.&lt;/p&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;p&gt;&lt;strong&gt;One block group, every 10 min&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;function reach(block group, start time):
-    end time = start time + travel budget
-    keep the stop times for the date between start time and end time
-    find the stops within walking distance before the end time
-    for each of those stops:
-        search the transit network from the time we arrive on foot until the end time
-    for each stop reached, keep the journey leaving the most time on the budget
-    for each stop reached, take its isochrone for the remaining time and fill its holes
-    union them with the block group&#39;s own walking isochrone
-    return the polygon and its area
-
-for start time from 05:00 to 23:00, every 10 min:
-    reach(block group, start time)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;If no stop can be reached in time, the function should return the walking isochrone alone.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;All block groups, one start time&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;for each block group:
-    reach(block group, start time)
-stack the results into one table with the GEOID and the area
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Over time and space&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;for each start time:
-    for each block group:
-        reach(block group, start time)
-summarise the area for each block group: median and spread across start times
-summarise the area for each start time: median across block groups
-map the median and the spread, and plot the area against the start time
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Run this on a sample of block groups first, or in parallel. A single start time can mislead, because the area depends on how that time lines up with departures. For the block group above, the reach on foot is 21 sq km, while with transit it swings between about 40 and 65 sq km through the weekday without tracking the rush hour. A block group in the city (295101124002) ranges from about 76 to 114 sq km. So report a summary over many start times.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Other transit systems&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;build the routing network for Durham and precompute its isochrones
-choose a date from each period and day type in the feed&#39;s calendar
-repeat the steps above for each date and compare the summaries
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/details&gt;
-&lt;hr&gt;
-&lt;p&gt;Your goal is to get something that resembles this animation.&lt;/p&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img alt=&#34;&#34;
-           src=&#34;https://nkaza.github.io/post/transit-accessibility-using-gtfs/images/stlouis2.gif&#34;
-           loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-&lt;/p&gt;
-&lt;p&gt;Notice the variation in the reacheable area by transit in 45 min. Compare that to the reacheable areas by biking and driving.&lt;/p&gt;
-&lt;div class=&#34;alert alert-warning&#34;&gt;
-  &lt;div&gt;
-    Animations are terrible visualisations. They are primarily used for vanity purposes and have little informational content. Avoid them.
-  &lt;/div&gt;
-&lt;/div&gt;
-&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
-&lt;p&gt;Cumulative Opportunity is only one type of accessibility measures and perhaps not even the most useful one. But the above code can be easily adapted to gravity based measures or even any other kind of time/distance decay weighting. In any case, it is important to recognise that accessibility is unevenly distributed in both space and in time. Cumulative Opportunity is as good as any in demonstrating this.&lt;/p&gt;
-&lt;p&gt;Also while GTFS is about schedules, it is important to note that real travel times on transit systems rarely conform to the schedule. It is useful to think about how real time information can be useful in understanding why transit may or may not be a viable option for different constraints of life. More importantly, the above analysis does not account for tours and has implicitly assumed trips as the basis for accessibility. Again, caution should be used to interpret these.&lt;/p&gt;
-</description>
+&lt;p&gt;Understanding the reach and effectiveness of public transit is important to understand how urban environments are accessible for different groups of people. Analysing fixed route public transit has become relatively straightforward with the introduction of the “General Transit Feed Specification,” a common standard for transit agencies to publish their schedules. &lt;a href=&#34;https://beyondtransparency.org/chapters/part-2/pioneering-open-data-standards-the-gtfs-story/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Pioneered by TriMet of Portland, Oregon&lt;/a&gt; in collaboration with Google, this specification has become common for transit agencies around the world to publish their consumer facing datasets.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -920,361 +230,7 @@ repeat the steps above for each date and compare the summaries
       <link>https://nkaza.github.io/post/cleaning-using-spatial-networks/</link>
       <pubDate>Wed, 26 Oct 2022 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/cleaning-using-spatial-networks/</guid>
-      <description>&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/pymjs/pym.v1.js&#34;&gt;&lt;/script&gt;
-&lt;script src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/widgetframe-binding/widgetframe.js&#34;&gt;&lt;/script&gt;
-&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;Some transportation networks are intuitive to understand as networks. We can easily visualize intersections as nodes and roadways as edges in a road network. A network analysis approach helps in understanding complex behaviour of systems such as transportation networks that would not be possible with other types of analyses that look at individual components as separate entities. Understanding the relationships between various components such as different types of roadways (highways, side walks, residential roads) and how they induce events likes traffic jams requires a relational systemic perspective that is not fully provided with statistical or spatial analysis on their own. Spatial networks preserves the spatial properties while allowing exploration of relations between entities represented as points, lines and polygons.&lt;/p&gt;
-&lt;p&gt;While it is fairly easy to extract road networks from geospatial databases such as OpenStreetMap, using such data for network analysis isn’t so straightforward. Road network information are inherently messy because of complexities in roads and information associated with roads and transportation. In this tutorial, we will learn how to clean spatial networks in R. We take an example of a network of walkable streets in Downtown Carrboro in North Carolina.&lt;/p&gt;
-&lt;p&gt;We will use &lt;code&gt;sfnetworks&lt;/code&gt; package. The package bridges network analysis functionalities of the &lt;code&gt;tidygraph&lt;/code&gt; package with the spatial analysis functionalities of the &lt;code&gt;sf&lt;/code&gt; package.&lt;/p&gt;
-&lt;p&gt;As of writing this tutorial, &lt;code&gt;sfnetworks&lt;/code&gt; has recently been removed from CRAN, the peer-reviewed repository for R packages. We can use &lt;code&gt;remotes&lt;/code&gt; packages to install the package from Github.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(&amp;quot;remotes&amp;quot;)
-remotes::install_github(&amp;quot;luukvdmeer/sfnetworks&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osmdata)
-library(tidyverse)
-library(sf)
-library(igraph)
-library(tidygraph)
-library(sfnetworks)
-library(tmap)
-library(dbscan)
-library(widgetframe)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;downloading-data--sanity-checks&#34;&gt;Downloading Data &amp;amp; Sanity Checks&lt;/h2&gt;
-&lt;p&gt;Previously we have used “osmdata” package to download restaurants from OpenStreetMap using Overpass Query. Let’s use the same package to download all walkable ways in Downtown Carrboro. The key-value pairs used are not exhaustive. There maybe others that are relevant.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;we_foot &amp;lt;- opq(&amp;quot;Downtown Carrboro, North Carolina&amp;quot;) %&amp;gt;% 
-  add_osm_feature(key = &amp;quot;highway&amp;quot;, value = c(&amp;quot;bridleway&amp;quot;,&amp;quot;corridor&amp;quot;, &amp;quot;elevator&amp;quot;, &amp;quot;footway&amp;quot;, &amp;quot;living_street&amp;quot;, &amp;quot;path&amp;quot;, &amp;quot;pedestrian&amp;quot;, &amp;quot;primary&amp;quot;, &amp;quot;primary_link&amp;quot;, &amp;quot;residential&amp;quot;, &amp;quot;secondary&amp;quot;, &amp;quot;secondary_link&amp;quot;, &amp;quot;service&amp;quot;, &amp;quot;steps&amp;quot;, &amp;quot;tertiary&amp;quot;, &amp;quot;tertiary_link&amp;quot;, &amp;quot;track&amp;quot;, &amp;quot;unclassified&amp;quot;))%&amp;gt;% 
-  osmdata_sf() #convert to sf
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We will look at the columns, and a summary of the components of the spatial object&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;names(we_foot)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;bbox&amp;quot;              &amp;quot;overpass_call&amp;quot;     &amp;quot;meta&amp;quot;             
-## [4] &amp;quot;osm_points&amp;quot;        &amp;quot;osm_lines&amp;quot;         &amp;quot;osm_polygons&amp;quot;     
-## [7] &amp;quot;osm_multilines&amp;quot;    &amp;quot;osm_multipolygons&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;we_foot
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Object of class &#39;osmdata&#39; with:
-##                  $bbox : 35.8899859,-79.0952611,35.9299859,-79.0552611
-##         $overpass_call : The call submitted to the overpass API
-##                  $meta : metadata including timestamp and version numbers
-##            $osm_points : &#39;sf&#39; Simple Features Collection with 17707 points
-##             $osm_lines : &#39;sf&#39; Simple Features Collection with 2793 linestrings
-##          $osm_polygons : &#39;sf&#39; Simple Features Collection with 44 polygons
-##        $osm_multilines : NULL
-##     $osm_multipolygons : NULL
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can see that there are points, lines and polygons but no multi-lines and multipolygons. First we need to change polygons to lines. We do not need to worry about the points. The points are the points that make up the lines and polygons.&lt;/p&gt;
-&lt;p&gt;We can look at the location of those polygons.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;we_foot$osm_polygons %&amp;gt;% 
-  st_geometry() %&amp;gt;% 
-  plot()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;768&#34; /&gt;
-&lt;p&gt;We are only considering points and lines for this spatial network analysis. We can cast the polygons to lines.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# cast polygons to lines
-poly_to_lines &amp;lt;- st_cast(we_foot$osm_polygons, &amp;quot;LINESTRING&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning in st_cast.sf(we_foot$osm_polygons, &amp;quot;LINESTRING&amp;quot;): repeating attributes
-## for all sub-geometries for which they may not be constant
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# bind all lines together
-we_foot_lines &amp;lt;- bind_rows(we_foot$osm_lines, poly_to_lines)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# plot it
-we_foot_lines %&amp;gt;% 
-  st_geometry() %&amp;gt;% 
-  plot()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;768&#34; /&gt;
-&lt;h2 id=&#34;cleaning-the-network&#34;&gt;Cleaning the Network&lt;/h2&gt;
-&lt;p&gt;Mathematically a network/graph is a collection of links and nodes. For many applications, what really matters is the connections and relationships among these links and nodes, but not the spatial attributes these links and nodes. In other words, topological relationships are more important than spatial relationships. See for example, the Input Output matrix of various industries, or social network of different individuals or networks of neurons in brain.&lt;/p&gt;
-&lt;p&gt;However, in spatial networks, the location of the roads and street intersection matter. Furthermore, the representation of streets as lines (straight, or multilines, curved roads), their directionality (one-way, two-way), the precision (e.g. dangling, snaps), crossings (at grade, overpass etc.), road type (limited access, pedestrian etc.) all matter for how we construct what are links and which nodes (intersections) are relevant.&lt;/p&gt;
-&lt;p&gt;Much of the analysis is trying to figure out appropriate ways to clean the street network data so that only relevant nodes and links are kept in the graph. Because the road networks are different in different parts of the world, it is hard to come up with a consistent set of rules that will work everywhere.&lt;/p&gt;
-&lt;p&gt;Some of the key cleaning steps are demonstrated in the &lt;a href=&#34;https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;sfnetwork vigenttes&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Here are some common issues and rules we often use with street/road networks. As with everything, these are not exhaustive.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Curved Roads or road with multiple segments (e.g. change in directions) that have the same ID are not considered intersecting.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;End nodes (e.g. cul-de-sacs) do not contribute to walkability and should be ignored in street intersection density calculations. Because these nodes have degree 1 (only one edge is incident on them), we can filter them relatively easily after the fact.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;When a network is constructed, nodes are constructed from shared endpoints. However, sometimes, road may overlap and share some interior points resulting in a missing node. Often this is because they are overpasses or underpasses, but sometimes they are mapping errors. To rectify these mapping errors we can use to_spatial_subdivision().&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Roads that continue in the same direction but have different IDs (or names) will often be coded as different roads. However, the intersection of these two roads should be considered a false node. We can eliminate them in two different ways.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;They have degree 2. So we can try and filter them out after the fact. However, there might be instances where degree 2 nodes might be true intersections, such as the intersection at te lower triangle in the example (why?). Exercise caution.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;We can apply to_spatial_smooth to remove these pseudonodes. This function iteratively smooths pseudo nodes, and after each removal concatenates the linestring geometries of the two affected edges together into a new, single linestring geometry.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Often we want to simplify the topology of the network, by reducing the complex intersection structures into a single node you might want to reduce such complex intersection structures into a single node, but still maintaining the connectivity of the network.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Some of the key cleaning steps in networks are demonstrated in the &lt;a href=&#34;https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;sfnetwork vigenttes&lt;/a&gt;.
-The following figure illustrates some common issues encountered in the spatial datasets that need to be accounted for.&lt;/p&gt;
-&lt;img src=&#34;img/cleaning_networks.jpg&#34; width=&#34;862&#34; /&gt;
-&lt;h3 id=&#34;conversion-of-spatial-data-to-spatial-network&#34;&gt;Conversion of spatial data to spatial network&lt;/h3&gt;
-&lt;p&gt;We can convert the spatial object to spatial network using &lt;code&gt;as_sfnetwork&lt;/code&gt; function&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_net &amp;lt;- as_sfnetwork(we_foot_lines, directed = FALSE)
-plot(foot_net)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;768&#34; /&gt;
-&lt;p&gt;We can make the nodes less prominent from default settings while visualizing.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(st_geometry(foot_net, &amp;quot;edges&amp;quot;), lwd = 1)
-plot(st_geometry(foot_net, &amp;quot;nodes&amp;quot;), pch = 5, cex = .2, add = TRUE)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;768&#34; /&gt;
-Often it is useful to have an interactive map to zoom and pan into the data to understand the different cleaning operations that may be required.
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;tmap_mode(&amp;quot;view&amp;quot;) # set to interactive mode
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## tmap mode set to interactive viewing
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;m1 &amp;lt;- 
-tm_tiles(&amp;quot;CartoDB.Positron&amp;quot;) +
-  tm_shape(st_as_sf(foot_net, &amp;quot;edges&amp;quot;)) +
-  tm_lines(col = &amp;quot;highway&amp;quot;, palette = &amp;quot;Accent&amp;quot;, colorNA = &amp;quot;red&amp;quot;) +
-  tm_shape(st_as_sf(foot_net, &amp;quot;nodes&amp;quot;)) +
-  tm_dots() +
-  tm_view(set.zoom.limits = c(15,18))
-
-frameWidget(tmap_leaflet(m1))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-11.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;h3 id=&#34;removing-multiple-edges-and-loops&#34;&gt;Removing multiple edges and loops&lt;/h3&gt;
-&lt;p&gt;Multiple edges are more than one edges that connect the same two nodes. Loops are edges that connect a point to itself. We can filter them out using off-the-shelf functions. Use caution, this may or may not be desirable.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_simple = foot_net %&amp;gt;%
-  activate(&amp;quot;edges&amp;quot;) %&amp;gt;%
-  arrange(edge_length()) %&amp;gt;%
-  filter(!edge_is_multiple()) %&amp;gt;%
-  filter(!edge_is_loop())
-
-removed_edges &amp;lt;-st_as_sf(foot_net, &amp;quot;edges&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
-  setdiff(st_as_sf(foot_simple, &amp;quot;edges&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
-  st_as_sf()
-
-plot(st_geometry(foot_simple, &amp;quot;edges&amp;quot;), lwd = 1)
-plot(st_geometry(foot_simple, &amp;quot;nodes&amp;quot;), pch = 5, cex = .2, add = TRUE)
-plot(st_geometry(removed_edges), lwd = 1, col =&#39;red&#39;, add =T)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src=&#34;https://nkaza.github.io/post/cleaning-using-spatial-networks/index.en_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;768&#34; /&gt;
-&lt;h3 id=&#34;subdivision--smoothing&#34;&gt;Subdivision &amp;amp; Smoothing&lt;/h3&gt;
-&lt;p&gt;Some edges have interior nodes that are connected to other edges. We need to divide such edges. “to_spatial_subdivision” is the function we use.&lt;/p&gt;
-&lt;p&gt;On the other hand, there will be nodes that only connect two edges. Those nodes are not critical and can be removed. For that we use, “to_spatial smooth.”&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;vcount(foot_simple) # Vertex/Node Count
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 4092
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ecount(foot_simple) # Edge Count
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 2778
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_simple_subdivision &amp;lt;- convert(foot_simple, to_spatial_subdivision)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Warning: to_spatial_subdivision assumes attributes are constant over geometries
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;vcount(foot_simple_subdivision)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 4808
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ecount(foot_simple_subdivision)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 6175
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_simple_smooth &amp;lt;- convert(foot_simple_subdivision, to_spatial_smooth)
-vcount(foot_simple_smooth)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 4171
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ecount(foot_simple_smooth)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 5538
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can see the changes in the number of nodes and edges each cleaning (spatial morphing) operation did. Visualise the removed nodes in the following way.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;# We only care about the geometry so we ignore other attributes.
-removed_nodes &amp;lt;-
-  st_as_sf(foot_simple, &amp;quot;nodes&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
-  setdiff(st_as_sf(foot_simple_smooth, &amp;quot;nodes&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
-  st_as_sf()
-
-added_nodes &amp;lt;-  st_as_sf(foot_simple_subdivision, &amp;quot;nodes&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
-  setdiff(st_as_sf(foot_simple, &amp;quot;nodes&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
-  st_as_sf()
-
-
-
-m1 &amp;lt;-
-tm_tiles(&amp;quot;CartoDB.Positron&amp;quot;) +
-  tm_shape(st_as_sf(foot_simple_smooth, &amp;quot;nodes&amp;quot;)) +
-  tm_dots(size = .01)+
-  tm_shape(st_as_sf(foot_simple_smooth, &amp;quot;edges&amp;quot;)) +
-  tm_lines()+
-  tm_shape(removed_nodes)+
-  tm_dots(col = &#39;red&#39;, size = .03, legend.show = T) +
-  tm_shape(added_nodes) +
-  tm_dots(col = &#39;green&#39;, size = .03, legend.show = T) +
-  tm_view(set.zoom.limits = c(15,18))
-
-frameWidget(tmap_leaflet(m1))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-2&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-2&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-14.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;The examples above present only simple cleaning operations. There will undoubtedly be others. We should look closely for what cleaning operations are required.&lt;/p&gt;
-&lt;h3 id=&#34;disconnected-components&#34;&gt;Disconnected components&lt;/h3&gt;
-&lt;p&gt;One of the problem we can see are isolated sets of nodes and edges that are disconnected from the main network. These are largely because of&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;mapping errors,&lt;/li&gt;
-&lt;li&gt;issues around precision of the coordinates&lt;/li&gt;
-&lt;li&gt;Nodes belonging to roads/links that are not selected in the query (motorways e.g.)&lt;/li&gt;
-&lt;li&gt;other anomalies&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;components(foot_simple_smooth)$no
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 50
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;components(foot_simple_smooth)$csize
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  [1] 4035    4    2    5    2    8    2    2    4    4    2    2    2    2    2
-## [16]    2    2    2    2    2    2    2    2    6    2    2    2    2    2    2
-## [31]    2    4    2    2   11    2    2    2    2    2    2    2    2   10    2
-## [46]    2    2    2    2    2
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In this network, there are 50 components and first component has most of the nodes (4035). Let’s visualise these disconnected components.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;disconnected_components &amp;lt;- foot_simple_smooth %&amp;gt;%
-  activate(&#39;nodes&#39;)%&amp;gt;%
-  filter(components(foot_simple_smooth)$membership &amp;gt; 1)
-  
-
-m1 &amp;lt;-
-tm_tiles(&amp;quot;CartoDB.Positron&amp;quot;) +
-  tm_shape(st_as_sf(foot_simple_smooth, &#39;edges&#39;)) +
-  tm_lines()+
-  tm_shape(st_as_sf(disconnected_components, &amp;quot;nodes&amp;quot;)) +
-  tm_dots(col = &#39;red&#39;)+
-  tm_shape(st_as_sf(disconnected_components, &amp;quot;edges&amp;quot;)) +
-  tm_lines(col = &#39;red&#39;) +
-  tm_view(set.zoom.limits = c(15,18))
-
-frameWidget(tmap_leaflet(m1))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-3&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-3&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-16.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;p&gt;In this particular instance, they are mostly minor and often can be ignored. In other instances, ignoring them would cause analytical difficulties.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;foot_smooth_connected &amp;lt;- foot_simple_smooth %&amp;gt;%
-  activate(&#39;nodes&#39;)%&amp;gt;%
-  filter(components(foot_simple_smooth)$membership == 1)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Instead of ignoring the disconnected components, you can try and snap some of the nodes of the disconnected components to the main network. This might involve finding the closest node/s of the disconnected component to an edge in the main network. You might have to give explicit instructions about which of the nodes are candidates for snapping. (Hint: &lt;a href=&#34;https://stackoverflow.com/questions/51292952/snap-a-point-to-the-closest-point-on-a-line-segment-using-sf&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;This post&lt;/a&gt; may be useful.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h3 id=&#34;simplifying-intersections-by-contracting-nodes&#34;&gt;Simplifying intersections by contracting nodes&lt;/h3&gt;
-&lt;p&gt;Intersections in OpenStreetMap are often represented by a collection of several nodes. For the purposes of a network analysis, treating an intersection as one node is usually sufficient. We do that by contracting nearby nodes that are connected into one node.&lt;/p&gt;
-&lt;p&gt;First, we cluster nearby nodes using the DBSCAN algorithm. We have to choose the right epsilon value that represents the nearness required for nodes to belong to a single cluster. We contracted the nodes that belong to a single cluster using “to_spatial_contracted” function. It is important the the nodes are not only sufficiently near but also connected, checked using tidygraph’s “group_components” function by creating an additional variable.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;node_coords = foot_smooth_connected %&amp;gt;%
-  activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
-  st_coordinates()
-
-#0.004
-clusters = dbscan(node_coords, eps = 0.0001, minPts = 1)$cluster
-
-unique(clusters) %&amp;gt;% 
-  head()
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 1 2 3 4 5 6
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;clustered = foot_smooth_connected %&amp;gt;%
-  activate(&amp;quot;nodes&amp;quot;) %&amp;gt;%
-  mutate(cls = clusters)
-
-clustered = clustered %&amp;gt;%
-  mutate(cmp = group_components())
-
-foot_connected_contracted = convert(
-  clustered,
-  to_spatial_contracted,
-  cls, cmp,
-  simplify = TRUE
-)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The number of edges and nodes provides a simple sanity check. We do not want the number of nodes to have reduced by a lot unless we have a large number of intersections with redundant nodes.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ecount(foot_connected_contracted)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 3809
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;vcount(foot_connected_contracted)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 2949
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;removed_nodes &amp;lt;-
-  st_as_sf(foot_smooth_connected, &amp;quot;nodes&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
-  setdiff(st_as_sf(foot_connected_contracted, &amp;quot;nodes&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
-  st_as_sf()
-
-added_nodes &amp;lt;- st_as_sf(foot_connected_contracted, &amp;quot;nodes&amp;quot;) %&amp;gt;% st_geometry() %&amp;gt;%
-  setdiff(st_as_sf(foot_smooth_connected, &amp;quot;nodes&amp;quot;)%&amp;gt;%st_geometry()) %&amp;gt;% 
-  st_as_sf()
-
-m1 &amp;lt;- 
-tm_tiles(&amp;quot;CartoDB.Positron&amp;quot;) +
-  tm_shape(st_as_sf(foot_connected_contracted, &amp;quot;nodes&amp;quot;)) +
-  tm_dots()+
-  tm_shape(st_as_sf(foot_connected_contracted, &amp;quot;edges&amp;quot;)) +
-  tm_lines()+
-  tm_shape(removed_nodes)+
-  tm_dots(col = &#39;red&#39;, size = .01) +
-  tm_shape(added_nodes)+
-  tm_dots(col=&#39;green&#39;, size = .02) +
-  tm_view(set.zoom.limits = c(15,18))
-
-frameWidget(tmap_leaflet(m1))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;div id=&#34;htmlwidget-4&#34; style=&#34;width:100%;height:480px;&#34; class=&#34;widgetframe html-widget&#34;&gt;&lt;/div&gt;
-&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-4&#34;&gt;{&#34;x&#34;:{&#34;url&#34;:&#34;index.en_files/figure-html//widgets/widget_unnamed-chunk-19.html&#34;,&#34;options&#34;:{&#34;xdomain&#34;:&#34;*&#34;,&#34;allowfullscreen&#34;:false,&#34;lazyload&#34;:false}},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Explore the following:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;What does the epsilon value mean? How is it used in the DBSCAN algorithm?&lt;/li&gt;
-&lt;li&gt;Try different epsilon values and see the impact of changes on the network.&lt;/li&gt;
-&lt;li&gt;Identify other potential issues related to cleaning the network by looking closer at different areas in the map and explore how you can address them.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;As you may surmised much of this cleaning is an art rather than a precise steps you can follow. As with anything, the analytical choices dictate the final network you will end up with. These choices matter for the analysis of the network, sometimes in small ways and some other times in large ways.&lt;/p&gt;
-&lt;h2 id=&#34;other-resources&#34;&gt;Other Resources&lt;/h2&gt;
-&lt;p&gt;This tutorial borrows heavily from the following resources. You can refer them for more detailed coverage in specific issues discussed here.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://geospatial-community.netlify.app/post/2022-03-31-spatial-networks/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Introduction to tidy spatial networks&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://nkaza.github.io/post/intersection-density-from-osm-using-qgis-r/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Intersection Density From OSM using QGIS &amp;amp; R&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://luukvdmeer.github.io/sfnetworks/articles/sfn02_preprocess_clean.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Network pre-processing and cleaning&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+      <description>Introduction Some transportation networks are intuitive to understand as networks. We can easily visualize intersections as nodes and roadways as edges in a road network. A network analysis approach helps in understanding complex behaviour of systems such as transportation networks that would not be possible with other types of analyses that look at individual components as separate entities.</description>
     </item>
     
     <item>
@@ -1282,184 +238,7 @@ frameWidget(tmap_leaflet(m1))
       <link>https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/</link>
       <pubDate>Tue, 25 Jan 2022 00:00:00 +0000</pubDate>
       <guid>https://nkaza.github.io/post/isochrones-from-routing-engines-osrm/</guid>
-      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;In other posts, I have shown how to use external servers (google, craigslist etc.) to access information.  You can also query a local (on your computer) server and your R session acts like a client (e.g. browser).&lt;/p&gt;
-&lt;p&gt;We can demonstrate this using (Open Source Routing Machine) OSRM server and constructing Isocrhrones. &lt;a href=&#34;https://www.atlasobscura.com/articles/isochrone-maps-commutes-travel-times&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Isochrones&lt;/a&gt; are area you can reach from a point within a specified time. Often isochrones are used to identify gaps in the service area boundaries (e.g. 15 min distance from fire stations).&lt;/p&gt;
-&lt;p&gt;We can plot isochornes of every 2 min biking, around some random points in Orange County, NC. While we use OSRM, though any other API works as well (e.g. Google, Mapbox etc. &lt;a href=&#34;https://mrakow.wordpress.com/2015/11/30/isochrone-generation-with-the-google-maps-api-using-a-quadtree/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;see this blog&lt;/a&gt; for example.) . If you want to set other types of local routing engine, &lt;a href=&#34;https://github.com/valhalla/valhalla&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Valhalla&lt;/a&gt; and associated R packages  might be a good option. Use whichever one suits your needs.&lt;/p&gt;
-&lt;div class=&#34;alert alert-note&#34;&gt;
-  &lt;div&gt;
-    I am using a OSRM server. T
-  &lt;/div&gt;
-&lt;/div&gt;
-&lt;h2 id=&#34;setting-up-a-osrm-server&#34;&gt;Setting up a OSRM server&lt;/h2&gt;
-&lt;p&gt;We are going to &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;set up a OSRM server&lt;/a&gt; on your computer.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Different OS require different instructions, so please follow the &lt;a href=&#34;https://github.com/Project-OSRM/osrm-backend&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;website&lt;/a&gt; to construct the backend for your OS.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Download North Carolina road network from Openstreetmap from &lt;a href=&#34;https://download.geofabrik.de/north-america.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Geofabrik&lt;/a&gt; for example (use the pbf file).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Construct a graph that can be used for finding shortest routes. Use suitably modified versions of (mind the file locations)&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;    - osrm-extract nc.osm.pbf -p ./profiles/bicycle.lua
-    - osrm-partition nc.osrm
-    - osrm-customize nc.osrm
-    - osrm-routed --algorithm mld nc.osrm 
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;in the command window/terminal (outside R). If all goes well, this sequence of steps will create local server ready to accept your requests.  The server will be ready to be queried at  http://localhost:5000/ or http://127.0.0.1:5000&lt;/p&gt;
-&lt;p&gt;To get other modes, simply change the &lt;code&gt;lua&lt;/code&gt; profile.&lt;/p&gt;
-&lt;p&gt;The following code is here for the sake of completeness and is not evaluated. it can only be evaluated with the server is runnign in the background at &lt;code&gt;localhost:5000&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(osrm)
-library(tidyverse)
-library(sf)
-library(leaflet)
-library(widgetframe)
-
-# Ideally set these options up
- options(osrm.server = &amp;quot;http://localhost:5000/&amp;quot;)
-options(osrm.profile = &#39;bike&#39;) 
-
-randompoints &amp;lt;- matrix(c( -79.065443, 35.924787, -79.087353, 35.914525, -79.066203, 35.881521), 
-                       ncol=2, byrow =TRUE) %&amp;gt;%
-                      data.frame()
-names(randompoints) &amp;lt;- c(&#39;lng&#39;, &#39;lat&#39;)
-randompoints$name &amp;lt;- c(&#39;pt1&#39;, &#39;pt2&#39;, &#39;pt3&#39;)
-
-rt &amp;lt;- osrmRoute(src = randompoints[1,c(&#39;name&#39;, &#39;lng&#39;,&#39;lat&#39;)], 
-                dst = randompoints[2,c(&#39;name&#39;,&#39;lng&#39;,&#39;lat&#39;)], 
-                returnclass = &amp;quot;sf&amp;quot;)
-
-m1 &amp;lt;- 
-rt %&amp;gt;% leaflet() %&amp;gt;%
-    addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
-  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
-  addMarkers(data=randompoints[1:2,], ~lng, ~lat) %&amp;gt;%
-  addPolylines(weight =5, smoothFactor = .5, color=&#39;red&#39;)
-
-
-frameWidget(m1)
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;OSRM is a convenience package that is wrapping the calls to the server and parsing the output into sf classes. For example, the curl query in the backend looks like&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;http://localhost:5000/route/v1/biking/-78.901330,36.002806,-78.909020,36.040266&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;and should result in the following image&lt;/p&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/single_route.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-
-You can always shut the server down by closing the terminal/command window, after you are done with your analysis.&lt;/p&gt;
-&lt;p&gt;To get a matrix of distances and durations between multiple points,&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;ttmatrix &amp;lt;- osrmTable(loc=randompoints[, c(&#39;name&#39;, &#39;lng&#39;, &#39;lat&#39;)], measure = c(&#39;duration&#39;, &#39;distance&#39;))
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;ttmatrix$durations&lt;/code&gt; should return a table similar to&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;&lt;/th&gt;
-&lt;th&gt;pt1&lt;/th&gt;
-&lt;th&gt;pt2&lt;/th&gt;
-&lt;th&gt;pt3&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;em&gt;pt1&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;0.0&lt;/td&gt;
-&lt;td&gt;22.8&lt;/td&gt;
-&lt;td&gt;32.5&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;em&gt;pt2&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;22.8&lt;/td&gt;
-&lt;td&gt;0.0&lt;/td&gt;
-&lt;td&gt;25.1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;em&gt;pt3&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;32.9&lt;/td&gt;
-&lt;td&gt;25.8&lt;/td&gt;
-&lt;td&gt;0.0&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;querying-a-osrm-server&#34;&gt;Querying a OSRM server&lt;/h2&gt;
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;iso &amp;lt;- list()
-for (i in 1:nrow(randompoints)){
-iso[[i]] &amp;lt;- osrmIsochrone(loc = randompoints[i,c(&#39;lng&#39;,&#39;lat&#39;)], breaks = seq(from = 0,to = 15, by = 2)) %&amp;gt;% st_as_sf()
-}
-
-iso &amp;lt;- do.call(&#39;rbind&#39;, iso)
-
- Npal &amp;lt;- colorNumeric(
-   palette = &amp;quot;Reds&amp;quot;, n = 5,
-   domain = iso$center
- )
- 
-iso %&amp;gt;% leaflet() %&amp;gt;%
-  addProviderTiles(providers$Stamen.TonerLines, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
-  addProviderTiles(providers$Stamen.TonerLite, group = &amp;quot;Basemap&amp;quot;) %&amp;gt;%
-  addMarkers(data=randompoints, ~lng, ~lat) %&amp;gt;%
-  addPolygons(color = &amp;quot;#444444&amp;quot;, weight = 1, smoothFactor = 0.5,
-    opacity = 1.0, fillOpacity = 0.5, fillColor = ~Npal(iso$center),
-    group = &amp;quot;Isochrone&amp;quot;) %&amp;gt;%
-  addLegend(&amp;quot;topleft&amp;quot;, pal = Npal, values = ~iso$center,
-            title = &amp;quot;Biking Time (min)&amp;quot;,opacity = 1
-            )
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The result should looks similar to the following.&lt;/p&gt;
-&lt;p&gt;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;figure  &gt;
-  &lt;div class=&#34;d-flex justify-content-center&#34;&gt;
-    &lt;div class=&#34;w-100&#34; &gt;&lt;img src=&#34;./img/isochrones.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34; data-zoomable /&gt;&lt;/div&gt;
-  &lt;/div&gt;&lt;/figure&gt;
-&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Change the profile of the OSRM server to car and notice the differences in the Isochrones (shapes and extents).&lt;/li&gt;
-&lt;li&gt;Repeat the entire exercise for all the major shopping areas in the Triangle.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h2&gt;
-&lt;p&gt;It should be obvious that having a local server might reduce latency and allow for quicker turnaround. However, there are some distinct disadvantages compared to commercial option, including but not limited to incorporating real time information, setup costs and maintenance costs. Nonetheless, it is useful to think about how these might be beneficial within an organisation.&lt;/p&gt;
-</description>
+      <description>Introduction In other posts, I have shown how to use external servers (google, craigslist etc.) to access information. You can also query a local (on your computer) server and your R session acts like a client (e.</description>
     </item>
     
   </channel>
